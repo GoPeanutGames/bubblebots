@@ -1,0 +1,4 @@
+[BubbleBotsLevel]
+version=1
+dimensions=6,10
+available_tiles=0,1,2,3,4
