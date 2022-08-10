@@ -45,6 +45,13 @@ public class GUIGame : MonoBehaviour
 
         this.levelInfo = levelInfo;
 
+        // remove the old ones
+        for (int i = 3; i < gameObject.transform.childCount; i++)
+        {
+            Destroy(gameObject.transform.GetChild(i).gameObject);
+        }
+
+        // add new tiles
         backgroundTiles = new Image[levelInfo.Width,levelInfo.Height];
         Image backgroundTile;
         BackgroundTile.GetComponent<RectTransform>().sizeDelta = new Vector2(TileWidth, TileWidth);
@@ -230,12 +237,24 @@ public class GUIGame : MonoBehaviour
         tile.name = "Tile_" + x + "_" + y;
         tile.SetActive(true);
 
-        RectTransform rect = tile.AddComponent<RectTransform>();
+        RectTransform rect = tile.GetComponent<RectTransform>();
+        if (rect == null)
+        {
+            rect = tile.AddComponent<RectTransform>();
+        }
+
         rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + x * TileWidth + x * Spacing, -levelInfo.Height / 2f * TileWidth + y * TileWidth + y * Spacing, 0);
         rect.sizeDelta = new Vector2(TileWidth, TileWidth);
         rect.localScale = new Vector3(1, 1, 1);
+        rect.localScale = Vector3.zero;
+        rect.DOScale(Vector3.one, SwapDuration);
 
-        Image tileImage = tile.AddComponent<Image>();
+        Image tileImage = tile.GetComponent<Image>();
+        if(tileImage == null)
+        {
+            tileImage = tile.AddComponent<Image>();
+        }
+
         tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
         tileImage.DOFade(0, 0);
         tileImage.DOFade(1, SwapDuration);
@@ -249,5 +268,34 @@ public class GUIGame : MonoBehaviour
         guiTile.X = x;
         guiTile.Y = y;
         guiTile.Key = key;
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.F1))
+        {
+            DebugTileList();
+        }
+    }
+
+    private void DebugTileList()
+    {
+        string line;
+
+        for (int j = levelInfo.Height - 1; j >= 0; j--)
+        {
+            line = "";
+            for (int i = 0; i < levelInfo.Width; i++)
+            {
+                line += gamePlayManager.TileSet[i, j];
+
+                if(i != levelInfo.Width - 1)
+                {
+                    line += ", ";
+                }
+            }
+
+            Debug.Log(line);
+        }
     }
 }
