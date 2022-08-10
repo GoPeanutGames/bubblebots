@@ -261,8 +261,16 @@ public class GamePlayManager : MonoBehaviour
 
             if(hints.Count > 0)
             {
-                Debug.Log("Swap tiles (101): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
-                DisplayDebugHints();
+                if (hints[0].Length >= 5)
+                {
+                    Debug.Log("5 in line!");
+                } else if (hints[0].Length == 4)
+                {
+                    Debug.Log("4 in line!");
+                }
+
+                //Debug.Log("Swap tiles (101): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
+                //DisplayDebugHints();
 
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
@@ -274,8 +282,17 @@ public class GamePlayManager : MonoBehaviour
 
                 if (hints.Count > 0)
                 {
-                    Debug.Log("Swap tiles (102): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
-                    DisplayDebugHints();
+                    if (hints[0].Length >= 5)
+                    {
+                        Debug.Log("5 in line!");
+                    }
+                    else if (hints[0].Length == 4)
+                    {
+                        Debug.Log("4 in line!");
+                    }
+
+                    //Debug.Log("Swap tiles (102): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
+                    //DisplayDebugHints();
 
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                     SwapKeys(x, y, releaseTileX, releaseTileY);
@@ -337,7 +354,7 @@ public class GamePlayManager : MonoBehaviour
 
         bool vertical;
         int newIndex;
-        DisplayDebugHints();
+        //DisplayDebugHints();
         int longest = 0;
         int selected = 0;
         
