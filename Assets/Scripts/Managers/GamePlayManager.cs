@@ -241,8 +241,8 @@ public class GamePlayManager : MonoBehaviour
             return;
         }
 
-        releaseTileX = x; //>= 0 && x < levelInfo.Width ? x : 0;
-        releaseTileY = y; //>= 0 && y < levelInfo.Height ? y : 0;
+        releaseTileX = x;
+        releaseTileY = y;
     }
 
     public void MoveOverTile(int x, int y)
@@ -263,7 +263,6 @@ public class GamePlayManager : MonoBehaviour
             {
                 Debug.Log("Swap tiles (101): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
                 DisplayDebugHints();
-                //Debug.Break();
 
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
@@ -277,7 +276,6 @@ public class GamePlayManager : MonoBehaviour
                 {
                     Debug.Log("Swap tiles (102): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
                     DisplayDebugHints();
-                    //Debug.Break();
 
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                     SwapKeys(x, y, releaseTileX, releaseTileY);
