@@ -31,7 +31,7 @@ public class LevelInfo : MonoBehaviour
     {
         if(!Locked)
         {
-            FindObjectOfType<GamePlayManager>().PrepareLevel(DataFile);
+            FindObjectOfType<GamePlayManager>().PrepareLevel(DataFile, LevelNumber);
         }
     }
 }

@@ -12,6 +12,7 @@ public class GUIMenu : MonoBehaviour
     public Image MapImage;
     public Image GameImage;
     public Image WinDialogImage;
+    public Image WinNoMoreMoves;
     public TextMeshProUGUI TxtStatus;
     public Button PlayButton;
     public GameObject Robot1;
@@ -37,16 +38,16 @@ public class GUIMenu : MonoBehaviour
         StartCoroutine(TurnOffGUI());
     }
 
-    public void SwitchToMultiplayer(string levelFile)
+    public void SwitchToMultiplayer(string levelFile, int levelNumber)
     {
         MenuImage.gameObject.SetActive(true);
         MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0f);
         MenuImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
 
-        StartCoroutine(StartMultiplayerSequence(levelFile));
+        StartCoroutine(StartMultiplayerSequence(levelFile, levelNumber));
     }
 
-    IEnumerator StartMultiplayerSequence(string levelFile)
+    IEnumerator StartMultiplayerSequence(string levelFile, int levelNumber)
     {
         DisplayStatusText("");
 
@@ -66,7 +67,7 @@ public class GUIMenu : MonoBehaviour
         MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
 
         StartCoroutine(TurnOffGUI());
-        StartCoroutine(TurnOnPlay(levelFile));
+        StartCoroutine(TurnOnPlay(levelFile, levelNumber));
     }
 
     IEnumerator TurnOffGUI()
@@ -77,7 +78,7 @@ public class GUIMenu : MonoBehaviour
         MenuImage.gameObject.SetActive(false);
     }
 
-    IEnumerator TurnOnPlay(string levelFile)
+    IEnumerator TurnOnPlay(string levelFile, int levelNumber)
     {
         //yield return new WaitForSeconds(0.5f);
         yield return new WaitForEndOfFrame();
@@ -87,9 +88,9 @@ public class GUIMenu : MonoBehaviour
         GameImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
 
         Robot1.SetActive(true);
-        Robot2.SetActive(true);
+        //Robot2.SetActive(true);
 
-        gamePlayManager?.StartLevel(levelFile);
+        gamePlayManager?.StartLevel(levelFile, levelNumber);
     }
 
     public void DisplayStatusText(string message)
@@ -112,6 +113,16 @@ public class GUIMenu : MonoBehaviour
 
         WinDialogImage.gameObject.SetActive(false);
         MapImage.gameObject.SetActive(true);
+    }
+
+    public void DisplayNoMoreMoves()
+    {
+        WinNoMoreMoves.gameObject.SetActive(true);
+    }
+
+    public void HideNoMoreMoves()
+    {
+        WinNoMoreMoves.gameObject.SetActive(false);
     }
 
     internal void UnlockLevel(int numLevel)

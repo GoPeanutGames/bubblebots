@@ -13,14 +13,18 @@ public class GUIGame : MonoBehaviour
     public int TileWidth = 150;
     public float SwapDuration = 0.33f;
     public GameObject ExplosionEffect;
-    public Slider RobotGauge1;
     public Slider RobotGauge2;
+    public Slider RobotGauge1A;
+    public Slider RobotGauge1B;
+    public Slider RobotGauge1C;
+    public int TopBias = 100;
 
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
     LevelInformation levelInfo;
     SkinManager skinManager;
     List<GameObject> explosionEffects = new List<GameObject>();
+    bool canSwapTiles = true;
 
     private void Awake()
     {
@@ -30,7 +34,9 @@ public class GUIGame : MonoBehaviour
 
     public void DamageToRobot1(float damage)
     {
-        RobotGauge1.DOValue(RobotGauge1.value - damage, SwapDuration);
+        RobotGauge1A.DOValue(RobotGauge1A.value - damage, SwapDuration);
+        //RobotGauge1B.DOValue(RobotGauge1B.value - damage, SwapDuration);
+        //RobotGauge1C.DOValue(RobotGauge1C.value - damage, SwapDuration);
     }
 
     public void DamageToRobot2(float damage)
@@ -38,17 +44,33 @@ public class GUIGame : MonoBehaviour
         RobotGauge2.DOValue(RobotGauge2.value - damage, SwapDuration);
     }
 
-    public void RenderLevel(LevelInformation levelInfo)
+    public void SetRobotGauges(int value)
     {
-        RobotGauge1.value = 1;
-        RobotGauge2.value = 1;
+        RobotGauge1A.maxValue = value;
+        RobotGauge1B.maxValue = value;
+        RobotGauge1C.maxValue = value;
+        RobotGauge2.maxValue = value;
+    }
+
+    public void RenderLevelBackground(LevelInformation levelInfo)
+    {
+        RobotGauge1A.value = RobotGauge1A.maxValue;
+        RobotGauge1B.value = RobotGauge1B.maxValue;
+        RobotGauge1C.value = RobotGauge1C.maxValue;
+        RobotGauge2.value = RobotGauge2.maxValue;
 
         this.levelInfo = levelInfo;
 
         // remove the old ones
-        for (int i = 3; i < gameObject.transform.childCount; i++)
+        Transform child;
+        for (int i = 1; i < gameObject.transform.childCount; i++)
         {
-            Destroy(gameObject.transform.GetChild(i).gameObject);
+            child = gameObject.transform.GetChild(i);
+            if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
+                !child.gameObject.name.StartsWith("Robot"))
+            {
+                Destroy(gameObject.transform.GetChild(i).gameObject);
+            }
         }
 
         // add new tiles
@@ -65,7 +87,7 @@ public class GUIGame : MonoBehaviour
                 backgroundTile = Instantiate(BackgroundTile, gameObject.transform);
                 backgroundTile.gameObject.SetActive(true);
                 backgroundTile.gameObject.name = "TileBackground_" + x + "_" + y;
-                backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelInfo.Width / 2f * tileWidth + x * tileWidth + x * Spacing, -levelInfo.Height / 2f * tileHeight + y * tileHeight + y * Spacing);
+                backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelInfo.Width / 2f * tileWidth + x * tileWidth + x * Spacing, -levelInfo.Height / 2f * tileHeight + y * tileHeight + y * Spacing - TopBias);
 
                 backgroundTiles[x, y] = backgroundTile;
             }
@@ -98,7 +120,7 @@ public class GUIGame : MonoBehaviour
         //yield return new WaitForEndOfFrame();
 
         RectTransform rect = tile.AddComponent<RectTransform>();
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + i * TileWidth + i * Spacing, -levelInfo.Height / 2f * TileWidth + j * TileWidth + j * Spacing, 0);
+        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + i * TileWidth + i * Spacing, -levelInfo.Height / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
         rect.sizeDelta = new Vector2(TileWidth, TileWidth);
         rect.localScale = new Vector3(1, 1, 1);
 
@@ -121,11 +143,22 @@ public class GUIGame : MonoBehaviour
 
     public void SwapTiles(int x1, int y1, int x2, int y2, bool changeInfo)
     {
+        if(!canSwapTiles)
+        {
+            return;
+        }
+
+        if(!(x1 == x2 || y1 == y2))
+        {
+            return;
+        }
+
         StartCoroutine(SwapTilesNow(x1, y1, x2, y2, changeInfo));
     }
 
     IEnumerator SwapTilesNow(int x1, int y1, int x2, int y2, bool changeInfo)
     {
+        canSwapTiles = false;
         Transform tile1 = transform.Find("Tile_" + x1 + "_" + y1);
         Transform tile2 = transform.Find("Tile_" + x2 + "_" + y2);
 
@@ -148,6 +181,8 @@ public class GUIGame : MonoBehaviour
             tile2.GetComponent<GUITile>().X = x1;
             tile2.GetComponent<GUITile>().Y = y1;
         }
+
+        canSwapTiles = true;
     }
 
     public void ExplodeTile(int x, int y, bool destroyTile)
@@ -219,8 +254,27 @@ public class GUIGame : MonoBehaviour
         tile.GetComponent<GUITile>().Y = y - howMany;
     }
 
+    // very similar to the AppearAt but replaces the existing one instead
+    internal void ReappearAt(int x, int y, string key)
+    {
+        Transform trans = transform.Find("Tile_" + x + "_" + y);
+        if(trans != null)
+        {
+            Destroy(trans.gameObject);
+        }
+        
+        AppearAt(x, y, key);
+    }
+
     internal void AppearAt(int x, int y, string key)
     {
+        StartCoroutine(AppearDelayed(x, y, key));
+    }
+
+    IEnumerator AppearDelayed(int x, int y, string key)
+    {
+        yield return new WaitForSeconds(SwapDuration);
+
         Transform trans = transform.Find("Tile_" + x + "_" + y + "_deleted");
         GameObject tile;
 
@@ -243,7 +297,7 @@ public class GUIGame : MonoBehaviour
             rect = tile.AddComponent<RectTransform>();
         }
 
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + x * TileWidth + x * Spacing, -levelInfo.Height / 2f * TileWidth + y * TileWidth + y * Spacing, 0);
+        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + x * TileWidth + x * Spacing, -levelInfo.Height / 2f * TileWidth + y * TileWidth + y * Spacing - TopBias, 0);
         rect.sizeDelta = new Vector2(TileWidth, TileWidth);
         rect.localScale = new Vector3(1, 1, 1);
         rect.localScale = Vector3.zero;

@@ -1,3 +1,5 @@
+#define SPECIAL_MATCHING_OFF
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,13 +22,17 @@ public class GamePlayManager : MonoBehaviour
 
     LevelInformation levelInfo;
     string[,] tileSet;
+    List<Vector2> tilesToPut = new List<Vector2>();
     List<Vector2[]> hints = new List<Vector2[]>();
     List<int> availabletiles = new List<int>();
     int releaseTileX = -1;
     int releaseTileY = -1;
     bool canSwapTiles = true;
+    bool enemyDead = false;
     int numHit = 0;
     int numLevel = 1;
+    int currentLevel = 0;
+    int nextCount = 0;
 
     public string[,] TileSet
     {
@@ -36,17 +42,19 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
-    public void PrepareLevel(string levelFile)
+    public void PrepareLevel(string levelFile, int levelNumber)
     {
-        MenuGUI.SwitchToMultiplayer(levelFile);
+        MenuGUI.SwitchToMultiplayer(levelFile, levelNumber);
     }
 
-    public void StartLevel(string levelFile)
+    public void StartLevel(string levelFile, int levelNumber)
     {
         LevelInformation levelInfo;
+        currentLevel = levelNumber;
 
         try
         {
+            enemyDead = false;
             levelInfo = levelManager.LoadLevel(levelFile);
         }
         catch (Exception ex)
@@ -57,19 +65,41 @@ public class GamePlayManager : MonoBehaviour
 
         RenderLevel(levelInfo);
         numHit = 0;
-        Robot1Anim.CrossFade("YBotIdle", 0.1f);
-        Robot2Anim.CrossFade("XBotIdle", 0.1f);
+        Robot1Anim.CrossFade("Idle", 0.1f);
+        //Robot2Anim.CrossFade("Idle", 0.1f);
     }
 
     void RenderLevel(LevelInformation levelInfo)
     {
         this.levelInfo = levelInfo;
-        GameGUI.RenderLevel(levelInfo);
+        GameGUI.RenderLevelBackground(levelInfo);
+
+        bool foundAMatch;
 
         do
         {
+            foundAMatch = false;
+
             FillTiles(levelInfo);
-        } while (!MoreMovesArePossible());
+            if(!MoreMovesArePossible())
+            {
+                continue;
+            }
+
+            hints.Clear();
+            for (int x = 0; x < levelInfo.Width; x++)
+            {
+                for (int y = 0; y < levelInfo.Height; y++)
+                {
+                    TestForAMatchAround(x, y);
+                    if (hints.Count > 0)
+                    {
+                        foundAMatch = true;
+                        break;
+                    }
+                }
+            }
+        } while (foundAMatch);
 
         RenderTiles();
     }
@@ -84,12 +114,86 @@ public class GamePlayManager : MonoBehaviour
             availabletiles.Add(int.Parse(levelInfo.AvailableTiles[i]));
         }
 
+        int[,] tileIndices = new int[levelInfo.Width, levelInfo.Height];
+        /*tileIndices[0, 7] = 3;
+        tileIndices[1, 7] = 6;
+        tileIndices[2, 7] = 4;
+        tileIndices[3, 7] = 3;
+        tileIndices[4, 7] = 4;
+        tileIndices[5, 7] = 0;
+        tileIndices[6, 7] = 6;
+        tileIndices[7, 7] = 0;
+
+        tileIndices[0, 6] = 6;
+        tileIndices[1, 6] = 0;
+        tileIndices[2, 6] = 0;
+        tileIndices[3, 6] = 6;
+        tileIndices[4, 6] = 3;
+        tileIndices[5, 6] = 6;
+        tileIndices[6, 6] = 0;
+        tileIndices[7, 6] = 3;
+
+        tileIndices[0, 5] = 6;
+        tileIndices[1, 5] = 4;
+        tileIndices[2, 5] = 6;
+        tileIndices[3, 5] = 1;
+        tileIndices[4, 5] = 4;
+        tileIndices[5, 5] = 3;
+        tileIndices[6, 5] = 4;
+        tileIndices[7, 5] = 0;
+
+        tileIndices[0, 4] = 3;
+        tileIndices[1, 4] = 4;
+        tileIndices[2, 4] = 4;
+        tileIndices[3, 4] = 6;
+        tileIndices[4, 4] = 0;
+        tileIndices[5, 4] = 0;
+        tileIndices[6, 4] = 6;
+        tileIndices[7, 4] = 1;
+
+        tileIndices[0, 3] = 6;
+        tileIndices[1, 3] = 3;
+        tileIndices[2, 3] = 1;
+        tileIndices[3, 3] = 0;
+        tileIndices[4, 3] = 4;
+        tileIndices[5, 3] = 6;
+        tileIndices[6, 3] = 1;
+        tileIndices[7, 3] = 3;
+
+        tileIndices[0, 2] = 6;
+        tileIndices[1, 2] = 0;
+        tileIndices[2, 2] = 4;
+        tileIndices[3, 2] = 0;
+        tileIndices[4, 2] = 3;
+        tileIndices[5, 2] = 0;
+        tileIndices[6, 2] = 4;
+        tileIndices[7, 2] = 1;
+
+        tileIndices[0, 1] = 1;
+        tileIndices[1, 1] = 0;
+        tileIndices[2, 1] = 0;
+        tileIndices[3, 1] = 3;
+        tileIndices[4, 1] = 3;
+        tileIndices[5, 1] = 6;
+        tileIndices[7, 1] = 1;
+        tileIndices[6, 1] = 3;
+
+        tileIndices[0, 0] = 6;
+        tileIndices[1, 0] = 3;
+        tileIndices[2, 0] = 4;
+        tileIndices[3, 0] = 6;
+        tileIndices[4, 0] = 4;
+        tileIndices[5, 0] = 4;
+        tileIndices[6, 0] = 6;
+        tileIndices[7, 0] = 6;*/
+
         int index;
         for (int x = 0; x < levelInfo.Width; x++)
         {
             for (int y = 0; y < levelInfo.Height; y++)
             {
-                index = availabletiles[UnityEngine.Random.Range(0, availabletiles.Count)];
+                index = availabletiles[GetNextTile()];
+                //index = tileIndices[x,y];
                 tileSet[x, y] = skinManager.Skins[skinManager.SelectedSkin].TileSet[index].Key;
             }
         }
@@ -134,12 +238,28 @@ public class GamePlayManager : MonoBehaviour
             return;
         }
 
-        SwapKeys(x1,y1,x2,y2);
-        TestForAMatchAround(x1, y1, x2, y2);
-        SwapKeys(x1, y1, x2, y2);
+        // swapping a special tile?
+        if (tileSet[x1, y1] == "s5" || tileSet[x2, y2] == "s4")
+        {
+            if (x1 == x2)
+            {
+                // vertical
+            }
+            else
+            {
+                // horizontal
+            }
+        }
+        else
+        {
+            SwapKeys(x1, y1, x2, y2);
+            TestForAMatchAround(x1, y1);
+            TestForAMatchAround(x2, y2);
+            SwapKeys(x1, y1, x2, y2);
+        }
     }
 
-    private void TestForAMatchAround(int x, int y, int xo, int yo)
+    private void TestForAMatchAround(int x, int y)
     {
         List<Vector2> hintList = new List<Vector2>();
 
@@ -255,49 +375,168 @@ public class GamePlayManager : MonoBehaviour
         if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1 && tileSet[x, y] != tileSet[releaseTileX, releaseTileY])
         {
             canSwapTiles = false;
+#if SPECIAL_MATCHING
+            bool sm5InLine = false;
+            bool sm4InLine = false;
+            bool smBigT = false;
+#endif
 
             hints.Clear();
             CheckForAMatchWitchSwapingTiles(x, y, releaseTileX, releaseTileY);
 
             if(hints.Count > 0)
             {
+#if SPECIAL_MATCHING
                 if (hints[0].Length >= 5)
                 {
                     Debug.Log("5 in line!");
+                    sm5InLine = true;
                 } else if (hints[0].Length == 4)
                 {
                     Debug.Log("4 in line!");
+                    sm4InLine = true;
                 }
-
-                //Debug.Log("Swap tiles (101): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
-                //DisplayDebugHints();
+#endif
 
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
                 StartCoroutine(ExplodeTiles());
-                HitEnemy();
+                //HitEnemy();
+
+#if SPECIAL_MATCHING
+                if (sm5InLine)
+                {
+                    // place a special tile here
+                    if(x != releaseTileX)
+                    {
+                        // place vertical
+                        tileSet[releaseTileX + 2, releaseTileY] = "S5";
+                        GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S5");
+                    } else
+                    {
+                        // place horizontal
+                        tileSet[releaseTileX, releaseTileY + 2] = "S5";
+                        GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S5");
+                    }
+
+                    sm5InLine = false;
+                }
+                else if (sm4InLine)
+                {
+                    // place a special tile here
+                    if (x != releaseTileX)
+                    {
+                        // place vertical
+                        tileSet[releaseTileX + 2, releaseTileY] = "S4";
+                        GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S4");
+                    }
+                    else
+                    {
+                        // place horizontal
+                        tileSet[releaseTileX, releaseTileY + 2] = "S4";
+                        GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S4");
+                    }
+
+                    sm4InLine = false;
+                }
+                else if (smBigT)
+                {
+                    // place a special tile here
+                    if (x != releaseTileX)
+                    {
+                        // place vertical
+                        tileSet[releaseTileX + 2, releaseTileY] = "ST";
+                        GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "ST");
+                    }
+                    else
+                    {
+                        // place horizontal
+                        tileSet[releaseTileX, releaseTileY + 2] = "ST";
+                        GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "ST");
+                    }
+
+                    smBigT = false;
+                }
+#endif
             } else
             {
                 CheckForAMatchWitchSwapingTiles(releaseTileX, releaseTileY, x, y);
 
                 if (hints.Count > 0)
                 {
+#if SPECIAL_MATCHING
                     if (hints[0].Length >= 5)
                     {
                         Debug.Log("5 in line!");
+                        sm5InLine = true;
                     }
                     else if (hints[0].Length == 4)
                     {
                         Debug.Log("4 in line!");
+                        sm4InLine = true;
                     }
-
-                    //Debug.Log("Swap tiles (102): " + x + "," + y + " with " + releaseTileX + "," + releaseTileY);
-                    //DisplayDebugHints();
-
+#endif
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                     SwapKeys(x, y, releaseTileX, releaseTileY);
                     StartCoroutine(ExplodeTiles());
-                    HitEnemy();
+                    //HitEnemy();
+
+#if SPECIAL_MATCHING
+                    if (sm5InLine)
+                    {
+                        // place a special tile here
+                        if (x != releaseTileX)
+                        {
+                            // place vertical
+                            tileSet[releaseTileX + 2, releaseTileY] = "S5";
+                            GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S5");
+                        }
+                        else
+                        {
+                            // place horizontal
+                            tileSet[releaseTileX, releaseTileY + 2] = "S5";
+                            GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S5");
+                        }
+
+                        sm5InLine = false;
+                    }
+                    else if (sm4InLine)
+                    {
+                        // place a special tile here
+                        if (x != releaseTileX)
+                        {
+                            // place vertical
+                            tileSet[releaseTileX + 2, releaseTileY] = "S4";
+                            GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S4");
+                        }
+                        else
+                        {
+                            // place horizontal
+                            tileSet[releaseTileX, releaseTileY + 2] = "S4";
+                            GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S4");
+                        }
+
+                        sm4InLine = false;
+                    }
+                    else if (smBigT)
+                    {
+                        // place a special tile here
+                        if (x != releaseTileX)
+                        {
+                            // place vertical
+                            tileSet[releaseTileX + 2, releaseTileY] = "ST";
+                            GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "ST");
+                        }
+                        else
+                        {
+                            // place horizontal
+                            tileSet[releaseTileX, releaseTileY + 2] = "ST";
+                            GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "ST");
+                        }
+
+                        smBigT = false;
+                    }
+#endif
                 }
                 else
                 {
@@ -315,21 +554,42 @@ public class GamePlayManager : MonoBehaviour
         hitEffect.transform.position = HitEffect1.transform.position;
         hitEffect.SetActive(true);
         Destroy(hitEffect, 2);
-        if (++numHit >= EnemyHP)
-        {
-            KillEnemy();
-        }
 
-        if(numHit % 2 == 0)
+        numHit += 1;
+        if (numHit % 2 == 0)
         {
             HitPlayer();
         }
+
+        if (numHit >= EnemyHP)
+        {
+            KillEnemy();
+        }
+        else
+        {
+            if (!MoreMovesArePossible())
+            {
+                StartCoroutine(RefreshBoard());
+            }
+        }
+    }
+
+    IEnumerator RefreshBoard()
+    {
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+
+        MenuGUI.DisplayNoMoreMoves();
+
+        yield return new WaitForSeconds(1);
+
+        RenderLevel(levelInfo);
+        MenuGUI.HideNoMoreMoves();
     }
 
     private void HitPlayer()
     {
         GameGUI.DamageToRobot1(DamageOfRobot2);
-        Robot2Anim.CrossFade("XBotHit", 0.1f);
+        //Robot2Anim.CrossFade("XBotHit", 0.1f);
         var hitEffect = Instantiate(HitEffect2);
         hitEffect.transform.position = HitEffect2.transform.position;
         hitEffect.SetActive(true);
@@ -338,12 +598,25 @@ public class GamePlayManager : MonoBehaviour
 
     private void KillEnemy()
     {
+        if(enemyDead)
+        {
+            return;
+        }
+
+        StartCoroutine(KillEnemyNow());
+    }
+
+    IEnumerator KillEnemyNow()
+    {
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+
+        enemyDead = true;
         Robot1Anim.CrossFade("YBotDie", 0.1f);
         canSwapTiles = false;
         numLevel += 1;
 
         MenuGUI.gameObject.SetActive(true);
-        MenuGUI.UnlockLevel(numLevel);
+        MenuGUI.UnlockLevel(currentLevel + 1);
         MenuGUI.DisplayWin();
     }
 
@@ -351,135 +624,274 @@ public class GamePlayManager : MonoBehaviour
     {
         //DisplayDebugHints();
         yield return new WaitForSeconds(GameGUI.SwapDuration);
+        List<SlideInformation> tilesToSlide = new List<SlideInformation>();
+        tilesToPut.Clear();
 
         bool vertical;
         int newIndex;
-        //DisplayDebugHints();
-        int longest = 0;
-        int selected = 0;
-        
+
+        if(hints.Count == 0)
+        {
+            yield break;
+        }
+
+        // sort hints
+        Vector2 temp;
         for (int i = 0; i < hints.Count; i++)
         {
-            if(hints[i].Length > longest)
+            vertical = hints[i][0].y == hints[i][1].y;
+            for (int vi = 0; vi < hints[i].Length; vi++)
             {
-                longest = hints[i].Length;
-                selected = i;
+                for (int vj = vi + 1; vj < hints[i].Length; vj++)
+                {
+                    if (vertical)
+                    {
+                        if (hints[i][vj].x < hints[i][vi].x)
+                        {
+                            // swap
+                            temp = hints[i][vj];
+                            hints[i][vj] = hints[i][vi];
+                            hints[i][vi] = temp;
+                        }
+                    }
+                    else
+                    {
+                        if (hints[i][vj].y < hints[i][vi].y)
+                        {
+                            // swap
+                            temp = hints[i][vj];
+                            hints[i][vj] = hints[i][vi];
+                            hints[i][vi] = temp;
+                        }
+                    }
+                }
             }
         }
-        
-        vertical = hints[selected][0].x == hints[selected][1].x;
 
-        //Debug.Log("==============");
-        if (!vertical)
+        // eliminate duplicate hints
+        bool deleted;
+        bool allTheSame;
+        do
         {
-            // explode towards left
-            for (int indx = (int)hints[selected][0].x - 1; indx >= 0; indx--)
+            deleted = false;
+            for (int i = 0; i < hints.Count; i++)
             {
-                if (tileSet[indx, (int)hints[selected][0].y] != tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y])
+                for (int j = i + 1; j < hints.Count; j++)
                 {
-                    break;
-                }
-
-                GameGUI.ExplodeTile(indx, (int)hints[selected][0].y, false);
-
-                for (int y = (int)hints[selected][0].y; y < levelInfo.Height; y++)
-                {
-                    GameGUI.ScrollTileDown(indx, y, 1);
-                    if (y < levelInfo.Height - 1)
+                    if (hints[i].Length != hints[j].Length)
                     {
-                        tileSet[indx, y] = tileSet[indx, y + 1];
+                        continue;
+                    }
+
+                    allTheSame = true;
+                    for (int v = 0; v < hints[i].Length; v++)
+                    {
+                        if (hints[i][v].x != hints[j][v].x || hints[i][v].y != hints[j][v].y)
+                        {
+                            allTheSame = false;
+                            break;
+                        }
+                    }
+
+                    if(allTheSame)
+                    {
+                        deleted = true;
+                        hints.RemoveAt(i);
+
+                        break;
                     }
                 }
 
-                newIndex = availabletiles[UnityEngine.Random.Range(0, availabletiles.Count)];
-                tileSet[indx, levelInfo.Height - 1] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
-                GameGUI.AppearAt(indx, levelInfo.Height - 1, tileSet[indx, levelInfo.Height - 1]);
-            }
-
-            // explode towards right
-            for (int indx = (int)hints[selected][0].x + 1; indx < levelInfo.Width; indx++)
-            {
-                if (tileSet[indx, (int)hints[selected][0].y] != tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y])
+                if(deleted)
                 {
                     break;
                 }
+            }
 
-                GameGUI.ExplodeTile(indx, (int)hints[selected][0].y, false);
+        } while (deleted);
 
-                for (int y = (int)hints[selected][0].y; y < levelInfo.Height; y++)
+        // process the hints
+        string firstOne;
+        for (int selected = 0; selected < hints.Count; selected++)
+        {
+            firstOne = tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y];
+            vertical = hints[selected][0].x == hints[selected][1].x;
+
+            //Debug.Log("==============");
+            if (!vertical)
+            {
+                // explode towards left
+                for (int indx = (int)hints[selected][0].x - 1; indx >= 0; indx--)
                 {
-                    GameGUI.ScrollTileDown(indx, y, 1);
-                    if (y < levelInfo.Height - 1)
+                    if (tileSet[indx, (int)hints[selected][0].y] != firstOne)
                     {
-                        tileSet[indx, y] = tileSet[indx, y + 1];
+                        break;
+                    }
+
+                    GameGUI.ExplodeTile(indx, (int)hints[selected][0].y, false);
+                    tileSet[indx, (int)hints[selected][0].y] = "X";
+                }
+
+                // explode towards right
+                for (int indx = (int)hints[selected][0].x + 1; indx < levelInfo.Width; indx++)
+                {
+                    if (tileSet[indx, (int)hints[selected][0].y] != firstOne)
+                    {
+                        break;
+                    }
+
+                    GameGUI.ExplodeTile(indx, (int)hints[selected][0].y, false);
+                    tileSet[indx, (int)hints[selected][0].y] = "X";
+                }
+
+                // self explode
+                GameGUI.ExplodeTile((int)hints[selected][0].x, (int)hints[selected][0].y, true);
+                tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y] = "X";
+
+            }
+            else
+            {
+                // explode towards bottom
+                int yIndex = 0;
+                int yTop = (int)hints[selected][0].y;
+                for (int indy = (int)hints[selected][0].y - 1; indy >= 0; indy--)
+                {
+                    if (tileSet[(int)hints[selected][0].x, indy] != firstOne)
+                    {
+                        break;
+                    }
+
+                    yIndex += 1;
+                    GameGUI.ExplodeTile((int)hints[selected][0].x, indy, false);
+                    tileSet[(int)hints[selected][0].x, indy] = "X";
+                }
+
+                // explode towards top
+                for (int indy = (int)hints[selected][0].y + 1; indy < levelInfo.Height; indy++)
+                {
+                    if (tileSet[(int)hints[selected][0].x, indy] != firstOne)
+                    {
+                        break;
+                    }
+
+                    yIndex += 1;
+                    yTop = indy;
+                    GameGUI.ExplodeTile((int)hints[selected][0].x, indy, false);
+                    tileSet[(int)hints[selected][0].x, indy] = "X";
+                }
+
+                GameGUI.ExplodeTile((int)hints[selected][0].x, (int)hints[selected][0].y, false);
+                tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y] = "X";
+            }
+        }
+
+        // process scrolling
+        tilesToSlide.Clear();
+        tilesToPut.Clear();
+        for (int x = 0; x < levelInfo.Width; x++)
+        {
+            for (int y = 0; y < levelInfo.Height; y++)
+            {
+                if (tileSet[x, y] == "X")
+                {
+                    // find the nearest tile towards the top
+                    int foundAt = -1;
+                    for (int sy = y + 1; sy < levelInfo.Height; sy++)
+                    {
+                        if(tileSet[x, sy] != "X")
+                        {
+                            foundAt = sy;
+                            break;
+                        }
+                    }
+
+                    if(foundAt == -1)
+                    {
+                        // fill from here until the top
+                        for (int py = y; py < levelInfo.Height; py++)
+                        {
+                            newIndex = GetNextTile();
+                            tileSet[x, py] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
+                            GameGUI.AppearAt(x, py, tileSet[x, py]);
+
+                            AddTilesToPut(new Vector2(x, py));
+                        }
+
+                        break;
+                    } else
+                    {
+                        // scroll the tile from x, foundAt to x, y
+                        GameGUI.ScrollTileDown(x, foundAt, foundAt - y);
+                        tileSet[x, y] = tileSet[x, foundAt];
+                        tileSet[x, foundAt] = "X";
+
+                        tilesToSlide.Add(new SlideInformation(new Vector2(x, y), new Vector2(x, foundAt)));
                     }
                 }
-
-                newIndex = availabletiles[UnityEngine.Random.Range(0, availabletiles.Count)];
-                tileSet[indx, levelInfo.Height - 1] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
-                GameGUI.AppearAt(indx, levelInfo.Height - 1, tileSet[indx, levelInfo.Height - 1]);
             }
-
-            // self explode
-            GameGUI.ExplodeTile((int)hints[selected][0].x, (int)hints[selected][0].y, true);
-
-            for (int y = (int)hints[selected][0].y; y < levelInfo.Height; y++)
-            {
-                GameGUI.ScrollTileDown((int)hints[selected][0].x, y, 1);
-                if (y < levelInfo.Height - 1)
-                {
-                    tileSet[(int)hints[selected][0].x, y] = tileSet[(int)hints[selected][0].x, y + 1];
-                }
-            }
-
-            newIndex = availabletiles[UnityEngine.Random.Range(0, availabletiles.Count)];
-            tileSet[(int)hints[selected][0].x, levelInfo.Height - 1] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
-            GameGUI.AppearAt((int)hints[selected][0].x, levelInfo.Height - 1, tileSet[(int)hints[selected][0].x, levelInfo.Height - 1]);
         }
-        else
+
+        HitEnemy();
+
+        // final step: test if new blocks appeared
+        ProcessNewlyAppearedBlocks(tilesToSlide, tilesToPut);
+    }
+
+    private void AddTilesToPut(Vector2 v)
+    {
+        for (int i = 0; i < tilesToPut.Count; i++)
         {
-            // explode towards bottom
-            int yIndex = 0;
-            int yTop = (int)hints[selected][0].y;
-            for (int indy = (int)hints[selected][0].y - 1; indy >= 0; indy--)
+            if (tilesToPut[i].x == v.x && tilesToPut[i].y == v.y)
             {
-                if (tileSet[(int)hints[selected][0].x, indy] != tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y])
-                {
-                    break;
-                }
-
-                yIndex += 1;
-                GameGUI.ExplodeTile((int)hints[selected][0].x, indy, false);
-            }
-
-            // explode towards top
-            for (int indy = (int)hints[selected][0].y + 1; indy < levelInfo.Height; indy++)
-            {
-                if (tileSet[(int)hints[selected][0].x, indy] != tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y])
-                {
-                    break;
-                }
-
-                yIndex += 1;
-                yTop = indy;
-                GameGUI.ExplodeTile((int)hints[selected][0].x, indy, false);
-            }
-
-            GameGUI.ExplodeTile((int)hints[selected][0].x, (int)hints[selected][0].y, false);
-
-            for (int y = yTop + 1; y < levelInfo.Height; y++)
-            {
-                GameGUI.ScrollTileDown((int)hints[selected][0].x, y, yIndex + 1);
-                tileSet[(int)hints[selected][0].x, y - (yIndex + 1)] = tileSet[(int)hints[selected][0].x, y];
-            }
-
-            for (int y = 1; y <= yIndex + 1; y++)
-            {
-                newIndex = availabletiles[UnityEngine.Random.Range(0, availabletiles.Count)];
-                tileSet[(int)hints[selected][0].x, levelInfo.Height - y] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
-                GameGUI.AppearAt((int)hints[selected][0].x, levelInfo.Height - y, tileSet[(int)hints[selected][0].x, levelInfo.Height - y]);
+                return;
             }
         }
+
+        tilesToPut.Add(v);
+    }
+
+    public void ProcessNewlyAppearedBlocks(List<SlideInformation> tilesToSlide, List<Vector2> tilesToPut)
+    {
+        Vector2 to;
+        List<Vector2[]> tempHints = new List<Vector2[]>();
+        for (int i = 0; i < tilesToSlide.Count; i++)
+        {
+            hints.Clear();
+            to = tilesToSlide[i].To;
+            TestForAMatchAround((int)to.x, (int)to.y);
+            for (int h = 0; h < hints.Count; h++)
+            {
+                tempHints.Add(hints[h]);
+            }
+        }
+
+        for (int i = 0; i < tilesToPut.Count; i++)
+        {
+            hints.Clear();
+            TestForAMatchAround((int)tilesToPut[i].x, (int)tilesToPut[i].y);
+            for (int h = 0; h < hints.Count; h++)
+            {
+                tempHints.Add(hints[h]);
+            }
+        }
+
+        if (tempHints.Count > 0)
+        {
+            hints.Clear();
+            for (int i = 0; i < tempHints.Count; i++)
+            {
+                hints.Add(tempHints[i]);
+            }
+
+            StartCoroutine(MoveOverAfter(0.5f));
+        }
+    }
+
+    IEnumerator MoveOverAfter(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        StartCoroutine(ExplodeTiles());
     }
 
     IEnumerator SwapTilesBackAndForthOnGUI(int x1, int y1, int x2, int y2)
@@ -522,5 +934,29 @@ public class GamePlayManager : MonoBehaviour
         }
 
         Debug.Log("They are: " + s);
+    }
+
+    private void Start()
+    {
+        GameGUI.SetRobotGauges(EnemyHP);
+    }
+
+    int GetNextTile()
+    {
+        // regular process
+        return UnityEngine.Random.Range(0, availabletiles.Count);
+
+        // deterministic process
+        //int[] nextOnes = new int[] { 6, 3, 6, 0, /**/ 3, 4, 0, /**/ 4, 6, 1, /**/ 6, 6, 4, 6, 4 /**/, 3, 0, 4, 3, 1, 3 /**/, 3, 0, 6, 4 };
+
+        /*try
+        {
+            return nextOnes[nextCount++];
+        }
+        catch
+        {
+            Debug.LogWarning("!!");
+            return UnityEngine.Random.Range(0, availabletiles.Count);
+        }*/
     }
 }
