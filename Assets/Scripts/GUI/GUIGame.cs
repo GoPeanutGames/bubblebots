@@ -13,18 +13,23 @@ public class GUIGame : MonoBehaviour
     public int TileWidth = 150;
     public float SwapDuration = 0.33f;
     public GameObject ExplosionEffect;
-    public Slider RobotGauge2;
+    public GameObject LineExplosionEffect;
+    public GameObject ColorExplosionEffect;
+    public RobotEffects[] Robots;
+    public Slider[] EnemyGauges;
     public Slider RobotGauge1A;
     public Slider RobotGauge1B;
     public Slider RobotGauge1C;
     public int TopBias = 100;
+    [HideInInspector]
+    public bool CanSwapTiles = true;
 
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
     LevelInformation levelInfo;
     SkinManager skinManager;
     List<GameObject> explosionEffects = new List<GameObject>();
-    bool canSwapTiles = true;
+    int currentEnemy = 0;
 
     private void Awake()
     {
@@ -32,24 +37,63 @@ public class GUIGame : MonoBehaviour
         skinManager = FindObjectOfType<SkinManager>();
     }
 
-    public void DamageToRobot1(float damage)
+    public void DamageToPlayerRobot(float damage)
     {
         RobotGauge1A.DOValue(RobotGauge1A.value - damage, SwapDuration);
         //RobotGauge1B.DOValue(RobotGauge1B.value - damage, SwapDuration);
         //RobotGauge1C.DOValue(RobotGauge1C.value - damage, SwapDuration);
     }
 
-    public void DamageToRobot2(float damage)
+    public void DamageToEnemyRobot(float damage)
     {
-        RobotGauge2.DOValue(RobotGauge2.value - damage, SwapDuration);
+        if(currentEnemy >= EnemyGauges.Length)
+        {
+            return;
+        }
+
+        EnemyGauges[currentEnemy].DOValue(EnemyGauges[currentEnemy].value - damage, SwapDuration);
+        Robots[currentEnemy].Damage();
     }
 
-    public void SetRobotGauges(int value)
+    public void KillEnemy()
     {
-        RobotGauge1A.maxValue = value;
-        RobotGauge1B.maxValue = value;
-        RobotGauge1C.maxValue = value;
-        RobotGauge2.maxValue = value;
+        Robots[currentEnemy].Die();
+    }
+
+    public void SetRobotGauges(int[] values)
+    {
+        RobotGauge1A.maxValue = values[0];
+        RobotGauge1B.maxValue = values[1];
+        RobotGauge1C.maxValue = values[2];
+
+        for (int g = 0; g < EnemyGauges.Length; g++)
+        {
+            EnemyGauges[g].maxValue = values[g];
+        }
+    }
+
+    public void TargetEnemy(int currentEnemy)
+    {
+        this.currentEnemy = currentEnemy;
+        gamePlayManager.SetEnemy(currentEnemy);
+        for (int r = 0; r < Robots.Length; r++)
+        {
+            if (r == currentEnemy)
+            {
+                Robots[r].SetTarget();
+            } else
+            {
+                Robots[r].ClearTarget();
+            }
+        }
+    }
+
+    internal void InitializeEnemyRobots()
+    {
+        for (int i = 0; i < Robots.Length; i++)
+        {
+            Robots[i].Initialize();
+        }
     }
 
     public void RenderLevelBackground(LevelInformation levelInfo)
@@ -57,7 +101,11 @@ public class GUIGame : MonoBehaviour
         RobotGauge1A.value = RobotGauge1A.maxValue;
         RobotGauge1B.value = RobotGauge1B.maxValue;
         RobotGauge1C.value = RobotGauge1C.maxValue;
-        RobotGauge2.value = RobotGauge2.maxValue;
+
+        for (int g = 0; g < EnemyGauges.Length; g++)
+        {
+            EnemyGauges[g].value = EnemyGauges[g].maxValue;
+        }
 
         this.levelInfo = levelInfo;
 
@@ -143,11 +191,6 @@ public class GUIGame : MonoBehaviour
 
     public void SwapTiles(int x1, int y1, int x2, int y2, bool changeInfo)
     {
-        if(!canSwapTiles)
-        {
-            return;
-        }
-
         if(!(x1 == x2 || y1 == y2))
         {
             return;
@@ -158,7 +201,7 @@ public class GUIGame : MonoBehaviour
 
     IEnumerator SwapTilesNow(int x1, int y1, int x2, int y2, bool changeInfo)
     {
-        canSwapTiles = false;
+        CanSwapTiles = false;
         Transform tile1 = transform.Find("Tile_" + x1 + "_" + y1);
         Transform tile2 = transform.Find("Tile_" + x2 + "_" + y2);
 
@@ -181,8 +224,6 @@ public class GUIGame : MonoBehaviour
             tile2.GetComponent<GUITile>().X = x1;
             tile2.GetComponent<GUITile>().Y = y1;
         }
-
-        canSwapTiles = true;
     }
 
     public void ExplodeTile(int x, int y, bool destroyTile)
@@ -196,7 +237,7 @@ public class GUIGame : MonoBehaviour
             return;
         }
 
-        explosionEffect.transform.position = tile.position;
+        explosionEffect.transform.position = tile.position + new Vector3(0, 1, -5);
         explosionEffect.SetActive(true);
 
         StartCoroutine(DespawnExplosion(explosionEffect));
@@ -351,5 +392,56 @@ public class GUIGame : MonoBehaviour
 
             Debug.Log(line);
         }
+    }
+
+    public void LineDestroyEffect(int x, int y, bool vertical)
+    {
+        GameObject explosionEffect1 = Instantiate(LineExplosionEffect);
+        GameObject explosionEffect2 = Instantiate(LineExplosionEffect);
+        Transform tile = transform.Find("Tile_" + x + "_" + y);
+
+        // TODO: Remove in the future versions
+        if (tile == null)
+        {
+            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            if (tile == null)
+            {
+                Debug.LogWarning("Line destroy effect failed to find the tile Tile_" + x + "_" + y);
+                return;
+            }
+        }
+
+        explosionEffect1.transform.position = tile.position + new Vector3(0, 1, -5);
+        explosionEffect1.SetActive(true);
+        explosionEffect1.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * 35 : Vector3.left * 35), 0.33f).SetEase(Ease.Linear);
+
+        explosionEffect2.transform.position = tile.position + new Vector3(0, 1, -5);
+        explosionEffect2.SetActive(true);
+        explosionEffect2.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * -35 : Vector3.left * -35), 0.33f).SetEase(Ease.Linear);
+
+        Destroy(explosionEffect1, 0.35f);
+        Destroy(explosionEffect2, 0.35f);
+    }
+
+    internal void ColorBlastEffect(int x, int y)
+    {
+        GameObject colorExplosionEffect = Instantiate(ColorExplosionEffect);
+        Transform tile = transform.Find("Tile_" + x + "_" + y);
+
+        // TODO: Remove in the future versions
+        if (tile == null)
+        {
+            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            if (tile == null)
+            {
+                Debug.LogWarning("Line destroy effect failed to find the tile Tile_" + x + "_" + y);
+                return;
+            }
+        }
+
+        colorExplosionEffect.transform.position = tile.position + new Vector3(0, 1, -5);
+        colorExplosionEffect.SetActive(true);
+
+        Destroy(colorExplosionEffect, 0.5f);
     }
 }

@@ -1,10 +1,11 @@
-#define SPECIAL_MATCHING_OFF
-
+#define RANDOM_TILES_OFF
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using static LevelManager;
+using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class GamePlayManager : MonoBehaviour
 {
@@ -12,27 +13,39 @@ public class GamePlayManager : MonoBehaviour
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
     public SkinManager skinManager;
-    public float DamageOfRobot1 = 0.2f;
-    public float DamageOfRobot2 = 0.2f;
+    public float DamageOfRobot1 = 0.05f;
+    public float DamageOfRobot2 = 0.05f;
     public Animator Robot1Anim;
     public Animator Robot2Anim;
     public GameObject HitEffect1;
     public GameObject HitEffect2;
-    public int EnemyHP = 20;
+    public int[] EnemyHPs = new int[] { 40, 40, 40 };
+    int[] numHit = new int[] { 0, 0, 0 };
 
+    List<SlideInformation> tilesToSlide = new List<SlideInformation>();
     LevelInformation levelInfo;
     string[,] tileSet;
     List<Vector2> tilesToPut = new List<Vector2>();
+    List<Vector2> tilesSpecialCoords = new List<Vector2>();
+    List<int> tilesSpecial = new List<int>();
     List<Vector2[]> hints = new List<Vector2[]>();
     List<int> availabletiles = new List<int>();
     int releaseTileX = -1;
     int releaseTileY = -1;
-    bool canSwapTiles = true;
     bool enemyDead = false;
-    int numHit = 0;
     int numLevel = 1;
     int currentLevel = 0;
-    int nextCount = 0;
+    int currentEnemy = 0;
+    int killedEnemies = 0;
+    int maxEnemies = 3;
+
+    // special matching related stuff
+    bool smLongT = false;
+    bool sm4Square = false;
+    bool sm5InLine = false;
+    bool sm4InLine = false;
+    bool smBigT = false;
+    bool smBigL = false;
 
     public string[,] TileSet
     {
@@ -51,6 +64,8 @@ public class GamePlayManager : MonoBehaviour
     {
         LevelInformation levelInfo;
         currentLevel = levelNumber;
+        currentEnemy = 0;
+        killedEnemies = 0;
 
         try
         {
@@ -64,15 +79,15 @@ public class GamePlayManager : MonoBehaviour
         }
 
         RenderLevel(levelInfo);
-        numHit = 0;
-        Robot1Anim.CrossFade("Idle", 0.1f);
-        //Robot2Anim.CrossFade("Idle", 0.1f);
+        GameGUI.TargetEnemy(0);
+        numHit = new int[] { 0, 0, 0 };
     }
 
     void RenderLevel(LevelInformation levelInfo)
     {
         this.levelInfo = levelInfo;
         GameGUI.RenderLevelBackground(levelInfo);
+        GameGUI.InitializeEnemyRobots();        
 
         bool foundAMatch;
 
@@ -115,85 +130,71 @@ public class GamePlayManager : MonoBehaviour
         }
 
         int[,] tileIndices = new int[levelInfo.Width, levelInfo.Height];
-        /*tileIndices[0, 7] = 3;
-        tileIndices[1, 7] = 6;
-        tileIndices[2, 7] = 4;
-        tileIndices[3, 7] = 3;
-        tileIndices[4, 7] = 4;
-        tileIndices[5, 7] = 0;
-        tileIndices[6, 7] = 6;
-        tileIndices[7, 7] = 0;
-
-        tileIndices[0, 6] = 6;
-        tileIndices[1, 6] = 0;
-        tileIndices[2, 6] = 0;
-        tileIndices[3, 6] = 6;
-        tileIndices[4, 6] = 3;
-        tileIndices[5, 6] = 6;
-        tileIndices[6, 6] = 0;
-        tileIndices[7, 6] = 3;
-
-        tileIndices[0, 5] = 6;
-        tileIndices[1, 5] = 4;
-        tileIndices[2, 5] = 6;
-        tileIndices[3, 5] = 1;
-        tileIndices[4, 5] = 4;
-        tileIndices[5, 5] = 3;
-        tileIndices[6, 5] = 4;
+#if RANDOM_TILES_OFF
+        tileIndices[0, 5] = 3;
+        tileIndices[1, 5] = 3;
+        tileIndices[2, 5] = 0;
+        tileIndices[3, 5] = 3;
+        tileIndices[4, 5] = 3;
+        tileIndices[5, 5] = 2;
+        tileIndices[6, 5] = 0;
         tileIndices[7, 5] = 0;
 
         tileIndices[0, 4] = 3;
-        tileIndices[1, 4] = 4;
-        tileIndices[2, 4] = 4;
-        tileIndices[3, 4] = 6;
+        tileIndices[1, 4] = 0;
+        tileIndices[2, 4] = 3;
+        tileIndices[3, 4] = 1;
         tileIndices[4, 4] = 0;
         tileIndices[5, 4] = 0;
-        tileIndices[6, 4] = 6;
+        tileIndices[6, 4] = 2;
         tileIndices[7, 4] = 1;
 
-        tileIndices[0, 3] = 6;
+        tileIndices[0, 3] = 0;
         tileIndices[1, 3] = 3;
         tileIndices[2, 3] = 1;
         tileIndices[3, 3] = 0;
-        tileIndices[4, 3] = 4;
-        tileIndices[5, 3] = 6;
+        tileIndices[4, 3] = 2;
+        tileIndices[5, 3] = 3;
         tileIndices[6, 3] = 1;
         tileIndices[7, 3] = 3;
 
-        tileIndices[0, 2] = 6;
+        tileIndices[0, 2] = 2;
         tileIndices[1, 2] = 0;
-        tileIndices[2, 2] = 4;
+        tileIndices[2, 2] = 2;
         tileIndices[3, 2] = 0;
         tileIndices[4, 2] = 3;
         tileIndices[5, 2] = 0;
-        tileIndices[6, 2] = 4;
+        tileIndices[6, 2] = 0;
         tileIndices[7, 2] = 1;
 
         tileIndices[0, 1] = 1;
         tileIndices[1, 1] = 0;
         tileIndices[2, 1] = 0;
         tileIndices[3, 1] = 3;
-        tileIndices[4, 1] = 3;
-        tileIndices[5, 1] = 6;
+        tileIndices[4, 1] = 1;
+        tileIndices[5, 1] = 2;
         tileIndices[7, 1] = 1;
         tileIndices[6, 1] = 3;
 
-        tileIndices[0, 0] = 6;
+        tileIndices[0, 0] = 2;
         tileIndices[1, 0] = 3;
-        tileIndices[2, 0] = 4;
-        tileIndices[3, 0] = 6;
-        tileIndices[4, 0] = 4;
-        tileIndices[5, 0] = 4;
-        tileIndices[6, 0] = 6;
-        tileIndices[7, 0] = 6;*/
-
+        tileIndices[2, 0] = 1;
+        tileIndices[3, 0] = 1;
+        tileIndices[4, 0] = 2;
+        tileIndices[5, 0] = 1;
+        tileIndices[6, 0] = 2;
+        tileIndices[7, 0] = 2;
+#endif
         int index;
         for (int x = 0; x < levelInfo.Width; x++)
         {
             for (int y = 0; y < levelInfo.Height; y++)
             {
+#if RANDOM_TILES_OFF
+                index = tileIndices[x, y];
+#else
                 index = availabletiles[GetNextTile()];
-                //index = tileIndices[x,y];
+#endif
                 tileSet[x, y] = skinManager.Skins[skinManager.SelectedSkin].TileSet[index].Key;
             }
         }
@@ -238,25 +239,10 @@ public class GamePlayManager : MonoBehaviour
             return;
         }
 
-        // swapping a special tile?
-        if (tileSet[x1, y1] == "s5" || tileSet[x2, y2] == "s4")
-        {
-            if (x1 == x2)
-            {
-                // vertical
-            }
-            else
-            {
-                // horizontal
-            }
-        }
-        else
-        {
-            SwapKeys(x1, y1, x2, y2);
-            TestForAMatchAround(x1, y1);
-            TestForAMatchAround(x2, y2);
-            SwapKeys(x1, y1, x2, y2);
-        }
+        SwapKeys(x1, y1, x2, y2);
+        TestForAMatchAround(x1, y1);
+        TestForAMatchAround(x2, y2);
+        SwapKeys(x1, y1, x2, y2);
     }
 
     private void TestForAMatchAround(int x, int y)
@@ -323,6 +309,11 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
+    private bool IsSpecialGem(string v)
+    {
+        return (v == "S1" || v == "S2" || v == "S3" || v == "S4" || v == "S5");
+    }
+
     private void AddHint(Vector2[] components)
     {
         bool allTrue;
@@ -356,7 +347,7 @@ public class GamePlayManager : MonoBehaviour
 
     public void SetDownTile(int x, int y)
     {
-        if(!canSwapTiles)
+        if(!GameGUI.CanSwapTiles)
         {
             return;
         }
@@ -367,176 +358,49 @@ public class GamePlayManager : MonoBehaviour
 
     public void MoveOverTile(int x, int y)
     {
-        if (!canSwapTiles || (x == releaseTileX && y == releaseTileY) || releaseTileX == -1 || releaseTileY == -1)
+        if (!GameGUI.CanSwapTiles || (x == releaseTileX && y == releaseTileY) || releaseTileX == -1 || releaseTileY == -1)
         {
             return;
         }
 
         if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1 && tileSet[x, y] != tileSet[releaseTileX, releaseTileY])
         {
-            canSwapTiles = false;
-#if SPECIAL_MATCHING
-            bool sm5InLine = false;
-            bool sm4InLine = false;
-            bool smBigT = false;
-#endif
+            GameGUI.CanSwapTiles = false;
+
+            if (IsSpecialGem(tileSet[x, y]))
+            {
+                StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                StartCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
+
+                return;
+            }
+            else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
+            {
+                StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                StartCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
+
+                return;
+            }
 
             hints.Clear();
             CheckForAMatchWitchSwapingTiles(x, y, releaseTileX, releaseTileY);
 
             if(hints.Count > 0)
             {
-#if SPECIAL_MATCHING
-                if (hints[0].Length >= 5)
-                {
-                    Debug.Log("5 in line!");
-                    sm5InLine = true;
-                } else if (hints[0].Length == 4)
-                {
-                    Debug.Log("4 in line!");
-                    sm4InLine = true;
-                }
-#endif
-
+                PrepareToProcessSpeacialMatching();
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
                 StartCoroutine(ExplodeTiles());
-                //HitEnemy();
-
-#if SPECIAL_MATCHING
-                if (sm5InLine)
-                {
-                    // place a special tile here
-                    if(x != releaseTileX)
-                    {
-                        // place vertical
-                        tileSet[releaseTileX + 2, releaseTileY] = "S5";
-                        GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S5");
-                    } else
-                    {
-                        // place horizontal
-                        tileSet[releaseTileX, releaseTileY + 2] = "S5";
-                        GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S5");
-                    }
-
-                    sm5InLine = false;
-                }
-                else if (sm4InLine)
-                {
-                    // place a special tile here
-                    if (x != releaseTileX)
-                    {
-                        // place vertical
-                        tileSet[releaseTileX + 2, releaseTileY] = "S4";
-                        GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S4");
-                    }
-                    else
-                    {
-                        // place horizontal
-                        tileSet[releaseTileX, releaseTileY + 2] = "S4";
-                        GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S4");
-                    }
-
-                    sm4InLine = false;
-                }
-                else if (smBigT)
-                {
-                    // place a special tile here
-                    if (x != releaseTileX)
-                    {
-                        // place vertical
-                        tileSet[releaseTileX + 2, releaseTileY] = "ST";
-                        GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "ST");
-                    }
-                    else
-                    {
-                        // place horizontal
-                        tileSet[releaseTileX, releaseTileY + 2] = "ST";
-                        GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "ST");
-                    }
-
-                    smBigT = false;
-                }
-#endif
             } else
             {
                 CheckForAMatchWitchSwapingTiles(releaseTileX, releaseTileY, x, y);
 
                 if (hints.Count > 0)
                 {
-#if SPECIAL_MATCHING
-                    if (hints[0].Length >= 5)
-                    {
-                        Debug.Log("5 in line!");
-                        sm5InLine = true;
-                    }
-                    else if (hints[0].Length == 4)
-                    {
-                        Debug.Log("4 in line!");
-                        sm4InLine = true;
-                    }
-#endif
+                    PrepareToProcessSpeacialMatching();
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                     SwapKeys(x, y, releaseTileX, releaseTileY);
                     StartCoroutine(ExplodeTiles());
-                    //HitEnemy();
-
-#if SPECIAL_MATCHING
-                    if (sm5InLine)
-                    {
-                        // place a special tile here
-                        if (x != releaseTileX)
-                        {
-                            // place vertical
-                            tileSet[releaseTileX + 2, releaseTileY] = "S5";
-                            GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S5");
-                        }
-                        else
-                        {
-                            // place horizontal
-                            tileSet[releaseTileX, releaseTileY + 2] = "S5";
-                            GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S5");
-                        }
-
-                        sm5InLine = false;
-                    }
-                    else if (sm4InLine)
-                    {
-                        // place a special tile here
-                        if (x != releaseTileX)
-                        {
-                            // place vertical
-                            tileSet[releaseTileX + 2, releaseTileY] = "S4";
-                            GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "S4");
-                        }
-                        else
-                        {
-                            // place horizontal
-                            tileSet[releaseTileX, releaseTileY + 2] = "S4";
-                            GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "S4");
-                        }
-
-                        sm4InLine = false;
-                    }
-                    else if (smBigT)
-                    {
-                        // place a special tile here
-                        if (x != releaseTileX)
-                        {
-                            // place vertical
-                            tileSet[releaseTileX + 2, releaseTileY] = "ST";
-                            GameGUI.ReappearAt(releaseTileX + 2, releaseTileY, "ST");
-                        }
-                        else
-                        {
-                            // place horizontal
-                            tileSet[releaseTileX, releaseTileY + 2] = "ST";
-                            GameGUI.ReappearAt(releaseTileX, releaseTileY + 2, "ST");
-                        }
-
-                        smBigT = false;
-                    }
-#endif
                 }
                 else
                 {
@@ -546,24 +410,211 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
+    private void ProcessSpecialMatching(bool vertical, int x, int y)
+    {
+        Vector2 leftMost = Vector2.zero;
+        Vector2 topMost = Vector2.zero;
+
+        sm5InLine = false;
+        sm4InLine = false;
+        smBigT = false;
+        smLongT = false;
+        sm4Square = false;
+        smBigL = false;
+
+        if (hints.Count > 0)
+        {
+            if (hints.Count > 1)
+            {
+                // is it a T or an L?
+
+            }
+            else if (hints[0].Length >= 5)
+            {
+                // is it a long T or a straight line?
+
+                Debug.Log("5 in line!");
+                sm5InLine = true;
+            }
+            else if (hints[0].Length == 4)
+            {
+                Debug.Log("4 in line!");
+                sm4InLine = true;
+            }
+        }
+
+        // a separate inspection is necessary for 4 squares
+        bool collidesWithAHint;
+        for (int _x = 0; _x < levelInfo.Width - 1; _x++)
+        {
+            for (int _y = 0; _y < levelInfo.Height - 1; _y++)
+            {
+                if (tileSet[_x, _y] == tileSet[_x + 1, _y] && tileSet[_x, _y] == tileSet[_x + 1, _y + 1] && tileSet[_x, _y] == tileSet[_x, _y + 1])
+                {
+                    // test whether any part of this square collides with another hint
+                    collidesWithAHint = false;
+                    for (int i = 0; i < hints.Count; i++)
+                    {
+                        for (int l = 0; l < hints[i].Length; l++)
+                        {
+                            if (hints[i][l].x == _x || hints[i][l].x == _x + 1 || hints[i][l].y == _y || hints[i][l].y == _y + 1)
+                            {
+                                collidesWithAHint = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!collidesWithAHint)
+                    {
+                        sm4Square = true;
+                        leftMost.x = _x;
+                        leftMost.y = _y;
+
+                        /*tilesSpecialCoords.Clear();
+                        tilesSpecialCoords.Add(new Vector2((int)leftMost.x, (int)leftMost.y));
+                        tilesSpecial.Clear();
+                        tilesSpecial.Add(11);*/
+
+                        break;
+                    }
+                }
+            }
+
+            if(sm4Square)
+            {
+                break;
+            }
+        }
+
+        if (vertical)
+        {
+            while(y < levelInfo.Height - 1)
+            {
+                y += 1;
+
+                if (tileSet[x, y - 1] != tileSet[x, y])
+                {
+                    y -= 1;
+                    break;
+                }
+            }
+
+            topMost = new Vector2(x, y);
+        } else
+        {
+            while (x > 0)
+            {
+                x -= 1;
+
+                if (tileSet[x, y] != tileSet[x + 1, y])
+                {
+                    x += 1;
+                    break;
+                }
+            }
+
+            leftMost = new Vector2(x, y);
+        }
+
+        if (sm5InLine)
+        {
+            // place a special tile here
+            if (vertical)
+            {
+                // place vertical
+                tilesSpecialCoords.Clear();
+                tilesSpecialCoords.Add(new Vector2((int)topMost.x, (int)topMost.y - 2));
+                tilesSpecial.Clear();
+                tilesSpecial.Add(10);
+            }
+            else
+            {
+                // place horizontal
+                tilesSpecialCoords.Clear();
+                tilesSpecialCoords.Add(new Vector2((int)leftMost.x + 2, (int)leftMost.y));
+                tilesSpecial.Clear();
+                tilesSpecial.Add(10);
+            }
+
+            sm5InLine = false;
+        }
+        else if (sm4InLine)
+        {
+            // place a special tile here
+            if (vertical)
+            {
+                // place vertical
+                tilesSpecialCoords.Clear();
+                tilesSpecialCoords.Add(new Vector2((int)topMost.x, (int)topMost.y - 2));
+                tilesSpecial.Clear();
+                tilesSpecial.Add(9);
+            }
+            else
+            {
+                // place horizontal
+                tilesSpecialCoords.Clear();
+                tilesSpecialCoords.Add(new Vector2((int)leftMost.x + 2, (int)leftMost.y));
+                tilesSpecial.Clear();
+                tilesSpecial.Add(9);
+            }
+
+            sm4InLine = false;
+        }
+        else if (smBigT)
+        {
+            Debug.Log("BigT: vertical: " + vertical + ", topMost: " + topMost + ", leftMost: " + leftMost);
+
+            // place a special tile here
+            if (vertical)
+            {
+                // place vertical
+                tilesSpecialCoords.Clear();
+                tilesSpecialCoords.Add(new Vector2((int)topMost.x + 1, (int)topMost.y));
+                tilesSpecial.Clear();
+                tilesSpecial.Add(11);
+            }
+            else
+            {
+                // place horizontal
+                tilesSpecialCoords.Clear();
+                tilesSpecialCoords.Add(new Vector2((int)leftMost.x, (int)leftMost.y - 1));
+                tilesSpecial.Clear();
+                tilesSpecial.Add(11);
+            }
+
+            smBigT = false;
+        }
+    }
+
+    private void PrepareToProcessSpeacialMatching()
+    {
+
+    }
+
     private void HitEnemy()
     {
-        GameGUI.DamageToRobot2(DamageOfRobot1);
-        Robot1Anim.CrossFade("YBotHit", 0.1f);
+        GameGUI.DamageToEnemyRobot(tilesToPut.Count);
         var hitEffect = Instantiate(HitEffect1);
         hitEffect.transform.position = HitEffect1.transform.position;
         hitEffect.SetActive(true);
-        Destroy(hitEffect, 2);
+        Destroy(hitEffect.gameObject, 2);
 
-        numHit += 1;
-        if (numHit % 2 == 0)
+        numHit[currentEnemy] += tilesToPut.Count;
+        if (numHit[currentEnemy] % 2 == 0)
         {
             HitPlayer();
         }
 
-        if (numHit >= EnemyHP)
+        if (numHit[currentEnemy] >= EnemyHPs[currentEnemy])
         {
             KillEnemy();
+            //numHit[currentEnemy] = 0;
+
+            if (++killedEnemies >= maxEnemies)
+            {
+                StartCoroutine(FinishLevel());
+            }
         }
         else
         {
@@ -580,39 +631,42 @@ public class GamePlayManager : MonoBehaviour
 
         MenuGUI.DisplayNoMoreMoves();
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
 
         RenderLevel(levelInfo);
         MenuGUI.HideNoMoreMoves();
+        GameGUI.CanSwapTiles = true;
     }
 
     private void HitPlayer()
     {
-        GameGUI.DamageToRobot1(DamageOfRobot2);
+        GameGUI.DamageToPlayerRobot(DamageOfRobot2);
         //Robot2Anim.CrossFade("XBotHit", 0.1f);
         var hitEffect = Instantiate(HitEffect2);
         hitEffect.transform.position = HitEffect2.transform.position;
         hitEffect.SetActive(true);
-        Destroy(hitEffect, 2);
+        Destroy(hitEffect.gameObject, 2);
     }
 
     private void KillEnemy()
     {
-        if(enemyDead)
+        if (enemyDead)
         {
             return;
         }
 
-        StartCoroutine(KillEnemyNow());
+        GameGUI.KillEnemy();
+        currentEnemy = (currentEnemy + 1) % maxEnemies;
+        GameGUI.TargetEnemy(currentEnemy);
     }
 
-    IEnumerator KillEnemyNow()
+    IEnumerator FinishLevel()
     {
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
         enemyDead = true;
-        Robot1Anim.CrossFade("YBotDie", 0.1f);
-        canSwapTiles = false;
+        //Robot1Anim.CrossFade("YBotDie", 0.1f);
+        GameGUI.CanSwapTiles = false;
         numLevel += 1;
 
         MenuGUI.gameObject.SetActive(true);
@@ -624,11 +678,10 @@ public class GamePlayManager : MonoBehaviour
     {
         //DisplayDebugHints();
         yield return new WaitForSeconds(GameGUI.SwapDuration);
-        List<SlideInformation> tilesToSlide = new List<SlideInformation>();
+        tilesToSlide.Clear();
         tilesToPut.Clear();
 
         bool vertical;
-        int newIndex;
 
         if(hints.Count == 0)
         {
@@ -710,7 +763,18 @@ public class GamePlayManager : MonoBehaviour
 
         } while (deleted);
 
-        // process the hints
+        ProcessTheHints();
+        ProcessSpecialMatching((int)hints[0][0].x == (int)hints[0][1].x, (int)hints[0][0].x, (int)hints[0][0].y);
+        ProcessScrolling();
+        HitEnemy();
+
+        // final step: test if new blocks appeared
+        ProcessNewlyAppearedBlocks(tilesToPut);
+    }
+
+    private void ProcessTheHints()
+    {
+        bool vertical;
         string firstOne;
         for (int selected = 0; selected < hints.Count; selected++)
         {
@@ -784,8 +848,11 @@ public class GamePlayManager : MonoBehaviour
                 tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y] = "X";
             }
         }
+    }
 
-        // process scrolling
+    private void ProcessScrolling()
+    {
+        int newIndex;
         tilesToSlide.Clear();
         tilesToPut.Clear();
         for (int x = 0; x < levelInfo.Width; x++)
@@ -798,19 +865,28 @@ public class GamePlayManager : MonoBehaviour
                     int foundAt = -1;
                     for (int sy = y + 1; sy < levelInfo.Height; sy++)
                     {
-                        if(tileSet[x, sy] != "X")
+                        if (tileSet[x, sy] != "X")
                         {
                             foundAt = sy;
                             break;
                         }
                     }
 
-                    if(foundAt == -1)
+                    if (foundAt == -1)
                     {
                         // fill from here until the top
                         for (int py = y; py < levelInfo.Height; py++)
                         {
                             newIndex = GetNextTile();
+                            for (int i = 0; i < tilesSpecialCoords.Count; i++)
+                            {
+                                if (tilesSpecialCoords[i].x == x && tilesSpecialCoords[i].y == py)
+                                {
+                                    newIndex = tilesSpecial[i];
+                                    break;
+                                }
+                            }
+
                             tileSet[x, py] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
                             GameGUI.AppearAt(x, py, tileSet[x, py]);
 
@@ -818,23 +894,35 @@ public class GamePlayManager : MonoBehaviour
                         }
 
                         break;
-                    } else
+                    }
+                    else
                     {
                         // scroll the tile from x, foundAt to x, y
-                        GameGUI.ScrollTileDown(x, foundAt, foundAt - y);
-                        tileSet[x, y] = tileSet[x, foundAt];
-                        tileSet[x, foundAt] = "X";
+                        bool foundInSpecialMatches = false;
+                        for (int i = 0; i < tilesSpecialCoords.Count; i++)
+                        {
+                            if (tilesSpecialCoords[i].x == x && tilesSpecialCoords[i].y == y)
+                            {
+                                tileSet[x, y] = skinManager.Skins[skinManager.SelectedSkin].TileSet[tilesSpecial[i]].Key;
+                                foundInSpecialMatches = true;
+                                GameGUI.AppearAt(x, y, tileSet[x, y]);
 
-                        tilesToSlide.Add(new SlideInformation(new Vector2(x, y), new Vector2(x, foundAt)));
+                                break;
+                            }
+                        }
+
+                        if (!foundInSpecialMatches)
+                        {
+                            GameGUI.ScrollTileDown(x, foundAt, foundAt - y);
+                            tileSet[x, y] = tileSet[x, foundAt];
+                            tileSet[x, foundAt] = "X";
+
+                            tilesToSlide.Add(new SlideInformation(new Vector2(x, y), new Vector2(x, foundAt)));
+                        }
                     }
                 }
             }
         }
-
-        HitEnemy();
-
-        // final step: test if new blocks appeared
-        ProcessNewlyAppearedBlocks(tilesToSlide, tilesToPut);
     }
 
     private void AddTilesToPut(Vector2 v)
@@ -850,7 +938,7 @@ public class GamePlayManager : MonoBehaviour
         tilesToPut.Add(v);
     }
 
-    public void ProcessNewlyAppearedBlocks(List<SlideInformation> tilesToSlide, List<Vector2> tilesToPut)
+    public void ProcessNewlyAppearedBlocks(List<Vector2> tilesToPut)
     {
         Vector2 to;
         List<Vector2[]> tempHints = new List<Vector2[]>();
@@ -858,6 +946,7 @@ public class GamePlayManager : MonoBehaviour
         {
             hints.Clear();
             to = tilesToSlide[i].To;
+            // search for a special gem
             TestForAMatchAround((int)to.x, (int)to.y);
             for (int h = 0; h < hints.Count; h++)
             {
@@ -880,10 +969,14 @@ public class GamePlayManager : MonoBehaviour
             hints.Clear();
             for (int i = 0; i < tempHints.Count; i++)
             {
+                PrepareToProcessSpeacialMatching();
                 hints.Add(tempHints[i]);
             }
 
             StartCoroutine(MoveOverAfter(0.5f));
+        } else
+        {
+            ReleaseTiles();
         }
     }
 
@@ -909,12 +1002,21 @@ public class GamePlayManager : MonoBehaviour
         GameGUI.SwapTiles(x1, y1, x2, y2, true);
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
-        ReleaseTiles();
+        //ReleaseTiles();
+        releaseTileX = -1;
+        releaseTileY = -1;
     }
 
     public void ReleaseTiles()
     {
-        canSwapTiles = true;
+        StartCoroutine(ReleaseTilesNow());
+    }
+
+    IEnumerator ReleaseTilesNow()
+    {
+        yield return new WaitForSeconds(GameGUI.SwapDuration * 1.25f);
+
+        GameGUI.CanSwapTiles = true;
         releaseTileX = -1;
         releaseTileY = -1;
     }
@@ -930,7 +1032,7 @@ public class GamePlayManager : MonoBehaviour
                 s += hints[i][j].x + "," + hints[i][j].y + "-" + tileSet[(int)hints[i][j].x, (int)hints[i][j].y] + " :: ";
             }
 
-            s += Environment.NewLine;
+            s += System.Environment.NewLine;
         }
 
         Debug.Log("They are: " + s);
@@ -938,7 +1040,12 @@ public class GamePlayManager : MonoBehaviour
 
     private void Start()
     {
-        GameGUI.SetRobotGauges(EnemyHP);
+        GameGUI.SetRobotGauges(EnemyHPs);
+    }
+
+    public void SetEnemy(int currentEmeny)
+    {
+        this.currentEnemy = currentEmeny;
     }
 
     int GetNextTile()
@@ -958,5 +1065,96 @@ public class GamePlayManager : MonoBehaviour
             Debug.LogWarning("!!");
             return UnityEngine.Random.Range(0, availabletiles.Count);
         }*/
+    }
+
+    IEnumerator ProcessSpecialGem(int x, int y, int releaseX, int releaseY)
+    {
+        bool horizontal = x != releaseX;
+
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+
+        switch (tileSet[x, y])
+        {
+            case "S1":
+                GameGUI.LineDestroyEffect(x, y, !horizontal);
+                yield return new WaitForSeconds(0.4f);
+
+                ProcessLineBlast(x, y, horizontal, tileSet[releaseX, releaseY] == "S4");
+                break;
+            case "S2":
+                GameGUI.ColorBlastEffect(x, y);
+                yield return new WaitForSeconds(0.51f);
+
+                ProcessColorBlast(x, y, tileSet[releaseX, releaseY]);
+                break;
+            case "S3":
+
+                break;
+            case "S4":
+                break;
+            case "S5":
+
+                break;
+        }
+
+        tilesSpecialCoords.Clear();
+        tilesSpecial.Clear();
+
+        ProcessScrolling();
+        HitEnemy();
+        ReleaseTiles();
+
+        ProcessNewlyAppearedBlocks(tilesToPut);
+    }
+
+    private void ProcessColorBlast(int x, int y, string v)
+    {
+        for (int _x = 0; _x < levelInfo.Width; _x++)
+        {
+            for (int _y = 0; _y < levelInfo.Height; _y++)
+            {
+                if(x == _x && y == _y)
+                {
+                    continue;
+                }
+
+                if (tileSet[_x, _y] == v)
+                {
+                    GameGUI.ExplodeTile(_x, _y, false);
+                    tileSet[_x, _y] = "X";
+                }
+            }
+        }
+
+        GameGUI.ExplodeTile(x, y, false);
+        tileSet[x, y] = "X";
+    }
+
+    private void ProcessLineBlast(int x, int y, bool horizontal, bool bothDir)
+    {
+        if (horizontal || bothDir)
+        {
+            // explode horizontal
+            for (int indx = 0; indx < levelInfo.Width; indx++)
+            {
+                GameGUI.ExplodeTile(indx, y, false);
+                tileSet[indx, y] = "X";
+            }
+        }
+
+        if (!horizontal || bothDir)
+        {
+            // explode vertical
+            for (int indx = 0; indx < levelInfo.Height; indx++)
+            {
+                if(bothDir && indx == y)
+                {
+                    continue;
+                }
+
+                GameGUI.ExplodeTile(x, indx, false);
+                tileSet[x, indx] = "X";
+            }
+        }
     }
 }

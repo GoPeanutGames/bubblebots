@@ -27,6 +27,6 @@ public class GUITile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        gamePlayManager.ReleaseTiles();
+        //gamePlayManager.ReleaseTiles();
     }
 }
