@@ -5,24 +5,25 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using static LevelManager;
+using Unity.VisualScripting;
+using TMPro;
 
 public class GUIGame : MonoBehaviour
 {
-    public Image BackgroundTile;
+    public Image[] BackgroundTiles;
     public int Spacing = 4;
     public int TileWidth = 150;
     public float SwapDuration = 0.33f;
     public GameObject ExplosionEffect;
     public GameObject LineExplosionEffect;
     public GameObject ColorExplosionEffect;
+    public GameObject ColorChangingEffect;
     public RobotEffects[] Robots;
     public Slider[] EnemyGauges;
-    public Slider RobotGauge1A;
-    public Slider RobotGauge1B;
-    public Slider RobotGauge1C;
     public int TopBias = 100;
     [HideInInspector]
     public bool CanSwapTiles = true;
+    public TextMeshProUGUI TxtScore;
 
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
@@ -30,6 +31,8 @@ public class GUIGame : MonoBehaviour
     SkinManager skinManager;
     List<GameObject> explosionEffects = new List<GameObject>();
     int currentEnemy = 0;
+
+    public delegate void OnGUIEvent(object param);
 
     private void Awake()
     {
@@ -39,9 +42,6 @@ public class GUIGame : MonoBehaviour
 
     public void DamageToPlayerRobot(float damage)
     {
-        RobotGauge1A.DOValue(RobotGauge1A.value - damage, SwapDuration);
-        //RobotGauge1B.DOValue(RobotGauge1B.value - damage, SwapDuration);
-        //RobotGauge1C.DOValue(RobotGauge1C.value - damage, SwapDuration);
     }
 
     public void DamageToEnemyRobot(float damage)
@@ -53,6 +53,8 @@ public class GUIGame : MonoBehaviour
 
         EnemyGauges[currentEnemy].DOValue(EnemyGauges[currentEnemy].value - damage, SwapDuration);
         Robots[currentEnemy].Damage();
+
+        TxtScore.text = gamePlayManager.IncrementScore(Mathf.FloorToInt(damage * 10)).ToString().PadLeft(6, '0');
     }
 
     public void KillEnemy()
@@ -62,10 +64,6 @@ public class GUIGame : MonoBehaviour
 
     public void SetRobotGauges(int[] values)
     {
-        RobotGauge1A.maxValue = values[0];
-        RobotGauge1B.maxValue = values[1];
-        RobotGauge1C.maxValue = values[2];
-
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
             EnemyGauges[g].maxValue = values[g];
@@ -98,10 +96,6 @@ public class GUIGame : MonoBehaviour
 
     public void RenderLevelBackground(LevelInformation levelInfo)
     {
-        RobotGauge1A.value = RobotGauge1A.maxValue;
-        RobotGauge1B.value = RobotGauge1B.maxValue;
-        RobotGauge1C.value = RobotGauge1C.maxValue;
-
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
             EnemyGauges[g].value = EnemyGauges[g].maxValue;
@@ -115,7 +109,9 @@ public class GUIGame : MonoBehaviour
         {
             child = gameObject.transform.GetChild(i);
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
-                !child.gameObject.name.StartsWith("Robot"))
+                !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
+                !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
+                child.gameObject.name != "TxtScore")
             {
                 Destroy(gameObject.transform.GetChild(i).gameObject);
             }
@@ -124,21 +120,29 @@ public class GUIGame : MonoBehaviour
         // add new tiles
         backgroundTiles = new Image[levelInfo.Width,levelInfo.Height];
         Image backgroundTile;
-        BackgroundTile.GetComponent<RectTransform>().sizeDelta = new Vector2(TileWidth, TileWidth);
-        int tileWidth = TileWidth; //(int)BackgroundTile.GetComponent<RectTransform>().sizeDelta.x;
-        int tileHeight = TileWidth; //(int)BackgroundTile.GetComponent<RectTransform>().sizeDelta.y;
+        for (int i = 0; i < BackgroundTiles.Length; i++)
+        {
+            BackgroundTiles[i].GetComponent<RectTransform>().sizeDelta = new Vector2(TileWidth, TileWidth);
+        }
+
+        int tileWidth = TileWidth;
+        int tileHeight = TileWidth;
+        int itemNumber = 0;
 
         for (int x = 0; x < levelInfo.Width; x++)
         {
             for (int y = 0; y < levelInfo.Height; y++)
             {
-                backgroundTile = Instantiate(BackgroundTile, gameObject.transform);
+                backgroundTile = Instantiate(BackgroundTiles[itemNumber++ % BackgroundTiles.Length], gameObject.transform);
                 backgroundTile.gameObject.SetActive(true);
+                backgroundTile.GetComponent<Image>().enabled = true;
                 backgroundTile.gameObject.name = "TileBackground_" + x + "_" + y;
                 backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelInfo.Width / 2f * tileWidth + x * tileWidth + x * Spacing, -levelInfo.Height / 2f * tileHeight + y * tileHeight + y * Spacing - TopBias);
 
                 backgroundTiles[x, y] = backgroundTile;
             }
+
+            itemNumber += 1;
         }
     }
 
@@ -423,18 +427,17 @@ public class GUIGame : MonoBehaviour
         Destroy(explosionEffect2, 0.35f);
     }
 
-    internal void ColorBlastEffect(int x, int y)
+    public void ColorBlastEffect(int x, int y)
     {
         GameObject colorExplosionEffect = Instantiate(ColorExplosionEffect);
         Transform tile = transform.Find("Tile_" + x + "_" + y);
 
-        // TODO: Remove in the future versions
         if (tile == null)
         {
             tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
             if (tile == null)
             {
-                Debug.LogWarning("Line destroy effect failed to find the tile Tile_" + x + "_" + y);
+                Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x + "_" + y);
                 return;
             }
         }
@@ -444,4 +447,40 @@ public class GUIGame : MonoBehaviour
 
         Destroy(colorExplosionEffect, 0.5f);
     }
+
+    public void ColorChangeEffect(string key, List<Vector2> changedTiles)
+    {
+        int x, y;
+        for (int i = 0; i < changedTiles.Count; i++)
+        {
+            x = (int)changedTiles[i].x;
+            y = (int)changedTiles[i].y;
+            GameObject colorChangingEffect = Instantiate(ColorChangingEffect);
+            Transform tile = transform.Find("Tile_" + x + "_" + y);
+
+            if (tile == null)
+            {
+                tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+                if (tile == null)
+                {
+                    Debug.LogWarning("Color change effect failed to find the tile Tile_" + x + "_" + y);
+                    return;
+                }
+            }
+
+            colorChangingEffect.transform.position = tile.position + new Vector3(0, 1, -5);
+            colorChangingEffect.SetActive(true);
+
+            Destroy(colorChangingEffect, 0.5f);
+
+            Image tileImage = tile.GetComponent<Image>();
+            if (tileImage == null)
+            {
+                tileImage = tile.AddComponent<Image>();
+            }
+
+            tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+        }
+    }
+
 }

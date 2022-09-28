@@ -2,10 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Rendering.LookDev;
+//using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using static LevelManager;
-using static UnityEditor.Searcher.SearcherWindow.Alignment;
+//using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class GamePlayManager : MonoBehaviour
 {
@@ -38,6 +38,7 @@ public class GamePlayManager : MonoBehaviour
     int currentEnemy = 0;
     int killedEnemies = 0;
     int maxEnemies = 3;
+    long score = 0;
 
     // special matching related stuff
     bool smLongT = false;
@@ -130,67 +131,67 @@ public class GamePlayManager : MonoBehaviour
         }
 
         int[,] tileIndices = new int[levelInfo.Width, levelInfo.Height];
-#if RANDOM_TILES_OFF
-        tileIndices[0, 5] = 3;
-        tileIndices[1, 5] = 3;
-        tileIndices[2, 5] = 0;
-        tileIndices[3, 5] = 3;
-        tileIndices[4, 5] = 3;
-        tileIndices[5, 5] = 2;
-        tileIndices[6, 5] = 0;
-        tileIndices[7, 5] = 0;
-
+#if RANDOM_TILES
         tileIndices[0, 4] = 3;
-        tileIndices[1, 4] = 0;
-        tileIndices[2, 4] = 3;
-        tileIndices[3, 4] = 1;
-        tileIndices[4, 4] = 0;
-        tileIndices[5, 4] = 0;
-        tileIndices[6, 4] = 2;
-        tileIndices[7, 4] = 1;
+        tileIndices[1, 4] = 3;
+        tileIndices[2, 4] = 0;
+        tileIndices[3, 4] = 3;
+        tileIndices[4, 4] = 3;
+        tileIndices[5, 4] = 2;
+        tileIndices[6, 4] = 0;
+        tileIndices[7, 4] = 0;
 
-        tileIndices[0, 3] = 0;
-        tileIndices[1, 3] = 3;
-        tileIndices[2, 3] = 1;
-        tileIndices[3, 3] = 0;
-        tileIndices[4, 3] = 2;
-        tileIndices[5, 3] = 3;
-        tileIndices[6, 3] = 1;
-        tileIndices[7, 3] = 3;
+        tileIndices[0, 3] = 3;
+        tileIndices[1, 3] = 0;
+        tileIndices[2, 3] = 3;
+        tileIndices[3, 3] = 1;
+        tileIndices[4, 3] = 0;
+        tileIndices[5, 3] = 0;
+        tileIndices[6, 3] = 2;
+        tileIndices[7, 3] = 1;
 
-        tileIndices[0, 2] = 2;
-        tileIndices[1, 2] = 0;
-        tileIndices[2, 2] = 2;
+        tileIndices[0, 2] = 0;
+        tileIndices[1, 2] = 3;
+        tileIndices[2, 2] = 1;
         tileIndices[3, 2] = 0;
-        tileIndices[4, 2] = 3;
-        tileIndices[5, 2] = 0;
-        tileIndices[6, 2] = 0;
-        tileIndices[7, 2] = 1;
+        tileIndices[4, 2] = 2;
+        tileIndices[5, 2] = 3;
+        tileIndices[6, 2] = 1;
+        tileIndices[7, 2] = 3;
 
-        tileIndices[0, 1] = 1;
+        tileIndices[0, 1] = 2;
         tileIndices[1, 1] = 0;
-        tileIndices[2, 1] = 0;
-        tileIndices[3, 1] = 3;
-        tileIndices[4, 1] = 1;
-        tileIndices[5, 1] = 2;
+        tileIndices[2, 1] = 2;
+        tileIndices[3, 1] = 0;
+        tileIndices[4, 1] = 3;
+        tileIndices[5, 1] = 0;
+        tileIndices[6, 1] = 0;
         tileIndices[7, 1] = 1;
-        tileIndices[6, 1] = 3;
 
-        tileIndices[0, 0] = 2;
-        tileIndices[1, 0] = 3;
-        tileIndices[2, 0] = 1;
-        tileIndices[3, 0] = 1;
-        tileIndices[4, 0] = 2;
-        tileIndices[5, 0] = 1;
-        tileIndices[6, 0] = 2;
-        tileIndices[7, 0] = 2;
+        tileIndices[0, 0] = 1;
+        tileIndices[1, 0] = 0;
+        tileIndices[2, 0] = 3;
+        tileIndices[3, 0] = 3;
+        tileIndices[4, 0] = 1;
+        tileIndices[5, 0] = 2;
+        tileIndices[7, 0] = 1;
+        tileIndices[6, 0] = 3;
+
+        tileIndices[0, 5] = 2;
+        tileIndices[1, 5] = 1;
+        tileIndices[2, 5] = 3;
+        tileIndices[3, 5] = 1;
+        tileIndices[4, 5] = 2;
+        tileIndices[5, 5] = 1;
+        tileIndices[6, 5] = 2;
+        tileIndices[7, 5] = 2;
 #endif
         int index;
         for (int x = 0; x < levelInfo.Width; x++)
         {
             for (int y = 0; y < levelInfo.Height; y++)
             {
-#if RANDOM_TILES_OFF
+#if RANDOM_TILES
                 index = tileIndices[x, y];
 #else
                 index = availabletiles[GetNextTile()];
@@ -424,15 +425,8 @@ public class GamePlayManager : MonoBehaviour
 
         if (hints.Count > 0)
         {
-            if (hints.Count > 1)
+            if (hints[0].Length >= 5)
             {
-                // is it a T or an L?
-
-            }
-            else if (hints[0].Length >= 5)
-            {
-                // is it a long T or a straight line?
-
                 Debug.Log("5 in line!");
                 sm5InLine = true;
             }
@@ -440,6 +434,10 @@ public class GamePlayManager : MonoBehaviour
             {
                 Debug.Log("4 in line!");
                 sm4InLine = true;
+            }
+            else if (hints.Count > 1)
+            {
+                // is it a T or an L?
             }
         }
 
@@ -501,7 +499,25 @@ public class GamePlayManager : MonoBehaviour
             }
 
             topMost = new Vector2(x, y);
-        } else
+
+            // is it a long T or a straight line?
+            if (sm5InLine && topMost.x < levelInfo.Width - 2)
+            {
+                if (tileSet[(int)topMost.x + 1, (int)topMost.y + 2] == tileSet[(int)topMost.x, (int)topMost.y])
+                {
+                    smBigT = true;
+                    sm5InLine = false;
+                }
+            } else if (sm5InLine && topMost.x > 0)
+            {
+                if (tileSet[(int)topMost.x - 1, (int)topMost.y + 2] == tileSet[(int)topMost.x, (int)topMost.y])
+                {
+                    smBigT = true;
+                    sm5InLine = false;
+                }
+            }
+        }
+        else
         {
             while (x > 0)
             {
@@ -515,6 +531,23 @@ public class GamePlayManager : MonoBehaviour
             }
 
             leftMost = new Vector2(x, y);
+
+            // is it a long T or a straight line?
+            if (sm5InLine && leftMost.y < levelInfo.Height - 1)
+            {
+                if(tileSet[(int)leftMost.x + 2, (int)leftMost.y + 1] == tileSet[(int)leftMost.x, (int)leftMost.y])
+                {
+                    smBigT = true;
+                    sm5InLine = false;
+                }
+            } else if (sm5InLine && leftMost.y > 0)
+            {
+                if (tileSet[(int)leftMost.x + 2, (int)leftMost.y - 1] == tileSet[(int)leftMost.x, (int)leftMost.y])
+                {
+                    smBigT = true;
+                    sm5InLine = false;
+                }
+            }
         }
 
         if (sm5InLine)
@@ -570,17 +603,17 @@ public class GamePlayManager : MonoBehaviour
             {
                 // place vertical
                 tilesSpecialCoords.Clear();
-                tilesSpecialCoords.Add(new Vector2((int)topMost.x + 1, (int)topMost.y));
+                tilesSpecialCoords.Add(new Vector2((int)topMost.x + 2, (int)topMost.y));
                 tilesSpecial.Clear();
-                tilesSpecial.Add(11);
+                tilesSpecial.Add(13);
             }
             else
             {
                 // place horizontal
                 tilesSpecialCoords.Clear();
-                tilesSpecialCoords.Add(new Vector2((int)leftMost.x, (int)leftMost.y - 1));
+                tilesSpecialCoords.Add(new Vector2((int)leftMost.x, (int)leftMost.y - 2));
                 tilesSpecial.Clear();
-                tilesSpecial.Add(11);
+                tilesSpecial.Add(13);
             }
 
             smBigT = false;
@@ -614,6 +647,7 @@ public class GamePlayManager : MonoBehaviour
             if (++killedEnemies >= maxEnemies)
             {
                 StartCoroutine(FinishLevel());
+                LeaderboardManager.Instance.Score = score;
             }
         }
         else
@@ -672,6 +706,8 @@ public class GamePlayManager : MonoBehaviour
         MenuGUI.gameObject.SetActive(true);
         MenuGUI.UnlockLevel(currentLevel + 1);
         MenuGUI.DisplayWin();
+
+        LeaderboardManager.Instance.SaveScore(score);
     }
 
     IEnumerator ExplodeTiles()
@@ -1093,6 +1129,8 @@ public class GamePlayManager : MonoBehaviour
             case "S4":
                 break;
             case "S5":
+                List<Vector2> changedTiles = ProcessRandomColorChange(x, y, tileSet[releaseX, releaseY]);
+                GameGUI.ColorChangeEffect(tileSet[releaseX, releaseY], changedTiles);
 
                 break;
         }
@@ -1105,6 +1143,57 @@ public class GamePlayManager : MonoBehaviour
         ReleaseTiles();
 
         ProcessNewlyAppearedBlocks(tilesToPut);
+    }
+
+    private List<Vector2> ProcessRandomColorChange(int x, int y, string code)
+    {
+        List<Vector2> result = new List<Vector2>();
+
+        // change numElements different elements from different colors to the ones which are in the long T6
+        int numElements = UnityEngine.Random.Range(5, 7);
+        int _x;
+        int _y;
+        bool overlapPresent;
+        for (int i = 0; i < numElements; i++)
+        {
+            _x = UnityEngine.Random.Range(0, levelInfo.Width);
+            _y = UnityEngine.Random.Range(0, levelInfo.Height);
+            overlapPresent = false;
+            do
+            {
+                for (int h = 0; h < hints.Count; h++)
+                {
+                    for (int f = 0; f < hints[h].Length; f++)
+                    {
+                        if (hints[h][f].x == _x && hints[h][f].y == _y)
+                        {
+                            overlapPresent = true;
+                            break;
+                        }
+                    }
+
+                    if (overlapPresent)
+                    {
+                        break;
+                    }
+                }
+
+                // not overlaped, good, but is the target gem in a different color?
+                if (!overlapPresent)
+                {
+                    if (tileSet[_x, _y] == tileSet[x, y])
+                    {
+                        overlapPresent = true;
+                    }
+                }
+            } while (overlapPresent);
+
+            // it is safe to convert the gem to the given color
+            tileSet[_x, _y] = tileSet[x, y];
+            result.Add(new Vector2(_x, _y));
+        }
+
+        return result;
     }
 
     private void ProcessColorBlast(int x, int y, string v)
@@ -1156,5 +1245,17 @@ public class GamePlayManager : MonoBehaviour
                 tileSet[x, indx] = "X";
             }
         }
+    }
+
+    public long GetScore()
+    {
+        return score;
+    }
+
+    public long IncrementScore(int score)
+    {
+        this.score += score;
+
+        return this.score;
     }
 }

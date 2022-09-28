@@ -13,6 +13,7 @@ public class LevelInfo : MonoBehaviour
 
     Transform imgLocked;
     Transform btnLevel;
+    TextMeshProUGUI txtLevelText;
 
     void Start()
     {
@@ -23,6 +24,7 @@ public class LevelInfo : MonoBehaviour
         {
             imgLocked.gameObject.SetActive(Locked);
             btnLevel.GetComponent<Button>().interactable = !Locked;
+            btnLevel.transform.Find("Text").gameObject.SetActive(!Locked);
             btnLevel.transform.Find("Text").GetComponent<TextMeshProUGUI>().text = LevelNumber.ToString();
         }
     }
