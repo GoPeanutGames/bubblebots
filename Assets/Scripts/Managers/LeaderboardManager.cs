@@ -3,8 +3,10 @@ using CodeStage.AntiCheat.Storage;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class LeaderboardManager : MonoBehaviour
 {
@@ -22,7 +24,7 @@ public class LeaderboardManager : MonoBehaviour
     public ObscuredString Password = "123";
     public delegate void LeaderboardEvent(object param);
 
-    string SessionToken = "";
+    string SessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
     bool authenticated = false;
     GUIMenu gui;
 
@@ -40,12 +42,6 @@ public class LeaderboardManager : MonoBehaviour
             return;
         }
 
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
-    }
-
-    private void Start()
-    {
         if (ObscuredPrefs.HasKey("user_name"))
         {
             PlayerId = ObscuredPrefs.Get("user_name", "");
@@ -58,9 +54,25 @@ public class LeaderboardManager : MonoBehaviour
 
         if (ObscuredPrefs.HasKey("session_token"))
         {
-            SessionToken = ObscuredPrefs.Get("session_token", "");
+            SessionToken = ObscuredPrefs.Get("session_token", SessionToken);
         }
 
+        if (ObscuredPrefs.HasKey("full_name"))
+        {
+            PlayerFullName = ObscuredPrefs.Get("full_name", "");
+        }
+
+        if (ObscuredPrefs.HasKey("rank"))
+        {
+            Rank = ObscuredPrefs.Get("rank", 9999);
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
         gui = FindObjectOfType<GUIMenu>();
         gui.DisplayPlayerInfo(false);
         gui.DisplayPlayerInfoLoading(true);
@@ -84,6 +96,8 @@ public class LeaderboardManager : MonoBehaviour
                 gui.DisplayPlayerInfo(true);
                 gui.DisplayPlayerInfoLoading(false);
                 gui.DisplayPlayerOffline(false);
+
+                gui.PlayButton.gameObject.SetActive(true);
             });
         };
 
@@ -276,7 +290,8 @@ public class LeaderboardManager : MonoBehaviour
 
                     JObject o = JObject.Parse(data);
                     score = long.Parse(o["score"].ToString());
-                    rank = 99; // int.Parse(o["rank"].ToString());
+                    rank = int.Parse(o["rank"].ToString());
+                    ObscuredPrefs.Get("rank", Rank);
 
                     break;
             }
@@ -317,7 +332,13 @@ public class LeaderboardManager : MonoBehaviour
                     JArray scoreData = JArray.Parse(data.ToString());
                     for (int i = 0; i < scoreData.Count; i++)
                     {
-                        playerName = "Player " + UnityEngine.Random.Range(1000, 10000);/*scoreData[i]["full_name"].ToString()*/
+                        if (scoreData[i]["nickname"] != null)
+                        {
+                            playerName = scoreData[i]["nickname"].ToString();
+                        } else {
+                            playerName = "Player " + UnityEngine.Random.Range(1000, 10000);/*scoreData[i]["full_name"].ToString();*/
+                        }
+
                         if (scoreData[i]["address"].ToString() == PlayerWalletAddress)
                         {
                             PlayerFullName = playerName;
@@ -342,8 +363,21 @@ public class LeaderboardManager : MonoBehaviour
     public IEnumerator SetFullNameNow(string fullName)
     {
         PlayerFullName = fullName;
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_fullname.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&full_name=" + fullName))
+        ObscuredPrefs.Set("full_name", PlayerFullName);
+
+        string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"nickname\":\"" + fullName.Replace("\"", "'").Trim() + "\"}";
+
+        //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_fullname.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&full_name=" + fullName))
+        using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/nickname", formData))
         {
+            UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(formData));
+            customUploadHandler.contentType = "application/json";
+            webRequest.uploadHandler = customUploadHandler;
+
+            webRequest.SetRequestHeader("Authorization", "Bearer " + SessionToken);
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("Accept", "*/*");
+
             yield return webRequest.SendWebRequest();
 
             switch (webRequest.result)
@@ -362,9 +396,12 @@ public class LeaderboardManager : MonoBehaviour
                     Debug.Log("Received data (set full name): " + data);
 
                     JObject o = JObject.Parse(data);
-                    if (o["success"].ToString() == "True")
+                    if (o.ContainsKey("rank"))
                     {
                         Debug.Log("Full name has been set to " + fullName);
+
+                        Rank = int.Parse(o["rank"].ToString());
+                        ObscuredPrefs.Get("rank", Rank);
                     }
                     else
                     {

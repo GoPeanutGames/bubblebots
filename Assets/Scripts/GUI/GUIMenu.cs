@@ -165,7 +165,6 @@ public class GUIMenu : MonoBehaviour
         }
     }
 
-
     public void DisplayPlayerInfoLoading(bool value)
     {
         PnlLoadingPlace.SetActive(value);
@@ -224,6 +223,7 @@ public class GUIMenu : MonoBehaviour
         btnCancel.onClick.RemoveAllListeners();
         btnCancel.onClick.AddListener(() =>
         {
+            MenuImage.gameObject.SetActive(true);
             PnlPrompt.SetActive(false);
         });
     }
@@ -284,7 +284,7 @@ public class GUIMenu : MonoBehaviour
                 lineItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
 
                 rect = lineItem.GetComponent<RectTransform>();
-                rect.anchoredPosition = new Vector2(90, (i + 1) * -82);
+                rect.anchoredPosition = new Vector2(35, (i + 1) * -42);
             }
 
             DisplayPlayerRank();

@@ -501,12 +501,19 @@ public class GamePlayManager : MonoBehaviour
             topMost = new Vector2(x, y);
 
             // is it a long T or a straight line?
-            if (sm5InLine && topMost.x < levelInfo.Width - 2)
+            if (sm5InLine && topMost.x < levelInfo.Width - 1)
             {
-                if (tileSet[(int)topMost.x + 1, (int)topMost.y + 2] == tileSet[(int)topMost.x, (int)topMost.y])
+                try
                 {
-                    smBigT = true;
-                    sm5InLine = false;
+                    if (tileSet[(int)topMost.x + 1, (int)topMost.y + 2] == tileSet[(int)topMost.x, (int)topMost.y])
+                    {
+                        smBigT = true;
+                        sm5InLine = false;
+                    }
+                }
+                catch
+                {
+                    Debug.LogError("Error 1301 == x: " + (topMost.x + 1) + ", y: " + (topMost.y + 2) + ", tsl: " + levelInfo.Width + ", tsh: " + levelInfo.Height);
                 }
             } else if (sm5InLine && topMost.x > 0)
             {
@@ -1140,7 +1147,7 @@ public class GamePlayManager : MonoBehaviour
 
         ProcessScrolling();
         HitEnemy();
-        ReleaseTiles();
+        //ReleaseTiles();
 
         ProcessNewlyAppearedBlocks(tilesToPut);
     }

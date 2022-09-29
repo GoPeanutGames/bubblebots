@@ -18,8 +18,10 @@ public class GUIGame : MonoBehaviour
     public GameObject LineExplosionEffect;
     public GameObject ColorExplosionEffect;
     public GameObject ColorChangingEffect;
-    public RobotEffects[] Robots;
+    public RobotEffects[] EnemyRobots;
     public Slider[] EnemyGauges;
+    public RobotEffects[] PlayerRobots;
+    public Slider[] PlayerGauges;
     public int TopBias = 100;
     [HideInInspector]
     public bool CanSwapTiles = true;
@@ -31,6 +33,7 @@ public class GUIGame : MonoBehaviour
     SkinManager skinManager;
     List<GameObject> explosionEffects = new List<GameObject>();
     int currentEnemy = 0;
+    int currentPlayer = 0;
 
     public delegate void OnGUIEvent(object param);
 
@@ -42,6 +45,13 @@ public class GUIGame : MonoBehaviour
 
     public void DamageToPlayerRobot(float damage)
     {
+        if (currentPlayer >= PlayerGauges.Length)
+        {
+            return;
+        }
+
+        PlayerGauges[currentPlayer].DOValue(PlayerGauges[currentPlayer].value - damage, SwapDuration);
+        PlayerRobots[currentPlayer].Damage();
     }
 
     public void DamageToEnemyRobot(float damage)
@@ -52,14 +62,14 @@ public class GUIGame : MonoBehaviour
         }
 
         EnemyGauges[currentEnemy].DOValue(EnemyGauges[currentEnemy].value - damage, SwapDuration);
-        Robots[currentEnemy].Damage();
+        EnemyRobots[currentEnemy].Damage();
 
         TxtScore.text = gamePlayManager.IncrementScore(Mathf.FloorToInt(damage * 10)).ToString().PadLeft(6, '0');
     }
 
     public void KillEnemy()
     {
-        Robots[currentEnemy].Die();
+        EnemyRobots[currentEnemy].Die();
     }
 
     public void SetRobotGauges(int[] values)
@@ -74,23 +84,23 @@ public class GUIGame : MonoBehaviour
     {
         this.currentEnemy = currentEnemy;
         gamePlayManager.SetEnemy(currentEnemy);
-        for (int r = 0; r < Robots.Length; r++)
+        for (int r = 0; r < EnemyRobots.Length; r++)
         {
             if (r == currentEnemy)
             {
-                Robots[r].SetTarget();
+                EnemyRobots[r].SetTarget();
             } else
             {
-                Robots[r].ClearTarget();
+                EnemyRobots[r].ClearTarget();
             }
         }
     }
 
     internal void InitializeEnemyRobots()
     {
-        for (int i = 0; i < Robots.Length; i++)
+        for (int i = 0; i < EnemyRobots.Length; i++)
         {
-            Robots[i].Initialize();
+            EnemyRobots[i].Initialize();
         }
     }
 
