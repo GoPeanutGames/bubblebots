@@ -10,14 +10,16 @@ public class LevelManager : MonoBehaviour
         public int Version { get; }
         public int Width { get; }
         public int Height { get; }
+        public int Waves { get; }
         public string[] AvailableTiles { get;  }
 
-        public LevelInformation(int version, int width, int height, string[] availableTiles)
+        public LevelInformation(int version, int width, int height, string[] availableTiles, int waves)
         {
             Version = version;
             Width = width;
             Height = height;
             AvailableTiles = availableTiles;
+            Waves = waves;
         }
     }
 
@@ -45,6 +47,7 @@ public class LevelManager : MonoBehaviour
         string[] availableTiles = null;
         int width = 6;
         int height = 8;
+        int waves = 1;
         for (int i = 2; i < levelData.Length; i++)
         {
             line = levelData[i].Trim();
@@ -77,12 +80,15 @@ public class LevelManager : MonoBehaviour
                 case "available_tiles":
                     availableTiles = data[1].Split(',');
                     break;
+                case "waves":
+                    waves = int.Parse(data[1]);
+                    break;
                 default:
                     Debug.LogWarning("Unknown item in save file: " + data[0]);
                     break;
             }
         }
 
-        return new LevelInformation(1, width, height, availableTiles);
+        return new LevelInformation(1, width, height, availableTiles, waves);
     }
 }

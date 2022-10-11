@@ -18,6 +18,7 @@ public class GUIGame : MonoBehaviour
     public GameObject LineExplosionEffect;
     public GameObject ColorExplosionEffect;
     public GameObject ColorChangingEffect;
+    public GameObject[] EnemyBullets;
     public RobotEffects[] EnemyRobots;
     public Slider[] EnemyGauges;
     public RobotEffects[] PlayerRobots;
@@ -51,7 +52,24 @@ public class GUIGame : MonoBehaviour
         }
 
         PlayerGauges[currentPlayer].DOValue(PlayerGauges[currentPlayer].value - damage, SwapDuration);
+
+        GameObject bullet = Instantiate(EnemyBullets[currentEnemy], EnemyBullets[currentEnemy].transform.parent);
+        bullet.transform.position = EnemyBullets[currentEnemy].transform.position;
+        bullet.gameObject.SetActive(true);
+        bullet.transform.DOMove(new Vector3(PlayerRobots[currentPlayer].transform.position.x, PlayerRobots[currentPlayer].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
+        StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1));
+    }
+
+    IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy)
+    {
+        yield return new WaitForSeconds(timeToHide);
         PlayerRobots[currentPlayer].Damage();
+
+        target.SetActive(false);
+
+        yield return new WaitForSeconds(timeToDestroy);
+
+        Destroy(target);
     }
 
     public void DamageToEnemyRobot(float damage)
@@ -72,6 +90,14 @@ public class GUIGame : MonoBehaviour
         EnemyRobots[currentEnemy].Die();
     }
 
+    public void SetPlayerGauges()
+    {
+        for (int g = 0; g < PlayerGauges.Length; g++)
+        {
+            PlayerGauges[g].value = PlayerGauges[g].maxValue;
+        }
+    }
+
     public void SetRobotGauges(int[] values)
     {
         for (int g = 0; g < EnemyGauges.Length; g++)
@@ -82,6 +108,11 @@ public class GUIGame : MonoBehaviour
 
     public void TargetEnemy(int currentEnemy)
     {
+        if(EnemyGauges[currentEnemy].value <= 0)
+        {
+            return;
+        }
+
         this.currentEnemy = currentEnemy;
         gamePlayManager.SetEnemy(currentEnemy);
         for (int r = 0; r < EnemyRobots.Length; r++)
@@ -121,7 +152,7 @@ public class GUIGame : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
-                child.gameObject.name != "TxtScore")
+                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus")
             {
                 Destroy(gameObject.transform.GetChild(i).gameObject);
             }
@@ -465,7 +496,6 @@ public class GUIGame : MonoBehaviour
         {
             x = (int)changedTiles[i].x;
             y = (int)changedTiles[i].y;
-            GameObject colorChangingEffect = Instantiate(ColorChangingEffect);
             Transform tile = transform.Find("Tile_" + x + "_" + y);
 
             if (tile == null)
@@ -478,19 +508,61 @@ public class GUIGame : MonoBehaviour
                 }
             }
 
-            colorChangingEffect.transform.position = tile.position + new Vector3(0, 1, -5);
-            colorChangingEffect.SetActive(true);
-
-            Destroy(colorChangingEffect, 0.5f);
-
             Image tileImage = tile.GetComponent<Image>();
             if (tileImage == null)
             {
                 tileImage = tile.AddComponent<Image>();
             }
+            
+            var duplicate = Instantiate(tile, tile.transform.parent);
+            duplicate.transform.SetAsLastSibling();
+            var dimage = duplicate.GetComponent<Image>();
+            dimage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
 
-            tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+            StartCoroutine(ChangeColor(tileImage, dimage, key));
+            Destroy(duplicate.gameObject, 1f);
         }
+    }
+
+    IEnumerator ChangeColor(Image tileImage, Image dimage, string key)
+    {
+        dimage.color = new Color(1, 1, 1, 0);
+        dimage.DOFade(1, 0.9f);
+
+        yield return new WaitForSeconds(0.95f);
+        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+        dimage.gameObject.SetActive(false);
+    }
+
+    public void StartNextWave()
+    {
+        CanSwapTiles = false;
+
+        StartCoroutine(SwapWaves());
+    }
+
+    IEnumerator SwapWaves()
+    {
+        for (int i = 0; i < EnemyRobots.Length; i++)
+        {
+            EnemyRobots[i].FadeOut();// GetComponent<Image>().DOFade(0, 0.3f).SetEase(Ease.Linear);
+        }
+
+        yield return new WaitForSeconds(0.67f);
+
+        for (int g = 0; g < EnemyGauges.Length; g++)
+        {
+            EnemyGauges[g].value = EnemyGauges[g].maxValue;
+        }
+
+        for (int i = 0; i < EnemyRobots.Length; i++)
+        {
+            EnemyRobots[i].FadeIn(); // GetComponent<Image>().DOFade(1, 0.3f).SetEase(Ease.Linear);
+        }
+
+        yield return new WaitForSeconds(0.3f);
+
+        CanSwapTiles = true;
     }
 
 }

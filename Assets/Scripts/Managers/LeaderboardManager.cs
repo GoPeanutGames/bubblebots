@@ -14,7 +14,7 @@ public class LeaderboardManager : MonoBehaviour
     public string HashKey = "Hsh123_?";
     [HideInInspector]
     public string PlayerFullName = "";
-    public string PlayerWalletAddress = "0xb354B942464755968a655144Bb1f69422b7D5ea2";
+    public string PlayerWalletAddress = null;
     [HideInInspector]
     public ObscuredLong Score = 0;
     [HideInInspector]
@@ -25,12 +25,7 @@ public class LeaderboardManager : MonoBehaviour
     public delegate void LeaderboardEvent(object param);
 
     string SessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
-    bool authenticated = false;
     GUIMenu gui;
-
-    LeaderboardEvent onAuthenticationComplete = null;
-
-    SecurityController security;
 
     public static LeaderboardManager Instance;
 
@@ -60,6 +55,14 @@ public class LeaderboardManager : MonoBehaviour
         if (ObscuredPrefs.HasKey("full_name"))
         {
             PlayerFullName = ObscuredPrefs.Get("full_name", "");
+        } else
+        {
+            PlayerFullName = "Player" + Random.Range(1000, 10000);
+        }
+
+        if (ObscuredPrefs.HasKey("wallet_address"))
+        {
+            PlayerWalletAddress = ObscuredPrefs.Get("wallet_address", "");
         }
 
         if (ObscuredPrefs.HasKey("rank"))
@@ -71,154 +74,9 @@ public class LeaderboardManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
+    public void Start()
     {
         gui = FindObjectOfType<GUIMenu>();
-        gui.DisplayPlayerInfo(false);
-        gui.DisplayPlayerInfoLoading(true);
-        gui.DisplayPlayerOffline(false);
-
-        onAuthenticationComplete = (param) => {
-            GetPlayerScore((parameter) =>
-            {
-                string[] parameters = ((string)parameter).Split(",");
-                long score = long.Parse(parameters[0]);
-                int rank = int.Parse(parameters[1]);
-
-                this.Score = score;
-                this.Rank = rank;
-
-                gui.SetPlayerRank(score, rank);
-            });
-
-            GetTop100Scores((scores) =>
-            {
-                gui.DisplayPlayerInfo(true);
-                gui.DisplayPlayerInfoLoading(false);
-                gui.DisplayPlayerOffline(false);
-
-                gui.PlayButton.gameObject.SetActive(true);
-            });
-        };
-
-        if (!authenticated)
-        {
-            gui.DisplayPlayerInfo(false);
-            gui.DisplayPlayerInfoLoading(true);
-            gui.DisplayPlayerOffline(false);
-
-            if (!string.IsNullOrEmpty(PlayerId) && !string.IsNullOrEmpty(SessionToken))
-            {
-                StartCoroutine(Authenticate());
-            }
-            else if (!string.IsNullOrEmpty(PlayerId) && !string.IsNullOrEmpty(Password))
-            {
-                StartCoroutine(Login());
-            }
-        }
-        else
-        {
-            gui.DisplayPlayerInfo(true);
-            gui.DisplayPlayerInfoLoading(false);
-            gui.DisplayPlayerOffline(false);
-        }
-    }
-
-    private IEnumerator Authenticate()
-    {
-        //Debug.Log(ServerURL + "/login.php?user_name=" + PlayerId + "&password=" + SecurityController.ComputeSha256Hash(Password));
-
-        authenticated = true;
-        onAuthenticationComplete?.Invoke(null);
-
-        yield break;
-
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/authenticate.php?user_name=" + PlayerId + "&session_token=" + SessionToken))
-        {
-            yield return webRequest.SendWebRequest();
-
-            switch (webRequest.result)
-            {
-                case UnityWebRequest.Result.ConnectionError:
-                case UnityWebRequest.Result.DataProcessingError:
-                case UnityWebRequest.Result.ProtocolError:
-                    Debug.LogError("Connection failed for reason: " + webRequest.error);
-
-                    gui.DisplayPlayerInfo(false);
-                    gui.DisplayPlayerInfoLoading(false);
-                    gui.DisplayPlayerOffline(true);
-                    break;
-                case UnityWebRequest.Result.Success:
-                    string data = webRequest.downloadHandler.text;
-                    Debug.Log("Received data: " + data);
-
-                    JObject o = JObject.Parse(data);
-                    if (o["success"].ToString() == "True")
-                    {
-                        authenticated = true;
-                        SessionToken = o["token"].ToString();
-                        PlayerFullName = o["full_name"].ToString();
-                        ObscuredPrefs.Set("session_token", SessionToken);
-                        onAuthenticationComplete?.Invoke(null);
-                    }
-                    else
-                    {
-                        Debug.LogError(o["result"].ToString());
-                    }
-
-                    break;
-            }
-        }
-    }
-
-    private IEnumerator Login()
-    {
-        authenticated = true;
-        onAuthenticationComplete?.Invoke(null);
-
-        yield break;
-
-        //Debug.Log(ServerURL + "/login.php?user_name=" + PlayerId + "&password=" + SecurityController.ComputeSha256Hash(Password));
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/login.php?user_name=" + PlayerId + "&password=" + SecurityController.ComputeSha256Hash(Password)))
-        {
-            yield return webRequest.SendWebRequest();
-
-            switch (webRequest.result)
-            {
-                case UnityWebRequest.Result.ConnectionError:
-                case UnityWebRequest.Result.DataProcessingError:
-                case UnityWebRequest.Result.ProtocolError:
-                    Debug.LogError("Connection failed for reason: " + webRequest.error);
-
-                    gui.DisplayPlayerInfo(false);
-                    gui.DisplayPlayerInfoLoading(false);
-                    gui.DisplayPlayerOffline(true);
-                    break;
-                case UnityWebRequest.Result.Success:
-                    string data = webRequest.downloadHandler.text;
-                    Debug.Log("Received data (login): " + data);
-
-                    JObject o = JObject.Parse(data);
-                    if (o["success"].ToString() == "True")
-                    {
-                        authenticated = true;
-                        SessionToken = o["token"].ToString();
-                        PlayerFullName = o["full name"].ToString();
-                        gui.DisplayFullName(o["full name"].ToString());
-                        onAuthenticationComplete?.Invoke(null);
-                    }
-                    else
-                    {
-                        gui.DisplayPlayerInfo(false);
-                        gui.DisplayPlayerInfoLoading(false);
-                        gui.DisplayPlayerOffline(true);
-
-                        Debug.LogError(o["reason"].ToString());
-                    }
-
-                    break;
-            }
-        }
     }
 
     public void SaveScore(long score)
@@ -230,8 +88,18 @@ public class LeaderboardManager : MonoBehaviour
 
     private IEnumerator SaveScoreNow(long score)
     {
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&score=" + score))
+        string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"score\":" + score.ToString().Replace("\"", "'").Trim() + "}";
+        using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/score", formData))
+        //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&score=" + score))
         {
+            UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(formData));
+            customUploadHandler.contentType = "application/json";
+            webRequest.uploadHandler = customUploadHandler;
+
+            webRequest.SetRequestHeader("Authorization", "Bearer " + SessionToken);
+            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("Accept", "*/*");
+
             yield return webRequest.SendWebRequest();
 
             switch (webRequest.result)
@@ -246,13 +114,18 @@ public class LeaderboardManager : MonoBehaviour
                     Debug.Log("Received data (set score): " + data);
 
                     JObject o = JObject.Parse(data);
-                    if (o["success"].ToString() == "True")
+                    if (o["rank"] != null)
                     {
                         Debug.Log("Score has been set with success");
+                        Rank = int.Parse(o["rank"].ToString());
+                        Score = score;
+
+                        ObscuredPrefs.Set("rank", (int)Rank);
+                        gui.DisplayPlayerRank();
                     }
                     else
                     {
-                        Debug.LogError(o["reason"].ToString());
+                        Debug.LogError("Score could not be set (" + data + ")");
                     }
 
                     break;
@@ -286,12 +159,20 @@ public class LeaderboardManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     string data = webRequest.downloadHandler.text;
-                    Debug.Log("Received data (get score): " + data);
 
                     JObject o = JObject.Parse(data);
                     score = long.Parse(o["score"].ToString());
-                    rank = int.Parse(o["rank"].ToString());
-                    ObscuredPrefs.Get("rank", Rank);
+                    if (o["rank"] != null)
+                    {
+                        rank = int.Parse(o["rank"].ToString());
+                        ObscuredPrefs.Get("rank", rank);
+                        Rank = rank;
+                    }
+
+                    if (o["nickname"] != null)
+                    {
+                        PlayerFullName = o["nickname"].ToString();
+                    }
 
                     break;
             }
@@ -415,5 +296,11 @@ public class LeaderboardManager : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public void SetPlayerWalletAddress(string address)
+    {
+        PlayerWalletAddress = address;
+        ObscuredPrefs.Set("wallet_address", PlayerWalletAddress);
     }
 }

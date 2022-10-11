@@ -7,6 +7,8 @@ using TMPro;
 using System;
 using static GUIGame;
 using System.Net.Sockets;
+using UnityEditor;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class GUIMenu : MonoBehaviour
 {
@@ -24,29 +26,59 @@ public class GUIMenu : MonoBehaviour
     public GameObject PnlPlayerOffline;
     public GameObject PnlLoadingPlace;
     public GameObject PnlPrompt;
+    public GameObject PnlWelcome;
     public GameObject PnlHighScores;
 
     GamePlayManager gamePlayManager = null;
+    WalletManager walletManager;
     string fullName = "";
 
     private void Awake()
     {
         Robot1.SetActive(false);
         Robot2.SetActive(false);
-        //PlayButton.gameObject.SetActive(true);
-        //TxtStatus.gameObject.SetActive(false);
-        //GameImage.gameObject.SetActive(false);
 
         gamePlayManager = FindObjectOfType<GamePlayManager>();
+        walletManager = FindObjectOfType<WalletManager>();
     }
 
     private void Start()
     {
+        PnlWelcome.SetActive(true);
         PnlPrompt.SetActive(false);
         PnlHighScores.SetActive(false);
 
-        DisplayFullName(LeaderboardManager.Instance.PlayerFullName);
-        DisplayPlayerRank();
+        Debug.Log("Stored wallet address is: " + LeaderboardManager.Instance.PlayerWalletAddress);
+        if(!string.IsNullOrEmpty(LeaderboardManager.Instance.PlayerWalletAddress))
+        {
+            PnlWelcome.SetActive(false);
+            InitSession(LeaderboardManager.Instance.PlayerWalletAddress);
+        } else
+        {
+
+        }
+
+        /*if (!authenticated)
+        {
+            DisplayPlayerInfo(false);
+            DisplayPlayerInfoLoading(true);
+            DisplayPlayerOffline(false);
+
+            if (!string.IsNullOrEmpty(PlayerId) && !string.IsNullOrEmpty(SessionToken))
+            {
+                StartCoroutine(Authenticate());
+            }
+            else if (!string.IsNullOrEmpty(PlayerId) && !string.IsNullOrEmpty(Password))
+            {
+                StartCoroutine(Login());
+            }
+        }
+        else
+        {
+            DisplayPlayerInfo(true);
+            DisplayPlayerInfoLoading(false);
+            DisplayPlayerOffline(false);
+        }*/
     }
 
     public void SwitchToMap()
@@ -56,13 +88,23 @@ public class GUIMenu : MonoBehaviour
         StartCoroutine(TurnOffGUI());
     }
 
+    public void StartLevel1()
+    {
+        MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
+
+        SwitchToMultiplayer("level1", 1);
+    }
+
     public void SwitchToMultiplayer(string levelFile, int levelNumber)
     {
-        MenuImage.gameObject.SetActive(true);
+        /*MenuImage.gameObject.SetActive(true);
         MenuImage.GetComponent<CanvasGroup>().alpha = 0;
-        MenuImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
+        MenuImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);*/
 
-        StartCoroutine(StartMultiplayerSequence(levelFile, levelNumber));
+        //StartCoroutine(StartMultiplayerSequence(levelFile, levelNumber));
+        StartCoroutine(TurnOffGUI());
+        StartCoroutine(TurnOnPlay(levelFile, levelNumber));
+
     }
 
     IEnumerator StartMultiplayerSequence(string levelFile, int levelNumber)
@@ -86,6 +128,8 @@ public class GUIMenu : MonoBehaviour
 
         StartCoroutine(TurnOffGUI());
         StartCoroutine(TurnOnPlay(levelFile, levelNumber));
+
+        yield break;
     }
 
     IEnumerator TurnOffGUI()
@@ -93,17 +137,30 @@ public class GUIMenu : MonoBehaviour
         //MenuImage.raycastTarget = false;
         yield return new WaitForSeconds(0.6f);
 
-        MenuImage.gameObject.SetActive(false);
+        //MenuImage.gameObject.SetActive(false);
         MenuImage.transform.Find("PlayerInfo").gameObject.SetActive(false);
 
-        MapImage.gameObject.SetActive(true);
+        /*MapImage.gameObject.SetActive(true);
         MapImage.GetComponent<CanvasGroup>().alpha = 0;
         MapImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.5f);*/
     }
 
     IEnumerator TurnOnPlay(string levelFile, int levelNumber)
     {
+        Transform child;
+        for (int i = 1; i < GameImage.transform.childCount; i++)
+        {
+            child = GameImage.transform.GetChild(i);
+            if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
+                !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
+                !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
+                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus")
+            {
+                Destroy(GameImage.transform.GetChild(i).gameObject);
+            }
+        }
+
         //yield return new WaitForSeconds(0.5f);
         yield return new WaitForEndOfFrame();
 
@@ -112,7 +169,20 @@ public class GUIMenu : MonoBehaviour
         GameImage.GetComponent<CanvasGroup>().alpha = 0;
         GameImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
 
-        yield return new WaitForEndOfFrame();
+        yield return new WaitForSeconds(1);
+
+        Transform txtStatus = GameImage.transform.Find("TxtStatus");
+        txtStatus.gameObject.SetActive(true);
+        txtStatus.SetAsLastSibling();
+        txtStatus.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
+        txtStatus.GetComponent<TextMeshProUGUI>().DOFade(1, 0.5f);
+        txtStatus.GetComponent<TextMeshProUGUI>().text = "LEVEL " + levelNumber;
+
+        yield return new WaitForSeconds(2);
+
+        txtStatus.GetComponent<TextMeshProUGUI>().DOFade(0, 0.5f);
+
+        yield return new WaitForSeconds(0.5f);
 
         gamePlayManager?.StartLevel(levelFile, levelNumber);
         MenuImage.gameObject.SetActive(false);
@@ -129,15 +199,26 @@ public class GUIMenu : MonoBehaviour
     public void DisplayWin()
     {
         WinDialogImage.gameObject.SetActive(true);
+        //StartCoroutine(DisplayWinNow(numLevel, score));
     }
+
+    /*IEnumerator DisplayWinNow(int numLevel, long score)
+    {
+    }*/
 
     public void HideWin()
     {
         Robot1.SetActive(false);
         Robot2.SetActive(false);
 
+        //MapImage.gameObject.SetActive(true);
+
         WinDialogImage.gameObject.SetActive(false);
-        MapImage.gameObject.SetActive(true);
+        MenuImage.gameObject.SetActive(true);
+
+        LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
+        //gamePlayManager?.StartLevel("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel());
+        StartCoroutine(TurnOnPlay("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel()));
     }
 
     public void DisplayNoMoreMoves()
@@ -234,14 +315,14 @@ public class GUIMenu : MonoBehaviour
         DisplayPlayerRank();
     }
 
-    private void DisplayPlayerRank()
+    public void DisplayPlayerRank()
     {
         MenuImage.transform.Find("PlayerInfo/BtnRank/TxtStart").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Rank.ToString().PadLeft(5, '0');
 
         GameObject templateItem = PnlHighScores.transform.Find("TxtRowTemplate").gameObject;
         templateItem.GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Rank + ".";
         templateItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.PlayerFullName;
-        templateItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Score.ToString();
+        templateItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Score == -1 ? "N/A" : LeaderboardManager.Instance.Score.ToString();
     }
 
     public void DisplayHighScores()
@@ -295,5 +376,39 @@ public class GUIMenu : MonoBehaviour
     {
         MenuImage.gameObject.SetActive(true);
         PnlHighScores.SetActive(false);
+    }
+
+    public void LoginWithMetamask()
+    {
+        walletManager?.LoginWithMetamask(null, null);
+    }
+
+    public void InitSession(string address)
+    {
+        Debug.Log("Init session...");
+        LeaderboardManager.Instance.SetPlayerWalletAddress(address);
+        PnlWelcome.SetActive(false);
+
+        PlayButton.gameObject.SetActive(true);
+        TxtStatus.gameObject.SetActive(false);
+        GameImage.gameObject.SetActive(false);
+
+        DisplayPlayerInfoLoading(true);
+        DisplayPlayerOffline(false);
+
+        LeaderboardManager.Instance.GetPlayerScore((parameter) =>
+        {
+            string[] parameters = ((string)parameter).Split(",");
+            long score = long.Parse(parameters[0]);
+            int rank = int.Parse(parameters[1]);
+
+            SetPlayerRank(score, rank);
+            DisplayPlayerInfoLoading(false);
+            DisplayPlayerInfo(true);
+            DisplayFullName(LeaderboardManager.Instance.PlayerFullName);
+        });
+
+        DisplayFullName(LeaderboardManager.Instance.PlayerFullName);
+        DisplayPlayerRank();
     }
 }

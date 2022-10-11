@@ -40,6 +40,16 @@ public class RobotEffects : MonoBehaviour
         robotImage.CrossFadeColor(Color.white, 0.35f, false, false);
     }
 
+    public void FadeOut()
+    {
+        robotImage.DOFade(0f, 0.33f);
+    }
+
+    public void FadeIn()
+    {
+        robotImage.DOFade(1f, 0.33f);
+    }
+
     public void YourTurn()
     {
         Crossair.SetActive(false);

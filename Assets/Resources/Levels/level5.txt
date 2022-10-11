@@ -2,4 +2,4 @@
 version=1
 dimensions=8,6
 available_tiles=0,1,2,3,4
-waves=0
+waves=5
