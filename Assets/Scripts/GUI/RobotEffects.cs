@@ -84,7 +84,10 @@ public class RobotEffects : MonoBehaviour
     internal void Initialize()
     {
         Crossair.transform.localScale = Vector3.one;
-        robotImage.DOFade(1f, 0f);
-        robotImage.transform.DOScale(1f, 0f);
+        if (robotImage != null)
+        {
+            robotImage.DOFade(1f, 0f);
+            robotImage.transform.DOScale(1f, 0f);
+        }
     }
 }

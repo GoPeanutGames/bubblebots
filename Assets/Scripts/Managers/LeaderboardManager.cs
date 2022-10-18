@@ -1,6 +1,7 @@
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,7 @@ public class LeaderboardManager : MonoBehaviour
     [HideInInspector]
     public ObscuredLong Score = 0;
     [HideInInspector]
-    public ObscuredInt Rank = int.MaxValue;
+    public ObscuredInt Rank = 0; // int.MaxValue;
 
     public ObscuredString PlayerId = "tolgak";
     public ObscuredString Password = "123";
@@ -57,7 +58,7 @@ public class LeaderboardManager : MonoBehaviour
             PlayerFullName = ObscuredPrefs.Get("full_name", "");
         } else
         {
-            PlayerFullName = "Player" + Random.Range(1000, 10000);
+            PlayerFullName = "Player" + UnityEngine.Random.Range(1000, 10000);
         }
 
         if (ObscuredPrefs.HasKey("wallet_address"))
@@ -89,6 +90,7 @@ public class LeaderboardManager : MonoBehaviour
     private IEnumerator SaveScoreNow(long score)
     {
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"score\":" + score.ToString().Replace("\"", "'").Trim() + "}";
+        //ServerURL = Environment.GetEnvironmentVariable("API_URL");
         using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/score", formData))
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&score=" + score))
         {
@@ -96,7 +98,9 @@ public class LeaderboardManager : MonoBehaviour
             customUploadHandler.contentType = "application/json";
             webRequest.uploadHandler = customUploadHandler;
 
+            //SessionToken = Environment.GetEnvironmentVariable("SECREAT_HEADER"); 
             webRequest.SetRequestHeader("Authorization", "Bearer " + SessionToken);
+            webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Accept", "*/*");
 
@@ -143,9 +147,11 @@ public class LeaderboardManager : MonoBehaviour
         long score = 0;
         int rank = int.MaxValue;
 
+        //ServerURL = Environment.GetEnvironmentVariable("API_URL");
         using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/bubblebots/score/" + PlayerWalletAddress))
         {
             webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
             webRequest.SetRequestHeader("Accept", "*/*");
 
             yield return webRequest.SendWebRequest();
@@ -159,6 +165,7 @@ public class LeaderboardManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     string data = webRequest.downloadHandler.text;
+                    Debug.Log("Received data (get player score): " + data);
 
                     JObject o = JObject.Parse(data);
                     score = long.Parse(o["score"].ToString());
@@ -191,9 +198,11 @@ public class LeaderboardManager : MonoBehaviour
         List<ScoreInfo> result = new List<ScoreInfo>();
 
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/get_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&filter=" + PlayerId))
+        //ServerURL = Environment.GetEnvironmentVariable("API_URL");
         using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/bubblebots/score"))
         {
             webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
             webRequest.SetRequestHeader("Accept", "*/*");
 
             yield return webRequest.SendWebRequest();
@@ -249,13 +258,18 @@ public class LeaderboardManager : MonoBehaviour
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"nickname\":\"" + fullName.Replace("\"", "'").Trim() + "\"}";
 
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_fullname.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&full_name=" + fullName))
+        //ServerURL = Environment.GetEnvironmentVariable("API_URL");
+        Debug.Log("server url: " + ServerURL + "/bubblebots/nickname");
+        Debug.Log("SessionToken: " + SessionToken);
         using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/nickname", formData))
         {
             UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(formData));
             customUploadHandler.contentType = "application/json";
             webRequest.uploadHandler = customUploadHandler;
 
+            //SessionToken = Environment.GetEnvironmentVariable("SECREAT_HEADER");
             webRequest.SetRequestHeader("Authorization", "Bearer " + SessionToken);
+            webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Accept", "*/*");
 
@@ -282,7 +296,7 @@ public class LeaderboardManager : MonoBehaviour
                         Debug.Log("Full name has been set to " + fullName);
 
                         Rank = int.Parse(o["rank"].ToString());
-                        ObscuredPrefs.Get("rank", Rank);
+                        ObscuredPrefs.Get("rank", (int)Rank);
                     }
                     else
                     {

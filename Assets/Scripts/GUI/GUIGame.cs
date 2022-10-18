@@ -27,6 +27,7 @@ public class GUIGame : MonoBehaviour
     [HideInInspector]
     public bool CanSwapTiles = true;
     public TextMeshProUGUI TxtScore;
+    public Sprite[] RobotSprites;
 
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
@@ -565,4 +566,42 @@ public class GUIGame : MonoBehaviour
         CanSwapTiles = true;
     }
 
+    public void SetRobots(int robot1, int robot2, int robot3)
+    {
+        transform.Find("ImgPlayerRobot1").GetComponent<Image>().sprite = RobotSprites[robot1];
+        transform.Find("ImgPlayerRobot2").GetComponent<Image>().sprite = RobotSprites[robot2];
+        transform.Find("ImgPlayerRobot3").GetComponent<Image>().sprite = RobotSprites[robot3];
+    }
+
+    public void DisplayHintAt(int x1, int y1)
+    {
+        StartCoroutine(DisplayHintAtNow(x1, y1));
+    }
+
+    IEnumerator DisplayHintAtNow(int x1, int y1)
+    {
+        Debug.Log("Displaying hint");
+        Transform tile1 = transform.Find("Tile_" + x1 + "_" + y1);
+
+        if (tile1 == null)
+        {
+            tile1 = transform.Find("Tile_" + x1 + "_" + y1 + "_deleted");
+            if (tile1 == null)
+            {
+                Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x1 + "_" + y1);
+                yield break;
+            }
+        }
+
+        float _x1 = tile1.GetComponent<RectTransform>().anchoredPosition.x;
+        float _y1 = tile1.GetComponent<RectTransform>().anchoredPosition.y;
+
+        for (int i = 0; i < 8; i++)
+        {
+            tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1 + (i % 2 == 0 ? 1 : -1) * UnityEngine.Random.Range(0f, 10f), _y1 + (i % 2 == 0 ? 1 : -1) * UnityEngine.Random.Range(0f, 10f)), 0.15f).SetEase(Ease.Linear);
+            yield return new WaitForSeconds(0.15f);
+        }
+
+        tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1, _y1), 0.15f).SetEase(Ease.Linear);
+    }
 }

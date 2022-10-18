@@ -28,10 +28,14 @@ public class GUIMenu : MonoBehaviour
     public GameObject PnlPrompt;
     public GameObject PnlWelcome;
     public GameObject PnlHighScores;
+    public GameObject PnlRobotSelection;
 
     GamePlayManager gamePlayManager = null;
     WalletManager walletManager;
     string fullName = "";
+    int selectedRobot1 = -1;
+    int selectedRobot2 = -1;
+    int selectedRobot3 = -1;
 
     private void Awake()
     {
@@ -44,11 +48,22 @@ public class GUIMenu : MonoBehaviour
 
     private void Start()
     {
+        if(PnlWelcome == null)
+        {
+            // Could be a promotional build
+            InitSession(LeaderboardManager.Instance.PlayerWalletAddress);
+            return;
+        }
+
+        //Debug.Log("API_URL: " + Environment.GetEnvironmentVariable("API_URL"));
+        //Debug.Log("SECREAT_HEADER: " + Environment.GetEnvironmentVariable("SECREAT_HEADER"));
+
         PnlWelcome.SetActive(true);
         PnlPrompt.SetActive(false);
         PnlHighScores.SetActive(false);
+        PnlRobotSelection.SetActive(false);
 
-        Debug.Log("Stored wallet address is: " + LeaderboardManager.Instance.PlayerWalletAddress);
+        //Debug.Log("Stored wallet address is: " + LeaderboardManager.Instance.PlayerWalletAddress);
         if(!string.IsNullOrEmpty(LeaderboardManager.Instance.PlayerWalletAddress))
         {
             PnlWelcome.SetActive(false);
@@ -57,28 +72,6 @@ public class GUIMenu : MonoBehaviour
         {
 
         }
-
-        /*if (!authenticated)
-        {
-            DisplayPlayerInfo(false);
-            DisplayPlayerInfoLoading(true);
-            DisplayPlayerOffline(false);
-
-            if (!string.IsNullOrEmpty(PlayerId) && !string.IsNullOrEmpty(SessionToken))
-            {
-                StartCoroutine(Authenticate());
-            }
-            else if (!string.IsNullOrEmpty(PlayerId) && !string.IsNullOrEmpty(Password))
-            {
-                StartCoroutine(Login());
-            }
-        }
-        else
-        {
-            DisplayPlayerInfo(true);
-            DisplayPlayerInfoLoading(false);
-            DisplayPlayerOffline(false);
-        }*/
     }
 
     public void SwitchToMap()
@@ -86,6 +79,13 @@ public class GUIMenu : MonoBehaviour
         MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
 
         StartCoroutine(TurnOffGUI());
+    }
+
+    public void SetSelectedRobots(int robot1, int robot2, int robot3)
+    {
+        selectedRobot1 = robot1;
+        selectedRobot2 = robot2;
+        selectedRobot3 = robot3;
     }
 
     public void StartLevel1()
@@ -166,8 +166,11 @@ public class GUIMenu : MonoBehaviour
 
         MapImage.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(true);
+        GameImage.GetComponent<GUIGame>().SetRobots(selectedRobot1, selectedRobot2, selectedRobot3);
         GameImage.GetComponent<CanvasGroup>().alpha = 0;
         GameImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
+
+        gamePlayManager?.StartLevel(levelFile, levelNumber);
 
         yield return new WaitForSeconds(1);
 
@@ -184,8 +187,9 @@ public class GUIMenu : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        gamePlayManager?.StartLevel(levelFile, levelNumber);
+        GameImage.GetComponent<GUIGame>().CanSwapTiles = true;
         MenuImage.gameObject.SetActive(false);
+        txtStatus.gameObject.SetActive(false);
     }
 
     public void DisplayStatusText(string message)
@@ -199,7 +203,25 @@ public class GUIMenu : MonoBehaviour
     public void DisplayWin()
     {
         WinDialogImage.gameObject.SetActive(true);
+        Transform imgWin = WinDialogImage.transform.Find("ImgWin");
+        Transform imgLose = WinDialogImage.transform.Find("ImgLose");
+        imgWin.gameObject.SetActive(true);
+        imgLose.gameObject.SetActive(false);
+
+        imgWin.transform.localScale = Vector3.zero;
+        imgWin.transform.DOScale(Vector3.one, 0.5f);
         //StartCoroutine(DisplayWinNow(numLevel, score));
+    }
+
+    public void DisplayLose()
+    {
+        Transform imgWin = WinDialogImage.transform.Find("ImgWin");
+        Transform imgLose = WinDialogImage.transform.Find("ImgLose");
+        imgWin.gameObject.SetActive(false);
+        imgLose.gameObject.SetActive(true);
+
+        imgLose.transform.localScale = Vector3.zero;
+        imgLose.transform.DOScale(Vector3.one, 0.5f);
     }
 
     /*IEnumerator DisplayWinNow(int numLevel, long score)
@@ -264,7 +286,7 @@ public class GUIMenu : MonoBehaviour
     public void DisplayFullName(string fullName)
     {
         this.fullName = fullName;
-        PnlPlayerInfo.transform.Find("TxtPlayerName").GetComponent<TextMeshProUGUI>().text = fullName;
+        PnlPlayerInfo.transform.Find("WindowBackground/BtnChangeName/TxtPlayerName").GetComponent<TextMeshProUGUI>().text = fullName.ToUpper();
     }
 
     public void SetFullName()
@@ -281,7 +303,7 @@ public class GUIMenu : MonoBehaviour
     {
         PnlPrompt.SetActive(true);
         PnlPrompt.transform.SetAsLastSibling();
-        PnlPrompt.transform.Find("TxtInfo").GetComponent<TextMeshProUGUI>().text = title;
+        PnlPrompt.transform.Find("Window/TxtInfo").GetComponent<TextMeshProUGUI>().text = title;
 
         TMP_InputField input = PnlPrompt.transform.Find("InpPrompt").GetComponent<TMP_InputField>();
         TextMeshProUGUI placehoder = PnlPrompt.transform.Find("InpPrompt/Text Area/Placeholder").GetComponent<TextMeshProUGUI>();
@@ -311,17 +333,17 @@ public class GUIMenu : MonoBehaviour
 
     internal void SetPlayerRank(long score, int rank)
     {
-        MenuImage.transform.Find("PlayerInfo/BtnRank/TxtStart").GetComponent<TextMeshProUGUI>().text = rank.ToString().PadLeft(5, '0');
+        PnlPlayerInfo.transform.Find("WindowBackground/BtnRank/TxtStart").GetComponent<TextMeshProUGUI>().text = rank.ToString().PadLeft(5, '0');
         DisplayPlayerRank();
     }
 
     public void DisplayPlayerRank()
     {
-        MenuImage.transform.Find("PlayerInfo/BtnRank/TxtStart").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Rank.ToString().PadLeft(5, '0');
+        PnlPlayerInfo.transform.Find("WindowBackground/BtnRank/TxtStart").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Rank.ToString().PadLeft(5, '0');
 
         GameObject templateItem = PnlHighScores.transform.Find("TxtRowTemplate").gameObject;
         templateItem.GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Rank + ".";
-        templateItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.PlayerFullName;
+        templateItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.PlayerFullName.ToUpper();
         templateItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Score == -1 ? "N/A" : LeaderboardManager.Instance.Score.ToString();
     }
 
@@ -330,7 +352,7 @@ public class GUIMenu : MonoBehaviour
         GameObject loading = PnlHighScores.transform.Find("LoadingPlace").gameObject;
         loading.SetActive(true);
 
-        GameObject scoreList = PnlHighScores.transform.Find("ScoreList").gameObject;
+        GameObject scoreList = PnlHighScores.transform.Find("Window/ScoreList").gameObject;
         scoreList.SetActive(false);
 
         MenuImage.gameObject.SetActive(false);
@@ -352,6 +374,8 @@ public class GUIMenu : MonoBehaviour
             scoreList.SetActive(true);
             loading.SetActive(false);
             RectTransform rect;
+            var root = lineRoot.GetComponent<RectTransform>();
+            root.sizeDelta = new Vector2(root.sizeDelta.x, 42 * result.Count + 20);
             for (int i = 0; i < result.Count; i++)
             {
                 lineItem = Instantiate(templateItem, lineRoot);
@@ -365,7 +389,7 @@ public class GUIMenu : MonoBehaviour
                 lineItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
 
                 rect = lineItem.GetComponent<RectTransform>();
-                rect.anchoredPosition = new Vector2(35, (i + 1) * -42);
+                rect.anchoredPosition = new Vector2(-225, 10 + (i + 1) * -42);
             }
 
             DisplayPlayerRank();
@@ -385,15 +409,23 @@ public class GUIMenu : MonoBehaviour
 
     public void InitSession(string address)
     {
-        Debug.Log("Init session...");
-        LeaderboardManager.Instance.SetPlayerWalletAddress(address);
-        PnlWelcome.SetActive(false);
+        Debug.Log("Init session for " + address + "...");
+        if (!string.IsNullOrEmpty(address))
+        {
+            LeaderboardManager.Instance.SetPlayerWalletAddress(address);
+        }
+
+        if (PnlWelcome != null)
+        {
+            PnlWelcome?.SetActive(false);
+        }
 
         PlayButton.gameObject.SetActive(true);
         TxtStatus.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(false);
 
         DisplayPlayerInfoLoading(true);
+        DisplayPlayerInfo(false);
         DisplayPlayerOffline(false);
 
         LeaderboardManager.Instance.GetPlayerScore((parameter) =>
@@ -410,5 +442,11 @@ public class GUIMenu : MonoBehaviour
 
         DisplayFullName(LeaderboardManager.Instance.PlayerFullName);
         DisplayPlayerRank();
+    }
+
+    public void DisplayRobotSelection()
+    {
+        PnlRobotSelection.SetActive(true);
+        gameObject.SetActive(false);
     }
 }

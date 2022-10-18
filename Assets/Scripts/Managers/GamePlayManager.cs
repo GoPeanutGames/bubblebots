@@ -22,6 +22,7 @@ public class GamePlayManager : MonoBehaviour
     public Animator Robot2Anim;
     public GameObject HitEffect1;
     public GameObject HitEffect2;
+    public int HintDuration = 7;
     public int[] EnemyHPs = new int[] { 40, 40, 40 };
     int[] numHit = new int[] { 0, 0, 0 };
 
@@ -44,6 +45,10 @@ public class GamePlayManager : MonoBehaviour
     int killedEnemies = 0;
     int currentWave = 1;
     int maxEnemies = 3;
+
+    int currentPlayer = 0;
+    int maxPayerRobots = 3;
+
     long score = 0;
     bool levelEnded = false;
 
@@ -54,6 +59,7 @@ public class GamePlayManager : MonoBehaviour
     bool sm4InLine = false;
     bool smBigT = false;
     bool smBigL = false;
+    DateTime timeForNewHint = DateTime.MinValue;
 
     public string[,] TileSet
     {
@@ -96,6 +102,7 @@ public class GamePlayManager : MonoBehaviour
         }
 
         numHit = new int[] { 0, 0, 0 };
+        timeForNewHint = DateTime.Now + new TimeSpan(0, 0, 7);
     }
 
     void RenderLevel(LevelInformation levelInfo)
@@ -1338,6 +1345,13 @@ public class GamePlayManager : MonoBehaviour
         GameGUI.CanSwapTiles = true;
         releaseTileX = -1;
         releaseTileY = -1;
+
+        StartHintingCountDown();
+    }
+
+    private void StartHintingCountDown()
+    {
+        timeForNewHint = DateTime.Now + new TimeSpan(0, 0, HintDuration);
     }
 
     private void DisplayDebugHints()
@@ -1678,5 +1692,57 @@ public class GamePlayManager : MonoBehaviour
         this.score += score;
 
         return this.score;
+    }
+
+    private void Update()
+    {
+        if(timeForNewHint != DateTime.MinValue && timeForNewHint <= DateTime.Now)
+        {
+            Debug.Log("Testing the hint (next test is in " + timeForNewHint + ")");
+            timeForNewHint = DateTime.Now + new TimeSpan(0, 0, HintDuration + 1);
+
+            hints.Clear();
+            hintShapes.Clear();
+            //Debug.Log("S0");
+
+            int firstVertical = 0;
+            for (int x = 0; x < levelInfo.Width - 1; x++)
+            {
+                for (int y = 0; y < levelInfo.Height - 1; y++)
+                {
+                    // test right
+                    SwapKeys(x, y, x + 1, y);
+                    TestForAMatchAround(x, y);
+                    TestForAMatchAround(x + 1, y);
+                    SwapKeys(x, y, x + 1, y);
+
+                    firstVertical = hints.Count;
+                    // test down
+                    SwapKeys(x, y, x, y + 1);
+                    TestForAMatchAround(x, y);
+                    TestForAMatchAround(x, y + 1);
+                    SwapKeys(x, y, x, y + 1);
+                }
+            }
+
+            if (hints.Count > 0)
+            {
+                int selectedHint = UnityEngine.Random.Range(0, hints.Count);
+                GameGUI.DisplayHintAt((int)hints[selectedHint][0].x, (int)hints[selectedHint][0].y);
+            }
+
+            hints.Clear();
+            hintShapes.Clear();
+        }
+    }
+
+    public void ResetHintTime()
+    {
+        timeForNewHint = DateTime.MinValue;
+    }
+
+    public DateTime GetTimeForNewHint()
+    {
+        return timeForNewHint;
     }
 }
