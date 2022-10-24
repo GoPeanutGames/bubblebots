@@ -134,7 +134,12 @@ public class GUIGame : MonoBehaviour
 
     public void TargetEnemy(int currentEnemy)
     {
-        if (!CanSwapTiles)
+        TargetEnemy(currentEnemy, true);
+    }
+
+    public void TargetEnemy(int currentEnemy, bool manual)
+    {
+        if (manual && !CanSwapTiles)
         {
             return;
         }

@@ -1034,7 +1034,7 @@ public class GamePlayManager : MonoBehaviour
 
         GameGUI.KillEnemy();
         currentEnemy = (currentEnemy + 1) % maxEnemies;
-        GameGUI.TargetEnemy(currentEnemy);
+        GameGUI.TargetEnemy(currentEnemy, false);
     }
 
     IEnumerator FinishLevel()
