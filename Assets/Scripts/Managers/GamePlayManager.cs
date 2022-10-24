@@ -59,7 +59,7 @@ public class GamePlayManager : MonoBehaviour
     bool sm4InLine = false;
     bool smBigT = false;
     bool smBigL = false;
-    DateTime timeForNewHint = DateTime.MinValue;
+    float timeForNewHint = 0;
 
     public string[,] TileSet
     {
@@ -79,6 +79,7 @@ public class GamePlayManager : MonoBehaviour
         LevelInformation levelInfo;
         currentLevel = levelNumber;
         currentEnemy = 0;
+        currentPlayer = 0;
         killedEnemies = 0;
         currentWave = 1;
         levelEnded = false;
@@ -95,14 +96,14 @@ public class GamePlayManager : MonoBehaviour
         }
 
         RenderLevel(levelInfo);
-        GameGUI.TargetEnemy(0);
         for (int g = 0; g < GameGUI.PlayerGauges.Length; g++)
         {
             GameGUI.PlayerGauges[g].value = GameGUI.PlayerGauges[g].maxValue;
         }
 
         numHit = new int[] { 0, 0, 0 };
-        timeForNewHint = DateTime.Now + new TimeSpan(0, 0, 7);
+        //timeForNewHint = DateTime.Now + new TimeSpan(0, 0, 7);
+        StartHintingCountDown();
     }
 
     void RenderLevel(LevelInformation levelInfo)
@@ -607,7 +608,7 @@ public class GamePlayManager : MonoBehaviour
 
         if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1 && tileSet[x, y] != tileSet[releaseTileX, releaseTileY])
         {
-            GameGUI.CanSwapTiles = false;
+            GameGUI.LockTiles("L2");
 
             if (IsSpecialGem(tileSet[x, y]))
             {
@@ -1041,8 +1042,9 @@ public class GamePlayManager : MonoBehaviour
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
         enemyDead = true;
+        ResetHintTime();
         //Robot1Anim.CrossFade("YBotDie", 0.1f);
-        GameGUI.CanSwapTiles = false;
+        GameGUI.LockTiles("L3");
         numLevel += 1;
 
         MenuGUI.gameObject.SetActive(true);
@@ -1300,6 +1302,7 @@ public class GamePlayManager : MonoBehaviour
             }
 
             StartCoroutine(MoveOverAfter(0.5f));
+            StartHintingCountDown();
         } else
         {
             ReleaseTiles();
@@ -1349,9 +1352,9 @@ public class GamePlayManager : MonoBehaviour
         StartHintingCountDown();
     }
 
-    private void StartHintingCountDown()
+    public void StartHintingCountDown()
     {
-        timeForNewHint = DateTime.Now + new TimeSpan(0, 0, HintDuration);
+        timeForNewHint = Time.time + HintDuration;
     }
 
     private void DisplayDebugHints()
@@ -1696,10 +1699,11 @@ public class GamePlayManager : MonoBehaviour
 
     private void Update()
     {
-        if(timeForNewHint != DateTime.MinValue && timeForNewHint <= DateTime.Now)
+        if(timeForNewHint != 0 && timeForNewHint <= Time.time)
         {
-            Debug.Log("Testing the hint (next test is in " + timeForNewHint + ")");
-            timeForNewHint = DateTime.Now + new TimeSpan(0, 0, HintDuration + 1);
+            //Debug.Log("Testing the hint (next test is in " + timeForNewHint + ")");
+            //timeForNewHint = DateTime.Now + new TimeSpan(0, 0, HintDuration + 1);
+            StartHintingCountDown();
 
             hints.Clear();
             hintShapes.Clear();
@@ -1727,7 +1731,17 @@ public class GamePlayManager : MonoBehaviour
 
             if (hints.Count > 0)
             {
-                int selectedHint = UnityEngine.Random.Range(0, hints.Count);
+                int selectedHint = 0;
+                int highestCount = 0;
+                for (int i = 0; i < hints.Count; i++)
+                {
+                    if (hints[i].Length > highestCount)
+                    {
+                        highestCount = hints[i].Length;
+                        selectedHint = i;
+                    }
+                }
+
                 GameGUI.DisplayHintAt((int)hints[selectedHint][0].x, (int)hints[selectedHint][0].y);
             }
 
@@ -1738,11 +1752,16 @@ public class GamePlayManager : MonoBehaviour
 
     public void ResetHintTime()
     {
-        timeForNewHint = DateTime.MinValue;
+        timeForNewHint = 0;
     }
 
-    public DateTime GetTimeForNewHint()
+    public float GetTimeForNewHint()
     {
         return timeForNewHint;
+    }
+
+    public bool GetEnemyDead()
+    {
+        return enemyDead;
     }
 }

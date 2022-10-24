@@ -7,6 +7,7 @@ using DG.Tweening;
 using static LevelManager;
 using Unity.VisualScripting;
 using TMPro;
+using UnityEngine.Rendering;
 
 public class GUIGame : MonoBehaviour
 {
@@ -28,6 +29,7 @@ public class GUIGame : MonoBehaviour
     public bool CanSwapTiles = true;
     public TextMeshProUGUI TxtScore;
     public Sprite[] RobotSprites;
+    public Transform WinDialogImage;
 
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
@@ -36,6 +38,7 @@ public class GUIGame : MonoBehaviour
     List<GameObject> explosionEffects = new List<GameObject>();
     int currentEnemy = 0;
     int currentPlayer = 0;
+    string lastLockedBy = "";
 
     public delegate void OnGUIEvent(object param);
 
@@ -47,8 +50,18 @@ public class GUIGame : MonoBehaviour
 
     public void DamageToPlayerRobot(float damage)
     {
-        if (currentPlayer >= PlayerGauges.Length)
+        if (damage >= PlayerGauges[currentPlayer].value)
         {
+            // current robot is dead
+            PlayerGauges[currentPlayer].DOValue(0, SwapDuration);
+            PlayerRobots[currentPlayer].Die();
+            currentPlayer += 1;
+        }
+
+        if (PlayerGauges[0].value + PlayerGauges[1].value + PlayerGauges[2].value <= 0) //(currentPlayer >= PlayerGauges.Length)
+        {
+            gamePlayManager.ResetHintTime();
+            DisplayLose();
             return;
         }
 
@@ -59,6 +72,18 @@ public class GUIGame : MonoBehaviour
         bullet.gameObject.SetActive(true);
         bullet.transform.DOMove(new Vector3(PlayerRobots[currentPlayer].transform.position.x, PlayerRobots[currentPlayer].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
         StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1));
+    }
+
+    private void DisplayLose()
+    {
+        WinDialogImage.gameObject.SetActive(true);
+        Transform imgWin = WinDialogImage.transform.Find("ImgWin");
+        Transform imgLose = WinDialogImage.transform.Find("ImgLose");
+        imgWin.gameObject.SetActive(false);
+        imgLose.gameObject.SetActive(true);
+
+        imgLose.transform.localScale = Vector3.zero;
+        imgLose.transform.DOScale(Vector3.one, 0.5f);
     }
 
     IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy)
@@ -109,6 +134,11 @@ public class GUIGame : MonoBehaviour
 
     public void TargetEnemy(int currentEnemy)
     {
+        if (!CanSwapTiles)
+        {
+            return;
+        }
+
         if(EnemyGauges[currentEnemy].value <= 0)
         {
             return;
@@ -247,7 +277,7 @@ public class GUIGame : MonoBehaviour
 
     IEnumerator SwapTilesNow(int x1, int y1, int x2, int y2, bool changeInfo)
     {
-        CanSwapTiles = false;
+        LockTiles("L1");
         Transform tile1 = transform.Find("Tile_" + x1 + "_" + y1);
         Transform tile2 = transform.Find("Tile_" + x2 + "_" + y2);
 
@@ -272,8 +302,19 @@ public class GUIGame : MonoBehaviour
         }
     }
 
+    public void LockTiles(string lockSource)
+    {
+        lastLockedBy = lockSource;
+        CanSwapTiles = false;
+    }
+
     public void ExplodeTile(int x, int y, bool destroyTile)
     {
+        if (gamePlayManager.GetEnemyDead())
+        {
+            return;
+        }
+
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = transform.Find("Tile_" + x + "_" + y);
         
@@ -291,6 +332,8 @@ public class GUIGame : MonoBehaviour
         Transform tileToDisactivate = transform.Find("Tile_" + x + "_" + y);
         tileToDisactivate.gameObject.SetActive(false); //transform.localScale = Vector3.zero;
         tileToDisactivate.name += "_deleted";
+
+        gamePlayManager.StartHintingCountDown();
     }
 
     IEnumerator DespawnExplosion(GameObject effect)
@@ -415,7 +458,7 @@ public class GUIGame : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.F1))
         {
-            DebugTileList();
+            //DamageToPlayerRobot(10);
         }
     }
 
@@ -537,7 +580,7 @@ public class GUIGame : MonoBehaviour
 
     public void StartNextWave()
     {
-        CanSwapTiles = false;
+        LockTiles("L0");
 
         StartCoroutine(SwapWaves());
     }
@@ -575,12 +618,16 @@ public class GUIGame : MonoBehaviour
 
     public void DisplayHintAt(int x1, int y1)
     {
+        if (gamePlayManager.GetEnemyDead())
+        {
+            return;
+        }
+
         StartCoroutine(DisplayHintAtNow(x1, y1));
     }
 
     IEnumerator DisplayHintAtNow(int x1, int y1)
     {
-        Debug.Log("Displaying hint");
         Transform tile1 = transform.Find("Tile_" + x1 + "_" + y1);
 
         if (tile1 == null)
@@ -598,10 +645,27 @@ public class GUIGame : MonoBehaviour
 
         for (int i = 0; i < 8; i++)
         {
+            if (!CanSwapTiles)
+            {
+                tile1.GetComponent<RectTransform>().anchoredPosition = new Vector2(_x1, _y1);
+                yield break;
+            }
+
             tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1 + (i % 2 == 0 ? 1 : -1) * UnityEngine.Random.Range(0f, 10f), _y1 + (i % 2 == 0 ? 1 : -1) * UnityEngine.Random.Range(0f, 10f)), 0.15f).SetEase(Ease.Linear);
             yield return new WaitForSeconds(0.15f);
         }
 
         tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1, _y1), 0.15f).SetEase(Ease.Linear);
+    }
+
+    public void DisplayDebug()
+    {
+        Debug.Log("DateTimeNow: " + DateTime.Now);
+        Debug.Log("CanSwapTiles: " + CanSwapTiles);
+        Debug.Log("TimeForNewHint: " + gamePlayManager.GetTimeForNewHint());
+        Debug.Log("LastLockedBy: " + lastLockedBy);
+        Debug.Log("DebugTileList: ");
+
+        DebugTileList();
     }
 }

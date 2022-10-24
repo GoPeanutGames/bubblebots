@@ -25,6 +25,7 @@ public class LeaderboardManager : MonoBehaviour
     public ObscuredString Password = "123";
     public delegate void LeaderboardEvent(object param);
 
+    string crptoPassword;
     string SessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
     GUIMenu gui;
 
@@ -32,6 +33,8 @@ public class LeaderboardManager : MonoBehaviour
 
     private void Awake()
     {
+        crptoPassword = "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
+
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -90,6 +93,7 @@ public class LeaderboardManager : MonoBehaviour
     private IEnumerator SaveScoreNow(long score)
     {
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"score\":" + score.ToString().Replace("\"", "'").Trim() + "}";
+        formData = "{\"data\":\"" + SimpleAESEncryption.Encrypt("", crptoPassword).EncryptedText + "\"}";
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");
         using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/score", formData))
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&score=" + score))
@@ -115,12 +119,12 @@ public class LeaderboardManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     string data = webRequest.downloadHandler.text;
-                    Debug.Log("Received data (set score): " + data);
+                    //Debug.Log("Received data (set score): " + data);
 
                     JObject o = JObject.Parse(data);
                     if (o["rank"] != null)
                     {
-                        Debug.Log("Score has been set with success");
+                        //Debug.Log("Score has been set with success");
                         Rank = int.Parse(o["rank"].ToString());
                         Score = score;
 
@@ -165,7 +169,7 @@ public class LeaderboardManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     string data = webRequest.downloadHandler.text;
-                    Debug.Log("Received data (get player score): " + data);
+                    //Debug.Log("Received data (get player score): " + data);
 
                     JObject o = JObject.Parse(data);
                     score = long.Parse(o["score"].ToString());
@@ -216,7 +220,7 @@ public class LeaderboardManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     string data = webRequest.downloadHandler.text;
-                    Debug.Log("Received data (scores): " + data);
+                    //Debug.Log("Received data (scores): " + data);
 
                     string playerName;
                     JArray scoreData = JArray.Parse(data.ToString());
@@ -288,12 +292,12 @@ public class LeaderboardManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     string data = webRequest.downloadHandler.text;
-                    Debug.Log("Received data (set full name): " + data);
+                    //Debug.Log("Received data (set full name): " + data);
 
                     JObject o = JObject.Parse(data);
                     if (o.ContainsKey("rank"))
                     {
-                        Debug.Log("Full name has been set to " + fullName);
+                        //Debug.Log("Full name has been set to " + fullName);
 
                         Rank = int.Parse(o["rank"].ToString());
                         ObscuredPrefs.Get("rank", (int)Rank);

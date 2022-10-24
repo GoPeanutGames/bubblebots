@@ -5,6 +5,7 @@ mergeInto(LibraryManager.library, {
 		
 		if(accounts.length > 0)
 		{
+			myGameInstance.SendMessage("Canvas/PnlUI", "NotifyMetamaskSuccess");
 			myGameInstance.SendMessage("Canvas/PnlUI", "InitSession", accounts[0]);
 		} else {
 			console.log("No wallet has been connected");
@@ -14,5 +15,15 @@ mergeInto(LibraryManager.library, {
 	LoginWithMetamask: function()
 	{
 		//LoginWithMetamask();
+	},
+	
+	DisplayDebug: function()
+	{
+		myGameInstance.SendMessage("Canvas/PnlGame", "DisplayDebug");
+	},
+	
+	DisplayTiles: function()
+	{
+		myGameInstance.SendMessage("Canvas/PnlGame", "DebugTileList");
 	},
 });

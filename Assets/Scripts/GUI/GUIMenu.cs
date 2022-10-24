@@ -188,8 +188,12 @@ public class GUIMenu : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         GameImage.GetComponent<GUIGame>().CanSwapTiles = true;
+        GameImage.GetComponent<GUIGame>().TargetEnemy(0);
         MenuImage.gameObject.SetActive(false);
         txtStatus.gameObject.SetActive(false);
+
+        FindObjectOfType<SoundManager>().StopStartMusic();
+        FindObjectOfType<SoundManager>().PlayStartMusic();
     }
 
     public void DisplayStatusText(string message)
@@ -405,6 +409,11 @@ public class GUIMenu : MonoBehaviour
     public void LoginWithMetamask()
     {
         walletManager?.LoginWithMetamask(null, null);
+    }
+
+    public void NotifyMetamaskSuccess()
+    {
+        FindObjectOfType<SoundManager>().PlayMetamaskEffect();
     }
 
     public void InitSession(string address)

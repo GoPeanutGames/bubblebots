@@ -32,22 +32,27 @@ public class GUIRobotSelection : MonoBehaviour
         PnlMenuUI.GetComponent<GUIMenu>().SetSelectedRobots(selectedRobot1, selectedRobot2, selectedRobot3);
         PnlMenuUI.GetComponent<GUIMenu>().StartLevel1();
         gameObject.SetActive(false);
+
+        FindObjectOfType<SoundManager>().PlayStartButtonEffect();
     }
 
     public void SelectRobot(int order)
     {
-        if(order < 6 && totalSelectedRobots != 3)
+        if(totalSelectedRobots != 3)
         {
             if(selectedRobot1 == order || selectedRobot2 == order || selectedRobot3 == order)
             {
+                Debug.Log("SEL101");
                 return;
             }
 
             SelectRobotImage(order);
 
-            totalSelectedRobots = Mathf.Clamp(totalSelectedRobots + 1, 1, 3);
-
+            CalculateTotalNumberOfRobots();
             BtnStart.interactable = totalSelectedRobots == 3;
+        } else
+        {
+            Debug.Log("SEL102 (" + totalSelectedRobots + ")");
         }
     }
 
@@ -110,7 +115,27 @@ public class GUIRobotSelection : MonoBehaviour
         button.transform.Find("Avatar").GetComponent<Image>().sprite = null;
         button.transform.Find("Avatar").GetComponent<Image>().color = new Color(1, 1, 1, 0);
 
-        totalSelectedRobots = Mathf.Clamp(totalSelectedRobots - 1, 0, 2);
+        CalculateTotalNumberOfRobots();
         BtnStart.interactable = totalSelectedRobots == 3;
+    }
+
+    private void CalculateTotalNumberOfRobots()
+    {
+        totalSelectedRobots = 0;
+
+        if (selectedRobot1 != -1)
+        {
+            totalSelectedRobots += 1;
+        }
+
+        if (selectedRobot2 != -1)
+        {
+            totalSelectedRobots += 1;
+        }
+
+        if (selectedRobot3 != -1)
+        {
+            totalSelectedRobots += 1;
+        }
     }
 }
