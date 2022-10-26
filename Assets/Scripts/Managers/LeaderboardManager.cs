@@ -5,8 +5,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 public class LeaderboardManager : MonoBehaviour
@@ -24,7 +26,23 @@ public class LeaderboardManager : MonoBehaviour
     public ObscuredString PlayerId = "tolgak";
     public ObscuredString Password = "123";
     public delegate void LeaderboardEvent(object param);
+    public bool GuestMode
+    {
+        get
+        {
+            return guestMode;
+        }
+    }
+    public int RobotsKilled
+    {
+        get
+        {
+            return robotsKilled;
+        }
+    }
 
+    int robotsKilled = 0;
+    bool guestMode = false;
     string crptoPassword;
     string SessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
     GUIMenu gui;
@@ -33,7 +51,7 @@ public class LeaderboardManager : MonoBehaviour
 
     private void Awake()
     {
-        crptoPassword = "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
+        crptoPassword = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";
 
         if (Instance != null)
         {
@@ -74,17 +92,50 @@ public class LeaderboardManager : MonoBehaviour
             Rank = ObscuredPrefs.Get("rank", 9999);
         }
 
+        guestMode = PlayerWalletAddress == null;
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+
+#if UNITY_EDITOR
+    [MenuItem("Peanut Games/Clear Session")]
+    static void ClearSession()
+    {
+        ObscuredPrefs.Set("wallet_address", "");
+        Debug.Log("Player wallet address is cleared");
+    }
+
+    [MenuItem("Peanut Games/Chiper Test")]
+    static void ChiperTest()
+    {
+        string data = "{\\r\\n    \"address\": \"0xb354B942464755968a655144Bb1f69422b7D5ea2\",\\r\\n    \"score\": 10\\r\\n}";
+        string password = "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
+        //string password = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";
+        Debug.Log(SimpleAESEncryption.Encrypt2(data, password)); // JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV
+        // 23809ed892807f7d3759d81ee5951516$3e6773410865db466ad99ac6586d8259da50bac00c2d5b74609df3e21dd48f57429d2a6af28a9e1937d6562498089f5f33f9092e2d215deb12cd8a82ccc4deafd9e31070059f9223bd11f0dc3fdeb115
+        // ln2eeq3we3qtpzvbT2OwDDKvkzQcd4yOYv2D7ShZOUFM18aCHRo4z9PJINAnkdjhjf2HY5HcxwGdRXXEPua2rPPtRFLc7J4vVWGI2UuldlwKH1Knmy4wSmQbLhJFghVAEhTAMnEzZz/OeNVjj0gFwA==
+    }
+
+#endif
 
     public void Start()
     {
         gui = FindObjectOfType<GUIMenu>();
     }
 
+    public void SetGuestMode()
+    {
+        guestMode = true;
+        PlayerWalletAddress = null;
+    }
+
     public void SaveScore(long score)
     {
+        if (guestMode)
+        {
+            return;
+        }
+
         this.Score = score;
 
         StartCoroutine(SaveScoreNow(score));
@@ -93,7 +144,7 @@ public class LeaderboardManager : MonoBehaviour
     private IEnumerator SaveScoreNow(long score)
     {
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"score\":" + score.ToString().Replace("\"", "'").Trim() + "}";
-        formData = "{\"data\":\"" + SimpleAESEncryption.Encrypt("", crptoPassword).EncryptedText + "\"}";
+        formData = "{\"data\":\"" + SimpleAESEncryption.Encrypt2(formData, crptoPassword) + "\"}";
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");
         using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/score", formData))
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&score=" + score))
@@ -143,6 +194,12 @@ public class LeaderboardManager : MonoBehaviour
 
     public void GetPlayerScore(LeaderboardEvent onComplete)
     {
+        if (guestMode)
+        {
+            onComplete?.Invoke("0,0");
+            return;
+        }
+
         StartCoroutine(GetPlayerScoreNow(onComplete));
     }
 
@@ -251,6 +308,11 @@ public class LeaderboardManager : MonoBehaviour
 
     public void SetFullName(string fullName)
     {
+        if (guestMode)
+        {
+            return;
+        }
+
         StartCoroutine(SetFullNameNow(fullName));
     }
 
@@ -260,6 +322,7 @@ public class LeaderboardManager : MonoBehaviour
         ObscuredPrefs.Set("full_name", PlayerFullName);
 
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"nickname\":\"" + fullName.Replace("\"", "'").Trim() + "\"}";
+        formData = "{\"data\":\"" + SimpleAESEncryption.Encrypt2(formData, crptoPassword) + "\"}";
 
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_fullname.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&full_name=" + fullName))
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");
@@ -318,7 +381,22 @@ public class LeaderboardManager : MonoBehaviour
 
     public void SetPlayerWalletAddress(string address)
     {
+        if (guestMode)
+        {
+            return;
+        }
+
         PlayerWalletAddress = address;
         ObscuredPrefs.Set("wallet_address", PlayerWalletAddress);
+    }
+
+    public void ResetKilledRobots()
+    {
+        robotsKilled = 0;
+    }
+
+    public void IncrementKilledRobots()
+    {
+        robotsKilled += 1;
     }
 }

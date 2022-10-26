@@ -29,9 +29,11 @@ public class GUIMenu : MonoBehaviour
     public GameObject PnlWelcome;
     public GameObject PnlHighScores;
     public GameObject PnlRobotSelection;
+    public GameObject PnlPlayAsGuest;
 
     GamePlayManager gamePlayManager = null;
     WalletManager walletManager;
+    SoundManager soundManager;
     string fullName = "";
     int selectedRobot1 = -1;
     int selectedRobot2 = -1;
@@ -44,11 +46,14 @@ public class GUIMenu : MonoBehaviour
 
         gamePlayManager = FindObjectOfType<GamePlayManager>();
         walletManager = FindObjectOfType<WalletManager>();
+        soundManager = FindObjectOfType<SoundManager>();
     }
 
     private void Start()
     {
-        if(PnlWelcome == null)
+        FindObjectOfType<SoundManager>().PlayStartMusic();
+
+        if (PnlWelcome == null)
         {
             // Could be a promotional build
             InitSession(LeaderboardManager.Instance.PlayerWalletAddress);
@@ -92,6 +97,9 @@ public class GUIMenu : MonoBehaviour
     {
         MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
 
+        soundManager.PlayLevelMusic();
+        GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "x0";
+        LeaderboardManager.Instance.ResetKilledRobots();
         SwitchToMultiplayer("level1", 1);
     }
 
@@ -139,6 +147,7 @@ public class GUIMenu : MonoBehaviour
 
         //MenuImage.gameObject.SetActive(false);
         MenuImage.transform.Find("PlayerInfo").gameObject.SetActive(false);
+        MenuImage.transform.Find("PlayAsGuest").gameObject.SetActive(false);
 
         /*MapImage.gameObject.SetActive(true);
         MapImage.GetComponent<CanvasGroup>().alpha = 0;
@@ -189,11 +198,30 @@ public class GUIMenu : MonoBehaviour
 
         GameImage.GetComponent<GUIGame>().CanSwapTiles = true;
         GameImage.GetComponent<GUIGame>().TargetEnemy(0);
-        MenuImage.gameObject.SetActive(false);
         txtStatus.gameObject.SetActive(false);
+        MenuImage.gameObject.SetActive(false);
+    }
 
-        FindObjectOfType<SoundManager>().StopStartMusic();
-        FindObjectOfType<SoundManager>().PlayStartMusic();
+    public void PlayAsGuest()
+    {
+        PnlPlayAsGuest.SetActive(true);
+        PnlWelcome.SetActive(false);
+    }
+
+    public void StartPlayingAsGuest()
+    {
+        LeaderboardManager.Instance.SetGuestMode();
+
+        //PlayButton.gameObject.SetActive(true);
+        TxtStatus.gameObject.SetActive(false);
+        GameImage.gameObject.SetActive(false);
+
+        DisplayPlayerInfoLoading(false);
+        DisplayPlayerInfo(false);
+        DisplayPlayerOffline(false);
+
+        //StartLevel1();
+        DisplayRobotSelection();
     }
 
     public void DisplayStatusText(string message)
@@ -413,7 +441,7 @@ public class GUIMenu : MonoBehaviour
 
     public void NotifyMetamaskSuccess()
     {
-        FindObjectOfType<SoundManager>().PlayMetamaskEffect();
+        soundManager?.PlayMetamaskEffect();
     }
 
     public void InitSession(string address)
@@ -455,6 +483,9 @@ public class GUIMenu : MonoBehaviour
 
     public void DisplayRobotSelection()
     {
+        soundManager?.FadeOutStartMusic();
+        soundManager?.FadeInRobotSelectionMusic();
+
         PnlRobotSelection.SetActive(true);
         gameObject.SetActive(false);
     }

@@ -76,6 +76,7 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartLevel(string levelFile, int levelNumber)
     {
+        //LeaderboardManager.Instance.ResetKilledRobots();
         LevelInformation levelInfo;
         currentLevel = levelNumber;
         currentEnemy = 0;
@@ -601,8 +602,14 @@ public class GamePlayManager : MonoBehaviour
 
     public void MoveOverTile(int x, int y)
     {
-        if (!GameGUI.CanSwapTiles || (x == releaseTileX && y == releaseTileY) || releaseTileX == -1 || releaseTileY == -1)
+        if (releaseTileX == -1 || releaseTileY == -1)
         {
+            return;
+        }
+
+        if (!GameGUI.CanSwapTiles || (x == releaseTileX && y == releaseTileY))
+        {
+            Debug.Log("L1-Q0 (" + (GameGUI.CanSwapTiles) + " | " + x + " | " + y + " | " + releaseTileX + " | " + releaseTileY + ")");
             return;
         }
 
@@ -612,6 +619,7 @@ public class GamePlayManager : MonoBehaviour
 
             if (IsSpecialGem(tileSet[x, y]))
             {
+                Debug.Log("L1-Q1");
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 StartCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
 
@@ -619,6 +627,7 @@ public class GamePlayManager : MonoBehaviour
             }
             else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
             {
+                Debug.Log("L1-Q2");
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 StartCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
 
@@ -631,21 +640,25 @@ public class GamePlayManager : MonoBehaviour
 
             if(hints.Count > 0)
             {
+                Debug.Log("L1-Q3");
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
                 StartCoroutine(ExplodeTiles());
             } else
             {
+                Debug.Log("L1-Q4");
                 CheckForAMatchWitchSwapingTiles(releaseTileX, releaseTileY, x, y);
 
                 if (hints.Count > 0)
                 {
+                    Debug.Log("L1-Q5");
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                     SwapKeys(x, y, releaseTileX, releaseTileY);
                     StartCoroutine(ExplodeTiles());
                 }
                 else
                 {
+                    Debug.Log("L1-Q6");
                     StartCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
                 }
             }
@@ -978,10 +991,10 @@ public class GamePlayManager : MonoBehaviour
 
             if (++killedEnemies >= maxEnemies)
             {
-                levelEnded = true;
-
                 if (++currentWave > levelInfo.Waves)
                 {
+                    levelEnded = true;
+                    FindObjectOfType<SoundManager>().FadeOutStartMusic();
                     StartCoroutine(FinishLevel());
                     LeaderboardManager.Instance.Score = score;
                 } else
@@ -1033,7 +1046,15 @@ public class GamePlayManager : MonoBehaviour
         }
 
         GameGUI.KillEnemy();
-        currentEnemy = (currentEnemy + 1) % maxEnemies;
+        //currentEnemy = (currentEnemy + 1) % maxEnemies;
+        for (int i = maxEnemies - 1; i >= 0; i--)
+        {
+            if (numHit[i] < EnemyHPs[currentEnemy])
+            {
+                currentEnemy = i;
+                break;
+            }
+        }
         GameGUI.TargetEnemy(currentEnemy, false);
     }
 
@@ -1063,6 +1084,7 @@ public class GamePlayManager : MonoBehaviour
 
         if(hints.Count == 0)
         {
+            ReleaseTiles();
             yield break;
         }
 
@@ -1261,6 +1283,11 @@ public class GamePlayManager : MonoBehaviour
 
     public void ProcessNewlyAppearedBlocks(List<Vector2> tilesToPut)
     {
+        if (levelEnded)
+        {
+            return;
+        }
+
         Vector2 to;
         // TODO: Process special matching
         List<Vector2[]> tempHints = new List<Vector2[]>();
@@ -1343,7 +1370,7 @@ public class GamePlayManager : MonoBehaviour
 
     IEnumerator ReleaseTilesNow()
     {
-        yield return new WaitForSeconds(GameGUI.SwapDuration * 1.25f);
+        yield return new WaitForSeconds(GameGUI.SwapDuration/* * 1.25f*/);
 
         GameGUI.CanSwapTiles = true;
         releaseTileX = -1;

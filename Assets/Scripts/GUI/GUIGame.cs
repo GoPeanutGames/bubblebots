@@ -28,9 +28,11 @@ public class GUIGame : MonoBehaviour
     [HideInInspector]
     public bool CanSwapTiles = true;
     public TextMeshProUGUI TxtScore;
+    public TextMeshProUGUI TxtKilledRobots;
     public Sprite[] RobotSprites;
     public Transform WinDialogImage;
 
+    SoundManager soundManager;
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
     LevelInformation levelInfo;
@@ -45,6 +47,7 @@ public class GUIGame : MonoBehaviour
     private void Awake()
     {
         gamePlayManager = FindObjectOfType<GamePlayManager>();
+        soundManager = FindObjectOfType<SoundManager>();
         skinManager = FindObjectOfType<SkinManager>();
     }
 
@@ -56,16 +59,18 @@ public class GUIGame : MonoBehaviour
             PlayerGauges[currentPlayer].DOValue(0, SwapDuration);
             PlayerRobots[currentPlayer].Die();
             currentPlayer += 1;
+        } else
+        {
+            PlayerGauges[currentPlayer].DOValue(PlayerGauges[currentPlayer].value - damage, SwapDuration);
         }
 
-        if (PlayerGauges[0].value + PlayerGauges[1].value + PlayerGauges[2].value <= 0) //(currentPlayer >= PlayerGauges.Length)
+        //if (PlayerGauges[0].value + PlayerGauges[1].value + PlayerGauges[2].value <= 0)
+        if (currentPlayer >= PlayerGauges.Length)
         {
             gamePlayManager.ResetHintTime();
             DisplayLose();
             return;
         }
-
-        PlayerGauges[currentPlayer].DOValue(PlayerGauges[currentPlayer].value - damage, SwapDuration);
 
         GameObject bullet = Instantiate(EnemyBullets[currentEnemy], EnemyBullets[currentEnemy].transform.parent);
         bullet.transform.position = EnemyBullets[currentEnemy].transform.position;
@@ -113,6 +118,9 @@ public class GUIGame : MonoBehaviour
 
     public void KillEnemy()
     {
+        LeaderboardManager.Instance.IncrementKilledRobots();
+        TxtKilledRobots.text = "x" + LeaderboardManager.Instance.RobotsKilled;
+
         EnemyRobots[currentEnemy].Die();
     }
 
@@ -272,7 +280,7 @@ public class GUIGame : MonoBehaviour
 
     public void SwapTiles(int x1, int y1, int x2, int y2, bool changeInfo)
     {
-        if(!(x1 == x2 || y1 == y2))
+        if (!(x1 == x2 || y1 == y2))
         {
             return;
         }
@@ -320,6 +328,7 @@ public class GUIGame : MonoBehaviour
             return;
         }
 
+        soundManager.PlayClickSound();
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = transform.Find("Tile_" + x + "_" + y);
         

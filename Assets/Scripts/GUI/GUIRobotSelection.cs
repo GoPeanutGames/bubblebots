@@ -10,6 +10,7 @@ public class GUIRobotSelection : MonoBehaviour
     public Button BtnStart;
     public Sprite[] RobotSprites;
 
+    SoundManager soundManager;
     int totalSelectedRobots = 0;
     int selectedRobot1 = -1;
     int selectedRobot2 = -1;
@@ -17,23 +18,27 @@ public class GUIRobotSelection : MonoBehaviour
 
     void Start()
     {
-        
+        soundManager = FindObjectOfType<SoundManager>();
     }
 
     public void BackToMenu()
     {
+        soundManager.FadeOutRobotSelectionMusic();
+        soundManager.PlayStartMusic();
+
         PnlMenuUI.SetActive(true);
         gameObject.SetActive(false);
     }
 
     public void Play()
     {
+        soundManager.FadeOutRobotSelectionMusic();
+        soundManager.PlayStartButtonEffect();
+
         PnlMenuUI.SetActive(true);
         PnlMenuUI.GetComponent<GUIMenu>().SetSelectedRobots(selectedRobot1, selectedRobot2, selectedRobot3);
         PnlMenuUI.GetComponent<GUIMenu>().StartLevel1();
         gameObject.SetActive(false);
-
-        FindObjectOfType<SoundManager>().PlayStartButtonEffect();
     }
 
     public void SelectRobot(int order)
@@ -58,6 +63,7 @@ public class GUIRobotSelection : MonoBehaviour
 
     private void SelectRobotImage(int order)
     {
+        soundManager.PlayClickSound();
         int selectOrder = 0;
         if (selectedRobot1 == -1)
         {
@@ -109,6 +115,7 @@ public class GUIRobotSelection : MonoBehaviour
                 return;
         }
 
+        soundManager.PlayClickSound();
         Transform button = transform.Find("BtnRobot" + (order + 1));
         button.transform.Find("Plus").gameObject.SetActive(true);
         button.transform.Find("Cross").gameObject.SetActive(false);
