@@ -1,4 +1,4 @@
-#define RANDOM_TILES_OFF
+#define RANDOM_TILES
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,9 +45,7 @@ public class GamePlayManager : MonoBehaviour
     int killedEnemies = 0;
     int currentWave = 1;
     int maxEnemies = 3;
-
-    int currentPlayer = 0;
-    int maxPayerRobots = 3;
+    int currentPlayer;
 
     long score = 0;
     bool levelEnded = false;
@@ -156,16 +154,16 @@ public class GamePlayManager : MonoBehaviour
 
         int[,] tileIndices = new int[levelInfo.Width, levelInfo.Height];
 #if RANDOM_TILES
-        tileIndices[0, 5] = 2;
+        tileIndices[0, 5] = 9; // 10, 11 explode whole board
         tileIndices[1, 5] = 1;
         tileIndices[2, 5] = 3;
         tileIndices[3, 5] = 1;
         tileIndices[4, 5] = 2;
-        tileIndices[5, 5] = 1;
+        tileIndices[5, 5] = 11;
         tileIndices[6, 5] = 2;
         tileIndices[7, 5] = 2;
 
-        tileIndices[0, 4] = 3;
+        tileIndices[0, 4] = 1;
         tileIndices[1, 4] = 3;
         tileIndices[2, 4] = 0;
         tileIndices[3, 4] = 3;
@@ -174,7 +172,7 @@ public class GamePlayManager : MonoBehaviour
         tileIndices[6, 4] = 0;
         tileIndices[7, 4] = 0;
 
-        tileIndices[0, 3] = 3;
+        tileIndices[0, 3] = 12;
         tileIndices[1, 3] = 0;
         tileIndices[2, 3] = 3;
         tileIndices[3, 3] = 1;
@@ -609,17 +607,22 @@ public class GamePlayManager : MonoBehaviour
 
         if (!GameGUI.CanSwapTiles || (x == releaseTileX && y == releaseTileY))
         {
-            Debug.Log("L1-Q0 (" + (GameGUI.CanSwapTiles) + " | " + x + " | " + y + " | " + releaseTileX + " | " + releaseTileY + ")");
+            //Debug.Log("L1-Q0 (" + (GameGUI.CanSwapTiles) + " | " + x + " | " + y + " | " + releaseTileX + " | " + releaseTileY + ")");
             return;
         }
 
-        if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1 && tileSet[x, y] != tileSet[releaseTileX, releaseTileY])
+        if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1)
         {
+            if(tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
+            {
+                StartCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
+                return;
+            }
+
             GameGUI.LockTiles("L2");
 
             if (IsSpecialGem(tileSet[x, y]))
             {
-                Debug.Log("L1-Q1");
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 StartCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
 
@@ -627,7 +630,6 @@ public class GamePlayManager : MonoBehaviour
             }
             else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
             {
-                Debug.Log("L1-Q2");
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 StartCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
 
@@ -640,29 +642,30 @@ public class GamePlayManager : MonoBehaviour
 
             if(hints.Count > 0)
             {
-                Debug.Log("L1-Q3");
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
                 StartCoroutine(ExplodeTiles());
             } else
             {
-                Debug.Log("L1-Q4");
                 CheckForAMatchWitchSwapingTiles(releaseTileX, releaseTileY, x, y);
 
                 if (hints.Count > 0)
                 {
-                    Debug.Log("L1-Q5");
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                     SwapKeys(x, y, releaseTileX, releaseTileY);
                     StartCoroutine(ExplodeTiles());
                 }
                 else
                 {
-                    Debug.Log("L1-Q6");
                     StartCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
                 }
             }
         }
+    }
+
+    private string ProcessDoubleBlast(int releaseTileX, int releaseTileY)
+    {
+        throw new NotImplementedException();
     }
 
     private void ProcessSpecialMatching()
@@ -687,8 +690,6 @@ public class GamePlayManager : MonoBehaviour
 
         if(shape != SpecailShapes.Nothing)
         {
-            Debug.Log("Detected Shape: " + shape);
-
             topMost = hints[chosenHint][0];
             for (int i = 1; i < hints[chosenHint].Length; i++)
             {
@@ -769,9 +770,15 @@ public class GamePlayManager : MonoBehaviour
 
                     break;
                 case SpecailShapes.L:
-                case SpecailShapes.T:
                     tilesSpecialCoords.Clear();
                     tilesSpecialCoords.Add(DetectCenterL(hints[chosenHint]));
+                    tilesSpecial.Clear();
+                    tilesSpecial.Add(12);
+
+                    break;
+                case SpecailShapes.T:
+                    tilesSpecialCoords.Clear();
+                    tilesSpecialCoords.Add(DetectCenterT(hints[chosenHint]));
                     tilesSpecial.Clear();
                     tilesSpecial.Add(12);
 
@@ -917,23 +924,23 @@ public class GamePlayManager : MonoBehaviour
 
         if (topLeft && topRight && bottomLeft)
         {
-            Debug.Log("L coords: " + lowestX + ", " + highestY);
+            //Debug.Log("L coords: " + lowestX + ", " + highestY);
             return new Vector2(lowestX, highestY);
         }
 
         if (topLeft && topRight && bottomRight)
         {
-            Debug.Log("L coords: " + highestX + ", " + highestY);
+            //Debug.Log("L coords: " + highestX + ", " + highestY);
             return new Vector2(highestX, highestY);
         }
 
         if (topRight && bottomRight && bottomLeft)
         {
-            Debug.Log("L coords: " + highestX + ", " + lowestY);
+            //Debug.Log("L coords: " + highestX + ", " + lowestY);
             return new Vector2(highestX, lowestY);
         }
 
-        Debug.Log("L coords: " + lowestX + ", " + lowestY);
+        //Debug.Log("L coords: " + lowestX + ", " + lowestY);
         return new Vector2(lowestX, lowestY);
     }
 
@@ -1055,6 +1062,7 @@ public class GamePlayManager : MonoBehaviour
                 break;
             }
         }
+
         GameGUI.TargetEnemy(currentEnemy, false);
     }
 
@@ -1181,6 +1189,12 @@ public class GamePlayManager : MonoBehaviour
             //firstOne = tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y];
             for (int indx = 0; indx < hints[selected].Length; indx++)
             {
+                if (IsSpecialGem(tileSet[(int)hints[selected][indx].x, (int)hints[selected][indx].y]))
+                {
+                    BlastWholeBoard();
+                    break;
+                }
+
                 try
                 {
                     GameGUI.ExplodeTile((int)hints[selected][indx].x, (int)hints[selected][indx].y, false);
@@ -1419,29 +1433,57 @@ public class GamePlayManager : MonoBehaviour
 
     IEnumerator ProcessSpecialGem(int x, int y, int releaseX, int releaseY)
     {
-        bool horizontal = x != releaseX;
-
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
+        StartCoroutine(SubProcessSpecialGem(x, y, releaseX, releaseY));
+    }
+
+    IEnumerator SubProcessSpecialGem(int x, int y, int releaseX, int releaseY)
+    {
+        bool horizontal = x != releaseX;
+        Debug.Log("D0: " + tileSet[x, y] + " (" + x + "," + y + ") :: (" + releaseX + "," + releaseY + ")");
         switch (tileSet[x, y])
         {
             case "S1":
                 GameGUI.LineDestroyEffect(x, y, !horizontal);
                 yield return new WaitForSeconds(0.4f);
 
-                ProcessLineBlast(x, y, horizontal, tileSet[releaseX, releaseY] == "S4");
+                ProcessLineBlast(x, y, horizontal, tileSet[releaseX, releaseY] == "S1");
                 break;
             case "S2":
                 GameGUI.ColorBlastEffect(x, y);
                 yield return new WaitForSeconds(0.51f);
 
-                ProcessColorBlast(x, y, tileSet[releaseX, releaseY]);
+                if (tileSet[releaseX, releaseY] == "S2")
+                {
+                    BlastWholeBoard();
+                }
+                else
+                {
+                    ProcessColorBlast(x, y, tileSet[releaseX, releaseY]);
+                }
                 break;
             case "S3":
-                ProcessGridBlast(releaseX, releaseY);
+                if (tileSet[releaseX, releaseY] == "S3" || tileSet[releaseX, releaseY] == "S4")
+                {
+                    BlastWholeBoard();
+                }
+                else
+                {
+                    ProcessGridBlast(releaseX, releaseY);
+                }
+
                 break;
             case "S4":
-                ProcessPlusBlast(releaseX, releaseY);
+                if (tileSet[releaseX, releaseY] == "S3" || tileSet[releaseX, releaseY] == "S4")
+                {
+                    BlastWholeBoard();
+                }
+                else
+                {
+                    ProcessPlusBlast(releaseX, releaseY);
+                }
+
                 break;
             case "S5":
                 string code = tileSet[releaseX, releaseY];
@@ -1462,6 +1504,18 @@ public class GamePlayManager : MonoBehaviour
         if (!levelEnded)
         {
             ProcessNewlyAppearedBlocks(tilesToPut);
+        }
+    }
+
+    private void BlastWholeBoard()
+    {
+        for (int x = 0; x < levelInfo.Width; x++)
+        {
+            for (int y = 0; y < levelInfo.Height; y++)
+            {
+                GameGUI.ExplodeTile(x, y, false);
+                tileSet[x, y] = "X";
+            }
         }
     }
 
@@ -1505,8 +1559,18 @@ public class GamePlayManager : MonoBehaviour
         {
             if (y > 0)
             {
+                if (IsSpecialGem(tileSet[x - 1, y - 1]))
+                {
+                    ProcessSpecialGem(x, y, x - 1, y - 1);
+                }
+
                 GameGUI.ExplodeTile(x - 1, y - 1, false);
                 tileSet[x - 1, y - 1] = "X";
+            }
+
+            if (IsSpecialGem(tileSet[x - 1, y]))
+            {
+                ProcessSpecialGem(x, y, x - 1, y);
             }
 
             GameGUI.ExplodeTile(x - 1, y, false);
@@ -1514,6 +1578,11 @@ public class GamePlayManager : MonoBehaviour
 
             if (y < levelInfo.Height - 1)
             {
+                if (IsSpecialGem(tileSet[x - 1, y + 1]))
+                {
+                    ProcessSpecialGem(x, y, x - 1, y + 1);
+                }
+
                 GameGUI.ExplodeTile(x - 1, y + 1, false);
                 tileSet[x - 1, y + 1] = "X";
             }
@@ -1522,6 +1591,11 @@ public class GamePlayManager : MonoBehaviour
         //
         if (y > 0)
         {
+            if (IsSpecialGem(tileSet[x, y - 1]))
+            {
+                ProcessSpecialGem(x, y, x, y - 1);
+            }
+
             GameGUI.ExplodeTile(x, y - 1, false);
             tileSet[x, y - 1] = "X";
         }
@@ -1531,6 +1605,11 @@ public class GamePlayManager : MonoBehaviour
 
         if (y < levelInfo.Height - 1)
         {
+            if (IsSpecialGem(tileSet[x, y + 1]))
+            {
+                ProcessSpecialGem(x, y, x, y + 1);
+            }
+
             GameGUI.ExplodeTile(x, y + 1, false);
             tileSet[x, y + 1] = "X";
         }
@@ -1540,8 +1619,18 @@ public class GamePlayManager : MonoBehaviour
         {
             if (y > 0)
             {
+                if (IsSpecialGem(tileSet[x + 1, y - 1]))
+                {
+                    ProcessSpecialGem(x, y, x + 1, y - 1);
+                }
+
                 GameGUI.ExplodeTile(x + 1, y - 1, false);
                 tileSet[x + 1, y - 1] = "X";
+            }
+
+            if (IsSpecialGem(tileSet[x + 1, y]))
+            {
+                ProcessSpecialGem(x, y, x + 1, y);
             }
 
             GameGUI.ExplodeTile(x + 1, y, false);
@@ -1549,6 +1638,11 @@ public class GamePlayManager : MonoBehaviour
 
             if (y < levelInfo.Height - 1)
             {
+                if (IsSpecialGem(tileSet[x + 1, y + 1]))
+                {
+                    ProcessSpecialGem(x, y, x + 1, y + 1);
+                }
+
                 GameGUI.ExplodeTile(x + 1, y + 1, false);
                 tileSet[x + 1, y + 1] = "X";
             }
@@ -1681,23 +1775,33 @@ public class GamePlayManager : MonoBehaviour
             // explode horizontal
             for (int indx = 0; indx < levelInfo.Width; indx++)
             {
-                GameGUI.ExplodeTile(indx, y, false);
+                if (indx != x && IsSpecialGem(tileSet[indx, y]))
+                {
+                    StartCoroutine(ProcessSpecialGem(indx, y, x, y));
+                }
+
                 tileSet[indx, y] = "X";
+                GameGUI.ExplodeTile(indx, y, false);
             }
         }
 
         if (!horizontal || bothDir)
         {
             // explode vertical
-            for (int indx = 0; indx < levelInfo.Height; indx++)
+            for (int indy = 0; indy < levelInfo.Height; indy++)
             {
-                if(bothDir && indx == y)
+                if(bothDir && indy == y)
                 {
                     continue;
                 }
 
-                GameGUI.ExplodeTile(x, indx, false);
-                tileSet[x, indx] = "X";
+                if (indy != y && IsSpecialGem(tileSet[x, indy]))
+                {
+                    StartCoroutine(ProcessSpecialGem(x, indy, x, y));
+                }
+
+                tileSet[x, indy] = "X";
+                GameGUI.ExplodeTile(x, indy, false);
             }
         }
     }
@@ -1790,5 +1894,10 @@ public class GamePlayManager : MonoBehaviour
     public bool GetEnemyDead()
     {
         return enemyDead;
+    }
+
+    public void EndLevel()
+    {
+        levelEnded = true;
     }
 }

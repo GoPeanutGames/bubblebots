@@ -14,34 +14,66 @@ public class SoundManager : MonoBehaviour
 
     public AudioSource ClickSound;
 
+    bool soundOn = true;
+
     public void PlayMetamaskEffect()
     {
+        if (!soundOn)
+        {
+            return;
+        }
+
         MetamaskSource?.Play();
     }
 
     public void PlayStartButtonEffect()
     {
+        if (!soundOn)
+        {
+            return;
+        }
+
         StartButtonSource?.Play();
     }
 
     public void PlayErrorMessageEffect()
     {
+        if (!soundOn)
+        {
+            return;
+        }
+
         ErrorMessageSource?.Play();
     }
 
     public void PlayStartMusic()
     {
         StartMusicSource?.Play();
+
+        if (!soundOn)
+        {
+            StartMusicSource.volume = 0;
+        }
     }
 
     public void PlayRobotSelectionMusic()
     {
         RobotSelectionSource?.Play();
+
+        if (!soundOn)
+        {
+            RobotSelectionSource.volume = 0;
+        }
     }
 
     public void PlayLevelMusic()
     {
         LevelMusicSource?.Play();
+
+        if (!soundOn)
+        {
+            LevelMusicSource.volume = 0;
+        }
     }
 
     public void StopStartMusic()
@@ -61,6 +93,11 @@ public class SoundManager : MonoBehaviour
 
     public void FadeOutLevelMusic()
     {
+        if (!soundOn)
+        {
+            return;
+        }
+
         if (LevelMusicSource == null)
         {
             return;
@@ -71,6 +108,11 @@ public class SoundManager : MonoBehaviour
 
     public void FadeOutRobotSelectionMusic()
     {
+        if (!soundOn)
+        {
+            return;
+        }
+
         if (RobotSelectionSource == null)
         {
             return;
@@ -86,7 +128,11 @@ public class SoundManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         StartMusicSource.Stop();
-        StartMusicSource.volume = 1;
+
+        if (soundOn)
+        {
+            StartMusicSource.volume = 1;
+        }
     }
 
     IEnumerator FadeOutLevelMusicNow()
@@ -96,7 +142,11 @@ public class SoundManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         LevelMusicSource.Stop();
-        LevelMusicSource.volume = 1;
+
+        if (soundOn)
+        {
+            LevelMusicSource.volume = 1;
+        }
     }
 
     IEnumerator FadeOutRobotSelectionMusicNow()
@@ -106,18 +156,44 @@ public class SoundManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         RobotSelectionSource.Stop();
-        RobotSelectionSource.volume = 1;
+
+        if (soundOn)
+        {
+            RobotSelectionSource.volume = 1;
+        }
     }
 
     public void FadeInRobotSelectionMusic()
     {
         RobotSelectionSource.volume = 0;
         RobotSelectionSource.Play();
-        RobotSelectionSource.DOFade(1, 0.5f);
+
+        if (soundOn)
+        {
+            RobotSelectionSource.DOFade(1, 0.5f);
+        }
     }
 
     public void PlayClickSound()
     {
+        if (!soundOn)
+        {
+            return;
+        }
+
         ClickSound?.Play();
+    }
+
+    public void SetVolume(float level)
+    {
+        MetamaskSource.volume = level;
+        StartMusicSource.volume = level;
+        StartButtonSource.volume = level;
+        ErrorMessageSource.volume = level;
+        RobotSelectionSource.volume = level;
+        LevelMusicSource.volume = level;
+        ClickSound.volume = level;
+
+        soundOn = level == 1;
     }
 }

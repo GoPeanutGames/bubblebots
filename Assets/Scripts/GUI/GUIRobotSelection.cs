@@ -47,7 +47,6 @@ public class GUIRobotSelection : MonoBehaviour
         {
             if(selectedRobot1 == order || selectedRobot2 == order || selectedRobot3 == order)
             {
-                Debug.Log("SEL101");
                 return;
             }
 
@@ -55,9 +54,6 @@ public class GUIRobotSelection : MonoBehaviour
 
             CalculateTotalNumberOfRobots();
             BtnStart.interactable = totalSelectedRobots == 3;
-        } else
-        {
-            Debug.Log("SEL102 (" + totalSelectedRobots + ")");
         }
     }
 

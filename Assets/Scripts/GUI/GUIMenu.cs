@@ -98,7 +98,7 @@ public class GUIMenu : MonoBehaviour
         MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
 
         soundManager.PlayLevelMusic();
-        GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "x0";
+        GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
         LeaderboardManager.Instance.ResetKilledRobots();
         SwitchToMultiplayer("level1", 1);
     }

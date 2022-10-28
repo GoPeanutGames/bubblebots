@@ -51,7 +51,7 @@ public class LeaderboardManager : MonoBehaviour
 
     private void Awake()
     {
-        crptoPassword = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";
+        crptoPassword = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV"; // "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
 
         if (Instance != null)
         {
@@ -108,12 +108,20 @@ public class LeaderboardManager : MonoBehaviour
     [MenuItem("Peanut Games/Chiper Test")]
     static void ChiperTest()
     {
-        string data = "{\\r\\n    \"address\": \"0xb354B942464755968a655144Bb1f69422b7D5ea2\",\\r\\n    \"score\": 10\\r\\n}";
+        string data = "{\"address\":\"0xb354B942464755968a655144Bb1f69422b7D5ea2\",\"score\":10}";
         string password = "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
         //string password = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";
         Debug.Log(SimpleAESEncryption.Encrypt2(data, password)); // JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV
-        // 23809ed892807f7d3759d81ee5951516$3e6773410865db466ad99ac6586d8259da50bac00c2d5b74609df3e21dd48f57429d2a6af28a9e1937d6562498089f5f33f9092e2d215deb12cd8a82ccc4deafd9e31070059f9223bd11f0dc3fdeb115
-        // ln2eeq3we3qtpzvbT2OwDDKvkzQcd4yOYv2D7ShZOUFM18aCHRo4z9PJINAnkdjhjf2HY5HcxwGdRXXEPua2rPPtRFLc7J4vVWGI2UuldlwKH1Knmy4wSmQbLhJFghVAEhTAMnEzZz/OeNVjj0gFwA==
+    }
+
+    [MenuItem("Peanut Games/Dechiper Test")]
+    static void DechiperTest()
+    {
+        //string data = "23809ed892807f7d3759d81ee59515163e6773410865db466ad99ac6586d8259da50bac00c2d5b74609df3e21dd48f57429d2a6af28a9e1937d6562498089f5f33f9092e2d215deb12cd8a82ccc4deafd9e31070059f9223bd11f0dc3fdeb115";
+        string data = "64beffce23ccb3220a9dcf52c42760a77e294b2be35c91b9e2568eac4b498ddeca07f3a9e9ba82b75076653231e4e7665b1adff947eb4adf348517ee5b051dce37c5c88f19a1d54e11a2ac1c5a268e444acb9c443a36ff66cfe9275ad8ef7249";
+        string password = "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
+        //string password = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";
+        Debug.Log(SimpleAESEncryption.Decrypt2(data, password));
     }
 
 #endif
@@ -145,15 +153,13 @@ public class LeaderboardManager : MonoBehaviour
     {
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"score\":" + score.ToString().Replace("\"", "'").Trim() + "}";
         formData = "{\"data\":\"" + SimpleAESEncryption.Encrypt2(formData, crptoPassword) + "\"}";
-        //ServerURL = Environment.GetEnvironmentVariable("API_URL");
+        //Debug.Log(ServerURL + "/bubblebots/score");
         using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/score", formData))
-        //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&score=" + score))
         {
             UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(formData));
             customUploadHandler.contentType = "application/json";
             webRequest.uploadHandler = customUploadHandler;
 
-            //SessionToken = Environment.GetEnvironmentVariable("SECREAT_HEADER"); 
             webRequest.SetRequestHeader("Authorization", "Bearer " + SessionToken);
             webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
             webRequest.SetRequestHeader("Content-Type", "application/json");
@@ -323,11 +329,11 @@ public class LeaderboardManager : MonoBehaviour
 
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"nickname\":\"" + fullName.Replace("\"", "'").Trim() + "\"}";
         formData = "{\"data\":\"" + SimpleAESEncryption.Encrypt2(formData, crptoPassword) + "\"}";
+        Debug.Log(formData);
+        Debug.Log(ServerURL + "/bubblebots/nickname");
 
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_fullname.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&full_name=" + fullName))
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");
-        Debug.Log("server url: " + ServerURL + "/bubblebots/nickname");
-        Debug.Log("SessionToken: " + SessionToken);
         using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/nickname", formData))
         {
             UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(formData));
@@ -355,7 +361,7 @@ public class LeaderboardManager : MonoBehaviour
                     break;
                 case UnityWebRequest.Result.Success:
                     string data = webRequest.downloadHandler.text;
-                    //Debug.Log("Received data (set full name): " + data);
+                    Debug.Log("Received data (set full name): " + data);
 
                     JObject o = JObject.Parse(data);
                     if (o.ContainsKey("rank"))

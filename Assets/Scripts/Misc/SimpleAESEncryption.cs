@@ -49,7 +49,7 @@ public static class SimpleAESEncryption
     {
         byte[] cipherData;
         Aes aes = Aes.Create();
-        aes.Key = Encoding.UTF8.GetBytes(keyString);
+        aes.Key = Encoding.ASCII.GetBytes(keyString);
         aes.GenerateIV();
         aes.Mode = CipherMode.CBC;
         ICryptoTransform cipher = aes.CreateEncryptor(aes.Key, aes.IV);
@@ -88,7 +88,7 @@ public static class SimpleAESEncryption
             part2 += cipherData[i].ToString("x2");
         }
 
-        return part1 + " :: " + part2 + " :: " + resultString; //Convert.ToBase64String(combinedData);
+        return part1 + "$" + part2;
     }
 
     /// summary
@@ -141,18 +141,27 @@ public static class SimpleAESEncryption
         return keyBytes;
     }
 
+    public static byte[] StringToByteArray(string hex)
+    {
+        return Enumerable.Range(0, hex.Length)
+                         .Where(x => x % 2 == 0)
+                         .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                         .ToArray();
+    }
+
     public static string Decrypt2(string combinedString, string keyString)
     {
         string plainText;
-        byte[] combinedData = Convert.FromBase64String(combinedString);
+        byte[] combinedData = StringToByteArray(combinedString); // Encoding.ASCII.GetBytes(combinedString); //Convert.FromBase64String(combinedString);
         Aes aes = Aes.Create();
-        aes.Key = Encoding.UTF8.GetBytes(keyString);
+        aes.Key = Encoding.ASCII.GetBytes(keyString);
+        aes.Mode = CipherMode.CBC;
+
         byte[] iv = new byte[aes.BlockSize / 8];
         byte[] cipherText = new byte[combinedData.Length - iv.Length];
         Array.Copy(combinedData, iv, iv.Length);
         Array.Copy(combinedData, iv.Length, cipherText, 0, cipherText.Length);
         aes.IV = iv;
-        aes.Mode = CipherMode.CBC;
         ICryptoTransform decipher = aes.CreateDecryptor(aes.Key, aes.IV);
 
         using (MemoryStream ms = new MemoryStream(cipherText))

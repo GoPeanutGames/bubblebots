@@ -56,18 +56,23 @@ public class GUIGame : MonoBehaviour
         if (damage >= PlayerGauges[currentPlayer].value)
         {
             // current robot is dead
+            PlayerGauges[currentPlayer].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = "0 / " + PlayerGauges[currentPlayer].maxValue;
             PlayerGauges[currentPlayer].DOValue(0, SwapDuration);
             PlayerRobots[currentPlayer].Die();
             currentPlayer += 1;
         } else
         {
             PlayerGauges[currentPlayer].DOValue(PlayerGauges[currentPlayer].value - damage, SwapDuration);
+            PlayerGauges[currentPlayer].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, PlayerGauges[currentPlayer].value - damage) + " / " + PlayerGauges[currentPlayer].maxValue;
         }
 
         //if (PlayerGauges[0].value + PlayerGauges[1].value + PlayerGauges[2].value <= 0)
         if (currentPlayer >= PlayerGauges.Length)
         {
             gamePlayManager.ResetHintTime();
+            gamePlayManager.EndLevel();
+            LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
+
             DisplayLose();
             return;
         }
@@ -112,6 +117,7 @@ public class GUIGame : MonoBehaviour
 
         EnemyGauges[currentEnemy].DOValue(EnemyGauges[currentEnemy].value - damage, SwapDuration);
         EnemyRobots[currentEnemy].Damage();
+        EnemyGauges[currentEnemy].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, EnemyGauges[currentEnemy].value - damage) + " / " + EnemyGauges[currentEnemy].maxValue;
 
         TxtScore.text = gamePlayManager.IncrementScore(Mathf.FloorToInt(damage * 10)).ToString().PadLeft(6, '0');
     }
@@ -119,7 +125,7 @@ public class GUIGame : MonoBehaviour
     public void KillEnemy()
     {
         LeaderboardManager.Instance.IncrementKilledRobots();
-        TxtKilledRobots.text = "x" + LeaderboardManager.Instance.RobotsKilled;
+        TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
 
         EnemyRobots[currentEnemy].Die();
     }
@@ -129,6 +135,7 @@ public class GUIGame : MonoBehaviour
         for (int g = 0; g < PlayerGauges.Length; g++)
         {
             PlayerGauges[g].value = PlayerGauges[g].maxValue;
+            PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = PlayerGauges[g].maxValue + " / " + PlayerGauges[g].maxValue;
         }
     }
 
@@ -137,6 +144,7 @@ public class GUIGame : MonoBehaviour
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
             EnemyGauges[g].maxValue = values[g];
+            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = values[g] + " / " + values[g];
         }
     }
 
@@ -290,28 +298,51 @@ public class GUIGame : MonoBehaviour
 
     IEnumerator SwapTilesNow(int x1, int y1, int x2, int y2, bool changeInfo)
     {
-        LockTiles("L1");
-        Transform tile1 = transform.Find("Tile_" + x1 + "_" + y1);
-        Transform tile2 = transform.Find("Tile_" + x2 + "_" + y2);
+        Transform tile1 = null;
+        Transform tile2 = null;
+        Vector2 tile1Pos = Vector2.zero;
+        Vector2 tile2Pos = Vector2.zero;
 
-        Vector2 tile1Pos = tile1.GetComponent<RectTransform>().anchoredPosition;
-        Vector2 tile2Pos = tile2.GetComponent<RectTransform>().anchoredPosition;
-        tile1.GetComponent<RectTransform>().DOAnchorPos(tile2Pos, SwapDuration);
-        tile2.GetComponent<RectTransform>().DOAnchorPos(tile1Pos, SwapDuration);
+        try
+        {
+            LockTiles("L1");
+            tile1 = transform.Find("Tile_" + x1 + "_" + y1);
+            tile2 = transform.Find("Tile_" + x2 + "_" + y2);
+
+            tile1Pos = tile1.GetComponent<RectTransform>().anchoredPosition;
+            tile2Pos = tile2.GetComponent<RectTransform>().anchoredPosition;
+            tile1.GetComponent<RectTransform>().DOAnchorPos(tile2Pos, SwapDuration);
+            tile2.GetComponent<RectTransform>().DOAnchorPos(tile1Pos, SwapDuration);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("E101: " + ex.Message);
+            Debug.LogError(ex.StackTrace);
+
+            yield break;
+        }
 
         yield return new WaitForSeconds(SwapDuration);
 
-        tile1.GetComponent<RectTransform>().DOAnchorPos(tile2Pos, 0);
-        tile2.GetComponent<RectTransform>().DOAnchorPos(tile1Pos, 0);
-
-        if (changeInfo)
+        try
         {
-            tile1.gameObject.name = "Tile_" + x2 + "_" + y2;
-            tile2.gameObject.name = "Tile_" + x1 + "_" + y1;
-            tile1.GetComponent<GUITile>().X = x2;
-            tile1.GetComponent<GUITile>().Y = y2;
-            tile2.GetComponent<GUITile>().X = x1;
-            tile2.GetComponent<GUITile>().Y = y1;
+            tile1.GetComponent<RectTransform>().DOAnchorPos(tile2Pos, 0);
+            tile2.GetComponent<RectTransform>().DOAnchorPos(tile1Pos, 0);
+
+            if (changeInfo)
+            {
+                tile1.gameObject.name = "Tile_" + x2 + "_" + y2;
+                tile2.gameObject.name = "Tile_" + x1 + "_" + y1;
+                tile1.GetComponent<GUITile>().X = x2;
+                tile1.GetComponent<GUITile>().Y = y2;
+                tile2.GetComponent<GUITile>().X = x1;
+                tile2.GetComponent<GUITile>().Y = y1;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("E102: " + ex.Message);
+            Debug.LogError(ex.StackTrace);
         }
     }
 
