@@ -1,8 +1,9 @@
-#define RANDOM_TILES
+#define RANDOM_TILES_OFF
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEditor;
 //using UnityEditor.Rendering.LookDev;
@@ -98,6 +99,7 @@ public class GamePlayManager : MonoBehaviour
         for (int g = 0; g < GameGUI.PlayerGauges.Length; g++)
         {
             GameGUI.PlayerGauges[g].value = GameGUI.PlayerGauges[g].maxValue;
+            GameGUI.PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = GameGUI.PlayerGauges[g].maxValue + " / " + GameGUI.PlayerGauges[g].maxValue;
         }
 
         numHit = new int[] { 0, 0, 0 };
@@ -1441,7 +1443,7 @@ public class GamePlayManager : MonoBehaviour
     IEnumerator SubProcessSpecialGem(int x, int y, int releaseX, int releaseY)
     {
         bool horizontal = x != releaseX;
-        Debug.Log("D0: " + tileSet[x, y] + " (" + x + "," + y + ") :: (" + releaseX + "," + releaseY + ")");
+        //Debug.Log("D0: " + tileSet[x, y] + " (" + x + "," + y + ") :: (" + releaseX + "," + releaseY + ")");
         switch (tileSet[x, y])
         {
             case "S1":

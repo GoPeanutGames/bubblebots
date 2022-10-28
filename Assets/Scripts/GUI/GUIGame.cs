@@ -8,6 +8,7 @@ using static LevelManager;
 using Unity.VisualScripting;
 using TMPro;
 using UnityEngine.Rendering;
+using System.Runtime.InteropServices;
 
 public class GUIGame : MonoBehaviour
 {
@@ -89,8 +90,11 @@ public class GUIGame : MonoBehaviour
         WinDialogImage.gameObject.SetActive(true);
         Transform imgWin = WinDialogImage.transform.Find("ImgWin");
         Transform imgLose = WinDialogImage.transform.Find("ImgLose");
+        Transform btnContinue = WinDialogImage.transform.Find("BtnContinue");
+        btnContinue.gameObject.SetActive(false);
         imgWin.gameObject.SetActive(false);
         imgLose.gameObject.SetActive(true);
+        imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = gamePlayManager.GetScore().ToString();
 
         imgLose.transform.localScale = Vector3.zero;
         imgLose.transform.DOScale(Vector3.one, 0.5f);
@@ -192,6 +196,7 @@ public class GUIGame : MonoBehaviour
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
             EnemyGauges[g].value = EnemyGauges[g].maxValue;
+            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue + " / " + EnemyGauges[g].maxValue;
         }
 
         this.levelInfo = levelInfo;
@@ -501,9 +506,9 @@ public class GUIGame : MonoBehaviour
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.F1))
+        if(Input.GetKeyDown(KeyCode.Q))
         {
-            //DamageToPlayerRobot(10);
+            DisplayLose();
         }
     }
 
@@ -642,6 +647,7 @@ public class GUIGame : MonoBehaviour
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
             EnemyGauges[g].value = EnemyGauges[g].maxValue;
+            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue + " / " + EnemyGauges[g].maxValue;
         }
 
         for (int i = 0; i < EnemyRobots.Length; i++)

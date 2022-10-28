@@ -9,6 +9,8 @@ using static GUIGame;
 using System.Net.Sockets;
 using UnityEditor;
 using UnityEngine.SocialPlatforms.Impl;
+using System.Runtime.InteropServices;
+using UnityEngine.SceneManagement;
 
 public class GUIMenu : MonoBehaviour
 {
@@ -38,6 +40,12 @@ public class GUIMenu : MonoBehaviour
     int selectedRobot1 = -1;
     int selectedRobot2 = -1;
     int selectedRobot3 = -1;
+
+    [DllImport("__Internal")]
+    private static extern void Premint();
+
+    [DllImport("__Internal")]
+    private static extern void Reload();
 
     private void Awake()
     {
@@ -251,6 +259,7 @@ public class GUIMenu : MonoBehaviour
         Transform imgLose = WinDialogImage.transform.Find("ImgLose");
         imgWin.gameObject.SetActive(false);
         imgLose.gameObject.SetActive(true);
+        imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = gamePlayManager.GetScore().ToString();
 
         imgLose.transform.localScale = Vector3.zero;
         imgLose.transform.DOScale(Vector3.one, 0.5f);
@@ -488,5 +497,20 @@ public class GUIMenu : MonoBehaviour
 
         PnlRobotSelection.SetActive(true);
         gameObject.SetActive(false);
+    }
+
+    public void PremintButton()
+    {
+        WinDialogImage.gameObject.SetActive(false);
+        Premint();
+
+        StartCoroutine(ReloadNow());
+    }
+
+    IEnumerator ReloadNow()
+    {
+        yield return new WaitForSeconds(0.33f);
+
+        Reload();
     }
 }
