@@ -9386,6 +9386,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 0781072c58d947242b889f3e6b464ee7, type: 3}
   - {fileID: 21300000, guid: 8e671beec6461ff43a4c1d8520bd79a5, type: 3}
   WinDialogImage: {fileID: 1824949329}
+  Menu: {fileID: 552920244}
 --- !u!1 &737301449
 GameObject:
   m_ObjectHideFlags: 0
@@ -18585,7 +18586,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: v1.15.2
+  m_text: v1.16
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4bdd76831f5a12648bfc98352bd977a0, type: 2}
   m_sharedMaterial: {fileID: -1806797510468903685, guid: 4bdd76831f5a12648bfc98352bd977a0,
@@ -20215,8 +20216,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 552920244}
-        m_TargetAssemblyTypeName: GUIMenu, Assembly-CSharp
+      - m_Target: {fileID: 736831953}
+        m_TargetAssemblyTypeName: GUIGame, Assembly-CSharp
         m_MethodName: PremintButton
         m_Mode: 1
         m_Arguments:

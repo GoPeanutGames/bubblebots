@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 using TMPro;
 using UnityEngine.Rendering;
 using System.Runtime.InteropServices;
+using UnityEditor;
 
 public class GUIGame : MonoBehaviour
 {
@@ -32,6 +33,7 @@ public class GUIGame : MonoBehaviour
     public TextMeshProUGUI TxtKilledRobots;
     public Sprite[] RobotSprites;
     public Transform WinDialogImage;
+    public GUIMenu Menu;
 
     SoundManager soundManager;
     Image[,] backgroundTiles;
@@ -44,6 +46,12 @@ public class GUIGame : MonoBehaviour
     string lastLockedBy = "";
 
     public delegate void OnGUIEvent(object param);
+
+    [DllImport("__Internal")]
+    private static extern void Premint();
+
+    [DllImport("__Internal")]
+    private static extern void Reload();
 
     private void Awake()
     {
@@ -504,14 +512,6 @@ public class GUIGame : MonoBehaviour
         guiTile.Key = key;
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Q))
-        {
-            DisplayLose();
-        }
-    }
-
     private void DebugTileList()
     {
         string line;
@@ -669,7 +669,7 @@ public class GUIGame : MonoBehaviour
 
     public void DisplayHintAt(int x1, int y1)
     {
-        if (gamePlayManager.GetEnemyDead())
+        if (gamePlayManager.GetEnemyDead() || !gameObject.activeSelf)
         {
             return;
         }
@@ -719,4 +719,34 @@ public class GUIGame : MonoBehaviour
 
         DebugTileList();
     }
+
+    public void PremintButton()
+    {
+        WinDialogImage.gameObject.SetActive(false);
+#if !UNITY_EDITOR
+        Premint();
+#endif
+
+        Menu.gameObject.SetActive(true);
+        Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
+        if (LeaderboardManager.Instance.GuestMode)
+        {
+            Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+        }
+        else
+        {
+            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
+            Menu.DisplayHighScores();
+        }
+
+        gameObject.SetActive(false);
+    }
+
+    /*private void Update()
+    {
+        if(Input.GetKeyUp(KeyCode.Q))
+        {
+            DisplayLose();
+        }
+    }*/
 }

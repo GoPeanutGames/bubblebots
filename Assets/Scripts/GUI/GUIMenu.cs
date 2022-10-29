@@ -41,12 +41,6 @@ public class GUIMenu : MonoBehaviour
     int selectedRobot2 = -1;
     int selectedRobot3 = -1;
 
-    [DllImport("__Internal")]
-    private static extern void Premint();
-
-    [DllImport("__Internal")]
-    private static extern void Reload();
-
     private void Awake()
     {
         Robot1.SetActive(false);
@@ -497,20 +491,5 @@ public class GUIMenu : MonoBehaviour
 
         PnlRobotSelection.SetActive(true);
         gameObject.SetActive(false);
-    }
-
-    public void PremintButton()
-    {
-        WinDialogImage.gameObject.SetActive(false);
-        Premint();
-
-        StartCoroutine(ReloadNow());
-    }
-
-    IEnumerator ReloadNow()
-    {
-        yield return new WaitForSeconds(0.33f);
-
-        Reload();
     }
 }

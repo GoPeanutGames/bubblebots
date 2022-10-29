@@ -626,15 +626,17 @@ public class GamePlayManager : MonoBehaviour
             if (IsSpecialGem(tileSet[x, y]))
             {
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                Debug.Log("H0A");
                 StartCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
-
+                Debug.Log("H0B");
                 return;
             }
             else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
             {
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                Debug.Log("H1A");
                 StartCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
-
+                Debug.Log("H1B");
                 return;
             }
 
@@ -645,17 +647,24 @@ public class GamePlayManager : MonoBehaviour
             if(hints.Count > 0)
             {
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                Debug.Log("H2A");
                 SwapKeys(x, y, releaseTileX, releaseTileY);
+                Debug.Log("H2B");
                 StartCoroutine(ExplodeTiles());
-            } else
+                Debug.Log("H2C");
+            }
+            else
             {
                 CheckForAMatchWitchSwapingTiles(releaseTileX, releaseTileY, x, y);
 
                 if (hints.Count > 0)
                 {
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                    Debug.Log("H3A");
                     SwapKeys(x, y, releaseTileX, releaseTileY);
+                    Debug.Log("H3B");
                     StartCoroutine(ExplodeTiles());
+                    Debug.Log("H3C");
                 }
                 else
                 {

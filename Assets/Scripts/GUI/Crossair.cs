@@ -5,14 +5,17 @@ using DG.Tweening;
 
 public class Crossair : MonoBehaviour
 {
+    GUIGame pnlGame;
+
     void Start()
     {
+        pnlGame = FindObjectOfType<GUIGame>();
         InvokeRepeating("AnimateCrossair", 0, 1.5f);
     }
 
     void AnimateCrossair()
     {
-        if (gameObject.activeSelf)
+        if (gameObject.activeSelf && pnlGame.gameObject.activeSelf)
         {
             StartCoroutine(AnimateCrossairNow());
         }
