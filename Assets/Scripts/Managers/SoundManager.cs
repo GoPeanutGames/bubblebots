@@ -12,7 +12,16 @@ public class SoundManager : MonoBehaviour
     public AudioSource RobotSelectionSource;
     public AudioSource LevelMusicSource;
 
+    public AudioSource LightningSound;
+    public AudioSource BombSound;
+    public AudioSource ColorSound;
+    public AudioSource HammerSound;
     public AudioSource ClickSound;
+    public AudioSource ComboSound1;
+    public AudioSource ComboSound2;
+    public AudioSource ComboSound3;
+    public AudioSource ComboSound4;
+    public AudioSource ComboSound5;
 
     bool soundOn = true;
 
@@ -181,7 +190,75 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        ClickSound?.Play();
+        //ClickSound?.Play();
+    }
+
+    public void PlayBombSound()
+    {
+        if (!soundOn)
+        {
+            return;
+        }
+
+        BombSound?.Play();
+    }
+
+    public void PlayLightningSound()
+    {
+        if (!soundOn)
+        {
+            return;
+        }
+
+        LightningSound?.Play();
+    }
+
+    public void PlayColorSound()
+    {
+        if (!soundOn)
+        {
+            return;
+        }
+
+        ColorSound?.Play();
+    }
+
+    public void PlayHammerSound()
+    {
+        if (!soundOn)
+        {
+            return;
+        }
+
+        HammerSound?.Play();
+    }
+
+    public void PlayComboSound(int combo)
+    {
+        if (!soundOn)
+        {
+            return;
+        }
+
+        switch(combo)
+        {
+            case 0:
+            case 1:
+                ComboSound1?.Play();
+                break;
+            case 2:
+                ComboSound2?.Play();
+                break;
+            case 3:
+                ComboSound3?.Play();
+                break;
+            case 4:
+                ComboSound4?.Play();
+                break;
+            default:
+                ComboSound5?.Play();
+                break;
+        }
     }
 
     public void SetVolume(float level)
@@ -193,6 +270,15 @@ public class SoundManager : MonoBehaviour
         RobotSelectionSource.volume = level;
         LevelMusicSource.volume = level;
         ClickSound.volume = level;
+        BombSound.volume = level;
+        ColorSound.volume = level;
+        HammerSound.volume = level;
+        LightningSound.volume = level;
+        ComboSound1.volume = level;
+        ComboSound2.volume = level;
+        ComboSound3.volume = level;
+        ComboSound4.volume = level;
+        ComboSound5.volume = level;
 
         soundOn = level == 1;
     }

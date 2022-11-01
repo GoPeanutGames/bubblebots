@@ -37,6 +37,7 @@ public class GamePlayManager : MonoBehaviour
     List<Vector2[]> hints = new List<Vector2[]>();
     List<SpecailShapes> hintShapes = new List<SpecailShapes>();
     List<int> availabletiles = new List<int>();
+    bool canDisplayhint = false;
     int releaseTileX = -1;
     int releaseTileY = -1;
     bool enemyDead = false;
@@ -46,10 +47,11 @@ public class GamePlayManager : MonoBehaviour
     int killedEnemies = 0;
     int currentWave = 1;
     int maxEnemies = 3;
-    int currentPlayer;
+    int combo = 0;
 
     long score = 0;
     bool levelEnded = false;
+    bool canAttack = false;
 
     // special matching related stuff
     bool smLongT = false;
@@ -79,7 +81,7 @@ public class GamePlayManager : MonoBehaviour
         LevelInformation levelInfo;
         currentLevel = levelNumber;
         currentEnemy = 0;
-        currentPlayer = 0;
+        GameGUI.SetCurrentPlayer(0);
         killedEnemies = 0;
         currentWave = 1;
         levelEnded = false;
@@ -235,6 +237,7 @@ public class GamePlayManager : MonoBehaviour
         hints.Clear();
         hintShapes.Clear();
 
+        bool specialGemsPresent = false;
         for (int i = 1; i < levelInfo.Width - 1; i++)
         {
             for (int j = 1; j < levelInfo.Height - 1; j++)
@@ -243,15 +246,21 @@ public class GamePlayManager : MonoBehaviour
                 CheckForAMatchWitchSwapingTiles(i, j, i + 1, j);
                 CheckForAMatchWitchSwapingTiles(i, j, i, j - 1);
                 CheckForAMatchWitchSwapingTiles(i, j, i, j + 1);
+
+                if (!specialGemsPresent)
+                {
+                    specialGemsPresent = IsSpecialGem(tileSet[i, j]);
+                }
             }
         }
 
-        if (hints.Count > 0)
+        if (hints.Count > 0 || specialGemsPresent)
         {
             //DisplayDebugHints();
             return true;
         }
 
+        FindObjectOfType<SoundManager>().FadeOutLevelMusic();
         Debug.Log("No more moves are possible");
         return false;
     }
@@ -613,6 +622,8 @@ public class GamePlayManager : MonoBehaviour
             return;
         }
 
+        combo = 0;
+        canAttack = true;
         if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1)
         {
             if(tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
@@ -626,17 +637,13 @@ public class GamePlayManager : MonoBehaviour
             if (IsSpecialGem(tileSet[x, y]))
             {
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-                Debug.Log("H0A");
                 StartCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
-                Debug.Log("H0B");
                 return;
             }
             else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
             {
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-                Debug.Log("H1A");
                 StartCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
-                Debug.Log("H1B");
                 return;
             }
 
@@ -647,11 +654,8 @@ public class GamePlayManager : MonoBehaviour
             if(hints.Count > 0)
             {
                 StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-                Debug.Log("H2A");
                 SwapKeys(x, y, releaseTileX, releaseTileY);
-                Debug.Log("H2B");
                 StartCoroutine(ExplodeTiles());
-                Debug.Log("H2C");
             }
             else
             {
@@ -660,11 +664,8 @@ public class GamePlayManager : MonoBehaviour
                 if (hints.Count > 0)
                 {
                     StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-                    Debug.Log("H3A");
                     SwapKeys(x, y, releaseTileX, releaseTileY);
-                    Debug.Log("H3B");
                     StartCoroutine(ExplodeTiles());
-                    Debug.Log("H3C");
                 }
                 else
                 {
@@ -1048,6 +1049,12 @@ public class GamePlayManager : MonoBehaviour
 
     private void HitPlayer()
     {
+        if (!canAttack)
+        {
+            return;
+        }
+
+        canAttack = false;
         GameGUI.DamageToPlayerRobot(DamageOfRobot2);
         //Robot2Anim.CrossFade("XBotHit", 0.1f);
         var hitEffect = Instantiate(HitEffect2);
@@ -1181,6 +1188,9 @@ public class GamePlayManager : MonoBehaviour
             }
 
         } while (deleted);
+
+        combo += 1;
+        FindObjectOfType<SoundManager>().PlayComboSound(combo);
 
         ProcessTheHints();
         ProcessSpecialMatching();
@@ -1409,7 +1419,7 @@ public class GamePlayManager : MonoBehaviour
         timeForNewHint = Time.time + HintDuration;
     }
 
-    private void DisplayDebugHints()
+    public void DisplayDebugHints()
     {
         Debug.Log(hints.Count + " more moves are possible:");
         string s = "";
@@ -1456,6 +1466,7 @@ public class GamePlayManager : MonoBehaviour
         switch (tileSet[x, y])
         {
             case "S1":
+                FindObjectOfType<SoundManager>().PlayLightningSound();
                 GameGUI.LineDestroyEffect(x, y, !horizontal);
                 yield return new WaitForSeconds(0.4f);
 
@@ -1463,19 +1474,21 @@ public class GamePlayManager : MonoBehaviour
                 break;
             case "S2":
                 GameGUI.ColorBlastEffect(x, y);
+                FindObjectOfType<SoundManager>().PlayColorSound();
                 yield return new WaitForSeconds(0.51f);
 
-                if (tileSet[releaseX, releaseY] == "S2")
+                /*if (tileSet[releaseX, releaseY] == "S2")
                 {
                     BlastWholeBoard();
                 }
                 else
-                {
-                    ProcessColorBlast(x, y, tileSet[releaseX, releaseY]);
-                }
+                {*/
+                ProcessColorBlast(x, y, tileSet[releaseX, releaseY]);
+                //}
                 break;
             case "S3":
-                if (tileSet[releaseX, releaseY] == "S3" || tileSet[releaseX, releaseY] == "S4")
+                FindObjectOfType<SoundManager>().PlayBombSound();
+                if (tileSet[releaseX, releaseY] == "S3")
                 {
                     BlastWholeBoard();
                 }
@@ -1486,14 +1499,8 @@ public class GamePlayManager : MonoBehaviour
 
                 break;
             case "S4":
-                if (tileSet[releaseX, releaseY] == "S3" || tileSet[releaseX, releaseY] == "S4")
-                {
-                    BlastWholeBoard();
-                }
-                else
-                {
-                    ProcessPlusBlast(releaseX, releaseY);
-                }
+                FindObjectOfType<SoundManager>().PlayHammerSound();
+                ProcessPlusBlast(releaseX, releaseY);
 
                 break;
             case "S5":
@@ -1716,20 +1723,27 @@ public class GamePlayManager : MonoBehaviour
                     break;
                 }
 
-                for (int h = 0; h < hints.Count; h++)
+                if (IsSpecialGem(tileSet[_x, _y]))
                 {
-                    for (int f = 0; f < hints[h].Length; f++)
+                    overlapPresent = true;
+                }
+                else
+                {
+                    for (int h = 0; h < hints.Count; h++)
                     {
-                        if (hints[h][f].x == _x && hints[h][f].y == _y)
+                        for (int f = 0; f < hints[h].Length; f++)
                         {
-                            overlapPresent = true;
+                            if (hints[h][f].x == _x && hints[h][f].y == _y)
+                            {
+                                overlapPresent = true;
+                                break;
+                            }
+                        }
+
+                        if (overlapPresent)
+                        {
                             break;
                         }
-                    }
-
-                    if (overlapPresent)
-                    {
-                        break;
                     }
                 }
 
@@ -1841,7 +1855,7 @@ public class GamePlayManager : MonoBehaviour
 
     private void Update()
     {
-        if(timeForNewHint != 0 && timeForNewHint <= Time.time)
+        if(canDisplayhint && timeForNewHint != 0 && timeForNewHint <= Time.time)
         {
             //Debug.Log("Testing the hint (next test is in " + timeForNewHint + ")");
             //timeForNewHint = DateTime.Now + new TimeSpan(0, 0, HintDuration + 1);

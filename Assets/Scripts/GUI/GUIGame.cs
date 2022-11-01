@@ -60,6 +60,11 @@ public class GUIGame : MonoBehaviour
         skinManager = FindObjectOfType<SkinManager>();
     }
 
+    public void SetCurrentPlayer(int currentPlayer)
+    {
+        this.currentPlayer = currentPlayer;
+    }
+
     public void DamageToPlayerRobot(float damage)
     {
         if (damage >= PlayerGauges[currentPlayer].value)
@@ -369,6 +374,7 @@ public class GUIGame : MonoBehaviour
     {
         if (gamePlayManager.GetEnemyDead())
         {
+            Debug.Log("EXP0");
             return;
         }
 
@@ -379,6 +385,7 @@ public class GUIGame : MonoBehaviour
         // TODO: Remove in the future versions
         if(tile == null)
         {
+            Debug.Log("EXP1");
             return;
         }
 
@@ -716,8 +723,12 @@ public class GUIGame : MonoBehaviour
         Debug.Log("TimeForNewHint: " + gamePlayManager.GetTimeForNewHint());
         Debug.Log("LastLockedBy: " + lastLockedBy);
         Debug.Log("DebugTileList: ");
+        Debug.Log("==========================================");
 
         DebugTileList();
+        Debug.Log("==========================================");
+
+        gamePlayManager.DisplayDebugHints();
     }
 
     public void PremintButton()
@@ -742,11 +753,12 @@ public class GUIGame : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    /*private void Update()
+    private void Update()
     {
         if(Input.GetKeyUp(KeyCode.Q))
         {
-            DisplayLose();
+            //DebugTileList();
+            DisplayDebug();
         }
-    }*/
+    }
 }
