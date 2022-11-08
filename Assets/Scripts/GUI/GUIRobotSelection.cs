@@ -23,7 +23,6 @@ public class GUIRobotSelection : MonoBehaviour
 
     public void BackToMenu()
     {
-        soundManager.FadeOutRobotSelectionMusic();
         soundManager.PlayStartMusic();
 
         PnlMenuUI.SetActive(true);

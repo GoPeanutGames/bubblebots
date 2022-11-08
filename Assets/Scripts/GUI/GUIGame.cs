@@ -32,6 +32,7 @@ public class GUIGame : MonoBehaviour
     public TextMeshProUGUI TxtScore;
     public TextMeshProUGUI TxtKilledRobots;
     public Sprite[] RobotSprites;
+    public Sprite[] EnemySprites;
     public Transform WinDialogImage;
     public GUIMenu Menu;
 
@@ -52,6 +53,9 @@ public class GUIGame : MonoBehaviour
 
     [DllImport("__Internal")]
     private static extern void Reload();
+
+    [DllImport("__Internal")]
+    private static extern void DisplayHelp();
 
     private void Awake()
     {
@@ -222,7 +226,8 @@ public class GUIGame : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
-                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus")
+                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus"
+                 && child.gameObject.name != "BtnHelp")
             {
                 Destroy(gameObject.transform.GetChild(i).gameObject);
             }
@@ -374,7 +379,7 @@ public class GUIGame : MonoBehaviour
     {
         if (gamePlayManager.GetEnemyDead())
         {
-            Debug.Log("EXP0");
+            //Debug.Log("EXP0");
             return;
         }
 
@@ -385,7 +390,7 @@ public class GUIGame : MonoBehaviour
         // TODO: Remove in the future versions
         if(tile == null)
         {
-            Debug.Log("EXP1");
+            //Debug.Log("EXP1");
             return;
         }
 
@@ -651,10 +656,11 @@ public class GUIGame : MonoBehaviour
 
         yield return new WaitForSeconds(0.67f);
 
+        RenewEnemyRobots();
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
             EnemyGauges[g].value = EnemyGauges[g].maxValue;
-            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue + " / " + EnemyGauges[g].maxValue;
+            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue.ToString("N0") + " / " + EnemyGauges[g].maxValue.ToString("N0");
         }
 
         for (int i = 0; i < EnemyRobots.Length; i++)
@@ -748,9 +754,31 @@ public class GUIGame : MonoBehaviour
         {
             Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
             Menu.DisplayHighScores();
+            Menu.ReverseHighScoreButtons();
         }
 
         gameObject.SetActive(false);
+    }
+
+    public void RenewEnemyRobots()
+    {
+        int robot1 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        int robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        int robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
+
+        while (robot2 == robot1)
+        {
+            robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        }
+
+        while (robot3 == robot1 || robot3 == robot2)
+        {
+            robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        }
+
+        EnemyRobots[0].gameObject.GetComponent<Image>().sprite = EnemySprites[robot1];
+        EnemyRobots[1].gameObject.GetComponent<Image>().sprite = EnemySprites[robot2];
+        EnemyRobots[2].gameObject.GetComponent<Image>().sprite = EnemySprites[robot3];
     }
 
     private void Update()
@@ -760,5 +788,10 @@ public class GUIGame : MonoBehaviour
             //DebugTileList();
             DisplayDebug();
         }
+    }
+
+    public void DisplayHelpButton()
+    {
+        DisplayHelp();
     }
 }

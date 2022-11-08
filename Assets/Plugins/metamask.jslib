@@ -32,8 +32,18 @@ mergeInto(LibraryManager.library, {
 		window.open("https://www.premint.xyz/peanutgames-bubble-bots-mini-game/");
 	},
 	
+	Airdrop: function()
+	{
+		window.open("https://peanutgames.com/airdrop");
+	},
+	
 	Reload: function()
 	{
 		window.location.reload();
+	},
+	
+	DisplayHelp: function()
+	{
+		window.open("https://www.youtube.com/watch?v=w10rwbbQVr8");
 	},
 });

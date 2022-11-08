@@ -11,6 +11,7 @@ using UnityEditor;
 using UnityEngine.SocialPlatforms.Impl;
 using System.Runtime.InteropServices;
 using UnityEngine.SceneManagement;
+using CodeStage.AntiCheat.ObscuredTypes;
 
 public class GUIMenu : MonoBehaviour
 {
@@ -32,6 +33,8 @@ public class GUIMenu : MonoBehaviour
     public GameObject PnlHighScores;
     public GameObject PnlRobotSelection;
     public GameObject PnlPlayAsGuest;
+    public GameObject BtnBackFromHighscores;
+    public GameObject BtnAirdrop;
 
     GamePlayManager gamePlayManager = null;
     WalletManager walletManager;
@@ -40,6 +43,9 @@ public class GUIMenu : MonoBehaviour
     int selectedRobot1 = -1;
     int selectedRobot2 = -1;
     int selectedRobot3 = -1;
+
+    [DllImport("__Internal")]
+    private static extern void Airdrop();
 
     private void Awake()
     {
@@ -101,6 +107,7 @@ public class GUIMenu : MonoBehaviour
 
         soundManager.PlayLevelMusic();
         GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
+        GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
         LeaderboardManager.Instance.ResetKilledRobots();
         SwitchToMultiplayer("level1", 1);
     }
@@ -166,7 +173,8 @@ public class GUIMenu : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
-                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus")
+                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus"
+                 && child.gameObject.name != "BtnHelp")
             {
                 Destroy(GameImage.transform.GetChild(i).gameObject);
             }
@@ -177,6 +185,7 @@ public class GUIMenu : MonoBehaviour
 
         MapImage.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(true);
+        GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
         GameImage.GetComponent<GUIGame>().SetRobots(selectedRobot1, selectedRobot2, selectedRobot3);
         GameImage.GetComponent<CanvasGroup>().alpha = 0;
         GameImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
@@ -471,7 +480,7 @@ public class GUIMenu : MonoBehaviour
         LeaderboardManager.Instance.GetPlayerScore((parameter) =>
         {
             string[] parameters = ((string)parameter).Split(",");
-            long score = long.Parse(parameters[0]);
+            ObscuredLong score = long.Parse(parameters[0]);
             int rank = int.Parse(parameters[1]);
 
             SetPlayerRank(score, rank);
@@ -491,5 +500,20 @@ public class GUIMenu : MonoBehaviour
 
         PnlRobotSelection.SetActive(true);
         gameObject.SetActive(false);
+    }
+
+    public void AirdropFromMenu()
+    {
+        BtnBackFromHighscores.SetActive(true);
+        BtnAirdrop.SetActive(false);
+
+        Airdrop();
+        BackFromHightScores();
+    }
+
+    public void ReverseHighScoreButtons()
+    {
+        BtnBackFromHighscores.SetActive(false);
+        BtnAirdrop.SetActive(true);
     }
 }

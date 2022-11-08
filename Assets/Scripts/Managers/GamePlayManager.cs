@@ -1,4 +1,5 @@
 #define RANDOM_TILES_OFF
+using CodeStage.AntiCheat.ObscuredTypes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ public class GamePlayManager : MonoBehaviour
     int maxEnemies = 3;
     int combo = 0;
 
-    long score = 0;
+    ObscuredLong score = 0;
     bool levelEnded = false;
     bool canAttack = false;
 
@@ -101,7 +102,7 @@ public class GamePlayManager : MonoBehaviour
         for (int g = 0; g < GameGUI.PlayerGauges.Length; g++)
         {
             GameGUI.PlayerGauges[g].value = GameGUI.PlayerGauges[g].maxValue;
-            GameGUI.PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = GameGUI.PlayerGauges[g].maxValue + " / " + GameGUI.PlayerGauges[g].maxValue;
+            GameGUI.PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = GameGUI.PlayerGauges[g].maxValue.ToString("N0") + " / " + GameGUI.PlayerGauges[g].maxValue.ToString("N0");
         }
 
         numHit = new int[] { 0, 0, 0 };
@@ -622,6 +623,12 @@ public class GamePlayManager : MonoBehaviour
             return;
         }
 
+        // eliminate diagonal
+        if(x != releaseTileX && y != releaseTileY)
+        {
+            return;
+        }
+
         combo = 0;
         canAttack = true;
         if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1)
@@ -785,21 +792,21 @@ public class GamePlayManager : MonoBehaviour
                     tilesSpecialCoords.Clear();
                     tilesSpecialCoords.Add(DetectCenterL(hints[chosenHint]));
                     tilesSpecial.Clear();
-                    tilesSpecial.Add(12);
+                    tilesSpecial.Add(11);
 
                     break;
                 case SpecailShapes.T:
                     tilesSpecialCoords.Clear();
                     tilesSpecialCoords.Add(DetectCenterT(hints[chosenHint]));
                     tilesSpecial.Clear();
-                    tilesSpecial.Add(12);
+                    tilesSpecial.Add(11);
 
                     break;
                 case SpecailShapes.SmallSquare:
                     tilesSpecialCoords.Clear();
                     tilesSpecialCoords.Add(new Vector2((int)topMost.x, (int)topMost.y));
                     tilesSpecial.Clear();
-                    tilesSpecial.Add(11);
+                    tilesSpecial.Add(12);
 
                     break;
             }
@@ -1110,7 +1117,7 @@ public class GamePlayManager : MonoBehaviour
 
         if(hints.Count == 0)
         {
-            ReleaseTiles();
+            ReleaseTiles("R1");
             yield break;
         }
 
@@ -1367,7 +1374,7 @@ public class GamePlayManager : MonoBehaviour
             StartHintingCountDown();
         } else
         {
-            ReleaseTiles();
+            ReleaseTiles("R2");
         }
     }
 
@@ -1381,11 +1388,16 @@ public class GamePlayManager : MonoBehaviour
     IEnumerator SwapTilesBackAndForthOnGUI(int x1, int y1, int x2, int y2)
     {
         GameGUI.SwapTiles(x1, y1, x2, y2, false);
+        GameGUI.LockTiles("S0");
         yield return new WaitForSeconds(GameGUI.SwapDuration);
         GameGUI.SwapTiles(x2, y2, x1, y1, false);
+        GameGUI.LockTiles("S1");
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
-        ReleaseTiles();
+        //ReleaseTiles();
+        //Debug.Log("Release: RXX");
+        GameGUI.CanSwapTiles = true;
+        ZeroReleasedTiles();
     }
 
     IEnumerator SwapTilesOnceOnGUI(int x1, int y1, int x2, int y2)
@@ -1398,8 +1410,15 @@ public class GamePlayManager : MonoBehaviour
         releaseTileY = -1;
     }
 
-    public void ReleaseTiles()
+    public void ZeroReleasedTiles()
     {
+        releaseTileX = -1;
+        releaseTileY = -1;
+    }
+
+    public void ReleaseTiles(string releaseSource)
+    {
+        //Debug.Log("Release: " + releaseSource);
         StartCoroutine(ReleaseTilesNow());
     }
 
@@ -1408,9 +1427,8 @@ public class GamePlayManager : MonoBehaviour
         yield return new WaitForSeconds(GameGUI.SwapDuration/* * 1.25f*/);
 
         GameGUI.CanSwapTiles = true;
-        releaseTileX = -1;
-        releaseTileY = -1;
 
+        ZeroReleasedTiles();
         StartHintingCountDown();
     }
 

@@ -33,7 +33,7 @@ public class LeaderboardManager : MonoBehaviour
             return guestMode;
         }
     }
-    public int RobotsKilled
+    public ObscuredInt RobotsKilled
     {
         get
         {
@@ -41,7 +41,7 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
-    int robotsKilled = 0;
+    ObscuredInt robotsKilled = 0;
     bool guestMode = false;
     string crptoPassword;
     string SessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
@@ -211,7 +211,7 @@ public class LeaderboardManager : MonoBehaviour
 
     private IEnumerator GetPlayerScoreNow(LeaderboardEvent onComplete)
     {
-        long score = 0;
+        ObscuredLong score = 0;
         int rank = int.MaxValue;
 
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");

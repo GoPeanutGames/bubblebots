@@ -57,6 +57,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayStartMusic()
     {
+        FadeOutRobotSelectionMusic();
         StartMusicSource?.Play();
 
         if (!soundOn)
@@ -67,6 +68,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayRobotSelectionMusic()
     {
+        FadeOutStartMusic();
         RobotSelectionSource?.Play();
 
         if (!soundOn)
@@ -77,6 +79,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlayLevelMusic()
     {
+        FadeOutRobotSelectionMusic();
         LevelMusicSource?.Play();
 
         if (!soundOn)

@@ -8,6 +8,7 @@ public class GUITile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
     public int X = 0;
     public int Y = 0;
     public string Key = "";
+
     GamePlayManager gamePlayManager;
 
     private void Start()
@@ -27,6 +28,6 @@ public class GUITile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        //gamePlayManager.ReleaseTiles();
+        gamePlayManager.ZeroReleasedTiles();
     }
 }

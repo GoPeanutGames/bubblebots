@@ -1,10 +1,11 @@
+using CodeStage.AntiCheat.ObscuredTypes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ScoreInfo
 {
-    public long Score { get; private set; }
+    public ObscuredLong Score { get; private set; }
     public string UserFullName { get; private set; }
     public string Country { get; private set; }
     public int Rank { get; private set; }
