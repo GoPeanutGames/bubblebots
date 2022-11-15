@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
+using WalletConnectSharp.Unity;
 
 public class WalletManager : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class WalletManager : MonoBehaviour
 
     private void Awake()
     {
+        
         Instance = this;
     }
 
@@ -23,6 +25,7 @@ public class WalletManager : MonoBehaviour
         }
         else
         {
+            Application.OpenURL(WalletConnect.Instance.ConnectURL);
             //TODO: mobile login
         }
     }

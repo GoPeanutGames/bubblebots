@@ -3,49 +3,158 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
-  </head>
-  <body style="text-align: center; padding: 0; border: 0; margin: 0;">
-    <canvas id="unity-canvas" width={{{ WIDTH }}} height={{{ HEIGHT }}} style="width: {{{ WIDTH }}}px; height: {{{ HEIGHT }}}px; background: {{{ BACKGROUND_FILENAME ? 'url(\'Build/' + BACKGROUND_FILENAME.replace(/'/g, '%27') + '\') center / cover' : BACKGROUND_COLOR }}}"></canvas>
-    <script src="Build/{{{ LOADER_FILENAME }}}"></script>
+    <link rel="icon" href="https://peanutgames.com/assets/favicon.ico"/>
+    <link rel="shortcut icon" href="https://peanutgames.com/assets/favicon.ico"/>
+    <link rel="apple-touch-icon" href="https://peanutgames.com/assets/favicon.png"/>	
+    <title>Bubble Bots MiniGame</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald&display=swap" rel="stylesheet">
+	<style>
+body { padding: 0; margin: 0 }
+#unity-container { position: absolute }
+#unity-container.unity-desktop { left: 50%; top: 50%; transform: translate(-50%, -50%); width: 100%; height: 100% }
+#unity-container.unity-mobile { width: 100%; height: 100% }
+#unity-canvas { background: #231F20 }
+.unity-mobile #unity-canvas { width: 100%; height: 100% }
+#unity-loading-bar { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none }
+#unity-logo { width: 154px; height: 130px; background: url('unity-logo-dark.png') no-repeat center; display:none; }
+#unity-progress-bar-empty { width: 400px; height: 60px; background-image: url('./TemplateData/LoadingBarBack.png'); background-size:100% 100% }
+#unity-progress-bar-text { width: 100%; height: 60px; z-index:1; text-align:center; color: white; line-height: 60px; position: absolute; font-family: 'Oswald', sans-serif; font-size:32px; }
+#unity-progress-bar-full { width: 0%; height: 60px; background-image: url('./TemplateData/LoadingBar.png'); background-size:100% 100% }
+#unity-footer { position: relative }
+.unity-mobile #unity-footer { display: none }
+#unity-webgl-logo { float:left; width: 204px; height: 38px; background: url('webgl-logo.png') no-repeat center }
+#unity-build-title { float: right; margin-right: 10px; line-height: 38px; font-family: arial; font-size: 18px }
+#unity-fullscreen-button { float: right; width: 38px; height: 38px; background: url('fullscreen-button.png') no-repeat center }
+#unity-warning { position: absolute; left: 50%; top: 5%; transform: translate(-50%); background: white; padding: 10px; display: none }
+	</style>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-M7GYWDYGQE"></script>
     <script>
-      var myGameInstance = null;
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-M7GYWDYGQE');
+    </script>  </head>
+  <body style="text-align: center;margin:0px 0px 0px 0px; background: #231F20">
+    <div id="unity-container" class="unity-desktop">
+      <canvas id="unity-canvas" style="width:100%;height:100%; background-size:100% auto;"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+			<div id="unity-progress-bar-text">LOADING...</div>
+			<div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+	</div>
+
+    <!--<canvas id="bbots-canvas" style="width: 100%; height: 100%; background: #231F20;background-size:100% auto"></canvas>-->
+    <script src="Build/WebGL.loader.js"></script>
+    <script>
+var container = document.querySelector("#unity-container");
+var canvas = document.querySelector("#unity-canvas");
+var myGameInstance = null;
+var loadingBar = document.querySelector("#unity-loading-bar");
+var progressBarFull = document.querySelector("#unity-progress-bar-full");
+
+let localStorageTimeout = 15 * 1000; // 15,000 milliseconds = 15 seconds.
+let localStorageResetInterval = 10 * 1000; // 10,000 milliseconds = 10 seconds.
+let localStorageTabKey = 'test-application-browser-tab';
+let sessionStorageGuidKey = 'browser-tab-guid';
+
+function createGUID() {
+  let guid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    /*eslint-disable*/
+    let r = Math.random() * 16 | 0,
+      v = c == 'x' ? r : (r & 0x3 | 0x8);
+    /*eslint-enable*/
+    return v.toString(16);
+  });
+
+  return guid;
+}
+
+function testTab() {
+  let sessionGuid = sessionStorage.getItem(sessionStorageGuidKey) || createGUID();
+  let tabObj = JSON.parse(localStorage.getItem(localStorageTabKey)) || null;
+
+	sessionStorage.setItem(sessionStorageGuidKey, sessionGuid);
+
+  // If no or stale tab object, our session is the winner.  If the guid matches, ours is still the winner
+  if (tabObj === null || (tabObj.timestamp < new Date().getTime() - localStorageTimeout) || tabObj.guid === sessionGuid) {
+    function setTabObj() {
+      let newTabObj = {
+        guid: sessionGuid,
+        timestamp: new Date().getTime()
+      };
+      localStorage.setItem(localStorageTabKey, JSON.stringify(newTabObj));
+    }
+    setTabObj();
+    setInterval(setTabObj, localStorageResetInterval);
+    return true;
+  } else {
+    // An active tab is already open that does not match our session guid.
+    return false;
+  }
+}
+
+if (testTab()) {
+    if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
         // Mobile device style: fill the whole browser client area with the game canvas:
         var meta = document.createElement('meta');
         meta.name = 'viewport';
         meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
         document.getElementsByTagName('head')[0].appendChild(meta);
 
-        var canvas = document.querySelector("#unity-canvas");
-        canvas.style.width = "100%";
-        canvas.style.height = "100%";
-        canvas.style.position = "fixed";
+        //container.className = "unity-mobile";*/
 
-        document.body.style.textAlign = "left";
-      }
+        // To lower canvas resolution on mobile devices to gain some
+        // performance, uncomment the following line:
+        // config.devicePixelRatio = 1;
 
-      createUnityInstance(document.querySelector("#unity-canvas"), {
-        dataUrl: "Build/{{{ DATA_FILENAME }}}",
-        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
-#if USE_WASM
-        codeUrl: "Build/{{{ CODE_FILENAME }}}",
-#endif
-#if MEMORY_FILENAME
-        memoryUrl: "Build/{{{ MEMORY_FILENAME }}}",
-#endif
-#if SYMBOLS_FILENAME
-        symbolsUrl: "Build/{{{ SYMBOLS_FILENAME }}}",
-#endif
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
-        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
-        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
-        // matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
-        // devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
-      }).then((unityInstance)=>{
-          myGameInstance = unityInstance
-      });
+        //canvas.style.width = window.innerWidth + 'px';
+        //canvas.style.height = window.innerHeight + 'px';
+    } else {
+        // Desktop style: Render the game canvas in a window that can be maximized to fullscreen:
+
+        //canvas.style.width = "100%";
+        //canvas.style.height = "100%";
+    }
+
+	loadingBar.style.display = "block";
+    var script = document.createElement("script");
+    var buildUrl = "Build";
+    var loaderUrl = buildUrl + "/WebBuild.loader.js";
+    script.src = loaderUrl;
+    script.onload = () => {
+		createUnityInstance(document.querySelector("#unity-canvas"), {
+			dataUrl: "Build/WebBuild.data",
+			frameworkUrl: "Build/WebBuild.framework.js",
+			codeUrl: "Build/WebBuild.wasm",
+			streamingAssetsUrl: "StreamingAssets",
+			companyName: "Peanut Games",
+			productName: "Bubble Bots",
+			productVersion: "0.1.1",
+			// matchWebGLToCanvasSize: false, // Uncomment this to separately control WebGL canvas render size and DOM element size.
+			// devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
+		}, (progress) => {
+			progressBarFull.style.width = 100 * progress + "%";
+		}).then((unityInstance) => {
+			document.getElementById("unity-progress-bar-empty").style.display = "none";
+			myGameInstance = unityInstance;
+			setInterval(function() {
+				myGameInstance.SendMessage("Canvas", "SetURL", window.location+"");
+			}, 1000);
+		}).catch((message) => {
+          alert(message);
+        });
+    };
+    document.body.appendChild(script);
+} else {
+	alert("Cannot have more than one tabs. Click OK to close");
+}
     </script>
   </body>
 </html>
