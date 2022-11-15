@@ -1,10 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
 public class SoundManager : MonoBehaviour
 {
+    public static SoundManager Instance { get; private set; }
+
     public AudioSource MetamaskSource;
     public AudioSource StartMusicSource;
     public AudioSource StartButtonSource;
@@ -24,6 +25,11 @@ public class SoundManager : MonoBehaviour
     public AudioSource ComboSound5;
 
     bool soundOn = true;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     public void PlayMetamaskEffect()
     {

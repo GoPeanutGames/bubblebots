@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 
@@ -10,8 +8,27 @@ public class WalletManager : MonoBehaviour
 
     public delegate void WalletCallback(object param);
 
-    public void LoginWithMetamask(WalletCallback onSuccess, WalletCallback onFailure)
+    public static WalletManager Instance { get; private set; }
+
+    private void Awake()
     {
-        Login();
+        Instance = this;
+    }
+
+    public void LoginWithMetamask()
+    {
+        if (Application.isMobilePlatform == false)
+        {
+            Login();
+        }
+        else
+        {
+            //TODO: mobile login
+        }
+    }
+
+    public void MetamaskLoginSuccess()
+    {
+        SoundManager.Instance.PlayMetamaskEffect();
     }
 }
