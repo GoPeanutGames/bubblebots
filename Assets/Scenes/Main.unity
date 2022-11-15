@@ -7165,10 +7165,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   AppData:
-    Description: 
-    URL: 
-    Icons: []
-    Name: 
+    Description: Peanut Community
+    URL: https://community.peanutgames.com/
+    Icons:
+    - https://app.warriders.com/favicon.ico
+    Name: Peanut
 --- !u!114 &497947980
 MonoBehaviour:
   m_ObjectHideFlags: 0
