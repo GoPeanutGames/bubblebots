@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 using WalletConnectSharp.Unity;
+using WalletConnectSharp.Core.Models;
 
 public class WalletManager : MonoBehaviour
 {
@@ -13,7 +14,6 @@ public class WalletManager : MonoBehaviour
 
     private void Awake()
     {
-        
         Instance = this;
     }
 
@@ -26,12 +26,20 @@ public class WalletManager : MonoBehaviour
         else
         {
             Application.OpenURL(WalletConnect.Instance.ConnectURL);
-            //TODO: mobile login
         }
     }
 
     public void MetamaskLoginSuccess()
     {
         SoundManager.Instance.PlayMetamaskEffect();
+    }
+
+    public void OnWalletConnectedEventFromPlugin(WCSessionData sessionData)
+    {
+        string account = sessionData.accounts[0];
+        Debug.Log(account);
+        //TODO: REFACTOR - UnityEvent to launch this, GUIMenu listens for it
+        //TODO: bad for performance, but no other way until other things are refactored
+        GameObject.FindObjectOfType<GUIMenu>().InitSession(account);
     }
 }
