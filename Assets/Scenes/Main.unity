@@ -1683,8 +1683,9 @@ Transform:
   - {fileID: 996944167}
   - {fileID: 100261915}
   - {fileID: 497947978}
+  - {fileID: 1454722122}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &89362726
 GameObject:
@@ -5962,7 +5963,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &404397449
 GameObject:
@@ -7168,7 +7169,7 @@ MonoBehaviour:
     Description: Peanut Community
     URL: https://community.peanutgames.com/
     Icons:
-    - https://app.warriders.com/favicon.ico
+    - https://peanutgames.com/assets/favicon.ico
     Name: Peanut
 --- !u!114 &497947980
 MonoBehaviour:
@@ -9654,7 +9655,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &677117134
 PrefabInstance:
@@ -18516,8 +18517,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_Father: {fileID: 85028815}
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1454722123
 MonoBehaviour:
@@ -26995,7 +26996,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -68.75699}
+  m_AnchoredPosition: {x: 0, y: -68.756996}
   m_SizeDelta: {x: -22.047, y: -229.901}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2047863385

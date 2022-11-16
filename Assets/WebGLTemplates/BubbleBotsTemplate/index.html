@@ -126,13 +126,13 @@ if (testTab()) {
 	loadingBar.style.display = "block";
     var script = document.createElement("script");
     var buildUrl = "Build";
-    var loaderUrl = buildUrl + "/WebBuild.loader.js";
+    var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
     script.src = loaderUrl;
     script.onload = () => {
 		createUnityInstance(document.querySelector("#unity-canvas"), {
-			dataUrl: "Build/WebBuild.data",
-			frameworkUrl: "Build/WebBuild.framework.js",
-			codeUrl: "Build/WebBuild.wasm",
+			dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+			frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+			codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
 			streamingAssetsUrl: "StreamingAssets",
 			companyName: "Peanut Games",
 			productName: "Bubble Bots",
