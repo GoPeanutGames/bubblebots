@@ -7179,7 +7179,7 @@ MonoBehaviour:
       m_Calls: []
   AppData:
     Description: Peanut Community
-    URL: https://community.peanutgames.com/
+    URL: https://game.peanutgames.com/
     Icons:
     - https://peanutgames.com/assets/favicon.ico
     Name: Peanut
@@ -27008,7 +27008,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -68.75699}
+  m_AnchoredPosition: {x: 0, y: -68.756996}
   m_SizeDelta: {x: -22.047, y: -229.901}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2047863385
