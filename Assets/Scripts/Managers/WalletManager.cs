@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using WalletConnectSharp.Unity;
+using WalletConnectSharp.Core.Models;
 
 public class WalletManager : MonoBehaviour
 {
@@ -10,8 +10,36 @@ public class WalletManager : MonoBehaviour
 
     public delegate void WalletCallback(object param);
 
-    public void LoginWithMetamask(WalletCallback onSuccess, WalletCallback onFailure)
+    public static WalletManager Instance { get; private set; }
+
+    private void Awake()
     {
-        Login();
+        Instance = this;
+    }
+
+    public void LoginWithMetamask()
+    {
+        if (Application.isMobilePlatform == false)
+        {
+            Login();
+        }
+        else
+        {
+            Application.OpenURL(WalletConnect.Instance.ConnectURL);
+        }
+    }
+
+    public void MetamaskLoginSuccess()
+    {
+        SoundManager.Instance.PlayMetamaskEffect();
+    }
+
+    public void OnWalletConnectedEventFromPlugin(WCSessionData sessionData)
+    {
+        string account = sessionData.accounts[0];
+        Debug.Log(account);
+        //TODO: REFACTOR - UnityEvent to launch this, GUIMenu listens for it
+        //TODO: bad for performance, but no other way until other things are refactored
+        GameObject.FindObjectOfType<GUIMenu>().InitSession(account);
     }
 }

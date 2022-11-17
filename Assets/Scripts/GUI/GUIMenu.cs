@@ -4,13 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using TMPro;
-using System;
 using static GUIGame;
-using System.Net.Sockets;
-using UnityEditor;
-using UnityEngine.SocialPlatforms.Impl;
 using System.Runtime.InteropServices;
-using UnityEngine.SceneManagement;
 using CodeStage.AntiCheat.ObscuredTypes;
 
 public class GUIMenu : MonoBehaviour
@@ -37,7 +32,6 @@ public class GUIMenu : MonoBehaviour
     public GameObject BtnAirdrop;
 
     GamePlayManager gamePlayManager = null;
-    WalletManager walletManager;
     SoundManager soundManager;
     string fullName = "";
     int selectedRobot1 = -1;
@@ -49,11 +43,11 @@ public class GUIMenu : MonoBehaviour
 
     private void Awake()
     {
+        Debug.Log(Time.realtimeSinceStartup);
         Robot1.SetActive(false);
         Robot2.SetActive(false);
 
         gamePlayManager = FindObjectOfType<GamePlayManager>();
-        walletManager = FindObjectOfType<WalletManager>();
         soundManager = FindObjectOfType<SoundManager>();
     }
 
@@ -448,12 +442,7 @@ public class GUIMenu : MonoBehaviour
 
     public void LoginWithMetamask()
     {
-        walletManager?.LoginWithMetamask(null, null);
-    }
-
-    public void NotifyMetamaskSuccess()
-    {
-        soundManager?.PlayMetamaskEffect();
+        WalletManager.Instance.LoginWithMetamask();
     }
 
     public void InitSession(string address)

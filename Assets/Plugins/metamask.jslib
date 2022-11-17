@@ -5,7 +5,7 @@ mergeInto(LibraryManager.library, {
 		
 		if(accounts.length > 0)
 		{
-			myGameInstance.SendMessage("Canvas/PnlUI", "NotifyMetamaskSuccess");
+			myGameInstance.SendMessage("Managers/WalletManager", "MetamaskLoginSuccess");
 			myGameInstance.SendMessage("Canvas/PnlUI", "InitSession", accounts[0]);
 		} else {
 			console.log("No wallet has been connected");
