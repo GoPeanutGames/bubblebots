@@ -139,12 +139,11 @@ if (testTab()) {
 			// devicePixelRatio: 1, // Uncomment this to override low DPI rendering on high DPI displays.
 		}, (progress) => {
             if(progress >= 0.95){
-                progressBarFull.style.backgroundImage = "url('./TemplateData/LoadingBar_100.png')"
+                progressBarFull.style.backgroundImage = "url('./TemplateData/100.png')"
             }else if (progress >= 0.1){
                 const a = (progress * 10).toString()[0] + '0';
-                progressBarFull.style.backgroundImage = "url('./TemplateData/LoadingBar_"+progress+".png')"
+                progressBarFull.style.backgroundImage = "url('./TemplateData/"+a+".png')"
             }
-			progressBarFull.style.width = 100 * progress + "%";
 		}).then((unityInstance) => {
 			document.getElementById("unity-progress-bar-empty").style.display = "none";
 			myGameInstance = unityInstance;
