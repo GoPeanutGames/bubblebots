@@ -15,10 +15,6 @@ public class GamePlayManager : MonoBehaviour
     public SkinManager skinManager;
     public float DamageOfRobot1 = 0.05f;
     public float DamageOfRobot2 = 0.05f;
-    public Animator Robot1Anim;
-    public Animator Robot2Anim;
-    public GameObject HitEffect1;
-    public GameObject HitEffect2;
     public int HintDuration = 7;
     public int[] EnemyHPs = new int[] { 40, 40, 40 };
     int[] numHit = new int[] { 0, 0, 0 };
@@ -398,16 +394,18 @@ public class GamePlayManager : MonoBehaviour
         {
             if (y > 0 && tileSet[(int)hintList[0].x, (int)hintList[0].y] == tileSet[(int)hintList[0].x, (int)hintList[0].y - 1] && tileSet[(int)hintList[1].x, (int)hintList[1].y] == tileSet[(int)hintList[1].x, (int)hintList[1].y - 1])
             {
+                WriteList(hintList);
                 hintList.Add(new Vector2((int)hintList[0].x, (int)hintList[0].y));
                 shape = SpecailShapes.SmallSquare;
-
+                WriteList(hintList);
                 AddHint(hintList.ToArray(), shape);
             }
             else if (y < levelInfo.Height - 1 && tileSet[(int)hintList[0].x, (int)hintList[0].y] == tileSet[(int)hintList[0].x, (int)hintList[0].y + 1] && tileSet[(int)hintList[1].x, (int)hintList[1].y] == tileSet[(int)hintList[1].x, (int)hintList[1].y + 1])
             {
+                WriteList(hintList);
                 hintList.Add(new Vector2((int)hintList[0].x, (int)hintList[0].y + 1));
                 shape = SpecailShapes.SmallSquare;
-
+                WriteList(hintList);
                 AddHint(hintList.ToArray(), shape);
             }
         }
@@ -547,6 +545,14 @@ public class GamePlayManager : MonoBehaviour
 
                 AddHint(hintList.ToArray(), shape);
             }
+        }
+    }
+
+    private void WriteList(List<Vector2> list)
+    {
+        foreach (Vector2 vector in list)
+        {
+            Debug.Log(vector);
         }
     }
 
