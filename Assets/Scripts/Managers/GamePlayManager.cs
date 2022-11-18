@@ -3,14 +3,9 @@ using CodeStage.AntiCheat.ObscuredTypes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting.Dependencies.NCalc;
-using UnityEditor;
-//using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using static LevelManager;
-//using static UnityEditor.Searcher.SearcherWindow.Alignment;
 
 public class GamePlayManager : MonoBehaviour
 {
@@ -54,13 +49,6 @@ public class GamePlayManager : MonoBehaviour
     bool levelEnded = false;
     bool canAttack = false;
 
-    // special matching related stuff
-    bool smLongT = false;
-    bool sm4Square = false;
-    bool sm5InLine = false;
-    bool sm4InLine = false;
-    bool smBigT = false;
-    bool smBigL = false;
     float timeForNewHint = 0;
 
     public string[,] TileSet
@@ -682,11 +670,6 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
-    private string ProcessDoubleBlast(int releaseTileX, int releaseTileY)
-    {
-        throw new NotImplementedException();
-    }
-
     private void ProcessSpecialMatching()
     {
         int chosenHint = FindHighestHint();
@@ -699,13 +682,6 @@ public class GamePlayManager : MonoBehaviour
         SpecailShapes shape = hintShapes[chosenHint];
         Vector2 leftMost = Vector2.zero;
         Vector2 topMost = Vector2.zero;
-
-        sm5InLine = shape == SpecailShapes.Straight5;
-        sm4InLine = shape == SpecailShapes.Straight4;
-        smBigT = shape == SpecailShapes.T;
-        smLongT = shape == SpecailShapes.LongT;
-        sm4Square = shape == SpecailShapes.SmallSquare;
-        smBigL = shape == SpecailShapes.L;
 
         if(shape != SpecailShapes.Nothing)
         {
@@ -999,10 +975,6 @@ public class GamePlayManager : MonoBehaviour
         }
 
         GameGUI.DamageToEnemyRobot(tilesToPut.Count);
-        var hitEffect = Instantiate(HitEffect1);
-        hitEffect.transform.position = HitEffect1.transform.position;
-        hitEffect.SetActive(true);
-        Destroy(hitEffect.gameObject, 2);
 
         numHit[currentEnemy] += tilesToPut.Count;
         if (numHit[currentEnemy] % 2 == 0)
@@ -1013,7 +985,6 @@ public class GamePlayManager : MonoBehaviour
         if (numHit[currentEnemy] >= EnemyHPs[currentEnemy])
         {
             KillEnemy();
-            //numHit[currentEnemy] = 0;
 
             if (++killedEnemies >= maxEnemies)
             {
@@ -1063,11 +1034,6 @@ public class GamePlayManager : MonoBehaviour
 
         canAttack = false;
         GameGUI.DamageToPlayerRobot(DamageOfRobot2);
-        //Robot2Anim.CrossFade("XBotHit", 0.1f);
-        var hitEffect = Instantiate(HitEffect2);
-        hitEffect.transform.position = HitEffect2.transform.position;
-        hitEffect.SetActive(true);
-        Destroy(hitEffect.gameObject, 2);
     }
 
     private void KillEnemy()
@@ -1210,11 +1176,8 @@ public class GamePlayManager : MonoBehaviour
 
     private void ProcessTheHints()
     {
-        //bool vertical;
-        //string firstOne;
         for (int selected = 0; selected < hints.Count; selected++)
         {
-            //firstOne = tileSet[(int)hints[selected][0].x, (int)hints[selected][0].y];
             for (int indx = 0; indx < hints[selected].Length; indx++)
             {
                 if (IsSpecialGem(tileSet[(int)hints[selected][indx].x, (int)hints[selected][indx].y]))

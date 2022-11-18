@@ -17,8 +17,6 @@ public class GUIMenu : MonoBehaviour
     public Image WinNoMoreMoves;
     public TextMeshProUGUI TxtStatus;
     public Button PlayButton;
-    public GameObject Robot1;
-    public GameObject Robot2;
 
     public GameObject PnlPlayerInfo;
     public GameObject PnlPlayerOffline;
@@ -43,10 +41,6 @@ public class GUIMenu : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log(Time.realtimeSinceStartup);
-        Robot1.SetActive(false);
-        Robot2.SetActive(false);
-
         gamePlayManager = FindObjectOfType<GamePlayManager>();
         soundManager = FindObjectOfType<SoundManager>();
     }
@@ -98,7 +92,7 @@ public class GUIMenu : MonoBehaviour
     public void StartLevel1()
     {
         MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
-
+        Debug.Log(soundManager);
         soundManager.PlayLevelMusic();
         GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
         GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
@@ -108,54 +102,16 @@ public class GUIMenu : MonoBehaviour
 
     public void SwitchToMultiplayer(string levelFile, int levelNumber)
     {
-        /*MenuImage.gameObject.SetActive(true);
-        MenuImage.GetComponent<CanvasGroup>().alpha = 0;
-        MenuImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);*/
-
-        //StartCoroutine(StartMultiplayerSequence(levelFile, levelNumber));
         StartCoroutine(TurnOffGUI());
         StartCoroutine(TurnOnPlay(levelFile, levelNumber));
-
-    }
-
-    IEnumerator StartMultiplayerSequence(string levelFile, int levelNumber)
-    {
-        DisplayStatusText("");
-
-        yield return new WaitForSeconds(1);
-        DisplayStatusText("FINDING OPPONENT...");
-
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.63f, 1.14f));
-        DisplayStatusText("OPPONENT FOUND...");
-
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.32f, 0.49f));
-        DisplayStatusText("CONNECTING...");
-
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0.63f, 1.14f));
-        DisplayStatusText("STARTING THE GAME...");
-
-        MapImage.gameObject.SetActive(false);
-        MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
-
-        StartCoroutine(TurnOffGUI());
-        StartCoroutine(TurnOnPlay(levelFile, levelNumber));
-
-        yield break;
     }
 
     IEnumerator TurnOffGUI()
     {
-        //MenuImage.raycastTarget = false;
         yield return new WaitForSeconds(0.6f);
 
-        //MenuImage.gameObject.SetActive(false);
         MenuImage.transform.Find("PlayerInfo").gameObject.SetActive(false);
         MenuImage.transform.Find("PlayAsGuest").gameObject.SetActive(false);
-
-        /*MapImage.gameObject.SetActive(true);
-        MapImage.GetComponent<CanvasGroup>().alpha = 0;
-        MapImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
-        yield return new WaitForSeconds(0.5f);*/
     }
 
     IEnumerator TurnOnPlay(string levelFile, int levelNumber)
@@ -217,7 +173,6 @@ public class GUIMenu : MonoBehaviour
     {
         LeaderboardManager.Instance.SetGuestMode();
 
-        //PlayButton.gameObject.SetActive(true);
         TxtStatus.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(false);
 
@@ -225,7 +180,6 @@ public class GUIMenu : MonoBehaviour
         DisplayPlayerInfo(false);
         DisplayPlayerOffline(false);
 
-        //StartLevel1();
         DisplayRobotSelection();
     }
 
@@ -261,23 +215,12 @@ public class GUIMenu : MonoBehaviour
         imgLose.transform.localScale = Vector3.zero;
         imgLose.transform.DOScale(Vector3.one, 0.5f);
     }
-
-    /*IEnumerator DisplayWinNow(int numLevel, long score)
-    {
-    }*/
-
     public void HideWin()
     {
-        Robot1.SetActive(false);
-        Robot2.SetActive(false);
-
-        //MapImage.gameObject.SetActive(true);
-
         WinDialogImage.gameObject.SetActive(false);
         MenuImage.gameObject.SetActive(true);
 
         LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
-        //gamePlayManager?.StartLevel("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel());
         StartCoroutine(TurnOnPlay("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel()));
     }
 

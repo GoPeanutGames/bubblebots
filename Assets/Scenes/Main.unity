@@ -7616,8 +7616,6 @@ MonoBehaviour:
   WinNoMoreMoves: {fileID: 1820629988}
   TxtStatus: {fileID: 1059630147}
   PlayButton: {fileID: 793387639}
-  Robot1: {fileID: 0}
-  Robot2: {fileID: 0}
   PnlPlayerInfo: {fileID: 1787772161}
   PnlPlayerOffline: {fileID: 460962953}
   PnlLoadingPlace: {fileID: 204907984}
@@ -23433,8 +23431,6 @@ MonoBehaviour:
   WinNoMoreMoves: {fileID: 0}
   TxtStatus: {fileID: 1290550506}
   PlayButton: {fileID: 0}
-  Robot1: {fileID: 0}
-  Robot2: {fileID: 0}
   PnlPlayerInfo: {fileID: 0}
   PnlPlayerOffline: {fileID: 0}
   PnlLoadingPlace: {fileID: 0}
@@ -26379,7 +26375,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -68.756996}
+  m_AnchoredPosition: {x: 0, y: -68.75698}
   m_SizeDelta: {x: -22.047, y: -229.901}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2047863385
