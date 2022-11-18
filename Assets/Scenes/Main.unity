@@ -2382,10 +2382,6 @@ MonoBehaviour:
   skinManager: {fileID: 902079786}
   DamageOfRobot1: 1
   DamageOfRobot2: 1
-  Robot1Anim: {fileID: 0}
-  Robot2Anim: {fileID: 0}
-  HitEffect1: {fileID: 0}
-  HitEffect2: {fileID: 0}
   HintDuration: 7
   EnemyHPs: 320000003200000032000000
 --- !u!1 &125338890
@@ -6627,10 +6623,19 @@ MonoBehaviour:
       m_Calls: []
   ConnectedEventSession:
     m_PersistentCalls:
+      m_Calls: []
+  DisconnectedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  ConnectionFailedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  NewSessionConnected:
+    m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 100261914}
         m_TargetAssemblyTypeName: WalletManager, Assembly-CSharp
-        m_MethodName: OnWalletConnectedEventFromPlugin
+        m_MethodName: OnNewWalletSessionConnectedEventFromPlugin
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6640,15 +6645,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  DisconnectedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  ConnectionFailedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  NewSessionConnected:
-    m_PersistentCalls:
-      m_Calls: []
   ResumedSessionConnected:
     m_PersistentCalls:
       m_Calls: []
@@ -7072,7 +7068,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuImage: {fileID: 552920242}
-  MapImage: {fileID: 0}
   GameImage: {fileID: 736831950}
   WinDialogImage: {fileID: 1824949331}
   WinNoMoreMoves: {fileID: 1820629988}
@@ -22473,7 +22468,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MenuImage: {fileID: 1820629988}
-  MapImage: {fileID: 0}
   GameImage: {fileID: 736831950}
   WinDialogImage: {fileID: 0}
   WinNoMoreMoves: {fileID: 0}
@@ -25423,7 +25417,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -68.75698}
+  m_AnchoredPosition: {x: 0, y: -68.75699}
   m_SizeDelta: {x: -22.047, y: -229.901}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2047863385

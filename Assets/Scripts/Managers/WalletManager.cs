@@ -34,10 +34,9 @@ public class WalletManager : MonoBehaviour
         SoundManager.Instance.PlayMetamaskEffect();
     }
 
-    public void OnWalletConnectedEventFromPlugin(WCSessionData sessionData)
+    public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
     {
-        string account = sessionData.accounts[0];
-        Debug.Log(account);
+        string account = session.Accounts[0];
         //TODO: REFACTOR - UnityEvent to launch this, GUIMenu listens for it
         //TODO: bad for performance, but no other way until other things are refactored
         GameObject.FindObjectOfType<GUIMenu>().InitSession(account);
