@@ -1063,12 +1063,10 @@ public class GamePlayManager : MonoBehaviour
 
         enemyDead = true;
         ResetHintTime();
-        //Robot1Anim.CrossFade("YBotDie", 0.1f);
         GameGUI.LockTiles("L3");
         numLevel += 1;
 
         MenuGUI.gameObject.SetActive(true);
-        MenuGUI.UnlockLevel(currentLevel + 1);
         MenuGUI.DisplayWin();
     }
 

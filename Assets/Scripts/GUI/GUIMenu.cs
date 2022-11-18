@@ -11,7 +11,6 @@ using CodeStage.AntiCheat.ObscuredTypes;
 public class GUIMenu : MonoBehaviour
 {
     public Image MenuImage;
-    public Image MapImage;
     public Image GameImage;
     public Image WinDialogImage;
     public Image WinNoMoreMoves;
@@ -130,10 +129,8 @@ public class GUIMenu : MonoBehaviour
             }
         }
 
-        //yield return new WaitForSeconds(0.5f);
         yield return new WaitForEndOfFrame();
 
-        MapImage.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(true);
         GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
         GameImage.GetComponent<GUIGame>().SetRobots(selectedRobot1, selectedRobot2, selectedRobot3);
@@ -232,21 +229,6 @@ public class GUIMenu : MonoBehaviour
     public void HideNoMoreMoves()
     {
         WinNoMoreMoves.gameObject.SetActive(false);
-    }
-
-    internal void UnlockLevel(int numLevel)
-    {
-        Transform level = MapImage.transform.Find("Level" + numLevel);
-
-        if(level != null)
-        {
-            level.GetComponent<LevelInfo>().Locked = false;
-            level.transform.Find("ImgLocked").gameObject.SetActive(false);
-            level.transform.Find("BtnLevel").GetComponent<Button>().interactable = true;
-            level.transform.Find("BtnLevel/Text").gameObject.SetActive(true);
-
-            MenuImage.gameObject.SetActive(false);
-        }
     }
 
     public void DisplayPlayerInfoLoading(bool value)
