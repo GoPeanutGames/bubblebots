@@ -372,6 +372,7 @@ public class GUIMenu : MonoBehaviour
 
     public void InitSession(string address)
     {
+        AnalyticsManager.Instance.InitAnalytics(address);
         Debug.Log("Init session for " + address + "...");
         if (!string.IsNullOrEmpty(address))
         {
