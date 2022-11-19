@@ -395,7 +395,8 @@ public class GamePlayManager : MonoBehaviour
             if (y > 0 && tileSet[(int)hintList[0].x, (int)hintList[0].y] == tileSet[(int)hintList[0].x, (int)hintList[0].y - 1] && tileSet[(int)hintList[1].x, (int)hintList[1].y] == tileSet[(int)hintList[1].x, (int)hintList[1].y - 1])
             {
                 WriteList(hintList);
-                hintList.Add(new Vector2((int)hintList[0].x, (int)hintList[0].y));
+                hintList.Add(new Vector2((int)hintList[0].x, (int)hintList[0].y - 1));
+                hintList.Add(new Vector2((int)hintList[1].x, (int)hintList[1].y - 1));
                 shape = SpecailShapes.SmallSquare;
                 WriteList(hintList);
                 AddHint(hintList.ToArray(), shape);
@@ -404,6 +405,7 @@ public class GamePlayManager : MonoBehaviour
             {
                 WriteList(hintList);
                 hintList.Add(new Vector2((int)hintList[0].x, (int)hintList[0].y + 1));
+                hintList.Add(new Vector2((int)hintList[1].x, (int)hintList[1].y + 1));
                 shape = SpecailShapes.SmallSquare;
                 WriteList(hintList);
                 AddHint(hintList.ToArray(), shape);
@@ -533,7 +535,8 @@ public class GamePlayManager : MonoBehaviour
         {
             if (x > 0 && tileSet[(int)hintList[0].x, (int)hintList[0].y] == tileSet[(int)hintList[0].x - 1, (int)hintList[0].y] && tileSet[(int)hintList[1].x, (int)hintList[1].y] == tileSet[(int)hintList[1].x - 1, (int)hintList[1].y])
             {
-                hintList.Add(new Vector2((int)hintList[0].x, (int)hintList[0].y));
+                hintList.Add(new Vector2((int)hintList[0].x - 1, (int)hintList[0].y));
+                hintList.Add(new Vector2((int)hintList[1].x - 1, (int)hintList[1].y));
                 shape = SpecailShapes.SmallSquare;
 
                 AddHint(hintList.ToArray(), shape);
@@ -541,6 +544,7 @@ public class GamePlayManager : MonoBehaviour
             else if (x < levelInfo.Width - 1 && tileSet[(int)hintList[0].x, (int)hintList[0].y] == tileSet[(int)hintList[0].x + 1, (int)hintList[0].y] && tileSet[(int)hintList[1].x, (int)hintList[1].y] == tileSet[(int)hintList[1].x + 1, (int)hintList[1].y])
             {
                 hintList.Add(new Vector2((int)hintList[0].x + 1, (int)hintList[0].y));
+                hintList.Add(new Vector2((int)hintList[1].x + 1, (int)hintList[1].y));
                 shape = SpecailShapes.SmallSquare;
 
                 AddHint(hintList.ToArray(), shape);
@@ -786,7 +790,7 @@ public class GamePlayManager : MonoBehaviour
                     break;
                 case SpecailShapes.SmallSquare:
                     tilesSpecialCoords.Clear();
-                    tilesSpecialCoords.Add(new Vector2((int)topMost.x, (int)topMost.y));
+                    tilesSpecialCoords.Add(new Vector2((int)topMost.x, (int)topMost.y - 1));
                     tilesSpecial.Clear();
                     tilesSpecial.Add(12);
 
@@ -981,12 +985,7 @@ public class GamePlayManager : MonoBehaviour
         }
 
         GameGUI.DamageToEnemyRobot(tilesToPut.Count);
-
         numHit[currentEnemy] += tilesToPut.Count;
-        if (numHit[currentEnemy] % 2 == 0)
-        {
-            HitPlayer();
-        }
 
         if (numHit[currentEnemy] >= EnemyHPs[currentEnemy])
         {
@@ -1011,6 +1010,7 @@ public class GamePlayManager : MonoBehaviour
         }
         else
         {
+            HitPlayer();
             if (!MoreMovesArePossible())
             {
                 StartCoroutine(RefreshBoard());
