@@ -36,6 +36,7 @@ public class WalletManager : MonoBehaviour
 
     public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
     {
+        MetamaskLoginSuccess();
         string account = session.Accounts[0];
         //TODO: REFACTOR - UnityEvent to launch this, GUIMenu listens for it
         //TODO: bad for performance, but no other way until other things are refactored
