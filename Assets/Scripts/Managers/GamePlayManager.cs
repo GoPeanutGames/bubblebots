@@ -55,6 +55,10 @@ public class GamePlayManager : MonoBehaviour
         }
     }
 
+    public bool InputLocked()
+    {
+        return runningCoroutinesByStringName.Count > 0 || runningCoroutinesByEnumerator.Count > 0;
+    }
     public void PrepareLevel(string levelFile, int levelNumber)
     {
         MenuGUI.SwitchToMultiplayer(levelFile, levelNumber);
@@ -142,6 +146,7 @@ public class GamePlayManager : MonoBehaviour
         }
 
         int[,] tileIndices = new int[levelInfo.Width, levelInfo.Height];
+
 #if RANDOM_TILES
         tileIndices[0, 5] = 9; // 10, 11 explode whole board
         tileIndices[1, 5] = 1;
@@ -599,10 +604,16 @@ public class GamePlayManager : MonoBehaviour
 
     public void SetDownTile(int x, int y)
     {
+        if (InputLocked())
+        {
+            return;
+        }
+
         if(!GameGUI.CanSwapTiles)
         {
             return;
         }
+
 
         releaseTileX = x;
         releaseTileY = y;
@@ -610,6 +621,11 @@ public class GamePlayManager : MonoBehaviour
 
     public void MoveOverTile(int x, int y)
     {
+        if (InputLocked())
+        {
+            return;
+        }
+
         if (releaseTileX == -1 || releaseTileY == -1)
         {
             return;
@@ -633,7 +649,7 @@ public class GamePlayManager : MonoBehaviour
         {
             if(tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
             {
-                StartCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
+                StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
                 return;
             }
 
@@ -641,14 +657,14 @@ public class GamePlayManager : MonoBehaviour
 
             if (IsSpecialGem(tileSet[x, y]))
             {
-                StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-                StartCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
+                StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                StartTrackedCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
                 return;
             }
             else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
             {
-                StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-                StartCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
+                StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                StartTrackedCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
                 return;
             }
 
@@ -658,9 +674,9 @@ public class GamePlayManager : MonoBehaviour
 
             if(hints.Count > 0)
             {
-                StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
-                StartCoroutine(ExplodeTiles());
+                StartTrackedCoroutine(ExplodeTiles());
             }
             else
             {
@@ -668,13 +684,13 @@ public class GamePlayManager : MonoBehaviour
 
                 if (hints.Count > 0)
                 {
-                    StartCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+                    StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                     SwapKeys(x, y, releaseTileX, releaseTileY);
-                    StartCoroutine(ExplodeTiles());
+                    StartTrackedCoroutine(ExplodeTiles());
                 }
                 else
                 {
-                    StartCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
+                    StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
                 }
             }
         }
@@ -997,7 +1013,7 @@ public class GamePlayManager : MonoBehaviour
                 {
                     levelEnded = true;
                     FindObjectOfType<SoundManager>().FadeOutStartMusic();
-                    StartCoroutine(FinishLevel());
+                    StartTrackedCoroutine(FinishLevel());
                     LeaderboardManager.Instance.Score = score;
                 } else
                 {
@@ -1013,7 +1029,7 @@ public class GamePlayManager : MonoBehaviour
             HitPlayer();
             if (!MoreMovesArePossible())
             {
-                StartCoroutine(RefreshBoard());
+                StartTrackedCoroutine(RefreshBoard());
             }
         }
     }
@@ -1241,6 +1257,7 @@ public class GamePlayManager : MonoBehaviour
 
                             tileSet[x, py] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
                             GameGUI.AppearAt(x, py, tileSet[x, py]);
+                            
 
                             AddTilesToPut(new Vector2(x, py));
                         }
@@ -1258,7 +1275,7 @@ public class GamePlayManager : MonoBehaviour
                                 tileSet[x, y] = skinManager.Skins[skinManager.SelectedSkin].TileSet[tilesSpecial[i]].Key;
                                 foundInSpecialMatches = true;
                                 GameGUI.AppearAt(x, y, tileSet[x, y]);
-
+                                
                                 break;
                             }
                         }
@@ -1337,9 +1354,10 @@ public class GamePlayManager : MonoBehaviour
                 hintShapes.Add(tempHintShapes[i]);
             }
 
-            StartCoroutine(MoveOverAfter(0.5f));
+            StartTrackedCoroutine(MoveOverAfter(0.5f));
             StartHintingCountDown();
-        } else
+        }
+        else
         {
             ReleaseTiles("R2");
         }
@@ -1349,7 +1367,7 @@ public class GamePlayManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        StartCoroutine(ExplodeTiles());
+        StartTrackedCoroutine(ExplodeTiles());
     }
 
     IEnumerator SwapTilesBackAndForthOnGUI(int x1, int y1, int x2, int y2)
@@ -1364,6 +1382,7 @@ public class GamePlayManager : MonoBehaviour
         //ReleaseTiles();
         //Debug.Log("Release: RXX");
         GameGUI.CanSwapTiles = true;
+
         ZeroReleasedTiles();
     }
 
@@ -1386,7 +1405,7 @@ public class GamePlayManager : MonoBehaviour
     public void ReleaseTiles(string releaseSource)
     {
         //Debug.Log("Release: " + releaseSource);
-        StartCoroutine(ReleaseTilesNow());
+        StartTrackedCoroutine(ReleaseTilesNow());
     }
 
     IEnumerator ReleaseTilesNow()
@@ -1441,7 +1460,7 @@ public class GamePlayManager : MonoBehaviour
     {
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
-        StartCoroutine(SubProcessSpecialGem(x, y, releaseX, releaseY));
+        StartTrackedCoroutine(SubProcessSpecialGem(x, y, releaseX, releaseY));
     }
 
     IEnumerator SubProcessSpecialGem(int x, int y, int releaseX, int releaseY)
@@ -1492,7 +1511,7 @@ public class GamePlayManager : MonoBehaviour
                 string code = tileSet[releaseX, releaseY];
                 List<Vector2> changedTiles = ProcessRandomColorChange(x, y, releaseX, releaseY);
                 GameGUI.ColorChangeEffect(code, changedTiles);
-                StartCoroutine(ReevaluateBoard());
+                StartTrackedCoroutine(ReevaluateBoard());
 
                 yield break;
         }
@@ -1787,7 +1806,7 @@ public class GamePlayManager : MonoBehaviour
             {
                 if (indx != x && IsSpecialGem(tileSet[indx, y]))
                 {
-                    StartCoroutine(ProcessSpecialGem(indx, y, x, y));
+                    StartTrackedCoroutine(ProcessSpecialGem(indx, y, x, y));
                 }
 
                 tileSet[indx, y] = "X";
@@ -1807,7 +1826,7 @@ public class GamePlayManager : MonoBehaviour
 
                 if (indy != y && IsSpecialGem(tileSet[x, indy]))
                 {
-                    StartCoroutine(ProcessSpecialGem(x, indy, x, y));
+                    StartTrackedCoroutine(ProcessSpecialGem(x, indy, x, y));
                 }
 
                 tileSet[x, indy] = "X";
@@ -1910,4 +1929,69 @@ public class GamePlayManager : MonoBehaviour
     {
         levelEnded = true;
     }
+
+    /// track coroutines started on this object as they contain board processing algorithms
+    /// input should be blocked as board processing algorithms are running
+    /// patchwork, entire board logic and processing should be rewritten as it is very convoluted and does not have a clear order of execution
+    
+    private List<string> runningCoroutinesByStringName = new List<string>();
+    private List<IEnumerator> runningCoroutinesByEnumerator = new List<IEnumerator>();
+    public Coroutine StartTrackedCoroutine(string methodName)
+    {
+        return StartCoroutine(GenericRoutine(methodName, null));
+    }
+    public Coroutine StartTrackedCoroutine(IEnumerator coroutine)
+    {
+        return StartCoroutine(GenericRoutine(coroutine));
+    }
+    public Coroutine StartTrackedCoroutine(string methodName, object parameter)
+    {
+        return StartCoroutine(GenericRoutine(methodName, parameter));
+    }
+    public bool IsTrackedCoroutineRunning(string methodName)
+    {
+        return runningCoroutinesByStringName.Contains(methodName);
+    }
+    public bool IsTrackedCoroutineRunning(IEnumerator coroutine)
+    {
+        return runningCoroutinesByEnumerator.Contains(coroutine);
+    }
+    public void StopTrackedCoroutine(string methodName)
+    {
+        if (!runningCoroutinesByStringName.Contains(methodName))
+        {
+            return;
+        }
+        StopCoroutine(methodName);
+        runningCoroutinesByStringName.Remove(methodName);
+    }
+    public void StopTrackedCoroutine(IEnumerator coroutine)
+    {
+        if (!runningCoroutinesByEnumerator.Contains(coroutine))
+        {
+            return;
+        }
+        StopCoroutine(coroutine);
+        runningCoroutinesByEnumerator.Remove(coroutine);
+    }
+    private IEnumerator GenericRoutine(string methodName, object parameter)
+    {
+        runningCoroutinesByStringName.Add(methodName);
+        if (parameter == null)
+        {
+            yield return StartCoroutine(methodName);
+        }
+        else
+        {
+            yield return StartCoroutine(methodName, parameter);
+        }
+        runningCoroutinesByStringName.Remove(methodName);
+    }
+    private IEnumerator GenericRoutine(IEnumerator coroutine)
+    {
+        runningCoroutinesByEnumerator.Add(coroutine);
+        yield return StartCoroutine(coroutine);
+        runningCoroutinesByEnumerator.Remove(coroutine);
+    }
+
 }
