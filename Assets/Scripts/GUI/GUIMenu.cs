@@ -162,6 +162,7 @@ public class GUIMenu : MonoBehaviour
 
     public void PlayAsGuest()
     {
+        AnalyticsManager.Instance.InitAnalyticsGuest();
         PnlPlayAsGuest.SetActive(true);
         PnlWelcome.SetActive(false);
     }
@@ -372,7 +373,7 @@ public class GUIMenu : MonoBehaviour
 
     public void InitSession(string address)
     {
-        AnalyticsManager.Instance.InitAnalytics(address);
+        AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
         Debug.Log("Init session for " + address + "...");
         if (!string.IsNullOrEmpty(address))
         {
