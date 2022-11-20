@@ -9,7 +9,6 @@ public class AnalyticsManager : MonoBehaviour
 {
     public static AnalyticsManager Instance;
 
-    public bool Development;
     public bool Community;
     public bool Production;
 
