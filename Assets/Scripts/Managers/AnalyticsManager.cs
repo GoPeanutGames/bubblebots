@@ -10,6 +10,8 @@ public class AnalyticsManager : MonoBehaviour
     public static AnalyticsManager Instance;
 
     public bool Development;
+    public bool Community;
+    public bool Production;
 
     private string currentWalletAddress;
     private int currentLevelStarted;
@@ -38,9 +40,13 @@ public class AnalyticsManager : MonoBehaviour
             {
                 options.SetEnvironmentName("development");
             }
-            else
+            else if (Production)
             {
                 options.SetEnvironmentName("production");
+            }
+            else if (Community)
+            {
+                options.SetEnvironmentName("community");
             }
             await UnityServices.InitializeAsync(options);
             List<string> consentIdentifiers = await AnalyticsService.Instance.CheckForRequiredConsents();
