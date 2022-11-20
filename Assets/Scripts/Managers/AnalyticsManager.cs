@@ -36,11 +36,8 @@ public class AnalyticsManager : MonoBehaviour
         {
             InitializationOptions options = new InitializationOptions();
             options.SetAnalyticsUserId(currentWalletAddress);
-            if (Development)
-            {
-                options.SetEnvironmentName("development");
-            }
-            else if (Production)
+            options.SetEnvironmentName("development");
+            if (Production)
             {
                 options.SetEnvironmentName("production");
             }
