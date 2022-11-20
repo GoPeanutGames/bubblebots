@@ -147,6 +147,7 @@ public class GUIGame : MonoBehaviour
     {
         LeaderboardManager.Instance.IncrementKilledRobots();
         TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
+        AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
 
         EnemyRobots[currentEnemy].Die();
     }

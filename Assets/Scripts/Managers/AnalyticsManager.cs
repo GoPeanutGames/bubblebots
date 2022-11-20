@@ -1,18 +1,52 @@
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Services.Analytics;
 using Unity.Services.Core;
+using Unity.Services.Core.Analytics;
+using Unity.Services.Core.Environments;
 using UnityEngine;
 
 public class AnalyticsManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    async void Start()
+    public static AnalyticsManager Instance;
+
+    public bool Community;
+    public bool Production;
+
+    private string currentWalletAddress;
+    private int currentLevelStarted;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
+    private void SendLoginEvent()
+    {
+        Debug.Log("ID: " + AnalyticsService.Instance.GetAnalyticsUserID());
+        AnalyticsService.Instance.CustomData("Login", new Dictionary<string, object>
+        {
+            {"wallet_address", currentWalletAddress }
+        });
+    }
+
+    private async void InitAnalyticsPrivately()
     {
         try
         {
-            await UnityServices.InitializeAsync();
+            InitializationOptions options = new InitializationOptions();
+            options.SetAnalyticsUserId(currentWalletAddress);
+            options.SetEnvironmentName("development");
+            if (Production)
+            {
+                options.SetEnvironmentName("production");
+            }
+            else if (Community)
+            {
+                options.SetEnvironmentName("community");
+            }
+            await UnityServices.InitializeAsync(options);
             List<string> consentIdentifiers = await AnalyticsService.Instance.CheckForRequiredConsents();
+            SendLoginEvent();
         }
         catch (ConsentCheckException e)
         {
@@ -20,9 +54,46 @@ public class AnalyticsManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void Update()
+    public async void InitAnalyticsWithWallet(string walletAddress)
     {
-        
+        currentWalletAddress = walletAddress;
+        InitAnalyticsPrivately();
+    }
+
+    public async void InitAnalyticsGuest()
+    {
+        currentWalletAddress = "guest-id";
+        InitAnalyticsPrivately();
+    }
+
+    public void SendPlayEvent(int levelNumber)
+    {
+        currentLevelStarted = levelNumber;
+        AnalyticsService.Instance.CustomData("StartLevel", new Dictionary<string, object>
+        {
+            {"wallet_address", currentWalletAddress },
+            {"game_level", levelNumber }
+        });
+    }
+
+    public void SendLevelEvent()
+    {
+        int score = (int)LeaderboardManager.Instance.Score;
+        AnalyticsService.Instance.CustomData("EndLevel", new Dictionary<string, object>
+        {
+            {"wallet_address", currentWalletAddress },
+            {"game_level", currentLevelStarted },
+            {"score", score }
+        });
+    }
+
+    public void SendRobotKillEvent(int robotsKilled)
+    {
+        AnalyticsService.Instance.CustomData("KillRobot", new Dictionary<string, object>
+        {
+            {"wallet_address", currentWalletAddress },
+            {"game_level", currentLevelStarted },
+            {"total_kills", robotsKilled }
+        });
     }
 }

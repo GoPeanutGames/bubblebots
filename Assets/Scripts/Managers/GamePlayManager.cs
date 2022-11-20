@@ -66,6 +66,7 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartLevel(string levelFile, int levelNumber)
     {
+        AnalyticsManager.Instance.SendPlayEvent(levelNumber);
         //LeaderboardManager.Instance.ResetKilledRobots();
         LevelInformation levelInfo;
         currentLevel = levelNumber;
@@ -1081,6 +1082,7 @@ public class GamePlayManager : MonoBehaviour
 
     IEnumerator FinishLevel()
     {
+        AnalyticsManager.Instance.SendLevelEvent();
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
         enemyDead = true;
