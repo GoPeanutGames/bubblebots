@@ -87,7 +87,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SendRobotKillEvent(int robotsKilled)
     {
-        AnalyticsService.Instance.CustomData("EndLevel", new Dictionary<string, object>
+        AnalyticsService.Instance.CustomData("KillRobot", new Dictionary<string, object>
         {
             {"wallet_address", currentWalletAddress },
             {"game_level", currentLevelStarted },
