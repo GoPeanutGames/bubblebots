@@ -1,9 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using System;
 
 public class RobotEffects : MonoBehaviour
 {
@@ -24,7 +22,7 @@ public class RobotEffects : MonoBehaviour
         robotImage.transform.DOScale(1f, 0f);
     }
 
-    public void Damage()
+    public virtual void Damage()
     {
         StartCoroutine(DamageEffect());
     }
@@ -55,7 +53,7 @@ public class RobotEffects : MonoBehaviour
         Crossair.SetActive(false);
     }
 
-    public void Die()
+    public virtual void Die()
     {
         StartCoroutine(DieEffect());
     }
@@ -81,7 +79,7 @@ public class RobotEffects : MonoBehaviour
         Crossair.SetActive(false);
     }
 
-    internal void Initialize()
+    internal virtual void Initialize()
     {
         Crossair.transform.localScale = Vector3.one;
         if (robotImage != null)

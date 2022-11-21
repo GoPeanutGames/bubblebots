@@ -9,9 +9,6 @@ public class AnalyticsManager : MonoBehaviour
 {
     public static AnalyticsManager Instance;
 
-    public bool Community;
-    public bool Production;
-
     private string currentWalletAddress;
     private int currentLevelStarted;
 
@@ -36,11 +33,11 @@ public class AnalyticsManager : MonoBehaviour
             InitializationOptions options = new InitializationOptions();
             options.SetAnalyticsUserId(currentWalletAddress);
             options.SetEnvironmentName("development");
-            if (Production)
+            if (EnvironmentManager.Instance.Production && !EnvironmentManager.Instance.Development)
             {
                 options.SetEnvironmentName("production");
             }
-            else if (Community)
+            else if (EnvironmentManager.Instance.Community && !EnvironmentManager.Instance.Development)
             {
                 options.SetEnvironmentName("community");
             }
