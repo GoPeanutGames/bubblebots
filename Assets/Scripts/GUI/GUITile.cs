@@ -18,16 +18,31 @@ public class GUITile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (gamePlayManager.InputLocked())
+        {
+            return;
+        }
+
         gamePlayManager.SetDownTile(X, Y);
     }
 
     public void OnPointerMove(PointerEventData eventData)
     {
+        if (gamePlayManager.InputLocked())
+        {
+            return;
+        }
+
         gamePlayManager.MoveOverTile(X, Y);
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (gamePlayManager.InputLocked())
+        {
+            return;
+        }
+
         gamePlayManager.ZeroReleasedTiles();
     }
 }
