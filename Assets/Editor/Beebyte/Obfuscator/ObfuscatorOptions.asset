@@ -62,6 +62,7 @@ MonoBehaviour:
   - TMPro
   - QFSW
   - Sirenix
+  - WalletConnectSharp
   unityMethods:
   - Awake
   - FixedUpdate
