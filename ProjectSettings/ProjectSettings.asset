@@ -881,7 +881,10 @@ PlayerSettings:
   windowsGamepadBackendHint: 0
   cloudProjectId: 2a834d77-e5e9-491e-8f7c-33c4ce1f1623
   framebufferDepthMemorylessMode: 0
-  qualitySettingsNames: []
+  qualitySettingsNames:
+  - Performant
+  - Balanced
+  - High Fidelity
   projectName: Bubble Bots
   organizationId: gopeanutgames
   cloudEnabled: 0

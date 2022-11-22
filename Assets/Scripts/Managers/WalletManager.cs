@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Runtime.InteropServices;
 using WalletConnectSharp.Unity;
-using WalletConnectSharp.Core.Models;
+using Beebyte.Obfuscator;
 
 public class WalletManager : MonoBehaviour
 {
@@ -29,6 +29,7 @@ public class WalletManager : MonoBehaviour
         }
     }
 
+    [SkipRename]
     public void MetamaskLoginSuccess()
     {
         SoundManager.Instance.PlayMetamaskEffect();
