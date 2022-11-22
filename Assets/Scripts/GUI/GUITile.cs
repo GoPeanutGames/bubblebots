@@ -23,7 +23,8 @@ public class GUITile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
             return;
         }
 
-        gamePlayManager.SetDownTile(X, Y);
+        //gamePlayManager.SetDownTile(X, Y);
+        gamePlayManager.TouchTile(X, Y);
     }
 
     public void OnPointerMove(PointerEventData eventData)
@@ -32,8 +33,9 @@ public class GUITile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
         {
             return;
         }
+        gamePlayManager.SwapTile(X, Y);
 
-        gamePlayManager.MoveOverTile(X, Y);
+        //gamePlayManager.MoveOverTile(X, Y);
     }
 
     public void OnPointerUp(PointerEventData eventData)

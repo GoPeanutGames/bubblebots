@@ -11,6 +11,8 @@ using UnityEngine.Rendering;
 using System.Runtime.InteropServices;
 using UnityEditor;
 
+using BubbleBots.Match3.Models;
+
 public class GUIGame : MonoBehaviour
 {
     public Image[] BackgroundTiles;
@@ -798,5 +800,46 @@ public class GUIGame : MonoBehaviour
     public void DisplayHelpButton()
     {
         DisplayHelp();
+    }
+
+
+    //refactored code
+    public void RenderTiles(BoardModel boardModel)
+    {
+        for (int i = 0; i < boardModel.width; i++)
+        {
+            for (int j = 0; j < boardModel.height; j++)
+            {
+                RenderTileOnObject(i, j, boardModel[i][j].gem.GetId());
+            }
+        }
+    }
+
+    void RenderTileOnObject(int i, int j, int id)
+    {
+        GameObject tile;
+        Image tileImage;
+        GUITile guiTile;
+
+        ClearSubElements(backgroundTiles[i, j].transform);
+        tile = new GameObject();
+        //tile.transform.SetParent(backgroundTiles[i, j].transform);
+        tile.transform.SetParent(transform);
+        tile.name = "Tile_" + i + "_" + j;
+
+        //yield return new WaitForEndOfFrame();
+
+        RectTransform rect = tile.AddComponent<RectTransform>();
+        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + i * TileWidth + i * Spacing, -levelInfo.Height / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
+        rect.sizeDelta = new Vector2(TileWidth, TileWidth);
+        rect.localScale = new Vector3(1, 1, 1);
+
+        tileImage = tile.AddComponent<Image>();
+        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(id.ToString());
+
+        guiTile = tile.AddComponent<GUITile>();
+        guiTile.X = i;
+        guiTile.Y = j;
+        guiTile.Key = id.ToString();
     }
 }

@@ -1,4 +1,4 @@
-#define RANDOM_TILES_OFF
+#define RANDOM_TILES
 using CodeStage.AntiCheat.ObscuredTypes;
 using System;
 using System.Collections;
@@ -7,8 +7,41 @@ using TMPro;
 using UnityEngine;
 using static LevelManager;
 
+using BubbleBots.Match3.Data;
+using BubbleBots.Match3.Controllers;
+using BubbleBots.Match3.Models;
+
+
 public class GamePlayManager : MonoBehaviour
 {
+    //refactored code
+
+    private enum GameplayState
+    {
+        WaitForInput,
+        SwapFailed,
+        SwapFailedPlaying,
+        Swap,
+        SwapPlaying,
+        CheckExplosionsAfterSwap,
+        ExplosionsInProgress,
+        RefillBoard,
+        RefillBoardInProgress,
+        CheckForMatches,
+    }
+
+    private GameplayState gameplayState;
+
+    public Vector2Int swapStart;
+    public Vector2Int swapEnd;
+
+    public LevelData levelData;
+    public BoardController boardController;
+    public MatchPrecedence matchPrecedence;
+
+    public bool inputLocked = true;
+
+    //refactored code end
     public LevelManager levelManager;
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
@@ -64,8 +97,45 @@ public class GamePlayManager : MonoBehaviour
         MenuGUI.SwitchToMultiplayer(levelFile, levelNumber);
     }
 
+    public void StartLevel(LevelData levelData)
+    {
+        boardController = new BoardController();
+        boardController.Initialize(levelData, matchPrecedence);
+        boardController.PopulateBoardWithSeed(1337);
+
+        RenderStartLevel();
+
+        gameplayState = GameplayState.WaitForInput;
+        inputLocked = false;
+    }
+
+    private void RenderStartLevel()
+    {
+        //this.levelInfo = levelInfo;
+
+        List<String> availableTiles = new List<string>();
+        for (int i = 0; i < levelData.gemSet.Count; ++i)
+        {
+            availableTiles.Add(levelData.gemSet[i].ToString());
+        }
+        LevelInformation levelInforFromLevelData = new LevelInformation(
+            1,
+            boardController.GetBoardModel().width,
+            boardController.GetBoardModel().height,
+            availableTiles.ToArray(),
+            levelData.waves
+            );
+        GameGUI.RenderLevelBackground(levelInforFromLevelData);
+        //GameGUI.InitializeEnemyRobots();
+        GameGUI.RenderTiles(boardController.GetBoardModel());
+    }
+
     public void StartLevel(string levelFile, int levelNumber)
     {
+        //
+        StartLevel(levelData);
+
+        return;
         AnalyticsManager.Instance.SendPlayEvent(levelNumber);
         //LeaderboardManager.Instance.ResetKilledRobots();
         LevelInformation levelInfo;
@@ -150,7 +220,7 @@ public class GamePlayManager : MonoBehaviour
 
 #if RANDOM_TILES
         tileIndices[0, 5] = 9; // 10, 11 explode whole board
-        tileIndices[1, 5] = 1;
+        tileIndices[1, 5] = 9;
         tileIndices[2, 5] = 3;
         tileIndices[3, 5] = 1;
         tileIndices[4, 5] = 2;
@@ -1386,22 +1456,25 @@ public class GamePlayManager : MonoBehaviour
         GameGUI.CanSwapTiles = true;
 
         ZeroReleasedTiles();
+        gameplayState = GameplayState.WaitForInput;
     }
 
     IEnumerator SwapTilesOnceOnGUI(int x1, int y1, int x2, int y2)
     {
         GameGUI.SwapTiles(x1, y1, x2, y2, true);
         yield return new WaitForSeconds(GameGUI.SwapDuration);
-
+        
         //ReleaseTiles();
         releaseTileX = -1;
         releaseTileY = -1;
+        gameplayState = GameplayState.CheckExplosionsAfterSwap;
     }
 
     public void ZeroReleasedTiles()
     {
         releaseTileX = -1;
         releaseTileY = -1;
+        inputLocked = false;
     }
 
     public void ReleaseTiles(string releaseSource)
@@ -1463,6 +1536,63 @@ public class GamePlayManager : MonoBehaviour
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
         StartTrackedCoroutine(SubProcessSpecialGem(x, y, releaseX, releaseY));
+    }
+
+
+    IEnumerator ExplodeSpecialGem(int x, int y, bool horizontal)
+    {
+        switch (tileSet[x, y])
+        {
+            case "S1":
+                FindObjectOfType<SoundManager>().PlayLightningSound();
+                GameGUI.LineDestroyEffect(x, y, !horizontal);
+                yield return new WaitForSeconds(0.4f);
+
+                ProcessLineBlast(x, y, horizontal, false);
+                break;
+            case "S2":
+                GameGUI.ColorBlastEffect(x, y);
+                FindObjectOfType<SoundManager>().PlayColorSound();
+                yield return new WaitForSeconds(0.51f);
+
+                /*if (tileSet[releaseX, releaseY] == "S2")
+                {
+                    BlastWholeBoard();
+                }
+                else
+                {*/
+                //ProcessColorBlast(x, y, tileSet[releaseX, releaseY]);
+                //}
+                break;
+            case "S3":
+                FindObjectOfType<SoundManager>().PlayBombSound();
+                ProcessGridBlast(x, y);
+
+                break;
+            case "S4":
+                FindObjectOfType<SoundManager>().PlayHammerSound();
+                ProcessPlusBlast(x, y);
+
+                break;
+            case "S5":
+                //string code = tileSet[x, y];
+                //List<Vector2> changedTiles = ProcessRandomColorChange(x, y, releaseX, releaseY);
+                //GameGUI.ColorChangeEffect(code, changedTiles);
+                //StartTrackedCoroutine(ReevaluateBoard());
+
+                yield break;
+        }
+
+        tilesSpecialCoords.Clear();
+        tilesSpecial.Clear();
+
+        ProcessScrolling();
+        HitEnemy();
+
+        if (!levelEnded)
+        {
+            ProcessNewlyAppearedBlocks(tilesToPut);
+        }
     }
 
     IEnumerator SubProcessSpecialGem(int x, int y, int releaseX, int releaseY)
@@ -1808,7 +1938,8 @@ public class GamePlayManager : MonoBehaviour
             {
                 if (indx != x && IsSpecialGem(tileSet[indx, y]))
                 {
-                    StartTrackedCoroutine(ProcessSpecialGem(indx, y, x, y));
+                    StartTrackedCoroutine(ExplodeSpecialGem(indx, y, true));
+                    //StartTrackedCoroutine(ProcessSpecialGem(indx, y, x, y));
                 }
 
                 tileSet[indx, y] = "X";
@@ -1861,7 +1992,67 @@ public class GamePlayManager : MonoBehaviour
 
     private void Update()
     {
-        if(canDisplayhint && timeForNewHint != 0 && timeForNewHint <= Time.time)
+
+        if (gameplayState == GameplayState.WaitForInput)
+        {
+
+
+        }
+        else if (gameplayState == GameplayState.SwapFailed)
+        {
+            StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
+            gameplayState = GameplayState.SwapFailedPlaying;
+        }
+        else if (gameplayState == GameplayState.SwapFailedPlaying)
+        {
+            //wait for animation to end and go to GameplayState.WaitForInput
+        }
+        else if (gameplayState == GameplayState.Swap)
+        {
+            StartCoroutine(SwapTilesOnceOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
+            gameplayState = GameplayState.SwapPlaying;
+        }
+        else if (gameplayState == GameplayState.SwapPlaying)
+        {
+            //wait for animation to end  and go to GameplayState.CheckExplosionsAfterSwap
+        }
+        else if (gameplayState == GameplayState.CheckExplosionsAfterSwap)
+        {
+            SwapResult swapResult = boardController.SwapGems(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y);
+            StartTrackedCoroutine(RemoveGems(swapResult.toExplode));
+            StartTrackedCoroutine(CreateGems(swapResult.toCreate));
+            gameplayState = GameplayState.ExplosionsInProgress;
+        }
+        else if (gameplayState == GameplayState.ExplosionsInProgress)
+        {
+            //wait for animations to end and go to GameplayState.RefillBoard
+        }
+        else if (gameplayState == GameplayState.RefillBoard)
+        {
+            List<GemMove> gemMoves = boardController.RefillBoard();
+            StartTrackedCoroutine(RefillBoard(gemMoves));
+            gameplayState = GameplayState.RefillBoardInProgress;
+        } 
+        else if (gameplayState == GameplayState.RefillBoardInProgress)
+        {
+            //wait for animations to end and go to GameplayState.CheckForMatches
+        } 
+        else if (gameplayState == GameplayState.CheckForMatches)
+        {
+            SwapResult swapResult = boardController.ExplodeMatches(true);
+            if (swapResult.toExplode.Count > 0)
+            {
+                StartTrackedCoroutine(RemoveGems(swapResult.toExplode));
+                StartTrackedCoroutine(CreateGems(swapResult.toCreate));
+                gameplayState = GameplayState.ExplosionsInProgress;
+            }
+            else
+            {
+                gameplayState = GameplayState.WaitForInput;
+            }
+        }
+
+        if (canDisplayhint && timeForNewHint != 0 && timeForNewHint <= Time.time)
         {
             //Debug.Log("Testing the hint (next test is in " + timeForNewHint + ")");
             //timeForNewHint = DateTime.Now + new TimeSpan(0, 0, HintDuration + 1);
@@ -1996,4 +2187,168 @@ public class GamePlayManager : MonoBehaviour
         runningCoroutinesByEnumerator.Remove(coroutine);
     }
 
+
+    //refactored code
+    public void TouchTile(int x, int y)
+    {
+        if (InputLocked())
+        {
+            return;
+        }
+        releaseTileX = x;
+        releaseTileY = y;
+    }
+
+    public void SwapTile(int x, int y)
+    {
+        if (InputLocked() || inputLocked)
+        {
+            return;
+        }
+
+        if (releaseTileX == -1 || releaseTileY == -1)
+        {
+            return;
+        }
+
+        if (!GameGUI.CanSwapTiles || (x == releaseTileX && y == releaseTileY))
+        {
+            //Debug.Log("L1-Q0 (" + (GameGUI.CanSwapTiles) + " | " + x + " | " + y + " | " + releaseTileX + " | " + releaseTileY + ")");
+            return;
+        }
+
+        // eliminate diagonal
+        if (x != releaseTileX && y != releaseTileY)
+        {
+            return;
+        }
+
+        combo = 0;
+        canAttack = true;
+
+        if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1)
+        {
+            inputLocked = true;
+
+            if (!boardController.CanSwap(x, y, releaseTileX, releaseTileY)) {
+                swapStart = new Vector2Int(x, y);
+                swapEnd = new Vector2Int(releaseTileX, releaseTileY);
+                gameplayState = GameplayState.SwapFailed;
+                
+            } 
+            else
+            {
+                swapStart = new Vector2Int(x, y);
+                swapEnd = new Vector2Int(releaseTileX, releaseTileY);
+                gameplayState = GameplayState.Swap;
+            }
+            
+
+            //    if (tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
+            //    {
+            //        StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
+            //        return;
+            //    }
+
+            //    GameGUI.LockTiles("L2");
+
+            //    if (IsSpecialGem(tileSet[x, y]))
+            //    {
+            //        StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+            //        StartTrackedCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
+            //        return;
+            //    }
+            //    else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
+            //    {
+            //        StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+            //        StartTrackedCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
+            //        return;
+            //    }
+
+            //    hints.Clear();
+            //    hintShapes.Clear();
+            //    CheckForAMatchWitchSwapingTiles(x, y, releaseTileX, releaseTileY);
+
+            //    if (hints.Count > 0)
+            //    {
+            //        StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+            //        SwapKeys(x, y, releaseTileX, releaseTileY);
+            //        StartTrackedCoroutine(ExplodeTiles());
+            //    }
+            //    else
+            //    {
+            //        CheckForAMatchWitchSwapingTiles(releaseTileX, releaseTileY, x, y);
+
+            //        if (hints.Count > 0)
+            //        {
+            //            StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
+            //            SwapKeys(x, y, releaseTileX, releaseTileY);
+            //            StartTrackedCoroutine(ExplodeTiles());
+            //        }
+            //        else
+            //        {
+            //            StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
+            //        }
+            //    }
+            //}
+        }
+
+   
+    }
+
+    IEnumerator RefillBoard(List<GemMove> gemMoves)
+    {
+        for (int i = 0; i < gemMoves.Count; ++i)
+        {
+            if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
+            {
+                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString());
+            } 
+            else
+            {
+                GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y);
+            }
+        }
+        yield return new WaitForSeconds(2 * GameGUI.SwapDuration);
+        gameplayState = GameplayState.CheckForMatches;
+        GameGUI.CanSwapTiles = true;
+    }
+
+    IEnumerator RemoveGems(List<Vector2Int> toRemove)
+    {
+        combo += 1;
+        FindObjectOfType<SoundManager>().PlayComboSound(combo);
+        for (int i = 0; i < toRemove.Count; ++i)
+        {
+            GameGUI.ExplodeTile(toRemove[i].x, toRemove[i].y, false);
+        }
+
+        //hardcoded effect duration
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+
+        gameplayState = GameplayState.RefillBoard;
+        //ProcessTheHints();
+        //ProcessSpecialMatching();
+        //ProcessScrolling();
+        //HitEnemy();
+
+        // final step: test if new blocks appeared
+        //ProcessNewlyAppearedBlocks(tilesToPut);
+    }
+
+    IEnumerator CreateGems(List<GemCreate> toCreate)
+    {
+        if (toCreate == null)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+
+        for (int i = 0; i < toCreate.Count; ++i)
+        {
+            GameGUI.AppearAt(toCreate[i].At.x, toCreate[i].At.y, skinManager.Skins[skinManager.SelectedSkin].TileSet[toCreate[i].Id].Key);
+        }
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+    }
+
+    //refactored code end
 }
