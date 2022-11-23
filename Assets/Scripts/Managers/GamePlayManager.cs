@@ -173,7 +173,7 @@ public class GamePlayManager : MonoBehaviour
     {
         this.levelInfo = levelInfo;
         GameGUI.RenderLevelBackground(levelInfo);
-        GameGUI.InitializeEnemyRobots();        
+        GameGUI.InitializeEnemyRobots();
 
         bool foundAMatch;
 
@@ -182,7 +182,7 @@ public class GamePlayManager : MonoBehaviour
             foundAMatch = false;
 
             FillTiles(levelInfo);
-            if(!MoreMovesArePossible())
+            if (!MoreMovesArePossible())
             {
                 continue;
             }
@@ -328,9 +328,9 @@ public class GamePlayManager : MonoBehaviour
 
     private void CheckForAMatchWitchSwapingTiles(int x1, int y1, int x2, int y2)
     {
-        if(x1 < 0 || y1 < 0 || x1 >= levelInfo.Width || y1 >= levelInfo.Height ||
+        if (x1 < 0 || y1 < 0 || x1 >= levelInfo.Width || y1 >= levelInfo.Height ||
            x2 < 0 || y2 < 0 || x2 >= levelInfo.Width || y2 >= levelInfo.Height ||
-           tileSet[x1,y1] == tileSet[x2,y2])
+           tileSet[x1, y1] == tileSet[x2, y2])
         {
             return;
         }
@@ -656,7 +656,7 @@ public class GamePlayManager : MonoBehaviour
                 }
             }
 
-            if(allTrue)
+            if (allTrue)
             {
                 return;
             }
@@ -680,7 +680,7 @@ public class GamePlayManager : MonoBehaviour
             return;
         }
 
-        if(!GameGUI.CanSwapTiles)
+        if (!GameGUI.CanSwapTiles)
         {
             return;
         }
@@ -709,7 +709,7 @@ public class GamePlayManager : MonoBehaviour
         }
 
         // eliminate diagonal
-        if(x != releaseTileX && y != releaseTileY)
+        if (x != releaseTileX && y != releaseTileY)
         {
             return;
         }
@@ -718,7 +718,7 @@ public class GamePlayManager : MonoBehaviour
         canAttack = true;
         if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1)
         {
-            if(tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
+            if (tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
             {
                 StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
                 return;
@@ -743,7 +743,7 @@ public class GamePlayManager : MonoBehaviour
             hintShapes.Clear();
             CheckForAMatchWitchSwapingTiles(x, y, releaseTileX, releaseTileY);
 
-            if(hints.Count > 0)
+            if (hints.Count > 0)
             {
                 StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
                 SwapKeys(x, y, releaseTileX, releaseTileY);
@@ -780,7 +780,7 @@ public class GamePlayManager : MonoBehaviour
         Vector2 leftMost = Vector2.zero;
         Vector2 topMost = Vector2.zero;
 
-        if(shape != SpecailShapes.Nothing)
+        if (shape != SpecailShapes.Nothing)
         {
             topMost = hints[chosenHint][0];
             for (int i = 1; i < hints[chosenHint].Length; i++)
@@ -800,7 +800,7 @@ public class GamePlayManager : MonoBehaviour
                 }
             }
 
-            switch(shape)
+            switch (shape)
             {
                 case SpecailShapes.Straight5:
                     // place a special tile here
@@ -927,10 +927,12 @@ public class GamePlayManager : MonoBehaviour
             if (hint[i].x == lowestX && hint[i].y == lowestY)
             {
                 leftTop = true;
-            } else if (hint[i].x == highestX && hint[i].y == lowestY)
+            }
+            else if (hint[i].x == highestX && hint[i].y == lowestY)
             {
                 rightTop = true;
-            } else if (hint[i].x == lowestX && hint[i].y == highestY)
+            }
+            else if (hint[i].x == lowestX && hint[i].y == highestY)
             {
                 leftBottom = true;
             }
@@ -940,16 +942,19 @@ public class GamePlayManager : MonoBehaviour
             }
         }
 
-        if(leftTop && rightTop)
+        if (leftTop && rightTop)
         {
             return new Vector2(lowestX + 1, lowestY);
-        } else if (leftTop && leftBottom)
+        }
+        else if (leftTop && leftBottom)
         {
             return new Vector2(lowestX, lowestY + 1);
-        } else if (leftBottom && rightBottom)
+        }
+        else if (leftBottom && rightBottom)
         {
             return new Vector2(lowestX + 1, highestY);
-        } else
+        }
+        else
         {
             return new Vector2(highestX, lowestY + 1);
         }
@@ -1086,7 +1091,8 @@ public class GamePlayManager : MonoBehaviour
                     FindObjectOfType<SoundManager>().FadeOutStartMusic();
                     StartTrackedCoroutine(FinishLevel());
                     LeaderboardManager.Instance.Score = score;
-                } else
+                }
+                else
                 {
                     killedEnemies = 0;
                     numHit = new int[] { 0, 0, 0 };
@@ -1173,7 +1179,7 @@ public class GamePlayManager : MonoBehaviour
 
         bool vertical;
 
-        if(hints.Count == 0)
+        if (hints.Count == 0)
         {
             ReleaseTiles("R1");
             yield break;
@@ -1237,7 +1243,7 @@ public class GamePlayManager : MonoBehaviour
                         }
                     }
 
-                    if(allTheSame)
+                    if (allTheSame)
                     {
                         deleted = true;
                         hints.RemoveAt(i);
@@ -1246,7 +1252,7 @@ public class GamePlayManager : MonoBehaviour
                     }
                 }
 
-                if(deleted)
+                if (deleted)
                 {
                     break;
                 }
@@ -1282,7 +1288,8 @@ public class GamePlayManager : MonoBehaviour
                 {
                     GameGUI.ExplodeTile((int)hints[selected][indx].x, (int)hints[selected][indx].y, false);
                     tileSet[(int)hints[selected][indx].x, (int)hints[selected][indx].y] = "X";
-                } catch
+                }
+                catch
                 {
                     Debug.LogError("hint could not be processed (selected: " + selected + ", length: " + (int)hints.Count + ", indx: " + indx + ")");
                 }
@@ -1329,7 +1336,7 @@ public class GamePlayManager : MonoBehaviour
 
                             tileSet[x, py] = skinManager.Skins[skinManager.SelectedSkin].TileSet[newIndex].Key;
                             GameGUI.AppearAt(x, py, tileSet[x, py]);
-                            
+
 
                             AddTilesToPut(new Vector2(x, py));
                         }
@@ -1347,7 +1354,7 @@ public class GamePlayManager : MonoBehaviour
                                 tileSet[x, y] = skinManager.Skins[skinManager.SelectedSkin].TileSet[tilesSpecial[i]].Key;
                                 foundInSpecialMatches = true;
                                 GameGUI.AppearAt(x, y, tileSet[x, y]);
-                                
+
                                 break;
                             }
                         }
@@ -1463,7 +1470,7 @@ public class GamePlayManager : MonoBehaviour
     {
         GameGUI.SwapTiles(x1, y1, x2, y2, true);
         yield return new WaitForSeconds(GameGUI.SwapDuration);
-        
+
         //ReleaseTiles();
         releaseTileX = -1;
         releaseTileY = -1;
@@ -1912,7 +1919,7 @@ public class GamePlayManager : MonoBehaviour
         {
             for (int _y = 0; _y < levelInfo.Height; _y++)
             {
-                if(x == _x && y == _y)
+                if (x == _x && y == _y)
                 {
                     continue;
                 }
@@ -1952,7 +1959,7 @@ public class GamePlayManager : MonoBehaviour
             // explode vertical
             for (int indy = 0; indy < levelInfo.Height; indy++)
             {
-                if(bothDir && indy == y)
+                if (bothDir && indy == y)
                 {
                     continue;
                 }
@@ -2019,8 +2026,13 @@ public class GamePlayManager : MonoBehaviour
         else if (gameplayState == GameplayState.CheckExplosionsAfterSwap)
         {
             SwapResult swapResult = boardController.SwapGems(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y);
-            StartTrackedCoroutine(RemoveGems(swapResult.toExplode));
-            StartTrackedCoroutine(CreateGems(swapResult.toCreate));
+
+            for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
+            {
+                StartTrackedCoroutine(RemoveGems(swapResult.explodeEvents[i].toExplode));
+                StartTrackedCoroutine(CreateGems(swapResult.explodeEvents[i].toCreate));
+            }
+
             gameplayState = GameplayState.ExplosionsInProgress;
         }
         else if (gameplayState == GameplayState.ExplosionsInProgress)
@@ -2032,15 +2044,15 @@ public class GamePlayManager : MonoBehaviour
             List<GemMove> gemMoves = boardController.RefillBoard();
             StartTrackedCoroutine(RefillBoard(gemMoves));
             gameplayState = GameplayState.RefillBoardInProgress;
-        } 
+        }
         else if (gameplayState == GameplayState.RefillBoardInProgress)
         {
             //wait for animations to end and go to GameplayState.CheckForMatches
-        } 
+        }
         else if (gameplayState == GameplayState.CheckForMatches)
         {
             SwapResult swapResult = boardController.ExplodeMatches(true);
-            if (swapResult.toExplode.Count > 0)
+            if (swapResult.explodeEvents != null &&swapResult.explodeEvents.Count > 0)
             {
                 StartTrackedCoroutine(RemoveGems(swapResult.toExplode));
                 StartTrackedCoroutine(CreateGems(swapResult.toCreate));
@@ -2126,7 +2138,7 @@ public class GamePlayManager : MonoBehaviour
     /// track coroutines started on this object as they contain board processing algorithms
     /// input should be blocked as board processing algorithms are running
     /// patchwork, entire board logic and processing should be rewritten as it is very convoluted and does not have a clear order of execution
-    
+
     private List<string> runningCoroutinesByStringName = new List<string>();
     private List<IEnumerator> runningCoroutinesByEnumerator = new List<IEnumerator>();
     public Coroutine StartTrackedCoroutine(string methodName)
@@ -2230,19 +2242,20 @@ public class GamePlayManager : MonoBehaviour
         {
             inputLocked = true;
 
-            if (!boardController.CanSwap(x, y, releaseTileX, releaseTileY)) {
+            if (!boardController.CanSwap(x, y, releaseTileX, releaseTileY))
+            {
                 swapStart = new Vector2Int(x, y);
                 swapEnd = new Vector2Int(releaseTileX, releaseTileY);
                 gameplayState = GameplayState.SwapFailed;
-                
-            } 
+
+            }
             else
             {
                 swapStart = new Vector2Int(x, y);
                 swapEnd = new Vector2Int(releaseTileX, releaseTileY);
                 gameplayState = GameplayState.Swap;
             }
-            
+
 
             //    if (tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
             //    {
@@ -2293,7 +2306,7 @@ public class GamePlayManager : MonoBehaviour
             //}
         }
 
-   
+
     }
 
     IEnumerator RefillBoard(List<GemMove> gemMoves)
@@ -2303,7 +2316,7 @@ public class GamePlayManager : MonoBehaviour
             if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
             {
                 GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString());
-            } 
+            }
             else
             {
                 GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y);
@@ -2340,10 +2353,10 @@ public class GamePlayManager : MonoBehaviour
     {
         if (toCreate == null)
         {
-            yield return new WaitForEndOfFrame();
+            yield break;
         }
 
-        for (int i = 0; i < toCreate.Count; ++i)
+        for (int i = 0; toCreate != null && i < toCreate.Count; ++i)
         {
             GameGUI.AppearAt(toCreate[i].At.x, toCreate[i].At.y, skinManager.Skins[skinManager.SelectedSkin].TileSet[toCreate[i].Id].Key);
         }

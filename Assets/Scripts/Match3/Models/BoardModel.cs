@@ -149,8 +149,6 @@ namespace BubbleBots.Match3.Models
             }
         }
 
-
-
         public List<GemMove> RefillBoard(List<int> gemSet)
         {
             List<GemMove> gemMoves = new List<GemMove>();
@@ -160,7 +158,6 @@ namespace BubbleBots.Match3.Models
                     if (cells[i][j].empty)
                     {
                         //search for the first one available on top of it
-
                         int top = j + 1;
                         while (top < height && cells[i][top].empty)
                         {
@@ -183,6 +180,48 @@ namespace BubbleBots.Match3.Models
                     }
                 }
             return gemMoves;
+        }
+    
+        public List<Vector2Int> LineBlast(int posX, int posY)
+        {
+            List<Vector2Int> toExplode = new List<Vector2Int>();
+            for (int i = 0; i < width; ++i)
+            {
+                toExplode.Add(new Vector2Int(i, posY));
+                cells[i][posY].empty = true;
+            }
+            return toExplode;
+        }
+
+        public List<Vector2Int> ColumnBlast(int posX, int posY)
+        {
+            List<Vector2Int> toExplode = new List<Vector2Int>();
+            for (int i = 0; i < height; ++i)
+            {
+                toExplode.Add(new Vector2Int(posX, i));
+                cells[posX][i].empty = true;
+            }
+            return toExplode;
+        }
+
+        public bool IsRowEmpty(int row)
+        {
+            bool empty = true;
+            for (int i = 0; i < width; ++i)
+            {
+                empty = empty && cells[i][row].empty;
+            }
+            return empty;
+        }
+
+        public bool IsColumnEmpty(int column)
+        {
+            bool empty = true;
+            for (int i = 0; i < height; ++i)
+            {
+                empty = empty && cells[column][i].empty;
+            }
+            return empty;
         }
     }
 }

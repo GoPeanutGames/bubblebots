@@ -12,6 +12,12 @@ namespace BubbleBots.Match3.Controllers
         private LevelData levelData;
         private MatchPrecedence matchPrecedence;
 
+        private enum SwipeDirection
+        {
+            None,
+            Horizontal,
+            Vertical
+        }
         public BoardModel GetBoardModel()
         {
             return boardModel;
@@ -70,23 +76,95 @@ namespace BubbleBots.Match3.Controllers
         {
             boardModel.SwapGems(startX, startY, releaseX, releaseY);
             SwapResult swapResult = ExplodeMatches();
-
+            bool horizontal = startY == releaseY;
 
             if (boardModel[startX][startY].gem.IsSpecial() &&
                 boardModel[releaseX][releaseY].gem.IsSpecial())
             {
-                //special - special match;
+                if (boardModel[startX][startY].gem.GetId() == 9 &&
+                    boardModel[releaseX][releaseY].gem.GetId() == 9)
+                {
+                    List<Vector2Int> newExploded = new List<Vector2Int>();
+
+                    newExploded.AddRange(ExplodeSpecial(ref swapResult, startX, startY, SwipeDirection.Horizontal));
+                    newExploded.AddRange(ExplodeSpecial(ref swapResult, startX, startY, SwipeDirection.Vertical));
+
+                    List<Vector2Int> alreadyExploded = new List<Vector2Int>();
+                    alreadyExploded.Add(new Vector2Int(startX, startY));
+                    alreadyExploded.Add(new Vector2Int(releaseX, releaseY));
+
+                    Stack<Vector2Int> specialsToExplode = new Stack<Vector2Int>();
+                    for (int i = 0; i < newExploded.Count; ++i)
+                    {
+                        if (alreadyExploded.Contains(newExploded[i]))
+                        {
+                            continue;
+                        }
+
+                        if (boardModel[newExploded[i].x][newExploded[i].y].gem.IsSpecial())
+                        {
+                            specialsToExplode.Push(new Vector2Int(newExploded[i].x, newExploded[i].y));
+                        }
+                    }
+
+                    while (specialsToExplode.Count > 0)
+                    {
+                        Vector2Int currentSpecial = specialsToExplode.Pop();
+                        List<Vector2Int> newExploded1 = ExplodeSpecial(ref swapResult, currentSpecial.x, currentSpecial.y, horizontal ?
+                            SwipeDirection.Horizontal : SwipeDirection.Vertical);
+
+                        alreadyExploded.Add(new Vector2Int(currentSpecial.x, currentSpecial.y));
+
+                        for (int i = 0; i < newExploded1.Count; ++i)
+                        {
+                            if (alreadyExploded.Contains(newExploded1[i]))
+                            {
+                                continue;
+                            }
+
+                            if (boardModel[newExploded1[i].x][newExploded1[i].y].gem.IsSpecial())
+                            {
+                                specialsToExplode.Push(new Vector2Int(newExploded1[i].x, newExploded1[i].y));
+                            }
+                        }
+                    }
+                }
             }
             else
             {
+                Stack<Vector2Int> specialsToExplode = new Stack<Vector2Int>();
 
                 if (boardModel[startX][startY].gem.IsSpecial())
                 {
-                    swapResult.toExplode.Add(new Vector2Int(startX, startY));
+                    specialsToExplode.Push(new Vector2Int(startX, startY));
                 }
                 if (boardModel[releaseX][releaseY].gem.IsSpecial())
                 {
-                    swapResult.toExplode.Add(new Vector2Int(releaseX, releaseY));
+                    specialsToExplode.Push(new Vector2Int(releaseX, releaseY));
+                }
+
+                List<Vector2Int> alreadyExploded = new List<Vector2Int>();
+
+                while (specialsToExplode.Count > 0)
+                {
+                    Vector2Int currentSpecial = specialsToExplode.Pop();
+                    List<Vector2Int> newExploded = ExplodeSpecial(ref swapResult, currentSpecial.x, currentSpecial.y, horizontal ?
+                        SwipeDirection.Horizontal : SwipeDirection.Vertical);
+
+                    alreadyExploded.Add(new Vector2Int(currentSpecial.x, currentSpecial.y));
+
+                    for (int i = 0; i < newExploded.Count; ++i)
+                    {
+                        if (alreadyExploded.Contains(newExploded[i]))
+                        {
+                            continue;
+                        }
+
+                        if (boardModel[newExploded[i].x][newExploded[i].y].gem.IsSpecial())
+                        {
+                            specialsToExplode.Push(new Vector2Int(newExploded[i].x, newExploded[i].y));
+                        }
+                    }
                 }
             }
 
@@ -97,40 +175,80 @@ namespace BubbleBots.Match3.Controllers
             return swapResult;
         }
 
-        public SwapResult SwapSpecial(int startX, int startY, int releaseX, int releaseY)
+        private List<Vector2Int> ExplodeSpecial(ref SwapResult swapResult, int posX, int posY, SwipeDirection direction)
         {
-            boardModel.SwapGems(startX, startY, releaseX, releaseY);
+            List<Vector2Int> newExploded = new List<Vector2Int>();
 
-            if (boardModel[startX][startY].gem.IsSpecial() &&
-                boardModel[releaseX][releaseY].gem.IsSpecial())
-            {
-                //special - special match;
-            }
-            SwapResult swapResult = ExplodeMatches();
-            
-            if (boardModel[startX][startY].gem.IsSpecial())
-            {
-                swapResult.toExplode.Add(new Vector2Int(startX, startY));
-            }
-            if (boardModel[releaseX][releaseY].gem.IsSpecial())
-            {
-                swapResult.toExplode.Add(new Vector2Int(releaseX, releaseY));
-            }
 
-            return swapResult;
+            if (boardModel[posX][posY].gem.GetId() == 9) // line blast
+            {
+                bool lineBlast = direction == SwipeDirection.Horizontal ? true :
+                    direction == SwipeDirection.Vertical ? false :
+                    Random.Range(0f, 1f) < 0.5f ? true : false;
+
+
+                //no 2 line blasts on the same line or 2 column blasts on the same column
+                if (lineBlast)
+                {
+                    if (boardModel.IsRowEmpty(posY))
+                    {
+                        lineBlast = false;
+                    }
+                }
+                else
+                {
+                    if (boardModel.IsColumnEmpty(posX))
+                    {
+                        lineBlast = true;
+                    }
+                }
+
+                if (lineBlast)
+                {
+                    newExploded = boardModel.LineBlast(posX, posY);
+                }
+                else
+                {
+                    newExploded = boardModel.ColumnBlast(posX, posY);
+                }
+
+
+                if (lineBlast)
+                {
+                    LineBlastExplodeEvent line = new LineBlastExplodeEvent();
+                    line.toExplode = newExploded;
+                    line.toCreate = null;
+                    line.lineBlastStartPosition = new Vector2Int(posX, posY);
+                    if (swapResult.explodeEvents == null)
+                    {
+                        swapResult.explodeEvents = new List<ExplodeEvent>();
+                    }
+                    swapResult.explodeEvents.Add(line);
+                }
+                else
+                {
+                    ColumnBlastEvent column = new ColumnBlastEvent();
+                    column.toExplode = newExploded;
+                    column.toCreate = null;
+                    column.columnBlastStartPosition = new Vector2Int(posX, posY);
+                    if (swapResult.explodeEvents == null)
+                    {
+                        swapResult.explodeEvents = new List<ExplodeEvent>();
+                    }
+                    swapResult.explodeEvents.Add(column);
+                }
+
+                swapResult.toExplode.AddRange(newExploded);
+            }
+            return newExploded;
         }
-
-        public void ExplodeSpecial(int posX, int posY)
-        {
-
-        }
-
 
         public SwapResult ExplodeMatches(bool updateBoard = false)
         {
             SwapResult swapResult = new SwapResult();
             swapResult.toExplode = new List<Vector2Int>();
             swapResult.toCreate = new List<GemCreate>();
+
             for (int i = 0; i < boardModel.width; i++)
                 for (int j = 0; j < boardModel.height; ++j)
                 {
@@ -141,10 +259,23 @@ namespace BubbleBots.Match3.Controllers
                     if (matchTestResult != null)
                     {
                         swapResult.toExplode.AddRange(matchTestResult.match);
+
+                        ExplodeEvent explodeEvent = new ExplodeEvent();
+                        explodeEvent.toExplode = new List<Vector2Int>();
+                        explodeEvent.toExplode.AddRange(matchTestResult.match);
+
                         if (matchTestResult.outcome != null)
                         {
                             swapResult.toCreate.Add(matchTestResult.outcome);
+                            explodeEvent.toCreate = new List<GemCreate>();
+                            explodeEvent.toCreate.Add(matchTestResult.outcome);
                         }
+                        if (swapResult.explodeEvents == null)
+                        {
+                            swapResult.explodeEvents = new List<ExplodeEvent>();
+                        }
+
+                        swapResult.explodeEvents.Add(explodeEvent);
                     }
                 }
 
@@ -153,6 +284,7 @@ namespace BubbleBots.Match3.Controllers
                 boardModel.RemoveGems(swapResult.toExplode);
                 boardModel.CreateGems(swapResult.toCreate);
             }
+
             return swapResult;
         }
 
