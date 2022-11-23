@@ -7,6 +7,7 @@ using TMPro;
 using static GUIGame;
 using System.Runtime.InteropServices;
 using CodeStage.AntiCheat.ObscuredTypes;
+using Beebyte.Obfuscator;
 
 public class GUIMenu : MonoBehaviour
 {
@@ -371,6 +372,7 @@ public class GUIMenu : MonoBehaviour
         WalletManager.Instance.LoginWithMetamask();
     }
 
+    [SkipRename]
     public void InitSession(string address)
     {
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
