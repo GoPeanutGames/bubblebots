@@ -181,6 +181,31 @@ namespace BubbleBots.Match3.Models
                 }
             return gemMoves;
         }
+
+        public List<Vector2Int> HammerBlast(int posX, int posY, int rangeX, int rangeY)
+        {
+            List<Vector2Int> toExplode = new List<Vector2Int>();
+            for (int i = -rangeX; i <= rangeX; ++i)
+            {
+                if (!BoundaryTest(posX + i, posY) || i == 0) {
+                    continue;
+                }
+                toExplode.Add(new Vector2Int(posX + i, posY));
+                cells[posX + i][posY].empty = true;
+            }
+            for (int i = -rangeY; i <= rangeY; ++i)
+            {
+                if (!BoundaryTest(posX, posY + i) || i == 0)
+                {
+                    continue;
+                }
+                toExplode.Add(new Vector2Int(posX, posY + i));
+                cells[posX][posY + i].empty = true;
+            }
+            toExplode.Add(new Vector2Int(posX, posY));
+            cells[posX][posY].empty = true;
+            return toExplode;
+        }
     
         public List<Vector2Int> LineBlast(int posX, int posY)
         {

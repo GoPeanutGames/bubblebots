@@ -79,10 +79,11 @@ namespace BubbleBots.Match3.Controllers
             bool horizontal = startY == releaseY;
 
             if (boardModel[startX][startY].gem.IsSpecial() &&
-                boardModel[releaseX][releaseY].gem.IsSpecial())
+                boardModel[releaseX][releaseY].gem.IsSpecial() &&
+                boardModel[startX][startY].gem.GetId() == boardModel[releaseX][releaseY].gem.GetId())
             {
                 if (boardModel[startX][startY].gem.GetId() == 9 &&
-                    boardModel[releaseX][releaseY].gem.GetId() == 9)
+                    boardModel[releaseX][releaseY].gem.GetId() == 9) // line - line, column column
                 {
                     List<Vector2Int> newExploded = new List<Vector2Int>();
 
@@ -129,6 +130,57 @@ namespace BubbleBots.Match3.Controllers
                         }
                     }
                 }
+                else if (boardModel[startX][startY].gem.GetId() == 12 &&
+                       boardModel[releaseX][releaseY].gem.GetId() == 12)
+                {
+                    List<Vector2Int> newExploded = new List<Vector2Int>();
+
+                    newExploded.AddRange(ExplodeSpecial(ref swapResult, startX, startY, SwipeDirection.Horizontal, 2));
+                    newExploded.AddRange(ExplodeSpecial(ref swapResult, releaseX, releaseY, SwipeDirection.Vertical, 2));
+                    
+                    List<Vector2Int> alreadyExploded = new List<Vector2Int>();
+                    alreadyExploded.Add(new Vector2Int(startX, startY));
+                    alreadyExploded.Add(new Vector2Int(releaseX, releaseY));
+
+                    Stack<Vector2Int> specialsToExplode = new Stack<Vector2Int>();
+                    for (int i = 0; i < newExploded.Count; ++i)
+                    {
+                        if (alreadyExploded.Contains(newExploded[i]))
+                        {
+                            continue;
+                        }
+
+                        if (boardModel[newExploded[i].x][newExploded[i].y].gem.IsSpecial())
+                        {
+                            specialsToExplode.Push(new Vector2Int(newExploded[i].x, newExploded[i].y));
+                        }
+                    }
+
+                    while (specialsToExplode.Count > 0)
+                    {
+                        Vector2Int currentSpecial = specialsToExplode.Pop();
+                        List<Vector2Int> newExploded1 = ExplodeSpecial(ref swapResult, currentSpecial.x, currentSpecial.y, horizontal ?
+                            SwipeDirection.Horizontal : SwipeDirection.Vertical);
+
+                        alreadyExploded.Add(new Vector2Int(currentSpecial.x, currentSpecial.y));
+
+                        for (int i = 0; i < newExploded1.Count; ++i)
+                        {
+                            if (alreadyExploded.Contains(newExploded1[i]))
+                            {
+                                continue;
+                            }
+
+                            if (boardModel[newExploded1[i].x][newExploded1[i].y].gem.IsSpecial())
+                            {
+                                specialsToExplode.Push(new Vector2Int(newExploded1[i].x, newExploded1[i].y));
+                            }
+                        }
+                    }
+                } else
+                {
+
+                }
             }
             else
             {
@@ -167,7 +219,6 @@ namespace BubbleBots.Match3.Controllers
                     }
                 }
             }
-
             //explode specials consequences
 
             boardModel.RemoveGems(swapResult.toExplode);
@@ -175,7 +226,7 @@ namespace BubbleBots.Match3.Controllers
             return swapResult;
         }
 
-        private List<Vector2Int> ExplodeSpecial(ref SwapResult swapResult, int posX, int posY, SwipeDirection direction)
+        private List<Vector2Int> ExplodeSpecial(ref SwapResult swapResult, int posX, int posY, SwipeDirection direction, object args = null)
         {
             List<Vector2Int> newExploded = new List<Vector2Int>();
 
@@ -237,9 +288,27 @@ namespace BubbleBots.Match3.Controllers
                     }
                     swapResult.explodeEvents.Add(column);
                 }
-
-                swapResult.toExplode.AddRange(newExploded);
             }
+            else if (boardModel[posX][posY].gem.GetId() == 12) //hammer blast
+            {
+                int explosionRange = 1;
+                if (args != null)
+                {
+                    explosionRange = (int)args; 
+                }
+                newExploded.AddRange(boardModel.HammerBlast(posX, posY, explosionRange, explosionRange));
+
+                HammerBlastEvent hammerBlast = new HammerBlastEvent();
+                hammerBlast.toExplode = newExploded;
+                hammerBlast.toCreate = null;
+                if (swapResult.explodeEvents == null)
+                {
+                    swapResult.explodeEvents = new List<ExplodeEvent>();
+                }
+                swapResult.explodeEvents.Add(hammerBlast);
+            }
+                
+            swapResult.toExplode.AddRange(newExploded);
             return newExploded;
         }
 

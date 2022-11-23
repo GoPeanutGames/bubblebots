@@ -28,4 +28,10 @@ namespace BubbleBots.Match3.Data
     {
         public Vector2Int columnBlastStartPosition;
     }
+
+
+    public class HammerBlastEvent : ExplodeEvent
+    {
+
+    }
 }
