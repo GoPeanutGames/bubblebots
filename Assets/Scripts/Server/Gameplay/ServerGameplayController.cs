@@ -7,11 +7,14 @@ public class ServerGameplayController : MonoBehaviour
     private string currentGameplaySessionID;
     private int currentLevel;
 
+    private bool sessionStarted = false;
+
     private void OnGameplaySessionStart(string data)
     {
         Debug.Log(data);
         GameplaySessionResult result = JsonUtility.FromJson<GameplaySessionResult>(data);
         currentGameplaySessionID = result.sessionId;
+        sessionStarted = true;
         Debug.Log(currentGameplaySessionID);
     }
 
@@ -49,10 +52,10 @@ public class ServerGameplayController : MonoBehaviour
         {
             address = WalletManager.Instance.GetWalletAddress(),
             timezone = TimeZoneInfo.Local.DisplayName,
-            gameStartTime = DateTime.Now.ToString(),
+            mode = ModeManager.Instance.Mode.ToString(),
+            startTime = DateTime.Now.ToString(),
         };
         string jsonFormData = JsonUtility.ToJson(formData);
-        //Debug.Log(jsonFromData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Start, jsonFormData, OnGameplaySessionStart);
     }
 
@@ -83,6 +86,9 @@ public class ServerGameplayController : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        EndGameplaySession();
+        if (sessionStarted)
+        {
+            EndGameplaySession();
+        }
     }
 }

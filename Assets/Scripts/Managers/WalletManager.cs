@@ -5,8 +5,6 @@ using Beebyte.Obfuscator;
 
 public class WalletManager : MonoSingleton<WalletManager>
 {
-    public delegate void WalletCallback(object param);
-
     [DllImport("__Internal")]
     private static extern void Login();
 
@@ -29,14 +27,14 @@ public class WalletManager : MonoSingleton<WalletManager>
     {
         currentWalletAddress = account;
         SoundManager.Instance.PlayMetamaskEffect();
+        //TODO: REFACTOR - UnityEvent to launch this, GUIMenu listens for it
+        //TODO: bad for performance, but no other way until other things are refactored
         GameObject.FindObjectOfType<GUIMenu>().InitSession(account);
     }
 
     public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
     {
         string account = session.Accounts[0];
-        //TODO: REFACTOR - UnityEvent to launch this, GUIMenu listens for it
-        //TODO: bad for performance, but no other way until other things are refactored
         MetamaskLoginSuccess(account);
     }
 

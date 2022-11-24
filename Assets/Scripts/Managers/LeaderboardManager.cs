@@ -51,7 +51,7 @@ public class LeaderboardManager : MonoBehaviour
 
     private void Awake()
     {
-        crptoPassword = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV"; // "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
+        crptoPassword = /*"JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";*/  "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
 
         if (Instance != null)
         {
@@ -154,7 +154,7 @@ public class LeaderboardManager : MonoBehaviour
         string formData = "{\"address\":\"" + PlayerWalletAddress + "\",\"score\":" + score.ToString().Replace("\"", "'").Trim() + "}";
         formData = "{\"data\":\"" + SimpleAESEncryption.Encrypt2(formData, crptoPassword) + "\"}";
         //Debug.Log(ServerURL + "/bubblebots/score");
-        using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/score", formData))
+        using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/player/score", formData))
         {
             UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(formData));
             customUploadHandler.contentType = "application/json";
@@ -215,7 +215,7 @@ public class LeaderboardManager : MonoBehaviour
         int rank = int.MaxValue;
 
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/bubblebots/score/" + PlayerWalletAddress))
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/player/score/" + PlayerWalletAddress))
         {
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
@@ -266,7 +266,7 @@ public class LeaderboardManager : MonoBehaviour
 
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/get_score.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&filter=" + PlayerId))
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");
-        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/bubblebots/score"))
+        using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/player/score"))
         {
             webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
@@ -334,7 +334,7 @@ public class LeaderboardManager : MonoBehaviour
 
         //using (UnityWebRequest webRequest = UnityWebRequest.Get(ServerURL + "/set_fullname.php?user_name=" + PlayerId + "&session_token=" + SessionToken + "&full_name=" + fullName))
         //ServerURL = Environment.GetEnvironmentVariable("API_URL");
-        using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/bubblebots/nickname", formData))
+        using (UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + "/player/nickname", formData))
         {
             UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(formData));
             customUploadHandler.contentType = "application/json";

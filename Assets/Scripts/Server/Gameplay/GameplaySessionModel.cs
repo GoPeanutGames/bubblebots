@@ -15,7 +15,8 @@ namespace BubbleBots.Server.Gameplay
     {
         public string address;
         public string timezone;
-        public string gameStartTime;
+        public string mode;
+        public string startTime;
     }
 
     [Serializable]

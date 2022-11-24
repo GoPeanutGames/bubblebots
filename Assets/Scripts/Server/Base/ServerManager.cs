@@ -13,11 +13,11 @@ public class ServerManager : MonoSingleton<ServerManager>
     private string sessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
     private readonly Dictionary<GameplaySessionAPI, string> SessionAPIMap = new()
     {
-        { GameplaySessionAPI.Start, "/session"},
+        { GameplaySessionAPI.Start, "/session/start"},
         { GameplaySessionAPI.Update, "/session/update"},
         { GameplaySessionAPI.End, "/session/end"}
     };
-    private string createPlayerAPI = "";
+    private string createPlayerAPI = "/player";
 
     private string Encrypt(string jsonForm)
     {
@@ -43,10 +43,8 @@ public class ServerManager : MonoSingleton<ServerManager>
         return webRequest;
     }
 
-
-    public void SendGameplayDataToServer(GameplaySessionAPI api, string formData, Action<string> onComplete)
+    private void SendWebRequest(UnityWebRequest webRequest, Action<string> onComplete)
     {
-        UnityWebRequest webRequest = SetupWebRequest(SessionAPIMap[api], formData);
         AsyncOperation operation = webRequest.SendWebRequest();
         operation.completed += (result) =>
         {
@@ -58,10 +56,16 @@ public class ServerManager : MonoSingleton<ServerManager>
         };
     }
 
+    public void SendGameplayDataToServer(GameplaySessionAPI api, string formData, Action<string> onComplete)
+    {
+        Debug.LogWarning("SENDING: " + api.ToString());
+        UnityWebRequest webRequest = SetupWebRequest(SessionAPIMap[api], formData);
+        SendWebRequest(webRequest, onComplete);
+    }
+
     public void CreatePlayerOnServer(string formData, Action<string> onComplete)
     {
         UnityWebRequest webRequest = SetupWebRequest(createPlayerAPI, formData);
-
+        SendWebRequest(webRequest, onComplete);
     }
-
 }

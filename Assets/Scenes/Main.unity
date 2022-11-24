@@ -1458,6 +1458,7 @@ Transform:
   - {fileID: 1454722122}
   - {fileID: 1359298429}
   - {fileID: 1367395891}
+  - {fileID: 759175314}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6685,11 +6686,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   AppData:
-    Description: Peanut Community
+    Description: Peanut Games
     URL: https://game.peanutgames.com/
     Icons:
     - https://peanutgames.com/assets/favicon.ico
-    Name: Peanut
+    Name: Peanut Games
 --- !u!114 &497947980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7102,7 +7103,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa23d9d4a6552564e965b518b912a932, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverPlayerController: {fileID: 0}
+  serverPlayerController: {fileID: 2021117242}
   MenuImage: {fileID: 552920242}
   GameImage: {fileID: 736831950}
   WinDialogImage: {fileID: 1824949331}
@@ -9517,6 +9518,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745159163}
   m_CullTransparentMesh: 1
+--- !u!1 &759175313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 759175314}
+  - component: {fileID: 759175315}
+  m_Layer: 0
+  m_Name: ModeManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &759175314
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759175313}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 85028815}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &759175315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759175313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f188702a83bf0464c8089e3826e48bef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &765326234
 GameObject:
   m_ObjectHideFlags: 0
@@ -12635,7 +12680,6 @@ GameObject:
   - component: {fileID: 1035116506}
   - component: {fileID: 1035116505}
   - component: {fileID: 1035116504}
-  - component: {fileID: 1035116508}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -12735,18 +12779,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1035116508
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1035116503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e667e5105839f64da0acb93c69b9ebf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1040159385
 GameObject:
   m_ObjectHideFlags: 0
@@ -17201,7 +17233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de9e31ee61ee594ebac5675698dc385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ServerURL: https://api-bb.peanutgames.com
+  ServerURL: https://api-bb.peanuthub.dev
   HashKey: Hsh123_?
   PlayerFullName: 
   PlayerWalletAddress: 
