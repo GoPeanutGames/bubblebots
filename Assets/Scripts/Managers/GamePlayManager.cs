@@ -9,6 +9,7 @@ using static LevelManager;
 
 public class GamePlayManager : MonoBehaviour
 {
+    public ServerGameplayController serverGameplayController;
     public LevelManager levelManager;
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
@@ -67,6 +68,7 @@ public class GamePlayManager : MonoBehaviour
     public void StartLevel(string levelFile, int levelNumber)
     {
         AnalyticsManager.Instance.SendPlayEvent(levelNumber);
+        serverGameplayController.StartGameplaySession(levelNumber);
         //LeaderboardManager.Instance.ResetKilledRobots();
         LevelInformation levelInfo;
         currentLevel = levelNumber;
@@ -1082,6 +1084,7 @@ public class GamePlayManager : MonoBehaviour
 
     IEnumerator FinishLevel()
     {
+        serverGameplayController.EndGameplaySession();
         AnalyticsManager.Instance.SendLevelEvent();
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 

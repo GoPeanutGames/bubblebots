@@ -11,6 +11,7 @@ using Beebyte.Obfuscator;
 
 public class GUIMenu : MonoBehaviour
 {
+    public ServerPlayerController serverPlayerController;
     public Image MenuImage;
     public Image GameImage;
     public Image WinDialogImage;
@@ -376,6 +377,7 @@ public class GUIMenu : MonoBehaviour
     public void InitSession(string address)
     {
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
+        serverPlayerController.CreatePlayer(address);
         Debug.Log("Init session for " + address + "...");
         if (!string.IsNullOrEmpty(address))
         {
