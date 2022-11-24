@@ -8,41 +8,23 @@ public class ServerGameplayController : MonoBehaviour
     private int currentLevel;
 
     private bool sessionStarted = false;
+    private int previousScore;
 
     private void OnGameplaySessionStart(string data)
     {
-        Debug.Log(data);
         GameplaySessionResult result = JsonUtility.FromJson<GameplaySessionResult>(data);
         currentGameplaySessionID = result.sessionId;
         sessionStarted = true;
-        Debug.Log(currentGameplaySessionID);
-    }
-
-    private void OnGameplaySessionUpdate(string data)
-    {
-        Debug.Log(data);
-        GameplaySessionResult result = JsonUtility.FromJson<GameplaySessionResult>(data);
-        if(result.sessionId == currentGameplaySessionID)
-        {
-            Debug.Log("OK");
-        }
     }
 
     private void OnGameplaySessionEnd(string data)
     {
-        Debug.Log(data);
-        GameplaySessionResult result = JsonUtility.FromJson<GameplaySessionResult>(data);
-        if (result.sessionId == currentGameplaySessionID)
-        {
-            Debug.Log("OK - ENDING");
-        }
         currentGameplaySessionID = "";
     }
 
     public void StartGameplaySession(int level)
     {
         string address = WalletManager.Instance.GetWalletAddress();
-        Debug.Log(address);
         if (string.IsNullOrEmpty(address))
         {
             return;
@@ -51,7 +33,7 @@ public class ServerGameplayController : MonoBehaviour
         GameplaySessionStartData formData = new()
         {
             address = WalletManager.Instance.GetWalletAddress(),
-            timezone = TimeZoneInfo.Local.DisplayName,
+            timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString(),
         };
@@ -59,21 +41,23 @@ public class ServerGameplayController : MonoBehaviour
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Start, jsonFormData, OnGameplaySessionStart);
     }
 
-    public void UpdateGameplaySession()
+    public void UpdateGameplaySession(int score)
     {
+        previousScore = score;
         GameplaySessionUpdateData formData = new()
         {
             sessionId = currentGameplaySessionID,
-            score = (int)LeaderboardManager.Instance.Score,
+            score = score,
             level = currentLevel,
             kills = (int)LeaderboardManager.Instance.RobotsKilled
         };
         string jsonFormData = JsonUtility.ToJson(formData);
-        ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, OnGameplaySessionUpdate);
+        ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, _ => { });
     }
 
-    public void EndGameplaySession()
+    public void EndGameplaySession(int score)
     {
+        previousScore = score;
         GameplaySessionEndData formData = new()
         {
             sessionId = currentGameplaySessionID,
@@ -88,7 +72,7 @@ public class ServerGameplayController : MonoBehaviour
     {
         if (sessionStarted)
         {
-            EndGameplaySession();
+            EndGameplaySession(previousScore);
         }
     }
 }

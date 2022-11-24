@@ -68,14 +68,7 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartLevel(string levelFile, int levelNumber)
     {
-        if (EnvironmentManager.Instance.Community)
-        {
-            ModeManager.Instance.SetMode(Mode.COMMUNITY);
-        }
-        else
-        {
-            ModeManager.Instance.SetMode(Mode.FREE);
-        }
+        ModeManager.Instance.SetMode(Mode.FREE);
         AnalyticsManager.Instance.SendPlayEvent(levelNumber);
         serverGameplayController.StartGameplaySession(levelNumber);
         //LeaderboardManager.Instance.ResetKilledRobots();
@@ -1093,7 +1086,7 @@ public class GamePlayManager : MonoBehaviour
 
     IEnumerator FinishLevel()
     {
-        serverGameplayController.EndGameplaySession();
+        serverGameplayController.EndGameplaySession((int)score);
         AnalyticsManager.Instance.SendLevelEvent();
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
@@ -1867,6 +1860,7 @@ public class GamePlayManager : MonoBehaviour
     public long IncrementScore(int score)
     {
         this.score += score;
+        serverGameplayController.UpdateGameplaySession((int)this.score);
 
         return this.score;
     }

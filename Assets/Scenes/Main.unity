@@ -9156,7 +9156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b73e79c07e12c9945a0543ac24d217b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverGameplayController: {fileID: 0}
+  serverGameplayController: {fileID: 2038123040}
   BackgroundTiles:
   - {fileID: 261203937}
   - {fileID: 1344354373}

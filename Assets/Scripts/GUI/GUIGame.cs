@@ -90,8 +90,6 @@ public class GUIGame : MonoBehaviour
         {
             gamePlayManager.ResetHintTime();
             gamePlayManager.EndLevel();
-            LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
-            serverGameplayController.UpdateGameplaySession();
 
             DisplayLose();
             return;
@@ -150,7 +148,7 @@ public class GUIGame : MonoBehaviour
         LeaderboardManager.Instance.IncrementKilledRobots();
         TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
         AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
-        serverGameplayController.UpdateGameplaySession();
+        serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
 
         EnemyRobots[currentEnemy].Die();
     }

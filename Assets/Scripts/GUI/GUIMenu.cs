@@ -220,7 +220,6 @@ public class GUIMenu : MonoBehaviour
         WinDialogImage.gameObject.SetActive(false);
         MenuImage.gameObject.SetActive(true);
 
-        LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
         StartCoroutine(TurnOnPlay("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel()));
     }
 

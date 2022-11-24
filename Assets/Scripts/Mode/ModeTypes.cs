@@ -1,4 +1,4 @@
 namespace BubbleBots.Modes
 {
-    public enum Mode { FREE, COMMUNITY, PAID }
+    public enum Mode { FREE, PAID }
 }
