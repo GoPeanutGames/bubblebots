@@ -11,6 +11,8 @@ using UnityEngine.Networking;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
+public enum PlayerType { Guest, LoggedInUser }
+
 public class LeaderboardManager : MonoBehaviour
 {
     public string ServerURL = "http://localhost:8090";
@@ -40,6 +42,8 @@ public class LeaderboardManager : MonoBehaviour
             return robotsKilled;
         }
     }
+
+    public PlayerType CurrentPlayerType = PlayerType.Guest;
 
     ObscuredInt robotsKilled = 0;
     bool guestMode = false;
@@ -404,5 +408,10 @@ public class LeaderboardManager : MonoBehaviour
     public void IncrementKilledRobots()
     {
         robotsKilled += 1;
+    }
+
+    public PlayerType GetCurrentPlayerType()
+    {
+        return CurrentPlayerType;
     }
 }
