@@ -87,8 +87,7 @@ public class GUIMenu : MonoBehaviour
     {
         yield return new WaitForSeconds(0.6f);
 
-        MenuImage.transform.Find("PlayerInfo").gameObject.SetActive(false);
-        MenuImage.transform.Find("PlayAsGuest").gameObject.SetActive(false);
+        PnlPlayerInfo.SetActive(false);
     }
 
     IEnumerator TurnOnPlay(string levelFile, int levelNumber)

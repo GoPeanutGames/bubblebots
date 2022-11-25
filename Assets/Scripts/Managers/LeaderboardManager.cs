@@ -52,8 +52,8 @@ public class LeaderboardManager : MonoBehaviour
 
     private void Awake()
     {
-        crptoPassword = /*"JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";*/  "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
-
+        crptoPassword = EnvironmentManager.Instance.GetEncryptPass();
+        ServerURL = EnvironmentManager.Instance.GetServerUrl();
         if (Instance != null)
         {
             Destroy(gameObject);

@@ -2377,7 +2377,7 @@ MonoBehaviour:
   Production: 0
   Community: 0
   DevelopmentEnvironment:
-    serverUrl: https://api-bb.peanutgames.com
+    serverUrl: https://api-bb.peanuthub.dev
     unityEnvironmentName: development
     sceneName: Main
     encryptPass:
@@ -4632,6 +4632,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1864773990}
+  - component: {fileID: 1864773991}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -4660,6 +4661,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1864773991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864773989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feaa6e41111123e4a9eafd7cf5bda0bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1867469863
 GameObject:
   m_ObjectHideFlags: 0

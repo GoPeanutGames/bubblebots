@@ -1,10 +1,8 @@
 using Bubblebots.Environment;
 using UnityEngine;
 
-public class EnvironmentManager : MonoBehaviour
+public class EnvironmentManager : MonoSingleton<EnvironmentManager>
 {
-    public static EnvironmentManager Instance;
-
     [SerializeField] private bool Development;
     [SerializeField] private bool Production;
     [SerializeField] private bool Community;
@@ -14,9 +12,9 @@ public class EnvironmentManager : MonoBehaviour
 
     private EnvironmentSpec currentEnvironment;
 
-    private void Awake()
+    protected override void Awake()
     {
-        Instance = this;
+        base.Awake();
         currentEnvironment = DevelopmentEnvironment;
         if (Production && !Community && !Development)
         {
