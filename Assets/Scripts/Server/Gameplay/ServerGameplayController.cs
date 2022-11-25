@@ -35,7 +35,7 @@ public class ServerGameplayController : MonoBehaviour
             address = WalletManager.Instance.GetWalletAddress(),
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
-            startTime = DateTime.Now.ToString(),
+            startTime = DateTime.Now.ToString("O"),
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Start, jsonFormData, OnGameplaySessionStart);
@@ -62,7 +62,7 @@ public class ServerGameplayController : MonoBehaviour
         {
             sessionId = currentGameplaySessionID,
             score = (int)LeaderboardManager.Instance.Score,
-            endTime = DateTime.Now.ToString(),
+            endTime = DateTime.Now.ToString("O"),
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.End, jsonFormData, OnGameplaySessionEnd);
