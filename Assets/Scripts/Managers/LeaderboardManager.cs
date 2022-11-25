@@ -48,7 +48,7 @@ public class LeaderboardManager : MonoBehaviour
 
     private void Awake()
     {
-        crptoPassword = /*"JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";*/  "JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j";
+        crptoPassword = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";;
 
         if (Instance != null)
         {
