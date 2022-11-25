@@ -296,7 +296,6 @@ public class LeaderboardManager : MonoBehaviour
                     Debug.LogError("Connection failed for reason: " + webRequest.error);
 
                     gui.DisplayPlayerInfo(false);
-                    gui.DisplayPlayerInfoLoading(false);
                     gui.DisplayPlayerOffline(true);
                     break;
                 case UnityWebRequest.Result.Success:
@@ -314,7 +313,6 @@ public class LeaderboardManager : MonoBehaviour
                     else
                     {
                         gui.DisplayPlayerInfo(false);
-                        gui.DisplayPlayerInfoLoading(false);
                         gui.DisplayPlayerOffline(true);
 
                         Debug.LogError(o["result"].ToString());

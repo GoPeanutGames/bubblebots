@@ -18,7 +18,6 @@ public class GUIMenu : MonoBehaviour
 
     public GameObject PnlPlayerInfo;
     public GameObject PnlPlayerOffline;
-    public GameObject PnlLoadingPlace;
     public GameObject PnlPrompt;
     public GameObject PnlHighScores;
     public GameObject PnlRobotSelection;
@@ -200,11 +199,6 @@ public class GUIMenu : MonoBehaviour
         WinNoMoreMoves.gameObject.SetActive(false);
     }
 
-    public void DisplayPlayerInfoLoading(bool value)
-    {
-        PnlLoadingPlace.SetActive(value);
-    }
-
     public void DisplayPlayerInfo(bool value)
     {
         PnlPlayerInfo.SetActive(value);
@@ -334,11 +328,6 @@ public class GUIMenu : MonoBehaviour
         PnlHighScores.SetActive(false);
     }
 
-    public void LoginWithMetamask()
-    {
-        //WalletManager.Instance.LoginWithMetamask();
-    }
-
     public void InitSession(string address)
     {
         Debug.Log("Init session for " + address + "...");
@@ -346,9 +335,6 @@ public class GUIMenu : MonoBehaviour
         PlayButton.gameObject.SetActive(true);
         TxtStatus.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(false);
-
-        DisplayPlayerInfo(false);
-        DisplayPlayerOffline(false);
 
         SetPlayerRank(LeaderboardManager.Instance.Score, LeaderboardManager.Instance.Rank);
         DisplayPlayerInfo(true);
