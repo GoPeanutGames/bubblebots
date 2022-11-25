@@ -9,7 +9,6 @@ using System.Runtime.InteropServices;
 
 public class GUIMenu : MonoBehaviour
 {
-    public ServerPlayerController serverPlayerController;
     public Image MenuImage;
     public Image GameImage;
     public Image WinDialogImage;

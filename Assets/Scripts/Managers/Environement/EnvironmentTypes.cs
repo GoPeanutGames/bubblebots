@@ -1,3 +1,4 @@
+using CodeStage.AntiCheat.ObscuredTypes;
 using System;
 
 namespace Bubblebots.Environment
@@ -8,5 +9,6 @@ namespace Bubblebots.Environment
         public string serverUrl;
         public string unityEnvironmentName;
         public string sceneName;
+        public ObscuredString encryptPass;
     }
 }

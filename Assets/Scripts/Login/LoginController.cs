@@ -6,7 +6,8 @@ public class LoginController : MonoBehaviour
     public GameObject LoginScreen;
     public GameObject GuestScreen;
     public GameObject LoadingScreen;
-    public WalletLoginController walletManager;
+    public WalletLoginController walletLoginController;
+    public LoginServerPlayerController loginServerPlayerController;
 
     private void Start()
     {
@@ -26,8 +27,10 @@ public class LoginController : MonoBehaviour
     private void StartLogin(string address)
     {
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
+        loginServerPlayerController.CreatePlayer(address);
         LoginScreen.SetActive(false);
         LoadingScreen.SetActive(true);
+        LeaderboardManager.Instance.SetPlayerWalletAddress(address);
         LeaderboardManager.Instance.CurrentPlayerType = PlayerType.LoggedInUser;
         LeaderboardManager.Instance.GetPlayerScore((res) =>
         {
@@ -38,7 +41,7 @@ public class LoginController : MonoBehaviour
 
     public void LoginWithMetamask()
     {
-        walletManager.LoginWithMetamask();
+        walletLoginController.LoginWithMetamask();
     }
 
     public void FirstPlayAsGuest()

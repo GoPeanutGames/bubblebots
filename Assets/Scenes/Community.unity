@@ -2108,6 +2108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7804c89fe599eb64e9f66141a97e8602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loginController: {fileID: 0}
 --- !u!4 &100261915
 Transform:
   m_ObjectHideFlags: 0
@@ -5510,50 +5511,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OffButton: {fileID: 372498482}
   OnButton: {fileID: 455006532}
---- !u!1 &390940351
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 390940353}
-  - component: {fileID: 390940352}
-  m_Layer: 0
-  m_Name: Bridge
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &390940352
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 390940351}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd9202ed045d07f40a3b2963fc31e391, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &390940353
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 390940351}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.9337018, y: 1.8930793, z: 89.97563}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &404397449
 GameObject:
   m_ObjectHideFlags: 0
@@ -7002,7 +6959,7 @@ Transform:
   - {fileID: 1329069304}
   - {fileID: 1933925813}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &552920240
 GameObject:
@@ -7113,10 +7070,8 @@ MonoBehaviour:
   PnlPlayerOffline: {fileID: 460962953}
   PnlLoadingPlace: {fileID: 204907984}
   PnlPrompt: {fileID: 2001819559}
-  PnlWelcome: {fileID: 1625634080}
   PnlHighScores: {fileID: 1737751300}
   PnlRobotSelection: {fileID: 89362726}
-  PnlPlayAsGuest: {fileID: 1004210304}
   BtnBackFromHighscores: {fileID: 1718726824}
   BtnAirdrop: {fileID: 1132717763}
 --- !u!225 &552920245
@@ -8806,37 +8761,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 666840996}
   m_CullTransparentMesh: 1
---- !u!1 &673743283
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 673743285}
-  m_Layer: 0
-  m_Name: Volume
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &673743285
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 673743283}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.292877, y: -20.095442, z: 104.08868}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &711355444
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9441,7 +9365,7 @@ PrefabInstance:
     - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
         type: 3}
@@ -17584,6 +17508,7 @@ MonoBehaviour:
     inited: 1
     fakeValue: 123
     fakeValueActive: 1
+  CurrentPlayerType: 0
 --- !u!1 &1458495637
 GameObject:
   m_ObjectHideFlags: 0
@@ -18417,6 +18342,18 @@ MonoBehaviour:
   Development: 1
   Production: 0
   Community: 1
+  DevelopmentEnvironment:
+    serverUrl: 
+    unityEnvironmentName: 
+    sceneName: 
+  ProductionEnvironment:
+    serverUrl: 
+    unityEnvironmentName: 
+    sceneName: 
+  CommunityEnvironment:
+    serverUrl: 
+    unityEnvironmentName: 
+    sceneName: 
 --- !u!1 &1510019504
 GameObject:
   m_ObjectHideFlags: 0
@@ -22840,10 +22777,8 @@ MonoBehaviour:
   PnlPlayerOffline: {fileID: 0}
   PnlLoadingPlace: {fileID: 0}
   PnlPrompt: {fileID: 0}
-  PnlWelcome: {fileID: 0}
   PnlHighScores: {fileID: 0}
   PnlRobotSelection: {fileID: 0}
-  PnlPlayAsGuest: {fileID: 0}
   BtnBackFromHighscores: {fileID: 0}
   BtnAirdrop: {fileID: 0}
 --- !u!114 &1820629988

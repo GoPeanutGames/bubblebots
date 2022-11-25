@@ -47,4 +47,9 @@ public class EnvironmentManager : MonoBehaviour
     {
         return Community == false;
     }
+
+    public string GetEncryptPass()
+    {
+        return currentEnvironment.encryptPass;
+    }
 }

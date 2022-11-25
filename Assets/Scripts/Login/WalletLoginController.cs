@@ -35,7 +35,6 @@ public class WalletLoginController : MonoBehaviour
     [SkipRename]
     public void MetamaskLoginSuccess(string address)
     {
-        currentWalletAddress = account;
         SoundManager.Instance.PlayMetamaskEffect();
         loginController.InitSession(address);
     }
@@ -44,21 +43,5 @@ public class WalletLoginController : MonoBehaviour
     {
         string account = session.Accounts[0];
         MetamaskLoginSuccess(account);
-    }
-
-    public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
-    {
-        string account = session.Accounts[0];
-        MetamaskLoginSuccess(account);
-    }
-
-    public string GetWalletAddress()
-    {
-        return currentWalletAddress;
-    }
-
-    public void SetWalletAddress(string address)
-    {
-        currentWalletAddress = address;
     }
 }

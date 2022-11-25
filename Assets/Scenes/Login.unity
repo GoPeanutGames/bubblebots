@@ -1271,6 +1271,94 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 628}
   m_SizeDelta: {x: 538.214, y: 261.718}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &643127725
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 643127727}
+  - component: {fileID: 643127726}
+  m_Layer: 0
+  m_Name: LoginServerPlayerController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &643127726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643127725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4bf2d758f1d93a41a9d698ffc771d59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &643127727
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 643127725}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.0892658, y: 1, z: 90}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1571263470}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &663372669
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 663372670}
+  - component: {fileID: 663372671}
+  m_Layer: 0
+  m_Name: ServerManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &663372670
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663372669}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1864773990}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &663372671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 663372669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b90c3c4286200441a3ff226c81fbad5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &733549877
 GameObject:
   m_ObjectHideFlags: 0
@@ -2292,14 +2380,38 @@ MonoBehaviour:
     serverUrl: https://api-bb.peanutgames.com
     unityEnvironmentName: development
     sceneName: Main
+    encryptPass:
+      currentCryptoKey: 
+      hiddenValue: 
+      cryptoKey: f700cc00e700cf007900e8007a00
+      hiddenChars: bd00b500ac00ee002b00aa003f00bb00f5009700a50003009e003d009600e100810095000a00b8000f00a7008b00c90099002b0098000300b5009d00a700a500
+      inited: 1
+      fakeValue: JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j
+      fakeValueActive: 1
   ProductionEnvironment:
     serverUrl: https://api-bb.peanutgames.com
     unityEnvironmentName: production
     sceneName: Main
+    encryptPass:
+      currentCryptoKey: 
+      hiddenValue: 
+      cryptoKey: 5b003b00020021001800ed001a00
+      hiddenChars: 110063006f004f00480086006b0016005200730074004a00c300540076000c00760057005a00a1006800020056006900570020009500790002005c0046007700
+      inited: 1
+      fakeValue: JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV
+      fakeValueActive: 1
   CommunityEnvironment:
-    serverUrl: https://api-bb-community.peanutgames.com
-    unityEnvironmentName: community
+    serverUrl: https://api-bb.peanutgames.com
+    unityEnvironmentName: production
     sceneName: Community
+    encryptPass:
+      currentCryptoKey: 
+      hiddenValue: 
+      cryptoKey: 1400e3005b0094007e000a004900
+      hiddenChars: 5e00bb003600fa002e006100380059008a002a00c1002c00240007003900d4002f00e2003c0046003b004d008e003000e200460072002a004d0084001f00c200
+      inited: 1
+      fakeValue: JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV
+      fakeValueActive: 1
 --- !u!1 &1049909871
 GameObject:
   m_ObjectHideFlags: 0
@@ -2671,6 +2783,75 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1130789316}
   m_CullTransparentMesh: 1
+--- !u!1001 &1152536751
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 469002824648398000, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_Name
+      value: CheatingDetections
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -17.185335
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -45.685738
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 89.866104
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 469002824648398003, guid: c6db247d7baca3c4091b8437baca8a5c,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c6db247d7baca3c4091b8437baca8a5c, type: 3}
 --- !u!1 &1188561506
 GameObject:
   m_ObjectHideFlags: 0
@@ -3426,7 +3607,8 @@ MonoBehaviour:
   LoginScreen: {fileID: 1878588207}
   GuestScreen: {fileID: 547233184}
   LoadingScreen: {fileID: 592334021}
-  walletManager: {fileID: 191624935}
+  walletLoginController: {fileID: 191624935}
+  loginServerPlayerController: {fileID: 643127726}
 --- !u!1 &1418094624
 GameObject:
   m_ObjectHideFlags: 0
@@ -3917,6 +4099,7 @@ Transform:
   m_Children:
   - {fileID: 191624936}
   - {fileID: 1377678525}
+  - {fileID: 643127727}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4473,6 +4656,7 @@ Transform:
   - {fileID: 2138157194}
   - {fileID: 1344661480}
   - {fileID: 1959954718}
+  - {fileID: 663372670}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4950,6 +5134,7 @@ MonoBehaviour:
     inited: 1
     fakeValue: 123
     fakeValueActive: 1
+  CurrentPlayerType: 0
 --- !u!1 &1968607295
 GameObject:
   m_ObjectHideFlags: 0

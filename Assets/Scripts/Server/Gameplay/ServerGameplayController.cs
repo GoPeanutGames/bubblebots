@@ -24,7 +24,7 @@ public class ServerGameplayController : MonoBehaviour
 
     public void StartGameplaySession(int level)
     {
-        string address = WalletManager.Instance.GetWalletAddress();
+        string address = LeaderboardManager.Instance.PlayerWalletAddress;
         if (string.IsNullOrEmpty(address))
         {
             return;
@@ -32,7 +32,7 @@ public class ServerGameplayController : MonoBehaviour
         currentLevel = level;
         GameplaySessionStartData formData = new()
         {
-            address = WalletManager.Instance.GetWalletAddress(),
+            address = LeaderboardManager.Instance.PlayerWalletAddress,
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString("O"),
