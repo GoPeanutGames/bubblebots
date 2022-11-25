@@ -19,7 +19,6 @@ public class AnalyticsManager : MonoBehaviour
 
     private void SendLoginEvent()
     {
-        Debug.Log("ID: " + AnalyticsService.Instance.GetAnalyticsUserID());
         AnalyticsService.Instance.CustomData("Login", new Dictionary<string, object>
         {
             {"wallet_address", currentWalletAddress }
@@ -51,13 +50,13 @@ public class AnalyticsManager : MonoBehaviour
         }
     }
 
-    public async void InitAnalyticsWithWallet(string walletAddress)
+    public void InitAnalyticsWithWallet(string walletAddress)
     {
         currentWalletAddress = walletAddress;
         InitAnalyticsPrivately();
     }
 
-    public async void InitAnalyticsGuest()
+    public void InitAnalyticsGuest()
     {
         currentWalletAddress = "guest-id";
         InitAnalyticsPrivately();

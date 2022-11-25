@@ -11,6 +11,7 @@ using Beebyte.Obfuscator;
 
 public class GUIMenu : MonoBehaviour
 {
+    public ServerPlayerController serverPlayerController;
     public Image MenuImage;
     public Image GameImage;
     public Image WinDialogImage;
@@ -219,7 +220,6 @@ public class GUIMenu : MonoBehaviour
         WinDialogImage.gameObject.SetActive(false);
         MenuImage.gameObject.SetActive(true);
 
-        LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
         StartCoroutine(TurnOnPlay("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel()));
     }
 
@@ -375,7 +375,9 @@ public class GUIMenu : MonoBehaviour
     [SkipRename]
     public void InitSession(string address)
     {
+        WalletManager.Instance.SetWalletAddress(address);
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
+        serverPlayerController.CreatePlayer(address);
         Debug.Log("Init session for " + address + "...");
         if (!string.IsNullOrEmpty(address))
         {

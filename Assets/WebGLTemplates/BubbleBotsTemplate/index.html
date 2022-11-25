@@ -235,13 +235,6 @@
                 "unity-progress-bar-empty"
               ).style.display = "none";
               myGameInstance = unityInstance;
-              setInterval(function () {
-                myGameInstance.SendMessage(
-                  "Canvas",
-                  "SetURL",
-                  window.location + ""
-                );
-              }, 1000);
             })
             .catch((message) => {
               alert(message);
