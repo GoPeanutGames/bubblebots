@@ -375,6 +375,7 @@ public class GUIMenu : MonoBehaviour
     [SkipRename]
     public void InitSession(string address)
     {
+        WalletManager.Instance.SetWalletAddress(address);
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
         serverPlayerController.CreatePlayer(address);
         Debug.Log("Init session for " + address + "...");

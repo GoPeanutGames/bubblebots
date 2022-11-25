@@ -42,4 +42,9 @@ public class WalletManager : MonoSingleton<WalletManager>
     {
         return currentWalletAddress;
     }
+
+    public void SetWalletAddress(string address)
+    {
+        currentWalletAddress = address;
+    }
 }

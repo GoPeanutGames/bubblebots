@@ -48,9 +48,6 @@ public class ServerManager : MonoSingleton<ServerManager>
         AsyncOperation operation = webRequest.SendWebRequest();
         operation.completed += (result) =>
         {
-            Debug.Log(webRequest.error);
-            Debug.Log(webRequest.isDone);
-            Debug.Log(webRequest.downloadHandler.text);
             onComplete?.Invoke(webRequest.downloadHandler.text);
             webRequest.Dispose();
         };
@@ -58,7 +55,6 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     public void SendGameplayDataToServer(GameplaySessionAPI api, string formData, Action<string> onComplete)
     {
-        Debug.LogWarning("SENDING: " + api.ToString());
         UnityWebRequest webRequest = SetupWebRequest(SessionAPIMap[api], formData);
         SendWebRequest(webRequest, onComplete);
     }
