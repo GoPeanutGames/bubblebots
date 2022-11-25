@@ -5,10 +5,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using BubbleBots.Modes;
 using static LevelManager;
 
 public class GamePlayManager : MonoBehaviour
 {
+    public ServerGameplayController serverGameplayController;
     public LevelManager levelManager;
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
@@ -66,7 +68,9 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartLevel(string levelFile, int levelNumber)
     {
+        ModeManager.Instance.SetMode(Mode.FREE);
         AnalyticsManager.Instance.SendPlayEvent(levelNumber);
+        serverGameplayController.StartGameplaySession(levelNumber);
         //LeaderboardManager.Instance.ResetKilledRobots();
         LevelInformation levelInfo;
         currentLevel = levelNumber;
@@ -1082,6 +1086,7 @@ public class GamePlayManager : MonoBehaviour
 
     IEnumerator FinishLevel()
     {
+        serverGameplayController.EndGameplaySession((int)score);
         AnalyticsManager.Instance.SendLevelEvent();
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
@@ -1855,6 +1860,7 @@ public class GamePlayManager : MonoBehaviour
     public long IncrementScore(int score)
     {
         this.score += score;
+        serverGameplayController.UpdateGameplaySession((int)this.score);
 
         return this.score;
     }

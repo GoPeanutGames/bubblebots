@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 
 public class GUIMenu : MonoBehaviour
 {
+    public ServerPlayerController serverPlayerController;
     public Image MenuImage;
     public Image GameImage;
     public Image WinDialogImage;
@@ -187,7 +188,6 @@ public class GUIMenu : MonoBehaviour
         WinDialogImage.gameObject.SetActive(false);
         MenuImage.gameObject.SetActive(true);
 
-        LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
         StartCoroutine(TurnOnPlay("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel()));
     }
 

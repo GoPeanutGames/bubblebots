@@ -13,6 +13,7 @@ using UnityEditor;
 
 public class GUIGame : MonoBehaviour
 {
+    public ServerGameplayController serverGameplayController;
     public Image[] BackgroundTiles;
     public int Spacing = 4;
     public int TileWidth = 150;
@@ -89,7 +90,6 @@ public class GUIGame : MonoBehaviour
         {
             gamePlayManager.ResetHintTime();
             gamePlayManager.EndLevel();
-            LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
 
             DisplayLose();
             return;
@@ -148,6 +148,7 @@ public class GUIGame : MonoBehaviour
         LeaderboardManager.Instance.IncrementKilledRobots();
         TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
         AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
+        serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
 
         EnemyRobots[currentEnemy].Die();
     }
