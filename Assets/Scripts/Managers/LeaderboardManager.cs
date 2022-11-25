@@ -1,7 +1,6 @@
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -12,8 +11,7 @@ public enum PlayerType { Guest, LoggedInUser }
 
 public class LeaderboardManager : MonoBehaviour
 {
-    public string ServerURL = "http://localhost:8090";
-    public string HashKey = "Hsh123_?";
+    private string ServerURL = "";
     [HideInInspector]
     public string PlayerFullName = "";
     public string PlayerWalletAddress = null;

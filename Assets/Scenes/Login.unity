@@ -2373,8 +2373,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b1981e44da4ae49a0e8e60e78004f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Development: 1
-  Production: 0
+  Development: 0
+  Production: 1
   Community: 0
   DevelopmentEnvironment:
     serverUrl: https://api-bb.peanuthub.dev
@@ -5115,8 +5115,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7de9e31ee61ee594ebac5675698dc385, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ServerURL: https://api-bb.peanutgames.com
-  HashKey: Hsh123_?
   PlayerFullName: 
   PlayerWalletAddress: 
   Score:
