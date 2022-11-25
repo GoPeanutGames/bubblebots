@@ -69,7 +69,7 @@ public class ServerGameplayController : MonoBehaviour
         GameplaySessionEndData formData = new()
         {
             sessionId = currentGameplaySessionID,
-            score = (int)LeaderboardManager.Instance.Score,
+            score = score,
             endTime = DateTime.Now.ToString("O"),
         };
         string jsonFormData = JsonUtility.ToJson(formData);
