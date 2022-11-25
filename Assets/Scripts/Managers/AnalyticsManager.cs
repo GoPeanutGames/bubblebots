@@ -32,13 +32,9 @@ public class AnalyticsManager : MonoBehaviour
             InitializationOptions options = new InitializationOptions();
             options.SetAnalyticsUserId(currentWalletAddress);
             options.SetEnvironmentName("development");
-            if (EnvironmentManager.Instance.Production && !EnvironmentManager.Instance.Development)
+            if ((EnvironmentManager.Instance.Production || EnvironmentManager.Instance.Community) && !EnvironmentManager.Instance.Development)
             {
                 options.SetEnvironmentName("production");
-            }
-            else if (EnvironmentManager.Instance.Community && !EnvironmentManager.Instance.Development)
-            {
-                options.SetEnvironmentName("community");
             }
             await UnityServices.InitializeAsync(options);
             List<string> consentIdentifiers = await AnalyticsService.Instance.CheckForRequiredConsents();
