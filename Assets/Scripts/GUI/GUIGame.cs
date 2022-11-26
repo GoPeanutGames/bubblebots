@@ -104,6 +104,7 @@ public class GUIGame : MonoBehaviour
 
     private void DisplayLose()
     {
+        serverGameplayController.EndGameplaySession((int)gamePlayManager.GetScore());
         WinDialogImage.gameObject.SetActive(true);
         Transform imgWin = WinDialogImage.transform.Find("ImgWin");
         Transform imgLose = WinDialogImage.transform.Find("ImgLose");

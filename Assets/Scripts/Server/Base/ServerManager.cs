@@ -31,7 +31,6 @@ public class ServerManager : MonoSingleton<ServerManager>
     private UnityWebRequest SetupWebRequest(string api, string formData)
     {
         string encryptedFormData = Encrypt(formData);
-        Debug.Log(encryptedFormData);
         UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + api, encryptedFormData);
         UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(encryptedFormData));
         customUploadHandler.contentType = "application/json";
