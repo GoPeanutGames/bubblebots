@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GUIRobotSelection : MonoBehaviour
@@ -15,9 +16,16 @@ public class GUIRobotSelection : MonoBehaviour
     public void BackToMenu()
     {
         SoundManager.Instance.PlayStartMusic();
+        if(LeaderboardManager.Instance.CurrentPlayerType == PlayerType.Guest)
+        {
+            SceneManager.LoadScene("Login");
+        }
+        else
+        {
+            PnlMenuUI.SetActive(true);
+            gameObject.SetActive(false);
+        }
 
-        PnlMenuUI.SetActive(true);
-        gameObject.SetActive(false);
     }
 
     public void Play()
