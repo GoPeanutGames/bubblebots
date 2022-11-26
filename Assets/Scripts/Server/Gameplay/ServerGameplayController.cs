@@ -24,15 +24,15 @@ public class ServerGameplayController : MonoBehaviour
 
     public void StartGameplaySession(int level)
     {
-        string address = WalletManager.Instance.GetWalletAddress();
-        if (string.IsNullOrEmpty(address))
+        if (LeaderboardManager.Instance.GuestMode == true)
         {
             return;
         }
+        string address = LeaderboardManager.Instance.PlayerWalletAddress;
         currentLevel = level;
         GameplaySessionStartData formData = new()
         {
-            address = WalletManager.Instance.GetWalletAddress(),
+            address = LeaderboardManager.Instance.PlayerWalletAddress,
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString("O"),
@@ -43,6 +43,10 @@ public class ServerGameplayController : MonoBehaviour
 
     public void UpdateGameplaySession(int score)
     {
+        if (LeaderboardManager.Instance.GuestMode == true)
+        {
+            return;
+        }
         previousScore = score;
         GameplaySessionUpdateData formData = new()
         {
@@ -57,6 +61,10 @@ public class ServerGameplayController : MonoBehaviour
 
     public void EndGameplaySession(int score)
     {
+        if (LeaderboardManager.Instance.GuestMode == true)
+        {
+            return;
+        }
         previousScore = score;
         GameplaySessionEndData formData = new()
         {

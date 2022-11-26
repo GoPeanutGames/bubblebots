@@ -1,17 +1,17 @@
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using Newtonsoft.Json.Linq;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Networking;
 
+public enum PlayerType { Guest, LoggedInUser }
+
 public class LeaderboardManager : MonoBehaviour
 {
-    public string ServerURL = "http://localhost:8090";
-    public string HashKey = "Hsh123_?";
+    private string ServerURL = "";
     [HideInInspector]
     public string PlayerFullName = "";
     public string PlayerWalletAddress = null;
@@ -38,6 +38,8 @@ public class LeaderboardManager : MonoBehaviour
         }
     }
 
+    public PlayerType CurrentPlayerType = PlayerType.Guest;
+
     ObscuredInt robotsKilled = 0;
     bool guestMode = false;
     string crptoPassword;
@@ -48,8 +50,8 @@ public class LeaderboardManager : MonoBehaviour
 
     private void Awake()
     {
-        crptoPassword = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";;
-
+        crptoPassword = EnvironmentManager.Instance.GetEncryptPass();
+        ServerURL = EnvironmentManager.Instance.GetServerUrl();
         if (Instance != null)
         {
             Destroy(gameObject);
@@ -292,7 +294,6 @@ public class LeaderboardManager : MonoBehaviour
                     Debug.LogError("Connection failed for reason: " + webRequest.error);
 
                     gui.DisplayPlayerInfo(false);
-                    gui.DisplayPlayerInfoLoading(false);
                     gui.DisplayPlayerOffline(true);
                     break;
                 case UnityWebRequest.Result.Success:
@@ -310,7 +311,6 @@ public class LeaderboardManager : MonoBehaviour
                     else
                     {
                         gui.DisplayPlayerInfo(false);
-                        gui.DisplayPlayerInfoLoading(false);
                         gui.DisplayPlayerOffline(true);
 
                         Debug.LogError(o["result"].ToString());
@@ -340,5 +340,10 @@ public class LeaderboardManager : MonoBehaviour
     public void IncrementKilledRobots()
     {
         robotsKilled += 1;
+    }
+
+    public PlayerType GetCurrentPlayerType()
+    {
+        return CurrentPlayerType;
     }
 }

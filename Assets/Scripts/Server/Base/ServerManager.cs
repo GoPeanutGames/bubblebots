@@ -7,9 +7,6 @@ using BubbleBots.Server.Gameplay;
 
 public class ServerManager : MonoSingleton<ServerManager>
 {
-    public string ServerURL;
-
-    private string crptoPassword = "JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV";
     private string sessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
     private readonly Dictionary<GameplaySessionAPI, string> SessionAPIMap = new()
     {
@@ -21,9 +18,10 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     private string Encrypt(string jsonForm)
     {
+        string password = EnvironmentManager.Instance.GetEncryptPass();
         EncryptedData jsonEncryptedForm = new()
         {
-            data = SimpleAESEncryption.Encrypt2(jsonForm, crptoPassword)
+            data = SimpleAESEncryption.Encrypt2(jsonForm, password)
         };
         return JsonUtility.ToJson(jsonEncryptedForm);
     }
@@ -31,7 +29,8 @@ public class ServerManager : MonoSingleton<ServerManager>
     private UnityWebRequest SetupWebRequest(string api, string formData)
     {
         string encryptedFormData = Encrypt(formData);
-        UnityWebRequest webRequest = UnityWebRequest.Post(ServerURL + api, encryptedFormData);
+        string serverUrl = EnvironmentManager.Instance.GetServerUrl();
+        UnityWebRequest webRequest = UnityWebRequest.Post(serverUrl + api, encryptedFormData);
         UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(encryptedFormData));
         customUploadHandler.contentType = "application/json";
         webRequest.uploadHandler = customUploadHandler;

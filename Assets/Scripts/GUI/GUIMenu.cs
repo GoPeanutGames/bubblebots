@@ -6,12 +6,9 @@ using DG.Tweening;
 using TMPro;
 using static GUIGame;
 using System.Runtime.InteropServices;
-using CodeStage.AntiCheat.ObscuredTypes;
-using Beebyte.Obfuscator;
 
 public class GUIMenu : MonoBehaviour
 {
-    public ServerPlayerController serverPlayerController;
     public Image MenuImage;
     public Image GameImage;
     public Image WinDialogImage;
@@ -21,12 +18,9 @@ public class GUIMenu : MonoBehaviour
 
     public GameObject PnlPlayerInfo;
     public GameObject PnlPlayerOffline;
-    public GameObject PnlLoadingPlace;
     public GameObject PnlPrompt;
-    public GameObject PnlWelcome;
     public GameObject PnlHighScores;
     public GameObject PnlRobotSelection;
-    public GameObject PnlPlayAsGuest;
     public GameObject BtnBackFromHighscores;
     public GameObject BtnAirdrop;
 
@@ -48,31 +42,13 @@ public class GUIMenu : MonoBehaviour
 
     private void Start()
     {
-        FindObjectOfType<SoundManager>().PlayStartMusic();
-
-        if (PnlWelcome == null)
+        if(LeaderboardManager.Instance.CurrentPlayerType == PlayerType.Guest)
         {
-            // Could be a promotional build
-            InitSession(LeaderboardManager.Instance.PlayerWalletAddress);
-            return;
+            StartPlayingAsGuest();
         }
-
-        //Debug.Log("API_URL: " + Environment.GetEnvironmentVariable("API_URL"));
-        //Debug.Log("SECREAT_HEADER: " + Environment.GetEnvironmentVariable("SECREAT_HEADER"));
-
-        PnlWelcome.SetActive(true);
-        PnlPrompt.SetActive(false);
-        PnlHighScores.SetActive(false);
-        PnlRobotSelection.SetActive(false);
-
-        //Debug.Log("Stored wallet address is: " + LeaderboardManager.Instance.PlayerWalletAddress);
-        if(!string.IsNullOrEmpty(LeaderboardManager.Instance.PlayerWalletAddress))
+        else
         {
-            PnlWelcome.SetActive(false);
             InitSession(LeaderboardManager.Instance.PlayerWalletAddress);
-        } else
-        {
-
         }
     }
 
@@ -111,8 +87,7 @@ public class GUIMenu : MonoBehaviour
     {
         yield return new WaitForSeconds(0.6f);
 
-        MenuImage.transform.Find("PlayerInfo").gameObject.SetActive(false);
-        MenuImage.transform.Find("PlayAsGuest").gameObject.SetActive(false);
+        PnlPlayerInfo.SetActive(false);
     }
 
     IEnumerator TurnOnPlay(string levelFile, int levelNumber)
@@ -162,21 +137,11 @@ public class GUIMenu : MonoBehaviour
         MenuImage.gameObject.SetActive(false);
     }
 
-    public void PlayAsGuest()
-    {
-        AnalyticsManager.Instance.InitAnalyticsGuest();
-        PnlPlayAsGuest.SetActive(true);
-        PnlWelcome.SetActive(false);
-    }
-
     public void StartPlayingAsGuest()
     {
-        LeaderboardManager.Instance.SetGuestMode();
-
         TxtStatus.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(false);
 
-        DisplayPlayerInfoLoading(false);
         DisplayPlayerInfo(false);
         DisplayPlayerOffline(false);
 
@@ -231,11 +196,6 @@ public class GUIMenu : MonoBehaviour
     public void HideNoMoreMoves()
     {
         WinNoMoreMoves.gameObject.SetActive(false);
-    }
-
-    public void DisplayPlayerInfoLoading(bool value)
-    {
-        PnlLoadingPlace.SetActive(value);
     }
 
     public void DisplayPlayerInfo(bool value)
@@ -367,48 +327,16 @@ public class GUIMenu : MonoBehaviour
         PnlHighScores.SetActive(false);
     }
 
-    public void LoginWithMetamask()
-    {
-        WalletManager.Instance.LoginWithMetamask();
-    }
-
-    [SkipRename]
     public void InitSession(string address)
     {
-        WalletManager.Instance.SetWalletAddress(address);
-        AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
-        serverPlayerController.CreatePlayer(address);
         Debug.Log("Init session for " + address + "...");
-        if (!string.IsNullOrEmpty(address))
-        {
-            LeaderboardManager.Instance.SetPlayerWalletAddress(address);
-        }
-
-        if (PnlWelcome != null)
-        {
-            PnlWelcome?.SetActive(false);
-        }
 
         PlayButton.gameObject.SetActive(true);
         TxtStatus.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(false);
 
-        DisplayPlayerInfoLoading(true);
-        DisplayPlayerInfo(false);
-        DisplayPlayerOffline(false);
-
-        LeaderboardManager.Instance.GetPlayerScore((parameter) =>
-        {
-            string[] parameters = ((string)parameter).Split(",");
-            ObscuredLong score = long.Parse(parameters[0]);
-            int rank = int.Parse(parameters[1]);
-
-            SetPlayerRank(score, rank);
-            DisplayPlayerInfoLoading(false);
-            DisplayPlayerInfo(true);
-            DisplayFullName(LeaderboardManager.Instance.PlayerFullName);
-        });
-
+        SetPlayerRank(LeaderboardManager.Instance.Score, LeaderboardManager.Instance.Rank);
+        DisplayPlayerInfo(true);
         DisplayFullName(LeaderboardManager.Instance.PlayerFullName);
         DisplayPlayerRank();
     }

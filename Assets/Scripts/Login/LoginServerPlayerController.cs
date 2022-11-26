@@ -1,7 +1,7 @@
 using BubbleBots.Server.Player;
 using UnityEngine;
 
-public class ServerPlayerController : MonoBehaviour
+public class LoginServerPlayerController : MonoBehaviour
 {
     private void OnPlayerCreatedOnServer(string data)
     {

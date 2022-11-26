@@ -765,7 +765,7 @@ public class GUIGame : MonoBehaviour
 
     public void RenewEnemyRobots()
     {
-        if (EnvironmentManager.Instance.Community)
+        if (EnvironmentManager.Instance.ShouldChangeRobotImages() == false)
         {
             return;
         }

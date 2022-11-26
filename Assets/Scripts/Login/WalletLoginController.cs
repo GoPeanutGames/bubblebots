@@ -3,12 +3,22 @@ using System.Runtime.InteropServices;
 using WalletConnectSharp.Unity;
 using Beebyte.Obfuscator;
 
-public class WalletManager : MonoSingleton<WalletManager>
+public class WalletLoginController : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void Login();
 
-    private string currentWalletAddress = "";
+    public LoginController loginController;
+
+    private void Start()
+    {
+        WalletConnect.Instance.NewSessionConnected.AddListener(OnNewWalletSessionConnectedEventFromPlugin);
+    }
+
+    private void OnDestroy()
+    {
+        WalletConnect.Instance.NewSessionConnected.RemoveListener(OnNewWalletSessionConnectedEventFromPlugin);
+    }
 
     public void LoginWithMetamask()
     {
@@ -23,28 +33,15 @@ public class WalletManager : MonoSingleton<WalletManager>
     }
 
     [SkipRename]
-    public void MetamaskLoginSuccess(string account)
+    public void MetamaskLoginSuccess(string address)
     {
-        currentWalletAddress = account;
         SoundManager.Instance.PlayMetamaskEffect();
-        //TODO: REFACTOR - UnityEvent to launch this, GUIMenu listens for it
-        //TODO: bad for performance, but no other way until other things are refactored
-        GameObject.FindObjectOfType<GUIMenu>().InitSession(account);
+        loginController.InitSession(address);
     }
 
     public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
     {
         string account = session.Accounts[0];
         MetamaskLoginSuccess(account);
-    }
-
-    public string GetWalletAddress()
-    {
-        return currentWalletAddress;
-    }
-
-    public void SetWalletAddress(string address)
-    {
-        currentWalletAddress = address;
     }
 }
