@@ -24,15 +24,15 @@ public class ServerGameplayController : MonoBehaviour
 
     public void StartGameplaySession(int level)
     {
-        if (LeaderboardManager.Instance.GuestMode == true)
+        if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
         }
-        string address = LeaderboardManager.Instance.PlayerWalletAddress;
+        string address = UserManager.Instance.GetPlayerWalletAddress();
         currentLevel = level;
         GameplaySessionStartData formData = new()
         {
-            address = LeaderboardManager.Instance.PlayerWalletAddress,
+            address = address,
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString("O"),
@@ -43,7 +43,7 @@ public class ServerGameplayController : MonoBehaviour
 
     public void UpdateGameplaySession(int score)
     {
-        if (LeaderboardManager.Instance.GuestMode == true)
+        if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
         }
@@ -53,7 +53,7 @@ public class ServerGameplayController : MonoBehaviour
             sessionId = currentGameplaySessionID,
             score = score,
             level = currentLevel,
-            kills = (int)LeaderboardManager.Instance.RobotsKilled
+            kills = UserManager.RobotsKilled
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, _ => { });
@@ -61,7 +61,7 @@ public class ServerGameplayController : MonoBehaviour
 
     public void EndGameplaySession(int score)
     {
-        if (LeaderboardManager.Instance.GuestMode == true)
+        if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
         }

@@ -1019,7 +1019,7 @@ public class GamePlayManager : MonoBehaviour
                     levelEnded = true;
                     FindObjectOfType<SoundManager>().FadeOutStartMusic();
                     StartTrackedCoroutine(FinishLevel());
-                    LeaderboardManager.Instance.Score = score;
+                    UserManager.Instance.SetPlayerScore((int)score);
                 } else
                 {
                     killedEnemies = 0;
