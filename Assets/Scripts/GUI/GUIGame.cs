@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine.Rendering;
 using System.Runtime.InteropServices;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class GUIGame : MonoBehaviour
 {
@@ -751,7 +752,7 @@ public class GUIGame : MonoBehaviour
         Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
         if (UserManager.PlayerType == PlayerType.Guest)
         {
-            Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+            SceneManager.LoadScene("Login");
         }
         else
         {
