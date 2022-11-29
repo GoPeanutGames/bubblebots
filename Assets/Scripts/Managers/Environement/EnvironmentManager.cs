@@ -1,4 +1,4 @@
-using Bubblebots.Environment;
+using BubbleBots.Environment;
 using UnityEngine;
 
 public class EnvironmentManager : MonoSingleton<EnvironmentManager>

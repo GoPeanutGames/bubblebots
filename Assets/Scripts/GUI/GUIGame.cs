@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine.Rendering;
 using System.Runtime.InteropServices;
 using UnityEditor;
+using UnityEngine.SceneManagement;
 
 public class GUIGame : MonoBehaviour
 {
@@ -146,9 +147,9 @@ public class GUIGame : MonoBehaviour
 
     public void KillEnemy()
     {
-        LeaderboardManager.Instance.IncrementKilledRobots();
-        TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
-        AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
+        UserManager.RobotsKilled++;
+        TxtKilledRobots.text = UserManager.RobotsKilled.ToString();
+        AnalyticsManager.Instance.SendRobotKillEvent(UserManager.RobotsKilled);
         serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
 
         EnemyRobots[currentEnemy].Die();
@@ -749,9 +750,9 @@ public class GUIGame : MonoBehaviour
 
         Menu.gameObject.SetActive(true);
         Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
-        if (LeaderboardManager.Instance.GuestMode)
+        if (UserManager.PlayerType == PlayerType.Guest)
         {
-            Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+            SceneManager.LoadScene("Login");
         }
         else
         {

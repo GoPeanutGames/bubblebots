@@ -1,0 +1,117 @@
+using BubbleBots.Server.Player;
+using BubbleBots.User;
+using CodeStage.AntiCheat.ObscuredTypes;
+using CodeStage.AntiCheat.Storage;
+using System;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
+public enum PlayerType { Guest, LoggedInUser }
+
+public class UserManager : MonoSingleton<UserManager>
+{
+    public static PlayerType PlayerType;
+    public static int RobotsKilled = 0;
+
+    private User CurrentUser;
+    private ObscuredString sessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
+
+    private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
+    {
+        { PrefsKey.Nickname, "full_name"},
+        { PrefsKey.WalletAddress, "wallet_address"},
+        { PrefsKey.SessionToken, "session_token"},
+        { PrefsKey.Rank, "rank" }
+    };
+
+    private void GetUserOrSetDefault()
+    {
+        CurrentUser = new()
+        {
+            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], "Player" + UnityEngine.Random.Range(1000, 10000)),
+            WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
+            SessionToken = ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),
+            Score = 0,
+            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999)
+        };
+    }
+
+    private void OnNicknameSet(string data)
+    {
+        Debug.Log("Nickname set");
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        GetUserOrSetDefault();
+    }
+
+    public void SetWalletAddress(string address)
+    {
+        CurrentUser.WalletAddress = address;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.WalletAddress], address);
+    }
+
+    public void SetPlayerUserName(string userName, bool sendToServer)
+    {
+        CurrentUser.UserName = userName;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Nickname], userName);
+        if (sendToServer)
+        {
+            string sanitizedUsername = userName.Replace("\"", "'").Trim();
+            ChangeUserNameData formData = new()
+            {
+                address = CurrentUser.WalletAddress,
+                nickname = sanitizedUsername
+            };
+            string jsonFormData = JsonUtility.ToJson(formData);
+            ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.UpdateNickname, jsonFormData, OnNicknameSet);
+        }
+    }
+
+    public string GetPlayerWalletAddress()
+    {
+        return CurrentUser.WalletAddress;
+    }
+
+    public string GetPlayerUserName()
+    {
+        return CurrentUser.UserName;
+    }
+
+    public void SetPlayerRank(int rank)
+    {
+        CurrentUser.Rank = rank;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Rank], rank);
+    }
+
+    public int GetPlayerRank()
+    {
+        return CurrentUser.Rank;
+    }
+
+    public void SetPlayerScore(int score)
+    {
+        CurrentUser.Score = score;
+    }
+
+    public int GetPlayerScore()
+    {
+        return CurrentUser.Score;
+    }
+
+    public void GetTop100Scores(Action<string> onComplete)
+    {
+        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Top100, onComplete);
+    }
+
+#if UNITY_EDITOR
+    [MenuItem("Peanut Games/Clear Prefs")]
+    public static void ClearPrefs()
+    {
+        ObscuredPrefs.DeleteAll();
+    }
+#endif
+}
