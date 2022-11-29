@@ -939,6 +939,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 432598, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 432598, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 432598, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 432598, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -981,6 +993,14 @@ PrefabInstance:
     - target: {fileID: 8226728, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19825404, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
+      propertyPath: moveWithTransform
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 19825404, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e85f4a610ef9e5b4aa9cedce76136489, type: 3}
@@ -2377,8 +2397,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10c8a06720af1a14d9623857b17a5f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  swapStart: {x: 0, y: 0}
+  swapEnd: {x: 0, y: 0}
   levelData: {fileID: 11400000, guid: a071d739e102572428c31244c15f4257, type: 2}
   matchPrecedence: {fileID: 11400000, guid: 0ac6873222e870643a1e280dc80e388b, type: 2}
+  inputLocked: 1
   levelManager: {fileID: 2106712192}
   MenuGUI: {fileID: 552920244}
   GameGUI: {fileID: 736831953}
@@ -6613,10 +6636,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultWallet: 4
-  retryOnTimeout: 1
+  retryOnTimeout: 0
   autoSaveAndResume: 1
   connectOnAwake: 0
-  connectOnStart: 1
+  connectOnStart: 0
   createNewSessionOnSessionDisconnect: 1
   connectSessionRetryCount: 3
   customBridgeUrl: 
@@ -25196,7 +25219,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -68.756996}
+  m_AnchoredPosition: {x: 0, y: -68.75699}
   m_SizeDelta: {x: -22.047, y: -229.901}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2047863385

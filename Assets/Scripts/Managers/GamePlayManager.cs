@@ -1649,7 +1649,7 @@ public class GamePlayManager : MonoBehaviour
             case "S5":
                 string code = tileSet[releaseX, releaseY];
                 List<Vector2> changedTiles = ProcessRandomColorChange(x, y, releaseX, releaseY);
-                GameGUI.ColorChangeEffect(code, changedTiles);
+                //GameGUI.ColorChangeEffect(code, changedTiles);
                 StartTrackedCoroutine(ReevaluateBoard());
 
                 yield break;
@@ -2025,15 +2025,14 @@ public class GamePlayManager : MonoBehaviour
         }
         else if (gameplayState == GameplayState.CheckExplosionsAfterSwap)
         {
-            SwapResult swapResult = boardController.SwapGems(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y);
-
-            for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
-            {
-                StartTrackedCoroutine(RemoveGems(swapResult.explodeEvents[i].toExplode));
-                StartTrackedCoroutine(CreateGems(swapResult.explodeEvents[i].toCreate));
-            }
-
+            //SwapResult swapResult = boardController.SwapGems(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y);
+            //StartTrackedCoroutine(ProcessSwapResult(swapResult));
             gameplayState = GameplayState.ExplosionsInProgress;
+
+            NewSwapResult swapResult = boardController.NewSwapGems(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y);
+            StartTrackedCoroutine(ProcessSwapResult(swapResult));
+
+
         }
         else if (gameplayState == GameplayState.ExplosionsInProgress)
         {
@@ -2051,11 +2050,10 @@ public class GamePlayManager : MonoBehaviour
         }
         else if (gameplayState == GameplayState.CheckForMatches)
         {
-            SwapResult swapResult = boardController.ExplodeMatches(true);
-            if (swapResult.explodeEvents != null &&swapResult.explodeEvents.Count > 0)
+            NewSwapResult swapResult = boardController.CheckForMatches();
+            if (swapResult.explodeEvents != null && swapResult.explodeEvents.Count > 0)
             {
-                StartTrackedCoroutine(RemoveGems(swapResult.toExplode));
-                StartTrackedCoroutine(CreateGems(swapResult.toCreate));
+                StartTrackedCoroutine(ProcessSwapResult(swapResult));
                 gameplayState = GameplayState.ExplosionsInProgress;
             }
             else
@@ -2255,55 +2253,6 @@ public class GamePlayManager : MonoBehaviour
                 swapEnd = new Vector2Int(releaseTileX, releaseTileY);
                 gameplayState = GameplayState.Swap;
             }
-
-
-            //    if (tileSet[x, y] == tileSet[releaseTileX, releaseTileY] && !IsSpecialGem(tileSet[x, y]))
-            //    {
-            //        StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
-            //        return;
-            //    }
-
-            //    GameGUI.LockTiles("L2");
-
-            //    if (IsSpecialGem(tileSet[x, y]))
-            //    {
-            //        StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-            //        StartTrackedCoroutine(ProcessSpecialGem(x, y, releaseTileX, releaseTileY));
-            //        return;
-            //    }
-            //    else if (IsSpecialGem(tileSet[releaseTileX, releaseTileY]))
-            //    {
-            //        StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-            //        StartTrackedCoroutine(ProcessSpecialGem(releaseTileX, releaseTileY, x, y));
-            //        return;
-            //    }
-
-            //    hints.Clear();
-            //    hintShapes.Clear();
-            //    CheckForAMatchWitchSwapingTiles(x, y, releaseTileX, releaseTileY);
-
-            //    if (hints.Count > 0)
-            //    {
-            //        StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-            //        SwapKeys(x, y, releaseTileX, releaseTileY);
-            //        StartTrackedCoroutine(ExplodeTiles());
-            //    }
-            //    else
-            //    {
-            //        CheckForAMatchWitchSwapingTiles(releaseTileX, releaseTileY, x, y);
-
-            //        if (hints.Count > 0)
-            //        {
-            //            StartTrackedCoroutine(SwapTilesOnceOnGUI(x, y, releaseTileX, releaseTileY));
-            //            SwapKeys(x, y, releaseTileX, releaseTileY);
-            //            StartTrackedCoroutine(ExplodeTiles());
-            //        }
-            //        else
-            //        {
-            //            StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(x, y, releaseTileX, releaseTileY));
-            //        }
-            //    }
-            //}
         }
 
 
@@ -2327,41 +2276,129 @@ public class GamePlayManager : MonoBehaviour
         GameGUI.CanSwapTiles = true;
     }
 
-    IEnumerator RemoveGems(List<Vector2Int> toRemove)
+    IEnumerator ProcessSwapResult(NewSwapResult swapResult)
     {
-        combo += 1;
-        FindObjectOfType<SoundManager>().PlayComboSound(combo);
-        for (int i = 0; i < toRemove.Count; ++i)
+        for (int i = 0; swapResult.explodeEvents != null && i < swapResult.explodeEvents.Count; ++i)
         {
-            GameGUI.ExplodeTile(toRemove[i].x, toRemove[i].y, false);
+            if (swapResult.explodeEvents[i].toExplode == null ||
+                swapResult.explodeEvents[i].toExplode.Count == 0)
+            {
+                continue;
+            }
+            
+            //play vfx
+            LineBlastExplodeEvent lineBlastExplodeEvent = swapResult.explodeEvents[i] as LineBlastExplodeEvent;
+            if (lineBlastExplodeEvent != null)
+            {
+                FindObjectOfType<SoundManager>().PlayLightningSound();
+                GameGUI.LineDestroyEffect(lineBlastExplodeEvent.lineBlastStartPosition.x, lineBlastExplodeEvent.lineBlastStartPosition.y, false);
+                yield return new WaitForSeconds(0.4f);
+            }
+            ColumnBlastEvent columnBlasEvent = swapResult.explodeEvents[i] as ColumnBlastEvent;
+            if (columnBlasEvent != null)
+            {
+                FindObjectOfType<SoundManager>().PlayLightningSound();
+                GameGUI.LineDestroyEffect(columnBlasEvent.columnBlastStartPosition.x, columnBlasEvent.columnBlastStartPosition.y, true);
+                yield return new WaitForSeconds(0.4f);
+            }
+            ColorBlastEvent colorBlastEvent = swapResult.explodeEvents[i] as ColorBlastEvent;
+            if (colorBlastEvent != null)
+            {
+                //GameGUI.ColorBlastEffect(colorBlastEvent.colorBlastPosition.x, colorBlastEvent.colorBlastPosition.y);
+                for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
+                {
+                    GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y);
+                }
+                FindObjectOfType<SoundManager>().PlayColorSound();
+                yield return new WaitForSeconds(1.1f);
+            }
+            BoardBlastEvent boardBlastEvent = swapResult.explodeEvents[i] as BoardBlastEvent;
+            if (boardBlastEvent != null)
+            {
+                for (int j = 0; j < 6; ++j)
+                {
+                    GameGUI.ColorBlastEffect(UnityEngine.Random.Range(0, boardController.GetBoardModel().width), UnityEngine.Random.Range(0, boardController.GetBoardModel().height));
+                    FindObjectOfType<SoundManager>().PlayColorSound();
+                    yield return new WaitForSeconds(0.1f);
+                }
+                //yield return new WaitForSeconds(0.4f);
+            }
+
+            combo += 1;
+            FindObjectOfType<SoundManager>().PlayComboSound(combo);
+            for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
+            {
+                GameGUI.ExplodeTile(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, false);
+            }
+
+
         }
-
-        //hardcoded effect duration
         yield return new WaitForSeconds(GameGUI.SwapDuration);
+        bool createdGems = false;
+        for (int i = 0; swapResult.explodeEvents != null && i < swapResult.explodeEvents.Count; ++i)
+        {
+            if (swapResult.explodeEvents[i].toCreate == null ||
+                swapResult.explodeEvents[i].toCreate.Count == 0)
+            {
+                continue;
+            }
 
+            for (int j = 0; j < swapResult.explodeEvents[i].toCreate.Count; ++j)
+            {
+                if (swapResult.explodeEvents[i].toCreate[j] == null)
+                {
+                    continue;
+                }
+                GameGUI.AppearAt(swapResult.explodeEvents[i].toCreate[j].At.x,
+                    swapResult.explodeEvents[i].toCreate[j].At.y,
+                    skinManager.Skins[skinManager.SelectedSkin].TileSet[swapResult.explodeEvents[i].toCreate[j].Id].Key);
+                createdGems = true;
+            }
+        }
+        if (createdGems)
+        {
+            yield return new WaitForSeconds(GameGUI.SwapDuration);
+        }
+        for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
+        {
+            ColorChangeEvent colorChangeEvent = swapResult.explodeEvents[i] as ColorChangeEvent;
+            if (colorChangeEvent != null)
+            {
+                GameGUI.ColorChangeEffect(GetKeyFromId(colorChangeEvent.targetColor), colorChangeEvent.toChange);
+                yield return new WaitForSeconds(1f);
+            }
+        }
         gameplayState = GameplayState.RefillBoard;
-        //ProcessTheHints();
-        //ProcessSpecialMatching();
-        //ProcessScrolling();
-        //HitEnemy();
-
-        // final step: test if new blocks appeared
-        //ProcessNewlyAppearedBlocks(tilesToPut);
     }
 
-    IEnumerator CreateGems(List<GemCreate> toCreate)
+    private string GetKeyFromId(int id) // strange naming convention
     {
-        if (toCreate == null)
+        if (id == 9)
         {
-            yield break;
+            return "S1";
+        }
+        else if (id == 12)
+        {
+            return "S4";
+        }
+        else if (id == 13)
+        {
+            return "S5";
+        }
+        else if (id == 10)
+        {
+            return "S2";
+        }
+        else if (id == 11)
+        {
+            return "S3";
         }
 
-        for (int i = 0; toCreate != null && i < toCreate.Count; ++i)
-        {
-            GameGUI.AppearAt(toCreate[i].At.x, toCreate[i].At.y, skinManager.Skins[skinManager.SelectedSkin].TileSet[toCreate[i].Id].Key);
-        }
-        yield return new WaitForSeconds(GameGUI.SwapDuration);
+
+        return id.ToString();
     }
+
+
 
     //refactored code end
 }

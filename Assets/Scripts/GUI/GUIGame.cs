@@ -552,7 +552,7 @@ public class GUIGame : MonoBehaviour
     {
         GameObject explosionEffect1 = Instantiate(LineExplosionEffect);
         GameObject explosionEffect2 = Instantiate(LineExplosionEffect);
-        Transform tile = transform.Find("Tile_" + x + "_" + y);
+        Transform tile = transform.Find("TileBackground_" + x + "_" + y);
 
         // TODO: Remove in the future versions
         if (tile == null)
@@ -598,7 +598,38 @@ public class GUIGame : MonoBehaviour
         Destroy(colorExplosionEffect, 0.5f);
     }
 
-    public void ColorChangeEffect(string key, List<Vector2> changedTiles)
+    public void ColorBombEffect(int x, int y)
+    {
+        Transform tile = transform.Find("Tile_" + x + "_" + y);
+
+        if (tile == null)
+        {
+            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            if (tile == null)
+            {
+                Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x + "_" + y);
+                return;
+            }
+        }
+        Image tileImage = tile.GetComponent<Image>();
+        StartCoroutine(ShakeObject(tileImage));
+    }
+
+    IEnumerator ShakeObject(Image tileImage)
+    {
+        tileImage.transform.DOScale(new Vector3(.9f,.9f,.9f), .2f); 
+        yield return new WaitForSeconds(0.21f);
+        tileImage.transform.DOScale(Vector3.one, .2f);
+        yield return new WaitForSeconds(0.21f);
+        tileImage.transform.DOScale(new Vector3(.9f, .9f, .9f), .2f);
+        yield return new WaitForSeconds(0.21f);
+        tileImage.transform.DOScale(Vector3.one, .2f);
+        yield return new WaitForSeconds(0.21f);
+        tileImage.transform.DOScale(new Vector3(.9f, .9f, .9f), .2f);
+        yield return new WaitForSeconds(0.21f);
+    }
+
+    public void ColorChangeEffect(string key, List<Vector2Int> changedTiles)
     {
         int x, y;
         for (int i = 0; i < changedTiles.Count; i++)

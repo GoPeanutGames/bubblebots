@@ -49,11 +49,11 @@ namespace BubbleBots.Match3.Models
                     0 <= posY && posY < height;
         }
 
-        public MatchTestResult TestForMatchOnPosition(int posX, int posY, List<MatchShape> matchPrecedenceList)
+        public MatchTestResult TestForMatchOnPosition(int posX, int posY, List<MatchShape> matchPrecedenceList, List<Vector2Int> exclusionList = null)
         {
             for (int i = matchPrecedenceList.Count - 1; i >= 0; i--)
             {
-                MatchTestResult matchResult = TestMatch(posX, posY, matchPrecedenceList[i]);
+                MatchTestResult matchResult = TestMatch(posX, posY, matchPrecedenceList[i], exclusionList);
                 if (matchResult != null)
                 {
                     return matchResult;
@@ -62,7 +62,7 @@ namespace BubbleBots.Match3.Models
             return null;
         }
 
-        public MatchTestResult TestMatch(int posX, int posY, MatchShape shape)
+        public MatchTestResult TestMatch(int posX, int posY, MatchShape shape, List<Vector2Int> exclusionList)
         {
             MatchTestResult matchTestResult = new MatchTestResult();
             for (int i = 0; i < shape.offsets.Count; ++i)
@@ -78,6 +78,12 @@ namespace BubbleBots.Match3.Models
 
                     if (!BoundaryTest(posX + offsetX, posY + offsetY))
                     {
+                        foundMatch = false;
+                        break;
+                    }
+
+                    if (exclusionList != null &&
+                        exclusionList.Contains(new Vector2Int(posX + offsetX, posY + offsetY))) {
                         foundMatch = false;
                         break;
                     }
@@ -135,6 +141,10 @@ namespace BubbleBots.Match3.Models
 
         public void RemoveGems(List<Vector2Int> toRemove)
         {
+            if (toRemove == null)
+            {
+                return;
+            }
             for (int i = 0; i < toRemove.Count; ++i)
             {
                 cells[toRemove[i].x][toRemove[i].y].empty = true;
@@ -143,8 +153,16 @@ namespace BubbleBots.Match3.Models
 
         public void CreateGems(List<GemCreate> toCreate)
         {
+            if (toCreate == null)
+            {
+                return;
+            }
             for (int i = 0; i < toCreate.Count; ++i)
             {
+                if (toCreate[i] == null)
+                {
+                    continue;
+                }
                 cells[toCreate[i].At.x][toCreate[i].At.y].SetGem(new BoardGem(toCreate[i].Id, GemType.Special));
             }
         }
@@ -182,12 +200,38 @@ namespace BubbleBots.Match3.Models
             return gemMoves;
         }
 
+        public List<Vector2Int> BombBlast(int posX, int posY)
+        {
+            List<Vector2Int> toExplode = new List<Vector2Int>();
+            for (int i = -1; i <= 1; ++i)
+                for (int j = -1; j <= 1; ++j)
+                {
+                    if (!BoundaryTest(posX + i, posY + j))
+                    {
+                        continue;
+                    }
+                    if (cells[posX + i][posY + j].empty)
+                    {
+                        continue;
+                    }
+                    toExplode.Add(new Vector2Int(posX + i, posY + j));
+                    cells[posX + i][posY + j].empty = true;
+
+                }
+            return toExplode;
+        }
+
         public List<Vector2Int> HammerBlast(int posX, int posY, int rangeX, int rangeY)
         {
             List<Vector2Int> toExplode = new List<Vector2Int>();
             for (int i = -rangeX; i <= rangeX; ++i)
             {
-                if (!BoundaryTest(posX + i, posY) || i == 0) {
+                if (!BoundaryTest(posX + i, posY) || i == 0)
+                {
+                    continue;
+                }
+                if (cells[posX + i][posY].empty)
+                {
                     continue;
                 }
                 toExplode.Add(new Vector2Int(posX + i, posY));
@@ -199,6 +243,10 @@ namespace BubbleBots.Match3.Models
                 {
                     continue;
                 }
+                if (cells[posX][posY + i].empty)
+                {
+                    continue;
+                }
                 toExplode.Add(new Vector2Int(posX, posY + i));
                 cells[posX][posY + i].empty = true;
             }
@@ -206,12 +254,16 @@ namespace BubbleBots.Match3.Models
             cells[posX][posY].empty = true;
             return toExplode;
         }
-    
+
         public List<Vector2Int> LineBlast(int posX, int posY)
         {
             List<Vector2Int> toExplode = new List<Vector2Int>();
             for (int i = 0; i < width; ++i)
             {
+                if (cells[i][posY].empty)
+                {
+                    continue;
+                }
                 toExplode.Add(new Vector2Int(i, posY));
                 cells[i][posY].empty = true;
             }
@@ -223,6 +275,10 @@ namespace BubbleBots.Match3.Models
             List<Vector2Int> toExplode = new List<Vector2Int>();
             for (int i = 0; i < height; ++i)
             {
+                if (cells[posX][i].empty)
+                {
+                    continue;
+                }
                 toExplode.Add(new Vector2Int(posX, i));
                 cells[posX][i].empty = true;
             }
@@ -247,6 +303,73 @@ namespace BubbleBots.Match3.Models
                 empty = empty && cells[column][i].empty;
             }
             return empty;
+        }
+
+
+        public List<Vector2Int> GetPossibleColorChanges(int targetColor)
+        {
+            List<Vector2Int> possibleChanges = new List<Vector2Int>();
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    if (cells[i][j].empty ||
+                        cells[i][j].gem.IsSpecial() ||
+                        cells[i][j].gem.GetId() == targetColor)
+                    {
+                        continue;
+                    }
+                    possibleChanges.Add(new Vector2Int(i, j));
+                }
+
+            return possibleChanges;
+        }
+
+        public List<Vector2Int> GetAllById(int targetColor)
+        {
+            List<Vector2Int> gemsOfColor = new List<Vector2Int>();
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    if (cells[i][j].empty ||
+                        cells[i][j].gem.IsSpecial() ||
+                        cells[i][j].gem.GetId() != targetColor)
+                    {
+                        continue;
+                    }
+                    gemsOfColor.Add(new Vector2Int(i, j));
+                }
+
+            return gemsOfColor;
+
+        }
+
+        public void ApplyColorChanges(List<Vector2Int> toChange, int targetColor, List<Vector2Int> exclusionList = null)
+        {
+            for (int i = 0; toChange != null && i < toChange.Count; ++i)
+            {
+                if (cells[toChange[i].x][toChange[i].y].empty)
+                {
+                    continue;
+                }
+                if (exclusionList != null && exclusionList.Contains(toChange[i]))
+                {
+                    continue;
+                }
+                cells[toChange[i].x][toChange[i].y].gem.SetId(targetColor);
+            }
+        }
+
+
+        public List<Vector2Int> BoardBlast()
+        {
+            List<Vector2Int> toExplode = new List<Vector2Int>();
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    toExplode.Add(new Vector2Int(i, j));
+                    cells[i][j].empty = true;
+                }
+            return toExplode;
         }
     }
 }
