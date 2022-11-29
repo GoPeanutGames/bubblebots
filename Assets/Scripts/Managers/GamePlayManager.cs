@@ -255,7 +255,7 @@ public class GamePlayManager : MonoBehaviour
             return true;
         }
 
-        FindObjectOfType<SoundManager>().FadeOutLevelMusic();
+        SoundManager.Instance.FadeOutMusic();
         Debug.Log("No more moves are possible");
         return false;
     }
@@ -1017,7 +1017,7 @@ public class GamePlayManager : MonoBehaviour
                 if (++currentWave > levelInfo.Waves)
                 {
                     levelEnded = true;
-                    FindObjectOfType<SoundManager>().FadeOutStartMusic();
+                    SoundManager.Instance.FadeOutMusic();
                     StartTrackedCoroutine(FinishLevel());
                     UserManager.Instance.SetPlayerScore((int)score);
                 } else
@@ -1190,7 +1190,7 @@ public class GamePlayManager : MonoBehaviour
         } while (deleted);
 
         combo += 1;
-        FindObjectOfType<SoundManager>().PlayComboSound(combo);
+        SoundManager.Instance.PlayComboSfx(combo);
 
         ProcessTheHints();
         ProcessSpecialMatching();
@@ -1477,7 +1477,7 @@ public class GamePlayManager : MonoBehaviour
         switch (tileSet[x, y])
         {
             case "S1":
-                FindObjectOfType<SoundManager>().PlayLightningSound();
+                SoundManager.Instance.PlayLightningSfx();
                 GameGUI.LineDestroyEffect(x, y, !horizontal);
                 yield return new WaitForSeconds(0.4f);
 
@@ -1485,7 +1485,7 @@ public class GamePlayManager : MonoBehaviour
                 break;
             case "S2":
                 GameGUI.ColorBlastEffect(x, y);
-                FindObjectOfType<SoundManager>().PlayColorSound();
+                SoundManager.Instance.PlayColorSfx();
                 yield return new WaitForSeconds(0.51f);
 
                 /*if (tileSet[releaseX, releaseY] == "S2")
@@ -1498,7 +1498,7 @@ public class GamePlayManager : MonoBehaviour
                 //}
                 break;
             case "S3":
-                FindObjectOfType<SoundManager>().PlayBombSound();
+                SoundManager.Instance.PlayBombSfx();
                 if (tileSet[releaseX, releaseY] == "S3")
                 {
                     BlastWholeBoard();
@@ -1510,7 +1510,7 @@ public class GamePlayManager : MonoBehaviour
 
                 break;
             case "S4":
-                FindObjectOfType<SoundManager>().PlayHammerSound();
+                SoundManager.Instance.PlayHammerSfx();
                 ProcessPlusBlast(releaseX, releaseY);
 
                 break;
