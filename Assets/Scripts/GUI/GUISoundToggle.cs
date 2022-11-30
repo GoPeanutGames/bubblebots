@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GUISoundToggle : MonoBehaviour
@@ -7,33 +5,28 @@ public class GUISoundToggle : MonoBehaviour
     public GameObject OffButton;
     public GameObject OnButton;
 
-    SoundManager soundManager;
-
     void Start()
     {
-        soundManager = FindObjectOfType<SoundManager>();
-        if (SoundManager.Instance.soundOn)
+        if (SoundManager.Instance.IsMuted())
         {
-            SoundOn();
+            SoundOff();
         }
         else
         {
-            SoundOff();
+            SoundOn();
         }
     }
 
     public void SoundOn()
     {
-        soundManager.SetVolume(1);
-
+        SoundManager.Instance.UnMute();
         OffButton.SetActive(true);
         OnButton.SetActive(false);
     }
 
     public void SoundOff()
     {
-        soundManager.SetVolume(0);
-
+        SoundManager.Instance.Mute();
         OnButton.SetActive(true);
         OffButton.SetActive(false);
     }

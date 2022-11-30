@@ -35,7 +35,7 @@ public class WalletLoginController : MonoBehaviour
     [SkipRename]
     public void MetamaskLoginSuccess(string address)
     {
-        SoundManager.Instance.PlayMetamaskEffect();
+        SoundManager.Instance.PlayMetamaskSfx();
         loginController.InitSession(address);
     }
 

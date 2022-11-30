@@ -15,7 +15,11 @@ public class GUIRobotSelection : MonoBehaviour
 
     public void BackToMenu()
     {
-        SoundManager.Instance.PlayStartMusic();
+        SoundManager.Instance.FadeOutMusic(() =>
+        {
+            SoundManager.Instance.PlayStartMusicNew();
+            SoundManager.Instance.FadeInMusic();
+        });
         if(UserManager.PlayerType == PlayerType.Guest)
         {
             SceneManager.LoadScene("Login");
@@ -30,8 +34,8 @@ public class GUIRobotSelection : MonoBehaviour
 
     public void Play()
     {
-        SoundManager.Instance.FadeOutRobotSelectionMusic();
-        SoundManager.Instance.PlayStartButtonEffect();
+        SoundManager.Instance.FadeOutMusic();
+        SoundManager.Instance.PlayStartButtonSfx();
 
         PnlMenuUI.SetActive(true);
         PnlMenuUI.GetComponent<GUIMenu>().SetSelectedRobots(selectedRobot1, selectedRobot2, selectedRobot3);
@@ -57,7 +61,6 @@ public class GUIRobotSelection : MonoBehaviour
 
     private void SelectRobotImage(int order)
     {
-        SoundManager.Instance.PlayClickSound();
         int selectOrder = 0;
         if (selectedRobot1 == -1)
         {
@@ -109,7 +112,6 @@ public class GUIRobotSelection : MonoBehaviour
                 return;
         }
 
-        SoundManager.Instance.PlayClickSound();
         Transform button = transform.Find("BtnRobot" + (order + 1));
         button.transform.Find("Plus").gameObject.SetActive(true);
         button.transform.Find("Cross").gameObject.SetActive(false);

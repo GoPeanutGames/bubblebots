@@ -387,7 +387,6 @@ public class GUIGame : MonoBehaviour
             return;
         }
 
-        soundManager.PlayClickSound();
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = transform.Find("Tile_" + x + "_" + y);
         
