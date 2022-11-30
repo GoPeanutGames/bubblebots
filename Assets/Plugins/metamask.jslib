@@ -5,16 +5,11 @@ mergeInto(LibraryManager.library, {
 		
 		if(accounts.length > 0)
 		{
-			myGameInstance.SendMessage("Managers/WalletManager", "MetamaskLoginSuccess");
-			myGameInstance.SendMessage("Canvas/PnlUI", "InitSession", accounts[0]);
+			console.warn(accounts[0]);
+			myGameInstance.SendMessage("Controllers/WalletLoginController", "MetamaskLoginSuccess", accounts[0]);
 		} else {
 			console.log("No wallet has been connected");
 		}
-	},
-
-	LoginWithMetamask: function()
-	{
-		//LoginWithMetamask();
 	},
 	
 	DisplayDebug: function()

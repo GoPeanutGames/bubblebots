@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #define RANDOM_TILES
 using CodeStage.AntiCheat.ObscuredTypes;
 using System;
@@ -2402,3 +2403,225 @@ public class GamePlayManager : MonoBehaviour
 
     //refactored code end
 }
+=======
+#define RANDOM_TILES_OFF
+using CodeStage.AntiCheat.ObscuredTypes;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using BubbleBots.Modes;
+using static LevelManager;
+
+public class GamePlayManager : MonoBehaviour
+{
+    public ServerGameplayController serverGameplayController;
+    public LevelManager levelManager;
+    public GUIMenu MenuGUI;
+    public GUIGame GameGUI;
+    public SkinManager skinManager;
+    public float DamageOfRobot1 = 0.05f;
+    public float DamageOfRobot2 = 0.05f;
+    public int HintDuration = 7;
+    public int[] EnemyHPs = new int[] { 40, 40, 40 };
+    int[] numHit = new int[] { 0, 0, 0 };
+
+    enum SpecailShapes { Nothing, LongT, L, T, SmallSquare, Straight5, Straight4 }
+    List<SlideInformation> tilesToSlide = new List<SlideInformation>();
+    LevelInformation levelInfo;
+    string[,] tileSet;
+    List<Vector2> tilesToPut = new List<Vector2>();
+    List<Vector2> tilesSpecialCoords = new List<Vector2>();
+    List<int> tilesSpecial = new List<int>();
+    List<Vector2[]> hints = new List<Vector2[]>();
+    List<SpecailShapes> hintShapes = new List<SpecailShapes>();
+    List<int> availabletiles = new List<int>();
+    bool canDisplayhint = false;
+    int releaseTileX = -1;
+    int releaseTileY = -1;
+    bool enemyDead = false;
+    int numLevel = 1;
+    int currentLevel = 0;
+    int currentEnemy = 0;
+    int killedEnemies = 0;
+    int currentWave = 1;
+    int maxEnemies = 3;
+    int combo = 0;
+
+    ObscuredLong score = 0;
+    bool levelEnded = false;
+    bool canAttack = false;
+
+    float timeForNewHint = 0;
+
+    public string[,] TileSet
+    {
+        get
+        {
+            return tileSet;
+        }
+    }
+
+    public bool InputLocked()
+    {
+        return runningCoroutinesByStringName.Count > 0 || runningCoroutinesByEnumerator.Count > 0;
+    }
+    public void PrepareLevel(string levelFile, int levelNumber)
+    {
+        MenuGUI.SwitchToMultiplayer(levelFile, levelNumber);
+    }
+
+    public void StartLevel(string levelFile, int levelNumber)
+    {
+        ModeManager.Instance.SetMode(Mode.FREE);
+        AnalyticsManager.Instance.SendPlayEvent(levelNumber);
+        serverGameplayController.StartGameplaySession(levelNumber);
+        //LeaderboardManager.Instance.ResetKilledRobots();
+        LevelInformation levelInfo;
+        currentLevel = levelNumber;
+        currentEnemy = 0;
+        GameGUI.SetCurrentPlayer(0);
+        killedEnemies = 0;
+        currentWave = 1;
+        levelEnded = false;
+
+        try
+        {
+            enemyDead = false;
+            levelInfo = levelManager.LoadLevel(levelFile);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError(ex.Message);
+            return;
+        }
+
+        RenderLevel(levelInfo);
+        for (int g = 0; g < GameGUI.PlayerGauges.Length; g++)
+        {
+            GameGUI.PlayerGauges[g].value = GameGUI.PlayerGauges[g].maxValue;
+            GameGUI.PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = GameGUI.PlayerGauges[g].maxValue.ToString("N0") + " / " + GameGUI.PlayerGauges[g].maxValue.ToString("N0");
+        }
+
+        numHit = new int[] { 0, 0, 0 };
+        //timeForNewHint = DateTime.Now + new TimeSpan(0, 0, 7);
+        StartHintingCountDown();
+    }
+
+    private void HitPlayer()
+    {
+        if (!canAttack)
+        {
+            return;
+        }
+
+        canAttack = false;
+        GameGUI.DamageToPlayerRobot(DamageOfRobot2);
+    }
+
+    private void KillEnemy()
+    {
+        if (enemyDead)
+        {
+            return;
+        }
+
+        GameGUI.KillEnemy();
+        //currentEnemy = (currentEnemy + 1) % maxEnemies;
+        for (int i = maxEnemies - 1; i >= 0; i--)
+        {
+            if (numHit[i] < EnemyHPs[currentEnemy])
+            {
+                currentEnemy = i;
+                break;
+            }
+        }
+
+        GameGUI.TargetEnemy(currentEnemy, false);
+    }
+
+    IEnumerator FinishLevel()
+    {
+        serverGameplayController.EndGameplaySession((int)score);
+        AnalyticsManager.Instance.SendLevelEvent();
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+
+        enemyDead = true;
+        ResetHintTime();
+        GameGUI.LockTiles("L3");
+        numLevel += 1;
+
+        MenuGUI.gameObject.SetActive(true);
+        MenuGUI.DisplayWin();
+    }
+      
+
+    public void StartHintingCountDown()
+    {
+        timeForNewHint = Time.time + HintDuration;
+    }
+
+    public void DisplayDebugHints()
+    {
+        Debug.Log(hints.Count + " more moves are possible:");
+        string s = "";
+        for (int i = 0; i < hints.Count; i++)
+        {
+            for (int j = 0; j < hints[i].Length; j++)
+            {
+                s += hints[i][j].x + "," + hints[i][j].y + "-" + tileSet[(int)hints[i][j].x, (int)hints[i][j].y] + " :: ";
+            }
+
+            s += System.Environment.NewLine;
+        }
+
+        Debug.Log("They are: " + s);
+    }
+
+    private void Start()
+    {
+        GameGUI.SetRobotGauges(EnemyHPs);
+        GameGUI.SetPlayerGauges();
+    }
+
+    public void SetEnemy(int currentEmeny)
+    {
+        this.currentEnemy = currentEmeny;
+    }
+
+    public long GetScore()
+    {
+        return score;
+    }
+
+    public int GetCurrentLevel()
+    {
+        return currentLevel;
+    }
+
+    public int GetNumLevel()
+    {
+        return numLevel;
+    }
+
+    public long IncrementScore(int score)
+    {
+        this.score += score;
+        serverGameplayController.UpdateGameplaySession((int)this.score);
+
+        return this.score;
+    }
+
+
+    public bool GetEnemyDead()
+    {
+        return enemyDead;
+    }
+
+    public void EndLevel()
+    {
+        levelEnded = true;
+    }
+
+>>>>>>> main

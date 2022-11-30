@@ -15,6 +15,7 @@ using BubbleBots.Match3.Models;
 
 public class GUIGame : MonoBehaviour
 {
+    public ServerGameplayController serverGameplayController;
     public Image[] BackgroundTiles;
     public int Spacing = 4;
     public int TileWidth = 150;
@@ -91,7 +92,6 @@ public class GUIGame : MonoBehaviour
         {
             gamePlayManager.ResetHintTime();
             gamePlayManager.EndLevel();
-            LeaderboardManager.Instance.SaveScore(gamePlayManager.GetScore());
 
             DisplayLose();
             return;
@@ -106,6 +106,7 @@ public class GUIGame : MonoBehaviour
 
     private void DisplayLose()
     {
+        serverGameplayController.EndGameplaySession((int)gamePlayManager.GetScore());
         WinDialogImage.gameObject.SetActive(true);
         Transform imgWin = WinDialogImage.transform.Find("ImgWin");
         Transform imgLose = WinDialogImage.transform.Find("ImgLose");
@@ -150,6 +151,7 @@ public class GUIGame : MonoBehaviour
         LeaderboardManager.Instance.IncrementKilledRobots();
         TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
         AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
+        serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
 
         EnemyRobots[currentEnemy].Die();
     }
@@ -796,7 +798,7 @@ public class GUIGame : MonoBehaviour
 
     public void RenewEnemyRobots()
     {
-        if (EnvironmentManager.Instance.Community)
+        if (EnvironmentManager.Instance.ShouldChangeRobotImages() == false)
         {
             return;
         }

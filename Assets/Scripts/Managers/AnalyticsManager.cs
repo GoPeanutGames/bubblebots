@@ -19,7 +19,6 @@ public class AnalyticsManager : MonoBehaviour
 
     private void SendLoginEvent()
     {
-        Debug.Log("ID: " + AnalyticsService.Instance.GetAnalyticsUserID());
         AnalyticsService.Instance.CustomData("Login", new Dictionary<string, object>
         {
             {"wallet_address", currentWalletAddress }
@@ -32,15 +31,7 @@ public class AnalyticsManager : MonoBehaviour
         {
             InitializationOptions options = new InitializationOptions();
             options.SetAnalyticsUserId(currentWalletAddress);
-            options.SetEnvironmentName("development");
-            if (EnvironmentManager.Instance.Production && !EnvironmentManager.Instance.Development)
-            {
-                options.SetEnvironmentName("production");
-            }
-            else if (EnvironmentManager.Instance.Community && !EnvironmentManager.Instance.Development)
-            {
-                options.SetEnvironmentName("community");
-            }
+            options.SetEnvironmentName(EnvironmentManager.Instance.GetUnityEnvironmentName());
             await UnityServices.InitializeAsync(options);
             List<string> consentIdentifiers = await AnalyticsService.Instance.CheckForRequiredConsents();
             SendLoginEvent();
@@ -51,13 +42,13 @@ public class AnalyticsManager : MonoBehaviour
         }
     }
 
-    public async void InitAnalyticsWithWallet(string walletAddress)
+    public void InitAnalyticsWithWallet(string walletAddress)
     {
         currentWalletAddress = walletAddress;
         InitAnalyticsPrivately();
     }
 
-    public async void InitAnalyticsGuest()
+    public void InitAnalyticsGuest()
     {
         currentWalletAddress = "guest-id";
         InitAnalyticsPrivately();

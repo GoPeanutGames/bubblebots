@@ -1,7 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GUIRobotSelection : MonoBehaviour
@@ -10,29 +8,30 @@ public class GUIRobotSelection : MonoBehaviour
     public Button BtnStart;
     public Sprite[] RobotSprites;
 
-    SoundManager soundManager;
     int totalSelectedRobots = 0;
     int selectedRobot1 = -1;
     int selectedRobot2 = -1;
     int selectedRobot3 = -1;
 
-    void Start()
-    {
-        soundManager = FindObjectOfType<SoundManager>();
-    }
-
     public void BackToMenu()
     {
-        soundManager.PlayStartMusic();
+        SoundManager.Instance.PlayStartMusic();
+        if(LeaderboardManager.Instance.CurrentPlayerType == PlayerType.Guest)
+        {
+            SceneManager.LoadScene("Login");
+        }
+        else
+        {
+            PnlMenuUI.SetActive(true);
+            gameObject.SetActive(false);
+        }
 
-        PnlMenuUI.SetActive(true);
-        gameObject.SetActive(false);
     }
 
     public void Play()
     {
-        soundManager.FadeOutRobotSelectionMusic();
-        soundManager.PlayStartButtonEffect();
+        SoundManager.Instance.FadeOutRobotSelectionMusic();
+        SoundManager.Instance.PlayStartButtonEffect();
 
         PnlMenuUI.SetActive(true);
         PnlMenuUI.GetComponent<GUIMenu>().SetSelectedRobots(selectedRobot1, selectedRobot2, selectedRobot3);
@@ -58,7 +57,7 @@ public class GUIRobotSelection : MonoBehaviour
 
     private void SelectRobotImage(int order)
     {
-        soundManager.PlayClickSound();
+        SoundManager.Instance.PlayClickSound();
         int selectOrder = 0;
         if (selectedRobot1 == -1)
         {
@@ -110,7 +109,7 @@ public class GUIRobotSelection : MonoBehaviour
                 return;
         }
 
-        soundManager.PlayClickSound();
+        SoundManager.Instance.PlayClickSound();
         Transform button = transform.Find("BtnRobot" + (order + 1));
         button.transform.Find("Plus").gameObject.SetActive(true);
         button.transform.Find("Cross").gameObject.SetActive(false);
