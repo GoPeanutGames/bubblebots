@@ -1,7 +1,7 @@
 using CodeStage.AntiCheat.ObscuredTypes;
 using System;
 
-namespace Bubblebots.Environment
+namespace BubbleBots.Environment
 {
     [Serializable]
     public class EnvironmentSpec

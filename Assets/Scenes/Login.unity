@@ -1345,7 +1345,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1864773990}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &663372671
 MonoBehaviour:
@@ -4623,6 +4623,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1810875925}
   m_CullTransparentMesh: 1
+--- !u!1 &1811097131
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1811097132}
+  - component: {fileID: 1811097133}
+  m_Layer: 0
+  m_Name: UserManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1811097132
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811097131}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1864773990}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1811097133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1811097131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 394c08ed5255efe4a8545b0942bf061a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1864773989
 GameObject:
   m_ObjectHideFlags: 0
@@ -4656,8 +4700,8 @@ Transform:
   - {fileID: 917384573}
   - {fileID: 2138157194}
   - {fileID: 1344661480}
-  - {fileID: 1959954718}
   - {fileID: 663372670}
+  - {fileID: 1811097132}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5071,81 +5115,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 628}
   m_SizeDelta: {x: 610, y: 524.01}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1959954717
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1959954718}
-  - component: {fileID: 1959954719}
-  m_Layer: 0
-  m_Name: LeaderboardManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1959954718
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1959954717}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -17.674149, y: -6.282192, z: 74.34988}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1864773990}
-  m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1959954719
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1959954717}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7de9e31ee61ee594ebac5675698dc385, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  PlayerFullName: 
-  PlayerWalletAddress: 
-  Score:
-    currentCryptoKey: 1667103258974824756
-    hiddenValue: 1667103258974824756
-    inited: 1
-    fakeValue: 0
-    fakeValueActive: 1
-  Rank:
-    currentCryptoKey: 1729633042
-    hiddenValue: 417850605
-    inited: 1
-    fakeValue: 2147483647
-    fakeValueActive: 1
-  PlayerId:
-    currentCryptoKey: 
-    hiddenValue: 
-    cryptoKey: e4001c00a600c3009f009500ee00
-    hiddenChars: 90007300ca00a400fe00fe00
-    inited: 1
-    fakeValue: tolgak
-    fakeValueActive: 1
-  Password:
-    currentCryptoKey: 
-    hiddenValue: 
-    cryptoKey: 6400920071006900ea007600ff00
-    hiddenChars: 5500a0004200
-    inited: 1
-    fakeValue: 123
-    fakeValueActive: 1
-  CurrentPlayerType: 0
 --- !u!1 &1968607295
 GameObject:
   m_ObjectHideFlags: 0

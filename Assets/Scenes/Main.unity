@@ -5348,7 +5348,6 @@ MonoBehaviour:
   PlayButton: {fileID: 793387639}
   PnlPlayerInfo: {fileID: 1787772161}
   PnlPlayerOffline: {fileID: 460962953}
-  PnlLoadingPlace: {fileID: 0}
   PnlPrompt: {fileID: 2001819559}
   PnlHighScores: {fileID: 1737751300}
   PnlRobotSelection: {fileID: 89362726}
@@ -17955,7 +17954,6 @@ MonoBehaviour:
   PlayButton: {fileID: 0}
   PnlPlayerInfo: {fileID: 0}
   PnlPlayerOffline: {fileID: 0}
-  PnlLoadingPlace: {fileID: 0}
   PnlPrompt: {fileID: 0}
   PnlHighScores: {fileID: 0}
   PnlRobotSelection: {fileID: 0}

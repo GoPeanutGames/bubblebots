@@ -12,6 +12,14 @@ public class GUISoundToggle : MonoBehaviour
     void Start()
     {
         soundManager = FindObjectOfType<SoundManager>();
+        if (SoundManager.Instance.soundOn)
+        {
+            SoundOn();
+        }
+        else
+        {
+            SoundOff();
+        }
     }
 
     public void SoundOn()

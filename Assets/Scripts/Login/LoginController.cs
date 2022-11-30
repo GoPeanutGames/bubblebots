@@ -11,13 +11,13 @@ public class LoginController : MonoBehaviour
 
     private void Start()
     {
-        TryLoginFromSave();
         SoundManager.Instance.PlayStartMusic();
+        TryLoginFromSave();
     }
 
     private void TryLoginFromSave()
     {
-        string address = LeaderboardManager.Instance.PlayerWalletAddress;
+        string address = UserManager.Instance.GetPlayerWalletAddress();
         if(string.IsNullOrEmpty(address) == false)
         {
             StartLogin(address);
@@ -27,16 +27,10 @@ public class LoginController : MonoBehaviour
     private void StartLogin(string address)
     {
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
-        loginServerPlayerController.CreatePlayer(address);
+        loginServerPlayerController.GetOrCreatePlayer(address);
+        UserManager.PlayerType = PlayerType.LoggedInUser;
         LoginScreen.SetActive(false);
         LoadingScreen.SetActive(true);
-        LeaderboardManager.Instance.SetPlayerWalletAddress(address);
-        LeaderboardManager.Instance.CurrentPlayerType = PlayerType.LoggedInUser;
-        LeaderboardManager.Instance.GetPlayerScore((res) =>
-        {
-            LoadingScreen.SetActive(false);
-            SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
-        });
     }
 
     public void LoginWithMetamask()
@@ -52,8 +46,7 @@ public class LoginController : MonoBehaviour
 
     public void SecondPlayAsGuest()
     {
-        LeaderboardManager.Instance.SetGuestMode();
-        LeaderboardManager.Instance.CurrentPlayerType = PlayerType.Guest;
+        UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
         SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
     }

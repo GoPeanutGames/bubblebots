@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using BubbleBots.Server;
 using BubbleBots.Server.Gameplay;
+using BubbleBots.Server.Player;
 
 public class ServerManager : MonoSingleton<ServerManager>
 {
@@ -14,7 +15,13 @@ public class ServerManager : MonoSingleton<ServerManager>
         { GameplaySessionAPI.Update, "/session/update"},
         { GameplaySessionAPI.End, "/session/end"}
     };
-    private string createPlayerAPI = "/player";
+    private readonly Dictionary<PlayerAPI, string> playerAPIMap = new()
+    {
+        { PlayerAPI.Create, "/player"},
+        { PlayerAPI.UpdateNickname, "/player/nickname"},
+        { PlayerAPI.Get, "/player/me/"},
+        { PlayerAPI.Top100, "/player/score" }
+    };
 
     private string Encrypt(string jsonForm)
     {
@@ -26,7 +33,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         return JsonUtility.ToJson(jsonEncryptedForm);
     }
 
-    private UnityWebRequest SetupWebRequest(string api, string formData)
+    private UnityWebRequest SetupPostWebRequest(string api, string formData)
     {
         string encryptedFormData = Encrypt(formData);
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
@@ -41,25 +48,50 @@ public class ServerManager : MonoSingleton<ServerManager>
         return webRequest;
     }
 
-    private void SendWebRequest(UnityWebRequest webRequest, Action<string> onComplete)
+    private UnityWebRequest SetupGetWebRequest(string api)
+    {
+        string serverUrl = EnvironmentManager.Instance.GetServerUrl();
+        UnityWebRequest webRequest = UnityWebRequest.Get(serverUrl + api);
+
+        webRequest.SetRequestHeader("Content-Type", "application/json");
+        webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
+        webRequest.SetRequestHeader("Accept", "*/*");
+        return webRequest;
+    }
+
+    private void SendWebRequest(UnityWebRequest webRequest, Action<string> onComplete, Action<string> onFail = null)
     {
         AsyncOperation operation = webRequest.SendWebRequest();
         operation.completed += (result) =>
         {
-            onComplete?.Invoke(webRequest.downloadHandler.text);
+            string data = webRequest.downloadHandler.text;
+            if (webRequest.result == UnityWebRequest.Result.Success)
+            {
+                onComplete?.Invoke(data);
+            }
+            else
+            {
+                onFail?.Invoke(data);
+            }
             webRequest.Dispose();
         };
     }
 
-    public void SendGameplayDataToServer(GameplaySessionAPI api, string formData, Action<string> onComplete)
+    public void SendGameplayDataToServer(GameplaySessionAPI api, string formData, Action<string> onComplete, Action<string> onFail = null)
     {
-        UnityWebRequest webRequest = SetupWebRequest(SessionAPIMap[api], formData);
-        SendWebRequest(webRequest, onComplete);
+        UnityWebRequest webRequest = SetupPostWebRequest(SessionAPIMap[api], formData);
+        SendWebRequest(webRequest, onComplete, onFail);
     }
 
-    public void CreatePlayerOnServer(string formData, Action<string> onComplete)
+    public void SendPlayerDataToServer(PlayerAPI api, string formData, Action<string> onComplete, Action<string> onFail = null)
     {
-        UnityWebRequest webRequest = SetupWebRequest(createPlayerAPI, formData);
-        SendWebRequest(webRequest, onComplete);
+        UnityWebRequest webRequest = SetupPostWebRequest(playerAPIMap[api], formData);
+        SendWebRequest(webRequest, onComplete, onFail);
+    }
+
+    public void GetPlayerDataFromServer(PlayerAPI api, Action<string> onComplete, string address = "", Action<string> onFail = null)
+    {
+        UnityWebRequest webRequest = SetupGetWebRequest(playerAPIMap[api] + address);
+        SendWebRequest(webRequest, onComplete, onFail);
     }
 }
