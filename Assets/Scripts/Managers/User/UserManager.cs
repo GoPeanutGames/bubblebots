@@ -22,7 +22,8 @@ public class UserManager : MonoSingleton<UserManager>
         { PrefsKey.Nickname, "full_name"},
         { PrefsKey.WalletAddress, "wallet_address"},
         { PrefsKey.SessionToken, "session_token"},
-        { PrefsKey.Rank, "rank" }
+        { PrefsKey.Rank, "rank" },
+        { PrefsKey.Signature, "signature" }
     };
 
     private void GetUserOrSetDefault()
@@ -33,7 +34,8 @@ public class UserManager : MonoSingleton<UserManager>
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
             SessionToken = ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),
             Score = 0,
-            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999)
+            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
+            Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], "")
         };
     }
 
@@ -52,6 +54,12 @@ public class UserManager : MonoSingleton<UserManager>
     {
         CurrentUser.WalletAddress = address;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.WalletAddress], address);
+    }
+
+    public void SetSignature(string signature)
+    {
+         CurrentUser.Signature = signature;
+         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
     }
 
     public void SetPlayerUserName(string userName, bool sendToServer)
@@ -74,6 +82,11 @@ public class UserManager : MonoSingleton<UserManager>
     public string GetPlayerWalletAddress()
     {
         return CurrentUser.WalletAddress;
+    }
+
+    public string GetPlayerSignature()
+    {
+        return CurrentUser.Signature;
     }
 
     public string GetPlayerUserName()

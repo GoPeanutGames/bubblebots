@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 using BubbleBots.Server;
 using BubbleBots.Server.Gameplay;
 using BubbleBots.Server.Player;
+using BubbleBots.Server.Signature;
 
 public class ServerManager : MonoSingleton<ServerManager>
 {
@@ -21,6 +22,11 @@ public class ServerManager : MonoSingleton<ServerManager>
         { PlayerAPI.UpdateNickname, "/player/nickname"},
         { PlayerAPI.Get, "/player/me/"},
         { PlayerAPI.Top100, "/player/score" }
+    };
+
+    private readonly Dictionary<SignatureLoginApi, string> signatureAPIMap = new()
+    {
+        {SignatureLoginApi.Get, "/auth/login-schema/"}
     };
 
     private string Encrypt(string jsonForm)
@@ -92,6 +98,12 @@ public class ServerManager : MonoSingleton<ServerManager>
     public void GetPlayerDataFromServer(PlayerAPI api, Action<string> onComplete, string address = "", Action<string> onFail = null)
     {
         UnityWebRequest webRequest = SetupGetWebRequest(playerAPIMap[api] + address);
+        SendWebRequest(webRequest, onComplete, onFail);
+    }
+
+    public void GetLoginSignatureDataFromServer(SignatureLoginApi api, Action<string> onComplete, string address = "", Action<string> onFail = null ) {
+        UnityWebRequest webRequest = SetupGetWebRequest(signatureAPIMap[api] + address);
+
         SendWebRequest(webRequest, onComplete, onFail);
     }
 }

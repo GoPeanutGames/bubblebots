@@ -5,12 +5,14 @@ using UnityEngine.SceneManagement;
 public class LoginServerPlayerController : MonoBehaviour
 {
     private string tempAddress;
+    private string tempSignature;
 
     private void SetDataToUser(GetPlayerDataResult res)
     {
         UserManager.Instance.SetPlayerUserName(res.nickname, false);
         UserManager.Instance.SetPlayerRank(res.rank);
         UserManager.Instance.SetWalletAddress(tempAddress);
+        UserManager.Instance.SetSignature(tempSignature);
     }
 
     private void OnPlayerCreatedOnServer(string data)
@@ -25,6 +27,7 @@ public class LoginServerPlayerController : MonoBehaviour
         CreatePlayerData formData = new()
         {
             address = tempAddress,
+            signature = tempSignature
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.Create, jsonFormData, OnPlayerCreatedOnServer);
@@ -37,9 +40,10 @@ public class LoginServerPlayerController : MonoBehaviour
         SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
     }
 
-    public void GetOrCreatePlayer(string address)
+    public void GetOrCreatePlayer(string address, string signature)
     {
         tempAddress = address;
+        tempSignature = signature;
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get, OnSuccessPlayerGet, address, OnFailPlayerGet);
     }
 }
