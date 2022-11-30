@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using UnityEditor;
 
 using BubbleBots.Match3.Models;
+using BubbleBots.Gameplay.Models;
 
 public class GUIGame : MonoBehaviour
 {
@@ -44,7 +45,6 @@ public class GUIGame : MonoBehaviour
     SkinManager skinManager;
     List<GameObject> explosionEffects = new List<GameObject>();
     int currentEnemy = 0;
-    int currentPlayer = 0;
     string lastLockedBy = "";
 
     public delegate void OnGUIEvent(object param);
@@ -64,46 +64,33 @@ public class GUIGame : MonoBehaviour
         soundManager = FindObjectOfType<SoundManager>();
         skinManager = FindObjectOfType<SkinManager>();
     }
-
-    public void SetCurrentPlayer(int currentPlayer)
+    public void KillPlayerRobot(int id)
     {
-        this.currentPlayer = currentPlayer;
-    }
-
-    public void DamageToPlayerRobot(float damage)
-    {
-        if (damage >= PlayerGauges[currentPlayer].value)
-        {
-            // current robot is dead
-            PlayerGauges[currentPlayer].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = "0 / " + PlayerGauges[currentPlayer].maxValue;
-            PlayerGauges[currentPlayer].DOValue(0, SwapDuration);
-            PlayerRobots[currentPlayer].Die();
-            currentPlayer += 1;
-        } else
-        {
-            PlayerGauges[currentPlayer].DOValue(PlayerGauges[currentPlayer].value - damage, SwapDuration);
-            PlayerGauges[currentPlayer].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, PlayerGauges[currentPlayer].value - damage) + " / " + PlayerGauges[currentPlayer].maxValue;
-        }
-
-        //if (PlayerGauges[0].value + PlayerGauges[1].value + PlayerGauges[2].value <= 0)
-        if (currentPlayer >= PlayerGauges.Length)
-        {
-            //gamePlayManager.EndLevel();
-
-            DisplayLose();
-            return;
-        }
+        PlayerGauges[id].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = "0 / " + PlayerGauges[id].maxValue;
+        PlayerGauges[id].DOValue(0, SwapDuration);
+        PlayerRobots[id].Die();
 
         GameObject bullet = Instantiate(EnemyBullets[currentEnemy], EnemyBullets[currentEnemy].transform.parent);
         bullet.transform.position = EnemyBullets[currentEnemy].transform.position;
         bullet.gameObject.SetActive(true);
-        bullet.transform.DOMove(new Vector3(PlayerRobots[currentPlayer].transform.position.x, PlayerRobots[currentPlayer].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
-        StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1));
+        bullet.transform.DOMove(new Vector3(PlayerRobots[id].transform.position.x, PlayerRobots[id].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
+        StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, id));
     }
 
-    private void DisplayLose()
+    public void DamagePlayerRobot(int id, int damage)
     {
-        serverGameplayController.EndGameplaySession((int)gamePlayManager.GetScore());
+        PlayerGauges[id].DOValue(PlayerGauges[id].value - damage, SwapDuration);
+        PlayerGauges[id].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, PlayerGauges[id].value - damage) + " / " + PlayerGauges[id].maxValue;
+
+        GameObject bullet = Instantiate(EnemyBullets[currentEnemy], EnemyBullets[currentEnemy].transform.parent);
+        bullet.transform.position = EnemyBullets[currentEnemy].transform.position;
+        bullet.gameObject.SetActive(true);
+        bullet.transform.DOMove(new Vector3(PlayerRobots[id].transform.position.x, PlayerRobots[id].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
+        StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, id));
+    }
+
+    public void DisplayLose()
+    {
         WinDialogImage.gameObject.SetActive(true);
         Transform imgWin = WinDialogImage.transform.Find("ImgWin");
         Transform imgLose = WinDialogImage.transform.Find("ImgLose");
@@ -117,10 +104,10 @@ public class GUIGame : MonoBehaviour
         imgLose.transform.DOScale(Vector3.one, 0.5f);
     }
 
-    IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy)
+    IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy, int id)
     {
         yield return new WaitForSeconds(timeToHide);
-        PlayerRobots[currentPlayer].Damage();
+        PlayerRobots[id].Damage();
 
         target.SetActive(false);
 
@@ -139,8 +126,11 @@ public class GUIGame : MonoBehaviour
         EnemyGauges[currentEnemy].value = EnemyGauges[currentEnemy].value - damage;
         EnemyRobots[currentEnemy].Damage();
         EnemyGauges[currentEnemy].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, EnemyGauges[currentEnemy].value) + " / " + EnemyGauges[currentEnemy].maxValue;
+    }
 
-        TxtScore.text = gamePlayManager.IncrementScore(Mathf.FloorToInt(damage * 10)).ToString().PadLeft(6, '0');
+    public void UpdateScore(int currentScore)
+    {
+        TxtScore.text = currentScore.ToString().PadLeft(6, '0');
     }
 
     public void KillEnemy()
@@ -154,12 +144,14 @@ public class GUIGame : MonoBehaviour
         EnemyRobots[currentEnemy].Die();
     }
 
-    public void SetPlayerGauges()
+    public void SetPlayerRobots(PlayerRoster roster)
     {
         for (int g = 0; g < PlayerGauges.Length; g++)
         {
-            PlayerGauges[g].value = PlayerGauges[g].maxValue;
-            PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = PlayerGauges[g].maxValue + " / " + PlayerGauges[g].maxValue;
+            PlayerGauges[g].maxValue = roster.bots[g].maxHp;
+            PlayerGauges[g].value = roster.bots[g].hp;
+            PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = PlayerGauges[g].value + " / " + PlayerGauges[g].maxValue;
+            PlayerRobots[g].Initialize();
         }
     }
 

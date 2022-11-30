@@ -1,8 +1,6 @@
 using CodeStage.AntiCheat.ObscuredTypes;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 using BubbleBots.Data;
@@ -10,25 +8,13 @@ using BubbleBots.Match3.Data;
 using BubbleBots.Match3.Controllers;
 using BubbleBots.Match3.Models;
 using BubbleBots.Modes;
-
-
-public class Wave
-{
-    public bool completed;
-    public List<BubbleBot> bots;
-}
-
-public class BubbleBot
-{
-    public int id;
-    public int hp;
-}
+using BubbleBots.Gameplay.Models;
 
 public class GamePlayManager : MonoBehaviour
 {
-
     private enum GameplayState
     {
+        RobotSelection,
         WaitForInput,
         SwapFailed,
         SwapFailedPlaying,
@@ -39,9 +25,12 @@ public class GamePlayManager : MonoBehaviour
         RefillBoard,
         RefillBoardInProgress,
         CheckForMatches,
+        LevelComplete,
+        LevelFailed,
+        WaveComplete
     }
 
-    private GameplayState gameplayState;
+    private GameplayState gameplayState = GameplayState.RobotSelection;
 
     public Vector2Int swapStart;
     public Vector2Int swapEnd;
@@ -56,12 +45,9 @@ public class GamePlayManager : MonoBehaviour
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
     public SkinManager skinManager;
-    public float DamageOfRobot1 = 0.05f;
     public float DamageOfRobot2 = 0.05f;
     public int HintDuration = 7;
 
-    enum SpecailShapes { Nothing, LongT, L, T, SmallSquare, Straight5, Straight4 }
-    List<SlideInformation> tilesToSlide = new List<SlideInformation>();
     int releaseTileX = -1;
     int releaseTileY = -1;
     int currentLevelIndex = 0;
@@ -69,11 +55,11 @@ public class GamePlayManager : MonoBehaviour
     int combo = 0;
 
     ObscuredLong score = 0;
-    bool canAttack = false;
 
-
+    private PlayerRoster playerRoster;
     private Wave currentWave;
     private int currentWaveIndex;
+    private bool levelComplete;
 
     public bool InputLocked()
     {
@@ -86,6 +72,8 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartLevel(LevelData levelData)
     {
+        playerRoster.ResetRoster();
+        levelComplete = false;
         currentWaveIndex = 0;
         currentWave = new Wave()
         {
@@ -101,38 +89,6 @@ public class GamePlayManager : MonoBehaviour
         AnalyticsManager.Instance.SendPlayEvent(currentLevelIndex);
         serverGameplayController.StartGameplaySession(currentLevelIndex);
 
-
-        //LevelInformation levelInfo;
-        //currentLevel = levelNumber;
-        //currentEnemy = 0;
-        //GameGUI.SetCurrentPlayer(0);
-        //killedEnemies = 0;
-        //currentWave = 1;
-        //levelEnded = false;
-
-        //try
-        //{
-        //    enemyDead = false;
-        //    levelInfo = levelManager.LoadLevel(levelFile);
-        //}
-        //catch (Exception ex)
-        //{
-        //    Debug.LogError(ex.Message);
-        //    return;
-        //}
-
-        //RenderLevel(levelInfo);
-        //for (int g = 0; g < GameGUI.PlayerGauges.Length; g++)
-        //{
-        //    GameGUI.PlayerGauges[g].value = GameGUI.PlayerGauges[g].maxValue;
-        //    GameGUI.PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = GameGUI.PlayerGauges[g].maxValue.ToString("N0") + " / " + GameGUI.PlayerGauges[g].maxValue.ToString("N0");
-        //}
-
-        //numHit = new int[] { 0, 0, 0 };
-        ////timeForNewHint = DateTime.Now + new TimeSpan(0, 0, 7);
-        //StartHintingCountDown();
-
-
         boardController = new BoardController();
         boardController.Initialize(levelData, matchPrecedence);
         boardController.PopulateBoardWithSeed(UnityEngine.Random.Range(0, 1337));
@@ -142,16 +98,13 @@ public class GamePlayManager : MonoBehaviour
         gameplayState = GameplayState.WaitForInput;
         inputLocked = false;
 
-
         GameGUI.SetRobotGauges(currentWave.bots);
-        GameGUI.SetPlayerGauges();
+        GameGUI.SetPlayerRobots(playerRoster);
     }
 
 
     private void RenderStartLevel()
     {
-        //this.levelInfo = levelInfo;
-
         GameGUI.RenderLevelBackground(boardController.GetBoardModel().width, boardController.GetBoardModel().height);
         GameGUI.InitializeEnemyRobots();
         GameGUI.RenderTiles(boardController.GetBoardModel());
@@ -159,27 +112,22 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartGamePlay()
     {
+        playerRoster = new PlayerRoster()
+        {
+            bots = new List<BubbleBot>()
+            {
+                new BubbleBot { maxHp = 30, hp = 30, id = 1 },
+                new BubbleBot { maxHp = 30, hp = 30, id = 2 },
+                new BubbleBot { maxHp = 30, hp = 30, id = 3 },
+            },
+            currentBot = 0
+        };
+
+
         StartLevel(gameplayData.levels[currentLevelIndex]);
         AnalyticsManager.Instance.SendPlayEvent(currentLevelIndex);
-
-        return;
-
         //LeaderboardManager.Instance.ResetKilledRobots();
-
-        for (int g = 0; g < GameGUI.PlayerGauges.Length; g++)
-        {
-            GameGUI.PlayerGauges[g].value = GameGUI.PlayerGauges[g].maxValue;
-            GameGUI.PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = GameGUI.PlayerGauges[g].maxValue.ToString("N0") + " / " + GameGUI.PlayerGauges[g].maxValue.ToString("N0");
-        }
-
-        //timeForNewHint = DateTime.Now + new TimeSpan(0, 0, 7);
-    }
-
-
-
-    private bool IsSpecialGem(string v)
-    {
-        return (v == "S1" || v == "S2" || v == "S3" || v == "S4" || v == "S5");
+        return;
     }
 
     public void SetDownTile(int x, int y)
@@ -193,7 +141,6 @@ public class GamePlayManager : MonoBehaviour
         {
             return;
         }
-
 
         releaseTileX = x;
         releaseTileY = y;
@@ -209,30 +156,13 @@ public class GamePlayManager : MonoBehaviour
         {
             OnLevelFinished();
         }
-        else
-        {
-            currentWave.bots = new List<BubbleBot>()
-            {
-                new BubbleBot() { hp = 40 },
-                new BubbleBot() { hp = 40 },
-                new BubbleBot() { hp = 40 }
-            };
-            GameGUI.StartNextWave();
-        }
     }
-
     private void OnLevelFinished()
     {
         serverGameplayController.EndGameplaySession((int)score);
         AnalyticsManager.Instance.SendLevelEvent();
-
-        currentLevelIndex++;
-
-        MenuGUI.gameObject.SetActive(true);
-        MenuGUI.DisplayWin();
+        levelComplete = true;
     }
-
-
 
     private void HitEnemy(int damage)
     {
@@ -253,29 +183,42 @@ public class GamePlayManager : MonoBehaviour
                 OnWaveFinished();
             }
         }
-        else
-        {
-            //HitPlayer();
-            //if (!MoreMovesArePossible())
-            {
-                //StartTrackedCoroutine(RefreshBoard());
-            }
-        }
     }
 
     private void HitPlayer()
     {
-        if (!canAttack)
+        if (levelComplete || currentWave.completed)
         {
             return;
         }
+        playerRoster.TakeDamage((int)DamageOfRobot2);
+        if (playerRoster.AreAllBotsDead())
+        {
+            OnPlayerLost();
+        }
+        else if (playerRoster.IsDead(playerRoster.currentBot))
+        {
+            GameGUI.KillPlayerRobot(playerRoster.currentBot);
+            playerRoster.currentBot++;
+        }
+        else
+        {
+            GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)DamageOfRobot2);
+        }
+    }
 
-        canAttack = false;
-        GameGUI.DamageToPlayerRobot(DamageOfRobot2);
+    private void OnPlayerLost()
+    {
+        GameGUI.DisplayLose();
+        serverGameplayController.EndGameplaySession((int)GetScore());
     }
 
     private bool KillEnemy()
     {
+        //LeaderboardManager.Instance.IncrementKilledRobots();
+        //TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
+        //AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
+        //serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
         GameGUI.KillEnemy();
         bool allEnemiesKilled = true;
 
@@ -367,22 +310,52 @@ public class GamePlayManager : MonoBehaviour
         return currentLevelIndex;
     }
 
-    public long IncrementScore(int score)
+    public long IncrementScore(int toAdd)
     {
+        score += toAdd * 10; // hardcoded score multiplier
         serverGameplayController.UpdateGameplaySession((int)this.score);
+        GameGUI.UpdateScore((int)score);
+        return score;
+    }
 
-        this.score += score;
 
-        return this.score;
+    private void StartNextWave()
+    {
+        currentWave.bots = new List<BubbleBot>()
+        {
+            new BubbleBot() { hp = 40 },
+            new BubbleBot() { hp = 40 },
+            new BubbleBot() { hp = 40 }
+        };
+        currentWave.completed = false;
+        gameplayState = GameplayState.WaveComplete;
+        GameGUI.StartNextWave();
+    }
+
+    private void StartNextLevel()
+    {
+        currentLevelIndex++;
+        currentWave.completed = false;
+        levelComplete = false;
+        MenuGUI.gameObject.SetActive(true);
+        MenuGUI.DisplayWin();
     }
 
     private void Update()
     {
-
         if (gameplayState == GameplayState.WaitForInput)
         {
+            if (levelComplete)
+            {
+                StartNextLevel();
+                return;
+            }
 
-
+            if (currentWave.completed)
+            {
+                StartNextWave();
+                return;
+            }
         }
         else if (gameplayState == GameplayState.SwapFailed)
         {
@@ -435,6 +408,7 @@ public class GamePlayManager : MonoBehaviour
             }
             else
             {
+                HitPlayer();
                 gameplayState = GameplayState.WaitForInput;
             }
         }
@@ -541,7 +515,6 @@ public class GamePlayManager : MonoBehaviour
         }
 
         combo = 0;
-        canAttack = true;
 
         if (Mathf.Abs(x - releaseTileX) <= 1 && Mathf.Abs(y - releaseTileY) <= 1)
         {
@@ -638,7 +611,7 @@ public class GamePlayManager : MonoBehaviour
                 GameGUI.ExplodeTile(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, false);
             }
             HitEnemy(swapResult.explodeEvents[i].toExplode.Count);
-
+            IncrementScore(swapResult.explodeEvents[i].toExplode.Count);
 
         }
         yield return new WaitForSeconds(GameGUI.SwapDuration);
@@ -703,7 +676,6 @@ public class GamePlayManager : MonoBehaviour
         {
             return "S3";
         }
-
 
         return id.ToString();
     }
