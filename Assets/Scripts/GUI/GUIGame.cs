@@ -770,7 +770,7 @@ public class GUIGame : MonoBehaviour
         DebugTileList();
         Debug.Log("==========================================");
 
-        gamePlayManager.DisplayDebugHints();
+        //gamePlayManager.DisplayDebugHints();
     }
 
     public void PremintButton()
