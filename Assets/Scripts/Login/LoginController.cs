@@ -11,7 +11,8 @@ public class LoginController : MonoBehaviour
 
     private void Start()
     {
-        SoundManager.Instance.PlayStartMusic();
+        SoundManager.Instance.FadeInMusic();
+        SoundManager.Instance.PlayStartMusicNew();
         TryLoginFromSave();
     }
 

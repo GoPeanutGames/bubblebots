@@ -39,7 +39,6 @@ public class GUIGame : MonoBehaviour
     public Transform WinDialogImage;
     public GUIMenu Menu;
 
-    SoundManager soundManager;
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
     SkinManager skinManager;
@@ -61,7 +60,6 @@ public class GUIGame : MonoBehaviour
     private void Awake()
     {
         gamePlayManager = FindObjectOfType<GamePlayManager>();
-        soundManager = FindObjectOfType<SoundManager>();
         skinManager = FindObjectOfType<SkinManager>();
     }
     public void KillPlayerRobot(int id)
@@ -372,7 +370,6 @@ public class GUIGame : MonoBehaviour
 
     public void ExplodeTile(int x, int y, bool destroyTile)
     {
-        soundManager.PlayClickSound();
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = transform.Find("Tile_" + x + "_" + y);
         

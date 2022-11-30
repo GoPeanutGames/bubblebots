@@ -26,7 +26,6 @@ public class GUIMenu : MonoBehaviour
     public GameObject BtnAirdrop;
 
     GamePlayManager gamePlayManager = null;
-    SoundManager soundManager;
     string fullName = "";
     int selectedRobot1 = -1;
     int selectedRobot2 = -1;
@@ -38,7 +37,6 @@ public class GUIMenu : MonoBehaviour
     private void Awake()
     {
         gamePlayManager = FindObjectOfType<GamePlayManager>();
-        soundManager = FindObjectOfType<SoundManager>();
     }
 
     private void Start()
@@ -70,8 +68,11 @@ public class GUIMenu : MonoBehaviour
     public void StartLevel1()
     {
         MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
-        Debug.Log(soundManager);
-        soundManager.PlayLevelMusic();
+        SoundManager.Instance.FadeOutMusic(() =>
+        {
+            SoundManager.Instance.PlayLevelMusicNew();
+            SoundManager.Instance.FadeInMusic();
+        });
         GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
         GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
         UserManager.RobotsKilled = 0;
@@ -360,8 +361,11 @@ public class GUIMenu : MonoBehaviour
 
     public void DisplayRobotSelection()
     {
-        soundManager?.FadeOutStartMusic();
-        soundManager?.FadeInRobotSelectionMusic();
+        SoundManager.Instance.FadeOutMusic(() =>
+        {
+            SoundManager.Instance.PlayRobotSelectMusicNew();
+            SoundManager.Instance.FadeInMusic();
+        });
 
         PnlRobotSelection.SetActive(true);
         gameObject.SetActive(false);

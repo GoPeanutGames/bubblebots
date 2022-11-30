@@ -148,7 +148,7 @@ public class GamePlayManager : MonoBehaviour
 
     private void OnWaveFinished()
     {
-        FindObjectOfType<SoundManager>().FadeOutStartMusic();
+        SoundManager.Instance.FadeOutMusic();
         currentWaveIndex++;
         currentWave.completed = true;
 
@@ -570,14 +570,14 @@ public class GamePlayManager : MonoBehaviour
             LineBlastExplodeEvent lineBlastExplodeEvent = swapResult.explodeEvents[i] as LineBlastExplodeEvent;
             if (lineBlastExplodeEvent != null)
             {
-                FindObjectOfType<SoundManager>().PlayLightningSound();
+                SoundManager.Instance.PlayLightningSfx();
                 GameGUI.LineDestroyEffect(lineBlastExplodeEvent.lineBlastStartPosition.x, lineBlastExplodeEvent.lineBlastStartPosition.y, false);
                 yield return new WaitForSeconds(0.4f);
             }
             ColumnBlastEvent columnBlasEvent = swapResult.explodeEvents[i] as ColumnBlastEvent;
             if (columnBlasEvent != null)
             {
-                FindObjectOfType<SoundManager>().PlayLightningSound();
+                SoundManager.Instance.PlayLightningSfx();
                 GameGUI.LineDestroyEffect(columnBlasEvent.columnBlastStartPosition.x, columnBlasEvent.columnBlastStartPosition.y, true);
                 yield return new WaitForSeconds(0.4f);
             }
@@ -589,7 +589,7 @@ public class GamePlayManager : MonoBehaviour
                 {
                     GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y);
                 }
-                FindObjectOfType<SoundManager>().PlayColorSound();
+                SoundManager.Instance.PlayColorSfx();
                 yield return new WaitForSeconds(1.1f);
             }
             BoardBlastEvent boardBlastEvent = swapResult.explodeEvents[i] as BoardBlastEvent;
@@ -598,14 +598,14 @@ public class GamePlayManager : MonoBehaviour
                 for (int j = 0; j < 6; ++j)
                 {
                     GameGUI.ColorBlastEffect(UnityEngine.Random.Range(0, boardController.GetBoardModel().width), UnityEngine.Random.Range(0, boardController.GetBoardModel().height));
-                    FindObjectOfType<SoundManager>().PlayColorSound();
+                    SoundManager.Instance.PlayColorSfx();
                     yield return new WaitForSeconds(0.1f);
                 }
                 //yield return new WaitForSeconds(0.4f);
             }
 
             combo += 1;
-            FindObjectOfType<SoundManager>().PlayComboSound(combo);
+            SoundManager.Instance.PlayComboSfx(combo);
             for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
             {
                 GameGUI.ExplodeTile(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, false);

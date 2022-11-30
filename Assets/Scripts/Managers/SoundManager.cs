@@ -1,287 +1,146 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
 public class SoundManager : MonoSingleton<SoundManager>
 {
-    public AudioSource MetamaskSource;
-    public AudioSource StartMusicSource;
-    public AudioSource StartButtonSource;
-    public AudioSource ErrorMessageSource;
-    public AudioSource RobotSelectionSource;
-    public AudioSource LevelMusicSource;
+    public AudioSource musicSource;
+    public AudioSource sfxSource;
 
-    public AudioSource LightningSound;
-    public AudioSource BombSound;
-    public AudioSource ColorSound;
-    public AudioSource HammerSound;
-    public AudioSource ClickSound;
-    public AudioSource ComboSound1;
-    public AudioSource ComboSound2;
-    public AudioSource ComboSound3;
-    public AudioSource ComboSound4;
-    public AudioSource ComboSound5;
+    public AudioClip StartMusic;
+    public AudioClip RobotSelectMusic;
+    public AudioClip LevelMusic;
+    public List<AudioClip> ComboSfxs;
+    public AudioClip HammerSfx;
+    public AudioClip ColorSfx;
+    public AudioClip LightningSfx;
+    public AudioClip BombSfx;
+    public AudioClip StartButtonSfx;
+    public AudioClip MetamaskSfx;
 
-    public bool soundOn = true;
+    private bool muted = false;
 
-    public void PlayMetamaskEffect()
+    private static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume)
     {
-        if (!soundOn)
+        float currentTime = 0;
+        float start = audioSource.volume;
+        while (currentTime < duration)
         {
-            return;
+            currentTime += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
+            yield return null;
         }
-
-        MetamaskSource?.Play();
+        yield break;
     }
 
-    public void PlayStartButtonEffect()
+    private static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume, Action onFadeEnd)
     {
-        if (!soundOn)
+        float currentTime = 0;
+        float start = audioSource.volume;
+        while (currentTime < duration)
         {
-            return;
+            currentTime += Time.deltaTime;
+            audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
+            yield return null;
         }
-
-        StartButtonSource?.Play();
+        onFadeEnd.Invoke();
+        yield break;
     }
 
-    public void PlayErrorMessageEffect()
+    private void SetMute(bool m)
     {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        ErrorMessageSource?.Play();
+        muted = m;
+        musicSource.mute = muted;
+        sfxSource.mute = muted;
     }
 
-    public void PlayStartMusic()
+    public void FadeInMusic(float volume = 1, float time = 0.5f)
     {
-        FadeOutRobotSelectionMusic();
-        StartMusicSource?.Play();
-
-        if (!soundOn)
-        {
-            StartMusicSource.volume = 0;
-        }
+        StopAllCoroutines();
+        StartCoroutine(SoundManager.StartFade(musicSource, time, volume));
     }
 
-    public void PlayRobotSelectionMusic()
+    public void FadeOutMusic(float volume = 0, float time = 0.5f)
     {
-        FadeOutStartMusic();
-        RobotSelectionSource?.Play();
-
-        if (!soundOn)
-        {
-            RobotSelectionSource.volume = 0;
-        }
+        StopAllCoroutines();
+        StartCoroutine(SoundManager.StartFade(musicSource, time, volume));
     }
 
-    public void PlayLevelMusic()
+    public void FadeOutMusic(Action onFadeEnd, float volume = 0, float time = 0.5f)
     {
-        FadeOutRobotSelectionMusic();
-        LevelMusicSource?.Play();
-
-        if (!soundOn)
-        {
-            LevelMusicSource.volume = 0;
-        }
+        StopAllCoroutines();
+        StartCoroutine(SoundManager.StartFade(musicSource, time, volume, onFadeEnd));
+    }
+    public void Mute()
+    {
+        SetMute(true);
     }
 
-    public void StopStartMusic()
+    public void UnMute()
     {
-        StartMusicSource?.Stop();
+        SetMute(false);
     }
 
-    public void FadeOutStartMusic()
+    public bool IsMuted()
     {
-        if (StartMusicSource == null)
-        {
-            return;
-        }
-
-        StartCoroutine(FadeOutStartMusicNow());
+        return muted;
     }
 
-    public void FadeOutLevelMusic()
+    public void PlayComboSfx(int combo)
     {
-        if (!soundOn)
+        if(combo > 5)
         {
-            return;
+            combo = 5;
         }
-
-        if (LevelMusicSource == null)
-        {
-            return;
-        }
-
-        StartCoroutine(FadeOutLevelMusicNow());
+        sfxSource.PlayOneShot(ComboSfxs[combo]);
     }
 
-    public void FadeOutRobotSelectionMusic()
+    public void PlayHammerSfx()
     {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        if (RobotSelectionSource == null)
-        {
-            return;
-        }
-
-        StartCoroutine(FadeOutRobotSelectionMusicNow());
+        sfxSource.PlayOneShot(HammerSfx);
     }
 
-    IEnumerator FadeOutStartMusicNow()
+    public void PlayColorSfx()
     {
-        StartMusicSource.DOFade(0, 0.5f);
-
-        yield return new WaitForSeconds(0.5f);
-
-        StartMusicSource.Stop();
-
-        if (soundOn)
-        {
-            StartMusicSource.volume = 1;
-        }
+        sfxSource.PlayOneShot(ColorSfx);
     }
 
-    IEnumerator FadeOutLevelMusicNow()
+    public void PlayLightningSfx()
     {
-        LevelMusicSource.DOFade(0, 0.5f);
-
-        yield return new WaitForSeconds(0.5f);
-
-        LevelMusicSource.Stop();
-
-        if (soundOn)
-        {
-            LevelMusicSource.volume = 1;
-        }
+        sfxSource.PlayOneShot(LightningSfx);
     }
 
-    IEnumerator FadeOutRobotSelectionMusicNow()
+    public void PlayBombSfx()
     {
-        RobotSelectionSource.DOFade(0, 0.5f);
-
-        yield return new WaitForSeconds(0.5f);
-
-        RobotSelectionSource.Stop();
-
-        if (soundOn)
-        {
-            RobotSelectionSource.volume = 1;
-        }
+        sfxSource.PlayOneShot(BombSfx);
     }
 
-    public void FadeInRobotSelectionMusic()
+    public void PlayStartButtonSfx()
     {
-        RobotSelectionSource.volume = 0;
-        RobotSelectionSource.Play();
-
-        if (soundOn)
-        {
-            RobotSelectionSource.DOFade(1, 0.5f);
-        }
+        sfxSource.PlayOneShot(StartButtonSfx);
     }
 
-    public void PlayClickSound()
+    public void PlayMetamaskSfx()
     {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        //ClickSound?.Play();
+        sfxSource.PlayOneShot(MetamaskSfx);
     }
 
-    public void PlayBombSound()
+    public void PlayStartMusicNew()
     {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        BombSound?.Play();
+        musicSource.clip = StartMusic;
+        musicSource.Play();
     }
 
-    public void PlayLightningSound()
+    public void PlayRobotSelectMusicNew()
     {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        LightningSound?.Play();
+        musicSource.clip = RobotSelectMusic;
+        musicSource.Play();
     }
 
-    public void PlayColorSound()
+    public void PlayLevelMusicNew()
     {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        ColorSound?.Play();
-    }
-
-    public void PlayHammerSound()
-    {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        HammerSound?.Play();
-    }
-
-    public void PlayComboSound(int combo)
-    {
-        if (!soundOn)
-        {
-            return;
-        }
-
-        switch(combo)
-        {
-            case 0:
-            case 1:
-                ComboSound1?.Play();
-                break;
-            case 2:
-                ComboSound2?.Play();
-                break;
-            case 3:
-                ComboSound3?.Play();
-                break;
-            case 4:
-                ComboSound4?.Play();
-                break;
-            default:
-                ComboSound5?.Play();
-                break;
-        }
-    }
-
-    public void SetVolume(float level)
-    {
-        MetamaskSource.volume = level;
-        StartMusicSource.volume = level;
-        StartButtonSource.volume = level;
-        ErrorMessageSource.volume = level;
-        RobotSelectionSource.volume = level;
-        LevelMusicSource.volume = level;
-        ClickSound.volume = level;
-        BombSound.volume = level;
-        ColorSound.volume = level;
-        HammerSound.volume = level;
-        LightningSound.volume = level;
-        ComboSound1.volume = level;
-        ComboSound2.volume = level;
-        ComboSound3.volume = level;
-        ComboSound4.volume = level;
-        ComboSound5.volume = level;
-
-        soundOn = level == 1;
+        musicSource.clip = LevelMusic;
+        musicSource.Play();
     }
 }
