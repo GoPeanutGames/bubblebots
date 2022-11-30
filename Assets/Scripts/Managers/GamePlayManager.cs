@@ -1017,7 +1017,6 @@ public class GamePlayManager : MonoBehaviour
                 if (++currentWave > levelInfo.Waves)
                 {
                     levelEnded = true;
-                    SoundManager.Instance.FadeOutMusic();
                     StartTrackedCoroutine(FinishLevel());
                     UserManager.Instance.SetPlayerScore((int)score);
                 } else
