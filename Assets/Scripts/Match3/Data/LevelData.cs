@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BubbleBots.Data
+namespace BubbleBots.Match3.Data
 {
     [CreateAssetMenu(fileName = "Levels", menuName = "Bubble Bots/Create Level Data", order = 1)]
     public class LevelData : ScriptableObject

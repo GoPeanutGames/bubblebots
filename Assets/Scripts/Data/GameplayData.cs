@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using BubbleBots.Match3.Data;
 
 namespace BubbleBots.Data
 {

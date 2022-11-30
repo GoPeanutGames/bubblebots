@@ -496,11 +496,11 @@ namespace BubbleBots.Match3.Controllers
                                 position = new Vector2Int(explosion.x, explosion.y),
                                 explosionSource = ToExplode.ExplosionSource.BombBlast
                             });
-                            BombBlastEvent bombBlastEvent = new BombBlastEvent();
-                            bombBlastEvent.toExplode = bombBlast;
-                            bombBlastEvent.toCreate = null;
-                            swapResult.explodeEvents.Add(bombBlastEvent);
                         }
+                        BombBlastEvent bombBlastEvent = new BombBlastEvent();
+                        bombBlastEvent.toExplode = bombBlast;
+                        bombBlastEvent.toCreate = null;
+                        swapResult.explodeEvents.Add(bombBlastEvent);
                         break;
                     case 13: // color switch
                         int target = boardModel[startX][startY].gem.IsSpecial() ? boardModel[releaseX][releaseY].gem.GetId() :

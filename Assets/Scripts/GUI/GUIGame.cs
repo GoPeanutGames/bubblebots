@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using static LevelManager;
 using Unity.VisualScripting;
 using TMPro;
 using UnityEngine.Rendering;
@@ -42,7 +41,6 @@ public class GUIGame : MonoBehaviour
     SoundManager soundManager;
     Image[,] backgroundTiles;
     GamePlayManager gamePlayManager;
-    LevelInformation levelInfo;
     SkinManager skinManager;
     List<GameObject> explosionEffects = new List<GameObject>();
     int currentEnemy = 0;
@@ -90,8 +88,7 @@ public class GUIGame : MonoBehaviour
         //if (PlayerGauges[0].value + PlayerGauges[1].value + PlayerGauges[2].value <= 0)
         if (currentPlayer >= PlayerGauges.Length)
         {
-            gamePlayManager.ResetHintTime();
-            gamePlayManager.EndLevel();
+            //gamePlayManager.EndLevel();
 
             DisplayLose();
             return;
@@ -139,9 +136,9 @@ public class GUIGame : MonoBehaviour
             return;
         }
 
-        EnemyGauges[currentEnemy].DOValue(EnemyGauges[currentEnemy].value - damage, SwapDuration);
+        EnemyGauges[currentEnemy].value = EnemyGauges[currentEnemy].value - damage;
         EnemyRobots[currentEnemy].Damage();
-        EnemyGauges[currentEnemy].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, EnemyGauges[currentEnemy].value - damage) + " / " + EnemyGauges[currentEnemy].maxValue;
+        EnemyGauges[currentEnemy].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, EnemyGauges[currentEnemy].value) + " / " + EnemyGauges[currentEnemy].maxValue;
 
         TxtScore.text = gamePlayManager.IncrementScore(Mathf.FloorToInt(damage * 10)).ToString().PadLeft(6, '0');
     }
@@ -153,6 +150,7 @@ public class GUIGame : MonoBehaviour
         //AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
         //serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
 
+        EnemyGauges[currentEnemy].value = 0;
         EnemyRobots[currentEnemy].Die();
     }
 
@@ -165,12 +163,14 @@ public class GUIGame : MonoBehaviour
         }
     }
 
-    public void SetRobotGauges(int[] values)
+    public void SetRobotGauges(List<BubbleBot> bots)
     {
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
-            EnemyGauges[g].maxValue = values[g];
-            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = values[g] + " / " + values[g];
+            EnemyGauges[g].maxValue = bots[g].hp;
+            EnemyGauges[g].minValue = 0;
+            EnemyGauges[g].value = bots[g].hp;
+            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = bots[g].hp + " / " + bots[g].hp;
         }
     }
 
@@ -213,15 +213,13 @@ public class GUIGame : MonoBehaviour
         }
     }
 
-    public void RenderLevelBackground(LevelInformation levelInfo)
+    public void RenderLevelBackground(int levelWidth, int levelHeight)
     {
         for (int g = 0; g < EnemyGauges.Length; g++)
         {
             EnemyGauges[g].value = EnemyGauges[g].maxValue;
             EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue + " / " + EnemyGauges[g].maxValue;
         }
-
-        this.levelInfo = levelInfo;
 
         // remove the old ones
         Transform child;
@@ -239,7 +237,7 @@ public class GUIGame : MonoBehaviour
         }
 
         // add new tiles
-        backgroundTiles = new Image[levelInfo.Width,levelInfo.Height];
+        backgroundTiles = new Image[levelWidth, levelHeight];
         Image backgroundTile;
         for (int i = 0; i < BackgroundTiles.Length; i++)
         {
@@ -250,15 +248,15 @@ public class GUIGame : MonoBehaviour
         int tileHeight = TileWidth;
         int itemNumber = 0;
 
-        for (int x = 0; x < levelInfo.Width; x++)
+        for (int x = 0; x < levelWidth; x++)
         {
-            for (int y = 0; y < levelInfo.Height; y++)
+            for (int y = 0; y < levelHeight; y++)
             {
                 backgroundTile = Instantiate(BackgroundTiles[itemNumber++ % BackgroundTiles.Length], gameObject.transform);
                 backgroundTile.gameObject.SetActive(true);
                 backgroundTile.GetComponent<Image>().enabled = true;
                 backgroundTile.gameObject.name = "TileBackground_" + x + "_" + y;
-                backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelInfo.Width / 2f * tileWidth + x * tileWidth + x * Spacing, -levelInfo.Height / 2f * tileHeight + y * tileHeight + y * Spacing - TopBias);
+                backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelWidth / 2f * tileWidth + x * tileWidth + x * Spacing, -levelHeight / 2f * tileHeight + y * tileHeight + y * Spacing - TopBias);
 
                 backgroundTiles[x, y] = backgroundTile;
             }
@@ -273,12 +271,12 @@ public class GUIGame : MonoBehaviour
         {
             for (int j = 0; j < height; j++)
             {
-                RenderTileOnObject(i, j, tileSet);
+                RenderTileOnObject(i, j, tileSet, width, height);
             }
         }
     }
 
-    void RenderTileOnObject(int i, int j, string[,] tileSet)
+    void RenderTileOnObject(int i, int j, string[,] tileSet, int levelWidth, int levelHeight)
     {
         GameObject tile;
         Image tileImage;
@@ -293,7 +291,7 @@ public class GUIGame : MonoBehaviour
         //yield return new WaitForEndOfFrame();
 
         RectTransform rect = tile.AddComponent<RectTransform>();
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + i * TileWidth + i * Spacing, -levelInfo.Height / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
+        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelWidth / 2f * TileWidth + i * TileWidth + i * Spacing, -levelHeight / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
         rect.sizeDelta = new Vector2(TileWidth, TileWidth);
         rect.localScale = new Vector3(1, 1, 1);
 
@@ -382,12 +380,6 @@ public class GUIGame : MonoBehaviour
 
     public void ExplodeTile(int x, int y, bool destroyTile)
     {
-        if (gamePlayManager.GetEnemyDead())
-        {
-            //Debug.Log("EXP0");
-            return;
-        }
-
         soundManager.PlayClickSound();
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = transform.Find("Tile_" + x + "_" + y);
@@ -408,7 +400,6 @@ public class GUIGame : MonoBehaviour
         tileToDisactivate.gameObject.SetActive(false); //transform.localScale = Vector3.zero;
         tileToDisactivate.name += "_deleted";
 
-        gamePlayManager.StartHintingCountDown();
     }
 
     IEnumerator DespawnExplosion(GameObject effect)
@@ -460,7 +451,7 @@ public class GUIGame : MonoBehaviour
     }
 
     // very similar to the AppearAt but replaces the existing one instead
-    internal void ReappearAt(int x, int y, string key)
+    internal void ReappearAt(int x, int y, string key, int levelWidth, int levelHeight)
     {
         Transform trans = transform.Find("Tile_" + x + "_" + y);
         if(trans != null)
@@ -468,15 +459,15 @@ public class GUIGame : MonoBehaviour
             Destroy(trans.gameObject);
         }
         
-        AppearAt(x, y, key);
+        AppearAt(x, y, key, levelWidth, levelHeight);
     }
 
-    internal void AppearAt(int x, int y, string key)
+    internal void AppearAt(int x, int y, string key, int levelWidth, int levelHeight)
     {
-        StartCoroutine(AppearDelayed(x, y, key));
+        StartCoroutine(AppearDelayed(x, y, key, levelWidth, levelHeight));
     }
 
-    IEnumerator AppearDelayed(int x, int y, string key)
+    IEnumerator AppearDelayed(int x, int y, string key, int levelWidth, int levelHeight)
     {
         yield return new WaitForSeconds(SwapDuration);
 
@@ -502,7 +493,7 @@ public class GUIGame : MonoBehaviour
             rect = tile.AddComponent<RectTransform>();
         }
 
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + x * TileWidth + x * Spacing, -levelInfo.Height / 2f * TileWidth + y * TileWidth + y * Spacing - TopBias, 0);
+        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelWidth / 2f * TileWidth + x * TileWidth + x * Spacing, -levelHeight / 2f * TileWidth + y * TileWidth + y * Spacing - TopBias, 0);
         rect.sizeDelta = new Vector2(TileWidth, TileWidth);
         rect.localScale = new Vector3(1, 1, 1);
         rect.localScale = Vector3.zero;
@@ -527,27 +518,6 @@ public class GUIGame : MonoBehaviour
         guiTile.X = x;
         guiTile.Y = y;
         guiTile.Key = key;
-    }
-
-    private void DebugTileList()
-    {
-        string line;
-
-        for (int j = levelInfo.Height - 1; j >= 0; j--)
-        {
-            line = "";
-            for (int i = 0; i < levelInfo.Width; i++)
-            {
-                line += gamePlayManager.TileSet[i, j];
-
-                if(i != levelInfo.Width - 1)
-                {
-                    line += ", ";
-                }
-            }
-
-            Debug.Log(line);
-        }
     }
 
     public void LineDestroyEffect(int x, int y, bool vertical)
@@ -716,15 +686,15 @@ public class GUIGame : MonoBehaviour
         transform.Find("ImgPlayerRobot3").GetComponent<Image>().sprite = RobotSprites[robot3];
     }
 
-    public void DisplayHintAt(int x1, int y1)
-    {
-        if (gamePlayManager.GetEnemyDead() || !gameObject.activeSelf)
-        {
-            return;
-        }
+    //public void DisplayHintAt(int x1, int y1)
+    //{
+    //    if (gamePlayManager.GetEnemyDead() || !gameObject.activeSelf)
+    //    {
+    //        return;
+    //    }
 
-        StartCoroutine(DisplayHintAtNow(x1, y1));
-    }
+    //    StartCoroutine(DisplayHintAtNow(x1, y1));
+    //}
 
     IEnumerator DisplayHintAtNow(int x1, int y1)
     {
@@ -756,21 +726,6 @@ public class GUIGame : MonoBehaviour
         }
 
         tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1, _y1), 0.15f).SetEase(Ease.Linear);
-    }
-
-    public void DisplayDebug()
-    {
-        Debug.Log("DateTimeNow: " + DateTime.Now);
-        Debug.Log("CanSwapTiles: " + CanSwapTiles);
-        Debug.Log("TimeForNewHint: " + gamePlayManager.GetTimeForNewHint());
-        Debug.Log("LastLockedBy: " + lastLockedBy);
-        Debug.Log("DebugTileList: ");
-        Debug.Log("==========================================");
-
-        DebugTileList();
-        Debug.Log("==========================================");
-
-        //gamePlayManager.DisplayDebugHints();
     }
 
     public void PremintButton()
@@ -821,15 +776,6 @@ public class GUIGame : MonoBehaviour
         EnemyRobots[2].gameObject.GetComponent<Image>().sprite = EnemySprites[robot3];
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyUp(KeyCode.Q))
-        {
-            //DebugTileList();
-            DisplayDebug();
-        }
-    }
-
     public void DisplayHelpButton()
     {
         DisplayHelp();
@@ -843,12 +789,12 @@ public class GUIGame : MonoBehaviour
         {
             for (int j = 0; j < boardModel.height; j++)
             {
-                RenderTileOnObject(i, j, boardModel[i][j].gem.GetId());
+                RenderTileOnObject(i, j, boardModel[i][j].gem.GetId(), boardModel.width, boardModel.height);
             }
         }
     }
 
-    void RenderTileOnObject(int i, int j, int id)
+    void RenderTileOnObject(int i, int j, int id, int levelWidth, int levelHeight)
     {
         GameObject tile;
         Image tileImage;
@@ -863,7 +809,7 @@ public class GUIGame : MonoBehaviour
         //yield return new WaitForEndOfFrame();
 
         RectTransform rect = tile.AddComponent<RectTransform>();
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelInfo.Width / 2f * TileWidth + i * TileWidth + i * Spacing, -levelInfo.Height / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
+        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelWidth / 2f * TileWidth + i * TileWidth + i * Spacing, -levelHeight / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
         rect.sizeDelta = new Vector2(TileWidth, TileWidth);
         rect.localScale = new Vector3(1, 1, 1);
 
