@@ -188,6 +188,7 @@ public class GUIMenu : MonoBehaviour
         MenuImage.gameObject.SetActive(true);
 
         StartCoroutine(TurnOnPlay());
+        SoundManager.Instance.FadeInMusic();
     }
 
     public void DisplayNoMoreMoves()

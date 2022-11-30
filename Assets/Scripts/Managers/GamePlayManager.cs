@@ -604,6 +604,18 @@ public class GamePlayManager : MonoBehaviour
                 //yield return new WaitForSeconds(0.4f);
             }
 
+            HammerBlastEvent hammerBlastEvent = swapResult.explodeEvents[i] as HammerBlastEvent;
+            if (hammerBlastEvent != null)
+            {
+                SoundManager.Instance.PlayHammerSfx();
+            }
+
+            BombBlastEvent bombBlastEvent = swapResult.explodeEvents[i] as BombBlastEvent;
+            if (bombBlastEvent != null)
+            {
+                SoundManager.Instance.PlayBombSfx();
+            }
+
             combo += 1;
             SoundManager.Instance.PlayComboSfx(combo);
             for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
