@@ -1,20 +1,45 @@
 using BubbleBots.Server.Player;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LoginServerPlayerController : MonoBehaviour
 {
-    private void OnPlayerCreatedOnServer(string data)
+    private string tempAddress;
+
+    private void SetDataToUser(GetPlayerDataResult res)
     {
-        Debug.Log(data);
+        UserManager.Instance.SetPlayerUserName(res.nickname, false);
+        UserManager.Instance.SetPlayerRank(res.rank);
+        UserManager.Instance.SetWalletAddress(tempAddress);
     }
 
-    public void CreatePlayer(string address)
+    private void OnPlayerCreatedOnServer(string data)
+    {
+        GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
+        SetDataToUser(result);
+        SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
+    }
+
+    private void OnFailPlayerGet(string data)
     {
         CreatePlayerData formData = new()
         {
-            address = address,
+            address = tempAddress,
         };
         string jsonFormData = JsonUtility.ToJson(formData);
-        ServerManager.Instance.CreatePlayerOnServer(jsonFormData, OnPlayerCreatedOnServer);
+        ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.Create, jsonFormData, OnPlayerCreatedOnServer);
+    }
+
+    private void OnSuccessPlayerGet(string data)
+    {
+        GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
+        SetDataToUser(result);
+        SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
+    }
+
+    public void GetOrCreatePlayer(string address)
+    {
+        tempAddress = address;
+        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get, OnSuccessPlayerGet, address, OnFailPlayerGet);
     }
 }

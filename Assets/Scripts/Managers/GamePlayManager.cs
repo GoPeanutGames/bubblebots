@@ -14,7 +14,6 @@ using BubbleBots.Modes;
 
 public class GamePlayManager : MonoBehaviour
 {
-    //refactored code
 
     private enum GameplayState
     {
@@ -252,7 +251,7 @@ public class GamePlayManager : MonoBehaviour
                     levelEnded = true;
                     FindObjectOfType<SoundManager>().FadeOutStartMusic();
                     StartTrackedCoroutine(FinishLevel());
-                    LeaderboardManager.Instance.Score = score;
+                    //LeaderboardManager.Instance.Score = score;
                 }
                 else
                 {

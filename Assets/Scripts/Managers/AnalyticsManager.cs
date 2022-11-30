@@ -36,7 +36,7 @@ public class AnalyticsManager : MonoBehaviour
             List<string> consentIdentifiers = await AnalyticsService.Instance.CheckForRequiredConsents();
             SendLoginEvent();
         }
-        catch (ConsentCheckException e)
+        catch (ConsentCheckException)
         {
             // Something went wrong when checking the GeoIP, check the e.Reason and handle appropriately.
         }
@@ -66,7 +66,7 @@ public class AnalyticsManager : MonoBehaviour
 
     public void SendLevelEvent()
     {
-        int score = (int)LeaderboardManager.Instance.Score;
+        int score = UserManager.Instance.GetPlayerScore();
         AnalyticsService.Instance.CustomData("EndLevel", new Dictionary<string, object>
         {
             {"wallet_address", currentWalletAddress },

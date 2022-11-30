@@ -22,7 +22,7 @@ public class SoundManager : MonoSingleton<SoundManager>
     public AudioSource ComboSound4;
     public AudioSource ComboSound5;
 
-    bool soundOn = true;
+    public bool soundOn = true;
 
     public void PlayMetamaskEffect()
     {

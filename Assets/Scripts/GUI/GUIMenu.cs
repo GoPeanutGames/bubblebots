@@ -6,6 +6,7 @@ using DG.Tweening;
 using TMPro;
 using static GUIGame;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json.Linq;
 
 public class GUIMenu : MonoBehaviour
 {
@@ -42,13 +43,13 @@ public class GUIMenu : MonoBehaviour
 
     private void Start()
     {
-        if(LeaderboardManager.Instance.CurrentPlayerType == PlayerType.Guest)
+        if(UserManager.PlayerType == PlayerType.Guest)
         {
             StartPlayingAsGuest();
         }
         else
         {
-            InitSession(LeaderboardManager.Instance.PlayerWalletAddress);
+            InitSession(UserManager.Instance.GetPlayerWalletAddress());
         }
     }
 
@@ -73,7 +74,7 @@ public class GUIMenu : MonoBehaviour
         soundManager.PlayLevelMusic();
         GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
         GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
-        LeaderboardManager.Instance.ResetKilledRobots();
+        UserManager.RobotsKilled = 0;
         SwitchToMultiplayer("level1", 1);
     }
 
@@ -220,7 +221,7 @@ public class GUIMenu : MonoBehaviour
         Prompt("ENTER YOUR FULL NAME:", "YOUR FULL NAME", fullName, (param) =>
         {
             DisplayFullName((string)param);
-            LeaderboardManager.Instance.SetFullName(fullName);
+            UserManager.Instance.SetPlayerUserName(fullName, true);
         });
     }
 
@@ -264,12 +265,12 @@ public class GUIMenu : MonoBehaviour
 
     public void DisplayPlayerRank()
     {
-        PnlPlayerInfo.transform.Find("WindowBackground/BtnRank/TxtStart").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Rank.ToString().PadLeft(5, '0');
+        PnlPlayerInfo.transform.Find("WindowBackground/BtnRank/TxtStart").GetComponent<TextMeshProUGUI>().text = UserManager.Instance.GetPlayerRank().ToString().PadLeft(5, '0');
 
         GameObject templateItem = PnlHighScores.transform.Find("TxtRowTemplate").gameObject;
-        templateItem.GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Rank + ".";
-        templateItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.PlayerFullName.ToUpper();
-        templateItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().text = LeaderboardManager.Instance.Score == -1 ? "N/A" : LeaderboardManager.Instance.Score.ToString();
+        templateItem.GetComponent<TextMeshProUGUI>().text = UserManager.Instance.GetPlayerRank().ToString();
+        templateItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().text = UserManager.Instance.GetPlayerUserName().ToUpper();
+        templateItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().text = UserManager.Instance.GetPlayerScore() == -1 ? "N/A" : UserManager.Instance.GetPlayerScore().ToString();
     }
 
     public void DisplayHighScores()
@@ -292,9 +293,25 @@ public class GUIMenu : MonoBehaviour
             Destroy(lineRoot.GetChild(i).gameObject);
         }
 
-        LeaderboardManager.Instance.GetTop100Scores((score) =>
+        UserManager.Instance.GetTop100Scores((data) =>
         {
-            List<ScoreInfo> result = (List<ScoreInfo>)score;
+
+            List<ScoreInfo> result = new List<ScoreInfo>();
+            JArray scoreData = JArray.Parse(data.ToString());
+            for (int i = 0; i < scoreData.Count; i++)
+            {
+                string playerName;
+                if (scoreData[i]["nickname"] != null)
+                {
+                    playerName = scoreData[i]["nickname"].ToString();
+                }
+                else
+                {
+                    playerName = "Player " + Random.Range(1000, 10000);
+                }
+
+                result.Add(new ScoreInfo(int.Parse(scoreData[i]["score"].ToString()), playerName, "", i + 1, scoreData[i]["address"].ToString() == UserManager.Instance.GetPlayerWalletAddress()));
+            }
 
             scoreList.SetActive(true);
             loading.SetActive(false);
@@ -335,9 +352,9 @@ public class GUIMenu : MonoBehaviour
         TxtStatus.gameObject.SetActive(false);
         GameImage.gameObject.SetActive(false);
 
-        SetPlayerRank(LeaderboardManager.Instance.Score, LeaderboardManager.Instance.Rank);
+        SetPlayerRank(UserManager.Instance.GetPlayerScore(), UserManager.Instance.GetPlayerRank());
         DisplayPlayerInfo(true);
-        DisplayFullName(LeaderboardManager.Instance.PlayerFullName);
+        DisplayFullName(UserManager.Instance.GetPlayerUserName());
         DisplayPlayerRank();
     }
 

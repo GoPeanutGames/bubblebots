@@ -148,10 +148,10 @@ public class GUIGame : MonoBehaviour
 
     public void KillEnemy()
     {
-        LeaderboardManager.Instance.IncrementKilledRobots();
-        TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
-        AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
-        serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
+        //LeaderboardManager.Instance.IncrementKilledRobots();
+        //TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
+        //AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
+        //serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
 
         EnemyRobots[currentEnemy].Die();
     }
@@ -782,16 +782,16 @@ public class GUIGame : MonoBehaviour
 
         Menu.gameObject.SetActive(true);
         Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
-        if (LeaderboardManager.Instance.GuestMode)
-        {
-            Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
-        }
-        else
-        {
-            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
-            Menu.DisplayHighScores();
-            Menu.ReverseHighScoreButtons();
-        }
+        //if (LeaderboardManager.Instance.GuestMode)
+        //{
+        //    Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+        //}
+        //else
+        //{
+        //    Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
+        //    Menu.DisplayHighScores();
+        //    Menu.ReverseHighScoreButtons();
+        //}
 
         gameObject.SetActive(false);
     }

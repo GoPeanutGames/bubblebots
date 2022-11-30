@@ -16,7 +16,7 @@ public class GUIRobotSelection : MonoBehaviour
     public void BackToMenu()
     {
         SoundManager.Instance.PlayStartMusic();
-        if(LeaderboardManager.Instance.CurrentPlayerType == PlayerType.Guest)
+        if(UserManager.PlayerType == PlayerType.Guest)
         {
             SceneManager.LoadScene("Login");
         }
