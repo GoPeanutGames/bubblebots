@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using BubbleBots.Match3.Models;
 using BubbleBots.Match3.Data;
-
+using BubbleBots.Data;
 
 namespace BubbleBots.Match3.Controllers
 {
@@ -165,7 +165,6 @@ namespace BubbleBots.Match3.Controllers
                     boardModel.ApplyColorChanges(colorChangeEvent.toChange, colorChangeEvent.targetColor);
                 }
             }
-
             return swapResult;
         }
 

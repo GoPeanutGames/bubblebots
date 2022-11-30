@@ -7,6 +7,7 @@ using UnityEngine;
 using static LevelManager;
 
 
+using BubbleBots.Data;
 using BubbleBots.Match3.Data;
 using BubbleBots.Match3.Controllers;
 using BubbleBots.Match3.Models;
@@ -34,7 +35,7 @@ public class GamePlayManager : MonoBehaviour
     public Vector2Int swapStart;
     public Vector2Int swapEnd;
 
-    public LevelData levelData;
+    public GameplayData gameplayData;
     public BoardController boardController;
     public MatchPrecedence matchPrecedence;
 
@@ -145,16 +146,16 @@ public class GamePlayManager : MonoBehaviour
         //this.levelInfo = levelInfo;
 
         List<String> availableTiles = new List<string>();
-        for (int i = 0; i < levelData.gemSet.Count; ++i)
+        for (int i = 0; i < gameplayData.levels[currentLevel].gemSet.Count; ++i)
         {
-            availableTiles.Add(levelData.gemSet[i].ToString());
+            availableTiles.Add(gameplayData.levels[currentLevel].gemSet[i].ToString());
         }
         LevelInformation levelInforFromLevelData = new LevelInformation(
             1,
             boardController.GetBoardModel().width,
             boardController.GetBoardModel().height,
             availableTiles.ToArray(),
-            levelData.waves
+            gameplayData.levels[currentLevel].waves
             );
         GameGUI.RenderLevelBackground(levelInforFromLevelData);
         //GameGUI.InitializeEnemyRobots();
@@ -163,8 +164,7 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartLevel(string levelFile, int levelNumber)
     {
-        //
-        StartLevel(levelData);
+        StartLevel(gameplayData.levels[currentLevel]);
 
         return;
         AnalyticsManager.Instance.SendPlayEvent(levelNumber);
