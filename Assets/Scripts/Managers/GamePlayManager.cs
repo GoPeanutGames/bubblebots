@@ -68,7 +68,6 @@ public class GamePlayManager : MonoBehaviour
 
     public void StartLevel(string levelFile, int levelNumber)
     {
-        ModeManager.Instance.SetMode(Mode.FREE);
         AnalyticsManager.Instance.SendPlayEvent(levelNumber);
         serverGameplayController.StartGameplaySession(levelNumber);
         //LeaderboardManager.Instance.ResetKilledRobots();
