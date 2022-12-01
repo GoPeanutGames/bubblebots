@@ -58,13 +58,19 @@ public class UserManager : MonoSingleton<UserManager>
 
     public void SetSignature(string signature)
     {
-         CurrentUser.Signature = signature;
-         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
+        Debug.Log(signature);
+        CurrentUser.Signature = signature;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
     }
 
     public void SetPlayerUserName(string userName, bool sendToServer)
     {
+        if (string.IsNullOrEmpty(userName))
+        {
+            return;
+        }
         CurrentUser.UserName = userName;
+        Debug.Log(userName);
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Nickname], userName);
         if (sendToServer)
         {

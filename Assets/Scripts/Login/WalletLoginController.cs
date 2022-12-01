@@ -45,7 +45,6 @@ public class WalletLoginController : MonoBehaviour
         SoundManager.Instance.PlayMetamaskEffect();
 
         ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginApi.Get, (schema) => {
-
             RequestSignature(schema.ToString(), address);
 
         }, address);
