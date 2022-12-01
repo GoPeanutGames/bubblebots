@@ -49,7 +49,7 @@ public class LoginController : MonoBehaviour
     {
         UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
-        SceneManager.LoadScene("Home");
+        SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
     }
 
     public void InitSession(string address)
