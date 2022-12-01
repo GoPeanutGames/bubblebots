@@ -4997,7 +4997,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1907430930}
   - component: {fileID: 1907430932}
-  - component: {fileID: 1907430931}
+  - component: {fileID: 1907430933}
   m_Layer: 0
   m_Name: WalletConnectPluginManager
   m_TagString: Untagged
@@ -5020,7 +5020,7 @@ Transform:
   m_Father: {fileID: 1864773990}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1907430931
+--- !u!114 &1907430932
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5029,7 +5029,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1907430929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 801bffbf4c62cc244b55ea230d19649d, type: 3}
+  m_Script: {fileID: 11500000, guid: 17303ab972a16184e8ba0066d294c7ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1907430933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907430929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecbeb50cc446e4642956bc9620d0f3cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultWallet: 4
@@ -5065,18 +5077,6 @@ MonoBehaviour:
     Icons:
     - https://peanutgames.com/assets/favicon.ico
     Name: Peanut
---- !u!114 &1907430932
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1907430929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17303ab972a16184e8ba0066d294c7ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1911660680
 GameObject:
   m_ObjectHideFlags: 0
@@ -5319,6 +5319,7 @@ MonoBehaviour:
   ComboSound3: {fileID: 733549879}
   ComboSound4: {fileID: 1262745379}
   ComboSound5: {fileID: 1543307825}
+  soundOn: 1
 --- !u!1 &2143523008
 GameObject:
   m_ObjectHideFlags: 0

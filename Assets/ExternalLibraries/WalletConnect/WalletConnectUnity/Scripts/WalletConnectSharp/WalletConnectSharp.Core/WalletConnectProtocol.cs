@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -165,6 +166,7 @@ namespace WalletConnectSharp.Core
 
         protected async Task SetupTransport()
         {
+            UnityEngine.Debug.Log(Transport);
             Transport.MessageReceived += TransportOnMessageReceived;
             
             await Transport.Open(this._bridgeUrl);
