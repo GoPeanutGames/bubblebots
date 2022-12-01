@@ -17,7 +17,7 @@ public class LoginServerPlayerController : MonoBehaviour
     {
         GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
         SetDataToUser(result);
-        SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
+        SceneManager.LoadScene("Home");
     }
 
     private void OnFailPlayerGet(string data)
@@ -34,7 +34,7 @@ public class LoginServerPlayerController : MonoBehaviour
     {
         GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
         SetDataToUser(result);
-        SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
+        SceneManager.LoadScene("Home");
     }
 
     public void GetOrCreatePlayer(string address)
