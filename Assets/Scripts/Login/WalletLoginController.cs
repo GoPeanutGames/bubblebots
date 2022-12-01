@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using WalletConnectSharp.Unity;
 using Beebyte.Obfuscator;
 using BubbleBots.Server.Signature;
+using WalletConnectSharp.Core.Models;
 
 public class WalletLoginController : MonoBehaviour
 {
@@ -37,6 +38,20 @@ public class WalletLoginController : MonoBehaviour
         }
     }
 
+    private async void RequestSignatureFromMetamask(string schema)
+    {
+        if(Application.isMobilePlatform == false)
+        {
+            RequestSignature(schema.ToString(), tempAddress);
+        }
+        else
+        {
+            string signature = await WalletConnect.Instance.Session.EthPersonalSign(tempAddress, schema);
+            SignatureLoginSuccess(signature);
+        }
+
+    }
+
     [SkipRename]
     public void MetamaskLoginSuccess(string address)
     {
@@ -45,8 +60,7 @@ public class WalletLoginController : MonoBehaviour
         SoundManager.Instance.PlayMetamaskEffect();
 
         ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginApi.Get, (schema) => {
-            RequestSignature(schema.ToString(), address);
-
+            RequestSignatureFromMetamask(schema);
         }, address);
     }
 
