@@ -126,7 +126,6 @@ public class GamePlayManager : MonoBehaviour
 
         StartLevel(gameplayData.levels[currentLevelIndex]);
         AnalyticsManager.Instance.SendPlayEvent(currentLevelIndex);
-        //LeaderboardManager.Instance.ResetKilledRobots();
         return;
     }
 
@@ -171,9 +170,9 @@ public class GamePlayManager : MonoBehaviour
             return;
         }
 
-        GameGUI.DamageToEnemyRobot(damage);
         currentWave.bots[currentEnemy].hp -= damage;
-
+        GameGUI.DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
+      
         if (currentWave.bots[currentEnemy].hp <= 0)
         {
             bool waveFinished = KillEnemy();
@@ -546,11 +545,23 @@ public class GamePlayManager : MonoBehaviour
         {
             if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
             {
-                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration);
+                //GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration);
             }
             else
             {
                 GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y, GameGUI.SwapDuration);
+            }
+        }
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+        for (int i = 0; i < gemMoves.Count; ++i)
+        {
+            if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
+            {
+                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
+            }
+            else
+            {
+                //GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y, GameGUI.SwapDuration);
             }
         }
         yield return new WaitForSeconds(GameGUI.SwapDuration);

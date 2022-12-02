@@ -115,16 +115,16 @@ public class GUIGame : MonoBehaviour
         Destroy(target);
     }
 
-    public void DamageToEnemyRobot(float damage)
+    public void DamageToEnemyRobot(float enemyHp)
     {
         if(currentEnemy >= EnemyGauges.Length)
         {
             return;
         }
 
-        EnemyGauges[currentEnemy].value = EnemyGauges[currentEnemy].value - damage;
+        EnemyGauges[currentEnemy].DOValue(Mathf.Max(0, enemyHp), SwapDuration);
         EnemyRobots[currentEnemy].Damage();
-        EnemyGauges[currentEnemy].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, EnemyGauges[currentEnemy].value) + " / " + EnemyGauges[currentEnemy].maxValue;
+        EnemyGauges[currentEnemy].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, enemyHp) + " / " + EnemyGauges[currentEnemy].maxValue;
     }
 
     public void UpdateScore(int currentScore)
@@ -135,7 +135,7 @@ public class GUIGame : MonoBehaviour
     public void KillEnemy()
     {
         TxtKilledRobots.text = UserManager.RobotsKilled.ToString();
-        EnemyGauges[currentEnemy].value = 0;
+        EnemyGauges[currentEnemy].DOValue(0, SwapDuration);
         EnemyRobots[currentEnemy].Die();
     }
 
@@ -660,16 +660,6 @@ public class GUIGame : MonoBehaviour
         transform.Find("ImgPlayerRobot2").GetComponent<Image>().sprite = RobotSprites[robot2];
         transform.Find("ImgPlayerRobot3").GetComponent<Image>().sprite = RobotSprites[robot3];
     }
-
-    //public void DisplayHintAt(int x1, int y1)
-    //{
-    //    if (gamePlayManager.GetEnemyDead() || !gameObject.activeSelf)
-    //    {
-    //        return;
-    //    }
-
-    //    StartCoroutine(DisplayHintAtNow(x1, y1));
-    //}
 
     IEnumerator DisplayHintAtNow(int x1, int y1)
     {
