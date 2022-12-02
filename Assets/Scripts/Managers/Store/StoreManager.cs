@@ -55,8 +55,20 @@ public class StoreManager : MonoSingleton<StoreManager>
         },
     };
 
+    private List<SpecialOffer> specialOffers = new()
+    {
+        new SpecialOffer() {Name = "Special offer 1"},
+        new SpecialOffer() {Name = "Special offer 2"},
+        new SpecialOffer() {Name = "Special offer 3"}
+    };
+
     public StoreTab GetStoreTabContent(StoreTabs tab)
     {
         return storeTabItemsMap[tab];
+    }
+
+    public List<SpecialOffer> GetSpecialOffers()
+    {
+        return specialOffers;
     }
 }

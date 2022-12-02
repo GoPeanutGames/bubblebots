@@ -20,4 +20,9 @@ namespace BubbleBots.Store
         public StoreTabContentLayout Layout;
         public List<StoreItem> Items;
     }
+
+    public class SpecialOffer
+    {
+        public string Name;
+    }
 }
