@@ -19,6 +19,7 @@ public class HomeScreenController : MonoBehaviour
     {
         HomeScreen.SetActive(false);
         ModeSelectScreen.SetActive(false);
+        StoreScreen.SetActive(false);
     }
 
     public void OpenModeSelectScreen()
