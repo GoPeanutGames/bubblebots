@@ -134,11 +134,7 @@ public class GUIGame : MonoBehaviour
 
     public void KillEnemy()
     {
-        //LeaderboardManager.Instance.IncrementKilledRobots();
-        //TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
-        //AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
-        //serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
-
+        TxtKilledRobots.text = UserManager.RobotsKilled.ToString();
         EnemyGauges[currentEnemy].value = 0;
         EnemyRobots[currentEnemy].Die();
     }
@@ -415,12 +411,12 @@ public class GUIGame : MonoBehaviour
         return newExplosion;
     }
 
-    public void ScrollTileDown(int x, int y, int howMany)
+    public void ScrollTileDown(int x, int y, int howMany, float duration)
     {
-        StartCoroutine(ScrollTileDownNow(x, y, howMany));
+        StartCoroutine(ScrollTileDownNow(x, y, howMany, duration));
     }
 
-    IEnumerator ScrollTileDownNow(int x, int y, int howMany)
+    IEnumerator ScrollTileDownNow(int x, int y, int howMany, float duration)
     {
         Transform tile = transform.Find("Tile_" + x + "_" + y);
 
@@ -431,36 +427,23 @@ public class GUIGame : MonoBehaviour
         }
 
         Vector2 tilePos = tile.GetComponent<RectTransform>().anchoredPosition;
-        tile.GetComponent<RectTransform>().DOAnchorPos(tilePos + Vector2.down * TileWidth * howMany + Vector2.down * howMany * Spacing, SwapDuration);
+        tile.GetComponent<RectTransform>().DOAnchorPos(tilePos + Vector2.down * TileWidth * howMany + Vector2.down * howMany * Spacing, duration);
 
-        yield return new WaitForSeconds(SwapDuration / 2);
+        yield return new WaitForSeconds(duration);
 
         tile.gameObject.name = "Tile_" + x + "_" + (y - howMany);
         tile.GetComponent<GUITile>().X = x;
         tile.GetComponent<GUITile>().Y = y - howMany;
     }
 
-    // very similar to the AppearAt but replaces the existing one instead
-    internal void ReappearAt(int x, int y, string key, int levelWidth, int levelHeight)
+
+    internal void AppearAt(int x, int y, string key, int levelWidth, int levelHeight, float duration)
     {
-        Transform trans = transform.Find("Tile_" + x + "_" + y);
-        if(trans != null)
-        {
-            Destroy(trans.gameObject);
-        }
-        
-        AppearAt(x, y, key, levelWidth, levelHeight);
+        StartCoroutine(AppearDelayed(x, y, key, levelWidth, levelHeight, duration));
     }
 
-    internal void AppearAt(int x, int y, string key, int levelWidth, int levelHeight)
+    IEnumerator AppearDelayed(int x, int y, string key, int levelWidth, int levelHeight, float duration)
     {
-        StartCoroutine(AppearDelayed(x, y, key, levelWidth, levelHeight));
-    }
-
-    IEnumerator AppearDelayed(int x, int y, string key, int levelWidth, int levelHeight)
-    {
-        yield return new WaitForSeconds(SwapDuration);
-
         Transform trans = transform.Find("Tile_" + x + "_" + y + "_deleted");
         GameObject tile;
 
@@ -487,7 +470,7 @@ public class GUIGame : MonoBehaviour
         rect.sizeDelta = new Vector2(TileWidth, TileWidth);
         rect.localScale = new Vector3(1, 1, 1);
         rect.localScale = Vector3.zero;
-        rect.DOScale(Vector3.one, SwapDuration);
+        rect.DOScale(Vector3.one, duration);
 
         Image tileImage = tile.GetComponent<Image>();
         if(tileImage == null)
@@ -497,7 +480,7 @@ public class GUIGame : MonoBehaviour
 
         tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
         tileImage.DOFade(0, 0);
-        tileImage.DOFade(1, SwapDuration);
+        tileImage.DOFade(1, duration);
 
         GUITile guiTile = tile.GetComponent<GUITile>();
         if (guiTile == null)
@@ -508,6 +491,8 @@ public class GUIGame : MonoBehaviour
         guiTile.X = x;
         guiTile.Y = y;
         guiTile.Key = key;
+
+        yield return new WaitForSeconds(duration);
     }
 
     public void LineDestroyEffect(int x, int y, bool vertical)

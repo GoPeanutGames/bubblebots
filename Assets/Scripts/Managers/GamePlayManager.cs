@@ -215,10 +215,10 @@ public class GamePlayManager : MonoBehaviour
 
     private bool KillEnemy()
     {
-        //LeaderboardManager.Instance.IncrementKilledRobots();
-        //TxtKilledRobots.text = LeaderboardManager.Instance.RobotsKilled.ToString();
-        //AnalyticsManager.Instance.SendRobotKillEvent(LeaderboardManager.Instance.RobotsKilled);
-        //serverGameplayController.UpdateGameplaySession((int)gamePlayManager.GetScore());
+        UserManager.RobotsKilled++;
+        AnalyticsManager.Instance.SendRobotKillEvent(UserManager.RobotsKilled);
+        serverGameplayController.UpdateGameplaySession((int)score);
+
         GameGUI.KillEnemy();
         bool allEnemiesKilled = true;
 
@@ -314,7 +314,7 @@ public class GamePlayManager : MonoBehaviour
     public long IncrementScore(int toAdd)
     {
         score += toAdd * 10; // hardcoded score multiplier
-        serverGameplayController.UpdateGameplaySession((int)this.score);
+        serverGameplayController.UpdateGameplaySession((int)score);
         GameGUI.UpdateScore((int)score);
         return score;
     }
@@ -546,11 +546,11 @@ public class GamePlayManager : MonoBehaviour
         {
             if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
             {
-                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString(), boardController.GetBoardModel().width, boardController.GetBoardModel().height);
+                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration);
             }
             else
             {
-                GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y);
+                GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y, GameGUI.SwapDuration);
             }
         }
         yield return new WaitForSeconds(GameGUI.SwapDuration);
@@ -574,14 +574,14 @@ public class GamePlayManager : MonoBehaviour
             {
                 SoundManager.Instance.PlayLightningSfx();
                 GameGUI.LineDestroyEffect(lineBlastExplodeEvent.lineBlastStartPosition.x, lineBlastExplodeEvent.lineBlastStartPosition.y, false);
-                yield return new WaitForSeconds(0.4f);
+                yield return new WaitForSeconds(0.2f);
             }
             ColumnBlastEvent columnBlasEvent = swapResult.explodeEvents[i] as ColumnBlastEvent;
             if (columnBlasEvent != null)
             {
                 SoundManager.Instance.PlayLightningSfx();
                 GameGUI.LineDestroyEffect(columnBlasEvent.columnBlastStartPosition.x, columnBlasEvent.columnBlastStartPosition.y, true);
-                yield return new WaitForSeconds(0.4f);
+                yield return new WaitForSeconds(0.2f);
             }
             ColorBlastEvent colorBlastEvent = swapResult.explodeEvents[i] as ColorBlastEvent;
             if (colorBlastEvent != null)
@@ -628,7 +628,7 @@ public class GamePlayManager : MonoBehaviour
             IncrementScore(swapResult.explodeEvents[i].toExplode.Count);
 
         }
-        yield return new WaitForSeconds(GameGUI.SwapDuration);
+        yield return new WaitForSeconds(GameGUI.SwapDuration / 2);
         bool createdGems = false;
         for (int i = 0; swapResult.explodeEvents != null && i < swapResult.explodeEvents.Count; ++i)
         {
@@ -648,13 +648,13 @@ public class GamePlayManager : MonoBehaviour
                     swapResult.explodeEvents[i].toCreate[j].At.y,
                     skinManager.Skins[skinManager.SelectedSkin].TileSet[swapResult.explodeEvents[i].toCreate[j].Id].Key,
                     boardController.GetBoardModel().width,
-                    boardController.GetBoardModel().height);
+                    boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
                 createdGems = true;
             }
         }
         if (createdGems)
         {
-            yield return new WaitForSeconds(GameGUI.SwapDuration);
+            yield return new WaitForSeconds(GameGUI.SwapDuration / 2);
         }
         for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
         {

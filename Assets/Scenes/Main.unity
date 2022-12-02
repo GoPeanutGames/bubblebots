@@ -7154,7 +7154,7 @@ MonoBehaviour:
   - {fileID: 1344354373}
   Spacing: 0
   TileWidth: 74
-  SwapDuration: 0.25
+  SwapDuration: 0.3
   ExplosionEffect: {fileID: 930319515}
   LineExplosionEffect: {fileID: 1685318017}
   ColorExplosionEffect: {fileID: 563918832}
