@@ -148,7 +148,7 @@ public class GamePlayManager : MonoBehaviour
 
     private void OnWaveFinished()
     {
-        SoundManager.Instance.FadeOutMusic();
+        //SoundManager.Instance.FadeOutMusic();
         currentWaveIndex++;
         currentWave.completed = true;
 
@@ -279,6 +279,7 @@ public class GamePlayManager : MonoBehaviour
     {
         releaseTileX = -1;
         releaseTileY = -1;
+        GameGUI.CanSwapTiles = true;
         inputLocked = false;
     }
 
@@ -410,6 +411,7 @@ public class GamePlayManager : MonoBehaviour
             {
                 HitPlayer();
                 gameplayState = GameplayState.WaitForInput;
+                ZeroReleasedTiles();
             }
         }
     }
@@ -551,7 +553,7 @@ public class GamePlayManager : MonoBehaviour
                 GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y);
             }
         }
-        yield return new WaitForSeconds(2 * GameGUI.SwapDuration);
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
         gameplayState = GameplayState.CheckForMatches;
         GameGUI.CanSwapTiles = true;
     }

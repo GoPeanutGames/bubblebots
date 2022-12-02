@@ -12,6 +12,7 @@ using UnityEditor;
 
 using BubbleBots.Match3.Models;
 using BubbleBots.Gameplay.Models;
+using UnityEngine.SceneManagement;
 
 public class GUIGame : MonoBehaviour
 {
@@ -432,7 +433,7 @@ public class GUIGame : MonoBehaviour
         Vector2 tilePos = tile.GetComponent<RectTransform>().anchoredPosition;
         tile.GetComponent<RectTransform>().DOAnchorPos(tilePos + Vector2.down * TileWidth * howMany + Vector2.down * howMany * Spacing, SwapDuration);
 
-        yield return new WaitForSeconds(SwapDuration);
+        yield return new WaitForSeconds(SwapDuration / 2);
 
         tile.gameObject.name = "Tile_" + x + "_" + (y - howMany);
         tile.GetComponent<GUITile>().X = x;
@@ -726,16 +727,17 @@ public class GUIGame : MonoBehaviour
 
         Menu.gameObject.SetActive(true);
         Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
-        //if (LeaderboardManager.Instance.GuestMode)
-        //{
-        //    Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
-        //}
-        //else
-        //{
-        //    Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
-        //    Menu.DisplayHighScores();
-        //    Menu.ReverseHighScoreButtons();
-        //}
+        if (UserManager.PlayerType == PlayerType.Guest)
+        {
+            //Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+            SceneManager.LoadScene("Login");
+        }
+        else
+        {
+            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
+            Menu.DisplayHighScores();
+            Menu.ReverseHighScoreButtons();
+        }
 
         gameObject.SetActive(false);
     }

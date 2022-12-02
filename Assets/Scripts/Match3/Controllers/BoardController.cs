@@ -158,6 +158,9 @@ namespace BubbleBots.Match3.Controllers
             for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
             {
                 boardModel.RemoveGems(swapResult.explodeEvents[i].toExplode);
+            }
+            for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
+            {
                 boardModel.CreateGems(swapResult.explodeEvents[i].toCreate);
                 ColorChangeEvent colorChangeEvent = swapResult.explodeEvents[i] as ColorChangeEvent;
                 if (colorChangeEvent != null)
@@ -220,6 +223,9 @@ namespace BubbleBots.Match3.Controllers
             for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
             {
                 boardModel.RemoveGems(swapResult.explodeEvents[i].toExplode);
+            }
+            for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
+            {
                 boardModel.CreateGems(swapResult.explodeEvents[i].toCreate);
             }
 
@@ -421,6 +427,27 @@ namespace BubbleBots.Match3.Controllers
             int numSpecials = (boardModel[startX][startY].gem.IsSpecial() ? 1 : 0) + (boardModel[releaseX][releaseY].gem.IsSpecial() ? 1 : 0);
             if (numSpecials == 1)
             {
+
+                int normalPositionX = boardModel[startX][startY].gem.IsSpecial() ? releaseX : startX;
+                int normalPositionY = boardModel[startX][startY].gem.IsSpecial() ? releaseY : startY;
+               
+                MatchTestResult matchTestResult = boardModel.TestForMatchOnPosition(normalPositionX, normalPositionY, matchPrecedence.matches, null);
+
+                if (matchTestResult != null)
+                {
+                    for (int i = 0; i < matchTestResult.match.Count; ++i)
+                    {
+                        ToExplode explosion = new ToExplode();
+                        explosion.position = matchTestResult.match[i];
+                        explosion.explosionSource = ToExplode.ExplosionSource.Swap;
+                        toExplode.Add(explosion);
+                    }
+                    ExplodeEvent explodeEvent = new ExplodeEvent();
+                    explodeEvent.toExplode = new List<Vector2Int>(matchTestResult.match);
+                    explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
+                    swapResult.explodeEvents.Add(explodeEvent);
+                }
+
                 int specialId = boardModel[startX][startY].gem.IsSpecial() ? boardModel[startX][startY].gem.GetId() : boardModel[releaseX][releaseY].gem.GetId();
 
                 switch (specialId)
@@ -794,50 +821,6 @@ namespace BubbleBots.Match3.Controllers
         }
 
 
-        public SwapResult ExplodeMatches(bool updateBoard = false)
-        {
-            SwapResult swapResult = new SwapResult();
-            swapResult.toExplode = new List<Vector2Int>();
-            swapResult.toCreate = new List<GemCreate>();
-
-            for (int i = 0; i < boardModel.width; i++)
-                for (int j = 0; j < boardModel.height; ++j)
-                {
-                    if (swapResult.toExplode.Contains(new Vector2Int(i, j)))
-                        continue;
-
-                    MatchTestResult matchTestResult = boardModel.TestForMatchOnPosition(i, j, matchPrecedence.matches, swapResult.toExplode);
-                    if (matchTestResult != null)
-                    {
-                        swapResult.toExplode.AddRange(matchTestResult.match);
-
-                        ExplodeEvent explodeEvent = new ExplodeEvent();
-                        explodeEvent.toExplode = new List<Vector2Int>();
-                        explodeEvent.toExplode.AddRange(matchTestResult.match);
-
-                        if (matchTestResult.outcome != null)
-                        {
-                            swapResult.toCreate.Add(matchTestResult.outcome);
-                            explodeEvent.toCreate = new List<GemCreate>();
-                            explodeEvent.toCreate.Add(matchTestResult.outcome);
-                        }
-                        if (swapResult.explodeEvents == null)
-                        {
-                            swapResult.explodeEvents = new List<ExplodeEvent>();
-                        }
-
-                        swapResult.explodeEvents.Add(explodeEvent);
-                    }
-                }
-
-            if (updateBoard)
-            {
-                boardModel.RemoveGems(swapResult.toExplode);
-                boardModel.CreateGems(swapResult.toCreate);
-            }
-
-            return swapResult;
-        }
 
         public List<GemMove> RefillBoard()
         {
