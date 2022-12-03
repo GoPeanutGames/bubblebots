@@ -80,9 +80,9 @@ public class GamePlayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 40 },
-                new BubbleBot() { hp = 40 },
-                new BubbleBot() { hp = 40 }
+                new BubbleBot() { hp = 50 },
+                new BubbleBot() { hp = 50 },
+                new BubbleBot() { hp = 50 }
             },
             completed = false
         };
@@ -159,8 +159,7 @@ public class GamePlayManager : MonoBehaviour
     }
     private void OnLevelFinished()
     {
-        serverGameplayController.EndGameplaySession((int)score);
-        AnalyticsManager.Instance.SendLevelEvent();
+
         levelComplete = true;
     }
 
@@ -324,16 +323,16 @@ public class GamePlayManager : MonoBehaviour
     {
         currentWave.bots = new List<BubbleBot>()
         {
-            new BubbleBot() { hp = 40 },
-            new BubbleBot() { hp = 40 },
-            new BubbleBot() { hp = 40 }
+            new BubbleBot() { hp = 50 },
+            new BubbleBot() { hp = 50 },
+            new BubbleBot() { hp = 50 }
         };
         currentWave.completed = false;
         gameplayState = GameplayState.WaveComplete;
         GameGUI.StartNextWave();
     }
 
-    private void StartNextLevel()
+    private void PrepareNextLevel()
     {
         currentLevelIndex++;
         currentWave.completed = false;
@@ -357,17 +356,15 @@ public class GamePlayManager : MonoBehaviour
 
     private void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.R))
-        //{
-        //    boardController.GetBoardModel().Shuffle();
-        //    StartTrackedCoroutine(ShuffleBoard());
-        //}
 
         if (gameplayState == GameplayState.WaitForInput)
         {
             if (levelComplete)
             {
-                StartNextLevel();
+                serverGameplayController.EndGameplaySession((int)score);
+                UserManager.Instance.SetPlayerScore((int)score);
+                AnalyticsManager.Instance.SendLevelEvent();
+                PrepareNextLevel();
                 return;
             }
 
