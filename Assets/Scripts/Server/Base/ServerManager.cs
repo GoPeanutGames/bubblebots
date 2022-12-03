@@ -31,12 +31,17 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     private string Encrypt(string jsonForm)
     {
-        string password = EnvironmentManager.Instance.GetEncryptPass();
         EncryptedData jsonEncryptedForm = new()
         {
-            data = SimpleAESEncryption.Encrypt2(jsonForm, password)
+            data = RSAUtility.Encrypt(jsonForm)
         };
         return JsonUtility.ToJson(jsonEncryptedForm);
+    }
+
+    private string Decrypt(string formEncryptedData)
+    {
+        EncryptedData jsonEncryptedData = JsonUtility.FromJson<EncryptedData>(formEncryptedData);
+        return RSAUtility.Decrypt(jsonEncryptedData.data);
     }
 
     private UnityWebRequest SetupPostWebRequest(string api, string formData)
@@ -71,13 +76,14 @@ public class ServerManager : MonoSingleton<ServerManager>
         operation.completed += (result) =>
         {
             string data = webRequest.downloadHandler.text;
+            string decryptedData = Decrypt(data);
             if (webRequest.result == UnityWebRequest.Result.Success)
             {
-                onComplete?.Invoke(data);
+                onComplete?.Invoke(decryptedData);
             }
             else
             {
-                onFail?.Invoke(data);
+                onFail?.Invoke(decryptedData);
             }
             webRequest.Dispose();
         };

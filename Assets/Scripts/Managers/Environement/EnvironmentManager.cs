@@ -45,9 +45,4 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     {
         return Community == false;
     }
-
-    public string GetEncryptPass()
-    {
-        return currentEnvironment.encryptPass;
-    }
 }
