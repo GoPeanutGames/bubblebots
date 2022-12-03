@@ -682,6 +682,8 @@ public class GUIGame : MonoBehaviour
         yield return new WaitForSeconds(0.3f);
 
         CanSwapTiles = true;
+        currentEnemy = 0;
+        TargetEnemy(currentEnemy);
     }
 
     public void SetRobots(int robot1, int robot2, int robot3)

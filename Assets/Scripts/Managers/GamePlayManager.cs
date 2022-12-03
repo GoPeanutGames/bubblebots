@@ -361,8 +361,8 @@ public class GamePlayManager : MonoBehaviour
         {
             if (levelComplete)
             {
-                serverGameplayController.EndGameplaySession((int)score);
                 UserManager.Instance.SetPlayerScore((int)score);
+                serverGameplayController.EndGameplaySession((int)score);
                 AnalyticsManager.Instance.SendLevelEvent();
                 PrepareNextLevel();
                 return;
