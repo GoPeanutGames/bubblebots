@@ -72,6 +72,10 @@ namespace BubbleBots.Match3.Controllers
             return boardModel.CanSwap(startX, startY, releaseX, releaseY, matchPrecedence.matches);
         }
 
+        public bool HasPossibleMove()
+        {
+            return boardModel.HasPossibleMove(matchPrecedence.matches);
+        }
 
         public NewSwapResult NewSwapGems(int startX, int startY, int releaseX, int releaseY)
         {
@@ -236,7 +240,7 @@ namespace BubbleBots.Match3.Controllers
         {
             HashSet<ToExplode> toExplode = new HashSet<ToExplode>();
             int specialId = boardModel[explosion.position.x][explosion.position.y].gem.GetId();
-
+            boardModel.DisableSpecialBug();
             switch (specialId)
             {
                 case 11: //bomb
@@ -401,6 +405,11 @@ namespace BubbleBots.Match3.Controllers
                 explodeEvent.toExplode = new List<Vector2Int>(matchTestResult.match);
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
+
+                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialRow())
+                {
+                    boardModel.EnableSpecialBug();
+                }
             }
 
             matchTestResult = boardModel.TestForMatchOnPosition(releaseX, releaseY, matchPrecedence.matches, null);
@@ -417,6 +426,11 @@ namespace BubbleBots.Match3.Controllers
                 explodeEvent.toExplode = new List<Vector2Int>(matchTestResult.match);
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
+
+                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialRow())
+                {
+                    boardModel.EnableSpecialBug();
+                }
             }
             return toExplode;
         }
@@ -427,6 +441,7 @@ namespace BubbleBots.Match3.Controllers
             int numSpecials = (boardModel[startX][startY].gem.IsSpecial() ? 1 : 0) + (boardModel[releaseX][releaseY].gem.IsSpecial() ? 1 : 0);
             if (numSpecials == 1)
             {
+                boardModel.DisableSpecialBug();
 
                 int normalPositionX = boardModel[startX][startY].gem.IsSpecial() ? releaseX : startX;
                 int normalPositionY = boardModel[startX][startY].gem.IsSpecial() ? releaseY : startY;
@@ -587,8 +602,9 @@ namespace BubbleBots.Match3.Controllers
                 boardModel[releaseX][releaseY].gem.IsSpecial() &&
                 boardModel[startX][startY].gem.GetId() == boardModel[releaseX][releaseY].gem.GetId())
             {
+                boardModel.DisableSpecialBug();
                 int specialId = boardModel[startX][startY].gem.GetId();
-
+                
                 switch (specialId)
                 {
                     case 9: // lightning-lightning
@@ -733,6 +749,7 @@ namespace BubbleBots.Match3.Controllers
             else if (boardModel[startX][startY].gem.IsSpecial() &&
                 boardModel[releaseX][releaseY].gem.IsSpecial())
             {
+                boardModel.DisableSpecialBug();
                 int specialId1 = boardModel[startX][startY].gem.GetId();
                 int specialId2 = boardModel[releaseX][releaseY].gem.GetId();
 

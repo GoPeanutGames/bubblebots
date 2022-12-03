@@ -11,6 +11,14 @@ namespace BubbleBots.Match3.Models
 
         public List<List<BoardCell>> cells;
 
+        private Vector2Int hintPosition;
+        
+        
+        //special bug
+        private Vector2Int lastCreatedSpecialPosittion;
+        private int lastCreatedSpecialType;
+        private bool canCreateSpecial = false;
+
         public BoardModel(int _width, int _height)
         {
             width = _width;
@@ -24,6 +32,7 @@ namespace BubbleBots.Match3.Models
                     cells[i].Add(new BoardCell());
                 }
             }
+            hintPosition = -Vector2Int.one;
         }
 
         public List<BoardCell> this[int i]
@@ -47,6 +56,22 @@ namespace BubbleBots.Match3.Models
         {
             return 0 <= posX && posX < width &&
                     0 <= posY && posY < height;
+        }
+
+        public void EnableSpecialBug()
+        {
+            canCreateSpecial = true;
+        }
+
+        public void DisableSpecialBug()
+        {
+            lastCreatedSpecialPosittion = -Vector2Int.one;
+            canCreateSpecial = false;
+        }
+
+        public int GetLastCreatedSpecialRow()
+        {
+            return lastCreatedSpecialPosittion.y;
         }
 
         public MatchTestResult TestForMatchOnPosition(int posX, int posY, List<MatchShape> matchPrecedenceList, List<Vector2Int> exclusionList = null)
@@ -83,7 +108,8 @@ namespace BubbleBots.Match3.Models
                     }
 
                     if (exclusionList != null &&
-                        exclusionList.Contains(new Vector2Int(posX + offsetX, posY + offsetY))) {
+                        exclusionList.Contains(new Vector2Int(posX + offsetX, posY + offsetY)))
+                    {
                         foundMatch = false;
                         break;
                     }
@@ -164,11 +190,15 @@ namespace BubbleBots.Match3.Models
                     continue;
                 }
                 cells[toCreate[i].At.x][toCreate[i].At.y].SetGem(new BoardGem(toCreate[i].Id, GemType.Special));
+                lastCreatedSpecialPosittion = new Vector2Int(toCreate[i].At.x, toCreate[i].At.y);
+                lastCreatedSpecialType = toCreate[i].Id;
+                Debug.Log("last created special: " + lastCreatedSpecialPosittion.ToString());
             }
         }
 
         public List<GemMove> RefillBoard(List<int> gemSet)
         {
+            InvalidateHint();
             List<GemMove> gemMoves = new List<GemMove>();
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < height; j++)
@@ -185,7 +215,16 @@ namespace BubbleBots.Match3.Models
                         if (top == height) // whole column is empty
                         {
                             cells[i][j].empty = false;
-                            cells[i][j].gem = new BoardGem(gemSet[Random.Range(0, gemSet.Count)]);
+                            if (i == lastCreatedSpecialPosittion.x && canCreateSpecial)
+                            {
+                                cells[i][j].gem = new BoardGem(lastCreatedSpecialType, GemType.Special);
+                                lastCreatedSpecialPosittion.y = j;
+                            }
+                            else
+                            {
+                                cells[i][j].gem = new BoardGem(gemSet[Random.Range(0, gemSet.Count)]);
+                            }
+
                             gemMoves.Add(new GemMove(new Vector2Int(i, j), new Vector2Int(i, j + height)));
                         }
                         else
@@ -197,6 +236,7 @@ namespace BubbleBots.Match3.Models
                         }
                     }
                 }
+            canCreateSpecial = false;
             return gemMoves;
         }
 
@@ -359,7 +399,6 @@ namespace BubbleBots.Match3.Models
             }
         }
 
-
         public List<Vector2Int> BoardBlast()
         {
             List<Vector2Int> toExplode = new List<Vector2Int>();
@@ -370,6 +409,102 @@ namespace BubbleBots.Match3.Models
                     cells[i][j].empty = true;
                 }
             return toExplode;
+        }
+
+        public bool HasPossibleMove(List<MatchShape> matchPrecedenceList)
+        {
+            Vector2Int hint = GetHint(matchPrecedenceList);
+            return hint != -Vector2Int.one;
+        }
+
+        public Vector2Int GetHint(List<MatchShape> matchPrecedenceList)
+        {
+            if (hintPosition != -Vector2Int.one)
+            {
+                return hintPosition;
+            }
+
+            List<Vector2Int> swapOffsets = new List<Vector2Int>()
+            {
+                new Vector2Int(0, 1),
+                new Vector2Int(1, 0),
+            };
+
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    if (cells[i][j].gem.IsSpecial()) {
+                        hintPosition = new Vector2Int(i, j);
+                        return hintPosition;
+                    }
+
+                    foreach (Vector2Int offset in swapOffsets)
+                    {
+                        
+                        if (!BoundaryTest(i + offset.x, j + offset.y))
+                        {
+                            continue;
+                        }
+
+                        SwapGems(i, j, i + offset.x, j + offset.y);
+
+                        MatchTestResult match = TestForMatchOnPosition(i, j, matchPrecedenceList, null);
+                        if (match != null)
+                        {
+                            hintPosition = new Vector2Int(i + offset.x, j + offset.y);
+                            SwapGems(i, j, i + offset.x, j + offset.y);
+                            return hintPosition;
+                        }
+                        else
+                        {
+                            match = TestForMatchOnPosition(i + offset.x, j + offset.y, matchPrecedenceList, null);
+                            if (match != null)
+                            {
+                                hintPosition = new Vector2Int(i, j);
+                                SwapGems(i, j, i + offset.x, j + offset.y);
+                                return hintPosition;
+                            }
+                        }
+
+                        SwapGems(i, j, i + offset.x, j + offset.y);
+                    }
+                }
+
+            return hintPosition;
+        }
+
+        private void InvalidateHint()
+        {
+            hintPosition = -Vector2Int.one;
+        }
+        public void Shuffle()
+        {
+            List<int> gemIds = new List<int>();
+
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    gemIds.Add(cells[i][j].gem.GetId());
+                }
+
+            //fisher-yates shuffle
+            int n = gemIds.Count;
+            System.Random rng = new System.Random();
+            while (n > 1)
+            {
+                n--;
+                int index = rng.Next(n + 1);
+                int val = gemIds[index];
+                gemIds[index] = gemIds[n];
+                gemIds[n] = val;
+            }
+
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    cells[i][j].gem.SetId(gemIds[0]);
+                    gemIds.RemoveAt(0);
+                }
         }
     }
 }

@@ -27,7 +27,8 @@ public class GamePlayManager : MonoBehaviour
         CheckForMatches,
         LevelComplete,
         LevelFailed,
-        WaveComplete
+        WaveComplete,
+        Shuffle
     }
 
     private GameplayState gameplayState = GameplayState.RobotSelection;
@@ -341,8 +342,27 @@ public class GamePlayManager : MonoBehaviour
         MenuGUI.DisplayWin();
     }
 
+    IEnumerator ShuffleBoard()
+    {
+        gameplayState = GameplayState.Shuffle;
+        for (int i = 0; i < boardController.GetBoardModel().width; ++i)
+            for (int j = 0; j < boardController.GetBoardModel().height; ++j)
+            {
+                GameGUI.ChangeColorScale(i, j, GetKeyFromId(boardController.GetBoardModel()[i][j].gem.GetId()));
+            }
+
+        yield return new WaitForSeconds(0.5f);
+        gameplayState = GameplayState.CheckForMatches;
+    }
+
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            boardController.GetBoardModel().Shuffle();
+            StartTrackedCoroutine(ShuffleBoard());
+        }
+
         if (gameplayState == GameplayState.WaitForInput)
         {
             if (levelComplete)
@@ -355,6 +375,12 @@ public class GamePlayManager : MonoBehaviour
             {
                 StartNextWave();
                 return;
+            }
+
+            if (!boardController.HasPossibleMove())
+            {
+                boardController.GetBoardModel().Shuffle();
+                StartTrackedCoroutine(ShuffleBoard());
             }
         }
         else if (gameplayState == GameplayState.SwapFailed)
@@ -557,7 +583,7 @@ public class GamePlayManager : MonoBehaviour
         {
             if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
             {
-                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
+                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, GetKeyFromId(boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId()), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
             }
             else
             {

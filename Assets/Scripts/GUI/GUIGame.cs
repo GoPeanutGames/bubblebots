@@ -610,6 +610,36 @@ public class GUIGame : MonoBehaviour
             Destroy(duplicate.gameObject, 1f);
         }
     }
+    public void ChangeColorScale(int posX, int posY, string key)
+    {
+        StartCoroutine(ScaleDownAndChangeColorAndScaleUp(posX, posY, key));
+    }
+
+    IEnumerator ScaleDownAndChangeColorAndScaleUp(int posX, int posY, string key)  
+    {
+        Transform tile = transform.Find("Tile_" + posX + "_" + posY);
+
+        if (tile == null)
+        {
+            tile = transform.Find("Tile_" + posX + "_" + posY + "_deleted");
+            if (tile == null)
+            {
+                Debug.LogWarning("Color change effect failed to find the tile Tile_" + posX + "_" + posY);
+            }
+        }
+        Image tileImage = tile.GetComponent<Image>();
+        if (tileImage == null)
+        {
+            tileImage = tile.AddComponent<Image>();
+        }
+
+        tileImage.transform.DOScale(0, 0.2f);
+        
+        yield return new WaitForSeconds(0.2f);
+        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+        tileImage.transform.DOScale(1, 0.2f);
+        yield return new WaitForSeconds(0.2f);
+    }
 
     IEnumerator ChangeColor(Image tileImage, Image dimage, string key)
     {
