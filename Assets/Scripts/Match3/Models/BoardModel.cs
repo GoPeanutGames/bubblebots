@@ -192,7 +192,7 @@ namespace BubbleBots.Match3.Models
                 cells[toCreate[i].At.x][toCreate[i].At.y].SetGem(new BoardGem(toCreate[i].Id, GemType.Special));
                 lastCreatedSpecialPosittion = new Vector2Int(toCreate[i].At.x, toCreate[i].At.y);
                 lastCreatedSpecialType = toCreate[i].Id;
-                Debug.Log("last created special: " + lastCreatedSpecialPosittion.ToString());
+                //Debug.Log("last created special: " + lastCreatedSpecialPosittion.ToString());
             }
         }
 
@@ -401,6 +401,7 @@ namespace BubbleBots.Match3.Models
 
         public List<Vector2Int> BoardBlast()
         {
+            DisableSpecialBug();
             List<Vector2Int> toExplode = new List<Vector2Int>();
             for (int i = 0; i < width; ++i)
                 for (int j = 0; j < height; ++j)

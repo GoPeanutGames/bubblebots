@@ -357,11 +357,11 @@ public class GamePlayManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            boardController.GetBoardModel().Shuffle();
-            StartTrackedCoroutine(ShuffleBoard());
-        }
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    boardController.GetBoardModel().Shuffle();
+        //    StartTrackedCoroutine(ShuffleBoard());
+        //}
 
         if (gameplayState == GameplayState.WaitForInput)
         {
