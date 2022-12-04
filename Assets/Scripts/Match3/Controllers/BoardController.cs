@@ -195,6 +195,7 @@ namespace BubbleBots.Match3.Controllers
                         if (boardModel[matchTestResult.match[0].x][matchTestResult.match[0].y].gem.IsSpecial())
                         {
                             List<Vector2Int> boardBlast = boardModel.BoardBlast();
+                            //swapResult.explodeEvents.Clear();
 
                             BoardBlastEvent boardBlastEventFunBug = new BoardBlastEvent()
                             {

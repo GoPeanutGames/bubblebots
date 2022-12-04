@@ -76,6 +76,7 @@ public class GUIMenu : MonoBehaviour
         GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
         GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
         UserManager.RobotsKilled = 0;
+        gamePlayManager?.ResetGameplay();
         SwitchToMultiplayer(1);
     }
 

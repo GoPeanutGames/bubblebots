@@ -111,6 +111,15 @@ public class GamePlayManager : MonoBehaviour
         GameGUI.RenderTiles(boardController.GetBoardModel());
     }
 
+    public void ResetGameplay()
+    {
+        currentLevelIndex = 0;
+        currentWaveIndex = 0;
+        currentEnemy = 0;
+        levelComplete = false;
+        score = 0;
+    }
+
     public void StartGamePlay()
     {
         playerRoster = new PlayerRoster()

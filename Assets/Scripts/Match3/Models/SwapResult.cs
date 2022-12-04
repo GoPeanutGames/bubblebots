@@ -10,19 +10,6 @@ namespace BubbleBots.Match3.Data
         public List<ExplodeEvent> explodeEvents;
     }
 
-
-    public class SwapResult
-    {
-        public List<ExplodeEvent> explodeEvents;
-        public ColorChangeEvent colorChangeEvent;
-
-        public List<Vector2Int> toExplode;
-        public List<GemCreate> toCreate;
-
-        public List<int> swapedGemsIds;
-    }
-
-
     public class ExplodeEvent
     {
         public List<Vector2Int> toExplode;
