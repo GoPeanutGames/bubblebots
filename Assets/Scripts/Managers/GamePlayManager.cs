@@ -118,6 +118,7 @@ public class GamePlayManager : MonoBehaviour
         currentEnemy = 0;
         levelComplete = false;
         score = 0;
+        UserManager.Instance.SetPlayerScore((int)score);
     }
 
     public void StartGamePlay()
