@@ -30,6 +30,16 @@ namespace BubbleBots.Match3.Controllers
             boardModel = new BoardModel(levelData.width, levelData.height);
         }
 
+        public void PopulateBoardWithPredefinedGems(LevelDesign levelDesign)
+        {
+            for (int i = 0; i < boardModel.height; i++)
+                for (int j = 0; j < boardModel.width; ++j)
+                {
+                    boardModel[j][i].SetGem(new BoardGem(levelDesign.rows[i][j], GemType.Normal));
+                }
+        }
+
+
         public void PopulateBoardWithSeed(int seed)
         {
             //should use a custom random class
@@ -195,14 +205,13 @@ namespace BubbleBots.Match3.Controllers
                         if (boardModel[matchTestResult.match[0].x][matchTestResult.match[0].y].gem.IsSpecial())
                         {
                             List<Vector2Int> boardBlast = boardModel.BoardBlast();
-                            //swapResult.explodeEvents.Clear();
-
                             BoardBlastEvent boardBlastEventFunBug = new BoardBlastEvent()
                             {
                                 blastPosition = new Vector2Int(i, j),
                                 toCreate = null,
                                 toExplode = boardBlast
                             };
+                            swapResult.explodeEvents.Clear();
                             swapResult.explodeEvents.Add(boardBlastEventFunBug);
                             return swapResult;
                         }
@@ -740,6 +749,7 @@ namespace BubbleBots.Match3.Controllers
                             toCreate = null,
                             toExplode = boardBlast
                         };
+                        swapResult.explodeEvents.Clear();
                         swapResult.explodeEvents.Add(boardBlastEvent);
                         //blast board
                         break;
@@ -758,13 +768,14 @@ namespace BubbleBots.Match3.Controllers
                     specialId1 == 10 || specialId2 == 10) // color switch and color bomb with anything = board blast
                 {
                     List<Vector2Int> boardBlastColorSwitch = boardModel.BoardBlast();
-
+                    
                     BoardBlastEvent boardBlastEventColorSwitch = new BoardBlastEvent()
                     {
                         blastPosition = new Vector2Int(startX, startY),
                         toCreate = null,
                         toExplode = boardBlastColorSwitch
                     };
+                    swapResult.explodeEvents.Clear();
                     swapResult.explodeEvents.Add(boardBlastEventColorSwitch);
                     return toExplode;
                 }

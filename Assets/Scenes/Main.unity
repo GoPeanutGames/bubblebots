@@ -1614,6 +1614,7 @@ MonoBehaviour:
   skinManager: {fileID: 902079786}
   DamageOfRobot2: 1
   HintDuration: 7
+  testLevel: {fileID: 11400000, guid: e5b88ddb960659040873c56203a22da5, type: 2}
 --- !u!1 &125338890
 GameObject:
   m_ObjectHideFlags: 0

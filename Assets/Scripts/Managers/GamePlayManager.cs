@@ -62,9 +62,11 @@ public class GamePlayManager : MonoBehaviour
     private int currentWaveIndex;
     private bool levelComplete;
 
+    public LevelDesign testLevel;
+
     public bool InputLocked()
     {
-        return runningCoroutinesByStringName.Count > 0 || runningCoroutinesByEnumerator.Count > 0;
+        return runningCoroutinesByStringName.Count > 0 || runningCoroutinesByEnumerator.Count > 0 || gameplayState != GameplayState.WaitForInput;
     }
     public void PrepareLevel(int levelNumber)
     {
@@ -93,6 +95,7 @@ public class GamePlayManager : MonoBehaviour
         boardController = new BoardController();
         boardController.Initialize(levelData, matchPrecedence);
         boardController.PopulateBoardWithSeed(UnityEngine.Random.Range(0, 1337));
+        //boardController.PopulateBoardWithPredefinedGems(testLevel);
 
         RenderStartLevel();
 
