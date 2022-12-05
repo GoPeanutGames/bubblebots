@@ -119,6 +119,7 @@ public class GamePlayManager : MonoBehaviour
         levelComplete = false;
         score = 0;
         UserManager.Instance.SetPlayerScore((int)score);
+        GameGUI.UpdateScore((int)score);
     }
 
     public void StartGamePlay()
