@@ -103,7 +103,6 @@ public class GamePlayManager : MonoBehaviour
         GameGUI.SetPlayerRobots(playerRoster);
     }
 
-
     private void RenderStartLevel()
     {
         GameGUI.RenderLevelBackground(boardController.GetBoardModel().width, boardController.GetBoardModel().height);
@@ -134,7 +133,6 @@ public class GamePlayManager : MonoBehaviour
             },
             currentBot = 0
         };
-
 
         StartLevel(gameplayData.levels[currentLevelIndex]);
         AnalyticsManager.Instance.SendPlayEvent(currentLevelIndex);
@@ -367,7 +365,6 @@ public class GamePlayManager : MonoBehaviour
 
     private void Update()
     {
-
         if (gameplayState == GameplayState.WaitForInput)
         {
             if (levelComplete)
@@ -639,17 +636,17 @@ public class GamePlayManager : MonoBehaviour
                 SoundManager.Instance.PlayColorSfx();
                 yield return new WaitForSeconds(1.1f);
             }
-            BoardBlastEvent boardBlastEvent = swapResult.explodeEvents[i] as BoardBlastEvent;
-            if (boardBlastEvent != null)
-            {
-                for (int j = 0; j < 6; ++j)
-                {
-                    GameGUI.ColorBlastEffect(UnityEngine.Random.Range(0, boardController.GetBoardModel().width), UnityEngine.Random.Range(0, boardController.GetBoardModel().height));
-                    SoundManager.Instance.PlayColorSfx();
-                    yield return new WaitForSeconds(0.1f);
-                }
-                //yield return new WaitForSeconds(0.4f);
-            }
+            //BoardBlastEvent boardBlastEvent = swapResult.explodeEvents[i] as BoardBlastEvent;
+            //if (boardBlastEvent != null)
+            //{
+            //    for (int j = 0; j < 6; ++j)
+            //    {
+            //        GameGUI.ColorBlastEffect(UnityEngine.Random.Range(0, boardController.GetBoardModel().width), UnityEngine.Random.Range(0, boardController.GetBoardModel().height));
+            //        SoundManager.Instance.PlayColorSfx();
+            //        yield return new WaitForSeconds(0.1f);
+            //    }
+            //    //yield return new WaitForSeconds(0.4f);
+            //}
 
             HammerBlastEvent hammerBlastEvent = swapResult.explodeEvents[i] as HammerBlastEvent;
             if (hammerBlastEvent != null)
