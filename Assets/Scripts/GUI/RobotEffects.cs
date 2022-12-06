@@ -8,6 +8,9 @@ public class RobotEffects : MonoBehaviour
     public GameObject Crossair;
     public GameObject HitEffect;
 
+
+    private bool damageAnimationIsRunning = false;
+
     Image robotImage;
     
     void Start()
@@ -20,15 +23,20 @@ public class RobotEffects : MonoBehaviour
         Crossair.transform.localScale = Vector3.one;
         robotImage.DOFade(1f, 0f);
         robotImage.transform.DOScale(1f, 0f);
+        damageAnimationIsRunning = false;
     }
 
     public virtual void Damage()
     {
-        StartCoroutine(DamageEffect());
+        if (!damageAnimationIsRunning)
+        {
+            StartCoroutine(DamageEffect());
+        }
     }
 
     IEnumerator DamageEffect()
     {
+        damageAnimationIsRunning = true;
         GameObject hitObject = Instantiate(HitEffect, HitEffect.transform.position, HitEffect.transform.rotation, transform.parent);
         hitObject.SetActive(true);
         Destroy(hitObject, 2);
@@ -36,6 +44,7 @@ public class RobotEffects : MonoBehaviour
         robotImage.CrossFadeColor(Color.red, 0.35f, false, false);
         yield return new WaitForSeconds(0.35f);
         robotImage.CrossFadeColor(Color.white, 0.35f, false, false);
+        damageAnimationIsRunning = false;
     }
 
     public void FadeOut()

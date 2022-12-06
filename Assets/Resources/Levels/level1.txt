@@ -1,5 +1,0 @@
-[BubbleBotsLevel]
-version=1
-dimensions=8,6
-available_tiles=0,1,2,3
-waves=1

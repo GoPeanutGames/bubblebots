@@ -76,13 +76,14 @@ public class GUIMenu : MonoBehaviour
         GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
         GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
         UserManager.RobotsKilled = 0;
-        SwitchToMultiplayer("level1", 1);
+        gamePlayManager?.ResetGameplay();
+        SwitchToMultiplayer(1);
     }
 
-    public void SwitchToMultiplayer(string levelFile, int levelNumber)
+    public void SwitchToMultiplayer(int levelNumber)
     {
         StartCoroutine(TurnOffGUI());
-        StartCoroutine(TurnOnPlay(levelFile, levelNumber));
+        StartCoroutine(TurnOnPlay());
     }
 
     IEnumerator TurnOffGUI()
@@ -92,7 +93,7 @@ public class GUIMenu : MonoBehaviour
         PnlPlayerInfo.SetActive(false);
     }
 
-    IEnumerator TurnOnPlay(string levelFile, int levelNumber)
+    IEnumerator TurnOnPlay()
     {
         Transform child;
         for (int i = 1; i < GameImage.transform.childCount; i++)
@@ -116,7 +117,7 @@ public class GUIMenu : MonoBehaviour
         GameImage.GetComponent<CanvasGroup>().alpha = 0;
         GameImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
 
-        gamePlayManager?.StartLevel(levelFile, levelNumber);
+        gamePlayManager?.StartGamePlay();
 
         yield return new WaitForSeconds(1);
 
@@ -125,7 +126,7 @@ public class GUIMenu : MonoBehaviour
         txtStatus.SetAsLastSibling();
         txtStatus.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
         txtStatus.GetComponent<TextMeshProUGUI>().DOFade(1, 0.5f);
-        txtStatus.GetComponent<TextMeshProUGUI>().text = "LEVEL " + levelNumber;
+        txtStatus.GetComponent<TextMeshProUGUI>().text = "LEVEL " + (gamePlayManager.GetCurrentLevel() + 1);
 
         yield return new WaitForSeconds(2);
 
@@ -187,7 +188,8 @@ public class GUIMenu : MonoBehaviour
         WinDialogImage.gameObject.SetActive(false);
         MenuImage.gameObject.SetActive(true);
 
-        StartCoroutine(TurnOnPlay("level" + gamePlayManager.GetNumLevel(), gamePlayManager.GetNumLevel()));
+        StartCoroutine(TurnOnPlay());
+        SoundManager.Instance.FadeInMusic();
     }
 
     public void DisplayNoMoreMoves()
