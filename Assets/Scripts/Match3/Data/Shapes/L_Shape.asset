@@ -113,4 +113,4 @@ MonoBehaviour:
     - {x: -2, y: 0}
     - {x: -2, y: 1}
     - {x: -2, y: 2}
-  matchOutcome: 11
+  matchOutcome: {fileID: 11400000, guid: 9c9de2f263b6f80498c40e997d11cd25, type: 2}

@@ -17,6 +17,7 @@ public class GamePlayManager : MonoBehaviour
         RobotSelection,
         WaitForInput,
         SwapFailed,
+        SwapFailedNotAllowed,
         SwapFailedPlaying,
         Swap,
         SwapPlaying,
@@ -33,8 +34,8 @@ public class GamePlayManager : MonoBehaviour
 
     private GameplayState gameplayState = GameplayState.RobotSelection;
 
-    public Vector2Int swapStart;
-    public Vector2Int swapEnd;
+    private Vector2Int swapStart;
+    private Vector2Int swapEnd;
 
     public GameplayData gameplayData;
     public BoardController boardController;
@@ -45,9 +46,7 @@ public class GamePlayManager : MonoBehaviour
     public ServerGameplayController serverGameplayController;
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
-    public SkinManager skinManager;
     public float DamageOfRobot2 = 0.05f;
-    public int HintDuration = 7;
 
     int releaseTileX = -1;
     int releaseTileY = -1;
@@ -72,7 +71,6 @@ public class GamePlayManager : MonoBehaviour
     {
         MenuGUI.SwitchToMultiplayer(levelNumber);
     }
-
     public void StartLevel(LevelData levelData)
     {
         playerRoster.ResetRoster();
@@ -110,7 +108,7 @@ public class GamePlayManager : MonoBehaviour
     {
         GameGUI.RenderLevelBackground(boardController.GetBoardModel().width, boardController.GetBoardModel().height);
         GameGUI.InitializeEnemyRobots();
-        GameGUI.RenderTiles(boardController.GetBoardModel());
+        //GameGUI.RenderTiles(boardController.GetBoardModel());
     }
 
     public void ResetGameplay()
@@ -169,9 +167,9 @@ public class GamePlayManager : MonoBehaviour
             OnLevelFinished();
         }
     }
+    
     private void OnLevelFinished()
     {
-
         levelComplete = true;
     }
 
@@ -220,7 +218,7 @@ public class GamePlayManager : MonoBehaviour
 
     private void OnPlayerLost()
     {
-        GameGUI.DisplayLose();
+        GameGUI.DisplayLose((int)GetScore());
         serverGameplayController.EndGameplaySession((int)GetScore());
     }
 
@@ -275,6 +273,16 @@ public class GamePlayManager : MonoBehaviour
         gameplayState = GameplayState.WaitForInput;
     }
 
+    IEnumerator SwapTilesNotAllowedOnGUI(int x1, int y1, int x2, int y2)
+    {
+        GameGUI.SwapTilesFail(x1, y1, x2, y2, false);
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+        yield return new WaitForSeconds(GameGUI.SwapDuration);
+        GameGUI.CanSwapTiles = true;
+        ZeroReleasedTiles();
+        gameplayState = GameplayState.WaitForInput;
+    }
+
     IEnumerator SwapTilesOnceOnGUI(int x1, int y1, int x2, int y2)
     {
         GameGUI.SwapTiles(x1, y1, x2, y2, true);
@@ -299,7 +307,6 @@ public class GamePlayManager : MonoBehaviour
         //Debug.Log("Release: " + releaseSource);
         StartTrackedCoroutine(ReleaseTilesNow());
     }
-
     IEnumerator ReleaseTilesNow()
     {
         yield return new WaitForSeconds(GameGUI.SwapDuration/* * 1.25f*/);
@@ -359,7 +366,7 @@ public class GamePlayManager : MonoBehaviour
         for (int i = 0; i < boardController.GetBoardModel().width; ++i)
             for (int j = 0; j < boardController.GetBoardModel().height; ++j)
             {
-                GameGUI.ChangeColorScale(i, j, GetKeyFromId(boardController.GetBoardModel()[i][j].gem.GetId()));
+                //GameGUI.ChangeColorScale(i, j, boardController.GetBoardModel()[i][j].gem.GetId(), levelData);
             }
 
         yield return new WaitForSeconds(0.5f);
@@ -374,7 +381,7 @@ public class GamePlayManager : MonoBehaviour
             {
                 UserManager.Instance.SetPlayerScore((int)score);
                 serverGameplayController.EndGameplaySession((int)score);
-                AnalyticsManager.Instance.SendLevelEvent();
+                AnalyticsManager.Instance.SendLevelEvent((int)score);
                 PrepareNextLevel();
                 return;
             }
@@ -396,6 +403,11 @@ public class GamePlayManager : MonoBehaviour
             StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
             gameplayState = GameplayState.SwapFailedPlaying;
         }
+        else if (gameplayState == GameplayState.SwapFailedNotAllowed)
+        {
+            StartTrackedCoroutine(SwapTilesNotAllowedOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
+            gameplayState = GameplayState.SwapFailedPlaying;
+        }
         else if (gameplayState == GameplayState.SwapFailedPlaying)
         {
             //wait for animation to end and go to GameplayState.WaitForInput
@@ -415,8 +427,6 @@ public class GamePlayManager : MonoBehaviour
 
             NewSwapResult swapResult = boardController.NewSwapGems(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y);
             StartTrackedCoroutine(ProcessSwapResult(swapResult));
-
-
         }
         else if (gameplayState == GameplayState.ExplosionsInProgress)
         {
@@ -451,7 +461,6 @@ public class GamePlayManager : MonoBehaviour
 
     /// track coroutines started on this object as they contain board processing algorithms
     /// input should be blocked as board processing algorithms are running
-    /// patchwork, entire board logic and processing should be rewritten as it is very convoluted and does not have a clear order of execution
 
     private List<string> runningCoroutinesByStringName = new List<string>();
     private List<IEnumerator> runningCoroutinesByEnumerator = new List<IEnumerator>();
@@ -555,7 +564,12 @@ public class GamePlayManager : MonoBehaviour
         {
             inputLocked = true;
 
-            if (!boardController.CanSwap(x, y, releaseTileX, releaseTileY))
+            if (!boardController.IsSwapAllowed(x, y, releaseTileX, releaseTileY)) {
+                swapStart = new Vector2Int(x, y);
+                swapEnd = new Vector2Int(releaseTileX, releaseTileY);
+                gameplayState = GameplayState.SwapFailedNotAllowed;
+            } 
+            else if (!boardController.CanSwap(x, y, releaseTileX, releaseTileY))
             {
                 swapStart = new Vector2Int(x, y);
                 swapEnd = new Vector2Int(releaseTileX, releaseTileY);
@@ -591,7 +605,7 @@ public class GamePlayManager : MonoBehaviour
         {
             if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
             {
-                GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, GetKeyFromId(boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId()), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
+                //GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
             }
             else
             {
@@ -668,6 +682,10 @@ public class GamePlayManager : MonoBehaviour
             for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
             {
                 GameGUI.ExplodeTile(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, false);
+                if (boardController.GetBoardModel()[swapResult.explodeEvents[i].toExplode[j].x][swapResult.explodeEvents[i].toExplode[j].y].gem.IsBubble())
+                {
+                    BubbleExploded(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y);
+                }
             }
             HitEnemy(swapResult.explodeEvents[i].toExplode.Count);
             IncrementScore(swapResult.explodeEvents[i].toExplode.Count);
@@ -689,11 +707,11 @@ public class GamePlayManager : MonoBehaviour
                 {
                     continue;
                 }
-                GameGUI.AppearAt(swapResult.explodeEvents[i].toCreate[j].At.x,
-                    swapResult.explodeEvents[i].toCreate[j].At.y,
-                    skinManager.Skins[skinManager.SelectedSkin].TileSet[swapResult.explodeEvents[i].toCreate[j].Id].Key,
-                    boardController.GetBoardModel().width,
-                    boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
+                //GameGUI.AppearAt(swapResult.explodeEvents[i].toCreate[j].At.x,
+                //    swapResult.explodeEvents[i].toCreate[j].At.y,
+                //    swapResult.explodeEvents[i].toCreate[j].GemData.gemId,
+                //    boardController.GetBoardModel().width,
+                //    boardController.GetBoardModel().height, GameGUI.SwapDuration / 2);
                 createdGems = true;
             }
         }
@@ -706,37 +724,15 @@ public class GamePlayManager : MonoBehaviour
             ColorChangeEvent colorChangeEvent = swapResult.explodeEvents[i] as ColorChangeEvent;
             if (colorChangeEvent != null)
             {
-                GameGUI.ColorChangeEffect(GetKeyFromId(colorChangeEvent.targetColor), colorChangeEvent.toChange);
+                //GameGUI.ColorChangeEffect(colorChangeEvent.targetColor, colorChangeEvent.toChange);
                 yield return new WaitForSeconds(1f);
             }
         }
         gameplayState = GameplayState.RefillBoard;
     }
 
-    private string GetKeyFromId(int id) // strange naming convention
+    private void BubbleExploded(int posX, int posy)
     {
-        if (id == 9)
-        {
-            return "S1";
-        }
-        else if (id == 12)
-        {
-            return "S4";
-        }
-        else if (id == 13)
-        {
-            return "S5";
-        }
-        else if (id == 10)
-        {
-            return "S2";
-        }
-        else if (id == 11)
-        {
-            return "S3";
-        }
-
-        return id.ToString();
+        //GameGUI.ExplodeBubble(posX, posy);
     }
-
 }

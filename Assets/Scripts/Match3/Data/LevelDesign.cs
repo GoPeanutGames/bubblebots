@@ -12,8 +12,8 @@ namespace BubbleBots.Match3.Data
     [System.Serializable]
     public class LevelRow
     {
-        public List<int> row;
-        public int this[int i]
+        public List<string> row;
+        public string this[int i]
         {
             get => row[i];
             set => row[i] = value;
