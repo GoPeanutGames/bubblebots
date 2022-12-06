@@ -10,7 +10,7 @@ public class ScreenDeviceFitter : MonoBehaviour
     
     private void Start()
     {
-        if (true)
+        if (Application.isMobilePlatform)
         {
             UIRoot.transform.parent = MobileCanvas.transform;
             DesktopCanvas.SetActive(false);

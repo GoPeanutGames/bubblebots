@@ -1,13 +1,21 @@
+using System;
+using TMPro;
 using UnityEngine;
 
 public class HomeScreenController : MonoBehaviour
 {
     public PlayButtonController PlayButtonController;
+    public TextMeshProUGUI PlayerNameText;
     public GameObject UpperInfoContainer;
     public GameObject BottomMenuContainer;
     public GameObject HomeScreen;
     public GameObject ModeSelectScreen;
     public GameObject StoreScreen;
+
+    private void Start()
+    {
+        PlayerNameText.text = UserManager.Instance.GetPlayerUserName();
+    }
 
     private void SetInfoContainers(bool upperActive, bool bottomActive)
     {
