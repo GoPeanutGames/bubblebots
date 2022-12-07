@@ -7997,11 +7997,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameplayData: {fileID: 11400000, guid: 4d1c9df41976a0040aca7ff09efdb606, type: 2}
-  serverGameplayController: {fileID: 0}
+  serverGameplayController: {fileID: 2038123040}
   MenuGUI: {fileID: 552920244}
   GameGUI: {fileID: 736831953}
   RobotSelectionGUI: {fileID: 89362732}
-  DamageOfRobot2: 10
+  DamageOfRobot2: 1
   match3Manager: {fileID: 120526381}
 --- !u!1 &831018383
 GameObject:
