@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Community.unity
     guid: 0bc95a184741b4d49a9152741f06389f
+  - enabled: 1
+    path: Assets/Scenes/Gameplay/FreeToPlayMode.unity
+    guid: be8220fb4a6cde74c8d810d6fdf9fa3f
+  - enabled: 1
+    path: Assets/Scenes/Gameplay/NetherMode.unity
+    guid: a1dd8557140a0a045bb0931356980e80
   m_configObjects: {}

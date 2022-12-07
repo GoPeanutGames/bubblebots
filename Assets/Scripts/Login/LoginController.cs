@@ -45,13 +45,6 @@ public class LoginController : MonoBehaviour
         LoginScreen.SetActive(false);
     }
 
-    public void SecondPlayAsGuest()
-    {
-        UserManager.PlayerType = PlayerType.Guest;
-        AnalyticsManager.Instance.InitAnalyticsGuest();
-        SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
-    }
-
     public void InitSession(string address)
     {
         StartLogin(address);
