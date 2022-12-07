@@ -9,7 +9,6 @@ public class GameStateLogin : GameState
     private GameScreenLogin gameScreenLogin;
     private string tempAddress;
     
-    
     public override string GetGameStateName()
     {
         return "game state login";
