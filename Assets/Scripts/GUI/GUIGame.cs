@@ -889,8 +889,13 @@ public class GUIGame : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
     }
 
-    public void SetUnclaimedBubblesText(long val)
+    public void SetUnclaimedBubblesText(int val)
     {
         unclaimedBubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
+    }
+
+    public void SetBubblesText(int val)
+    {
+        bubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
     }
 }

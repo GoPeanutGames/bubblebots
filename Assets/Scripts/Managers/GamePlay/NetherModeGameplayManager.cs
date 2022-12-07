@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FreeToPlaySessionData
+public class NetherModeSessionData
 {
     ObscuredLong score = 0;
 
@@ -50,20 +50,22 @@ public class FreeToPlaySessionData
     }
 }
 
-public class FreeToPlayGameplayManager : MonoBehaviour
+public class NetherModeGameplayManager : MonoBehaviour
 {
-    private enum FreeToPlayGameplayState
+    private enum NetherModeGameplayState
     {
         RobotSelection,
         ShowingLevelText,
         Match3Playing,
         LevelComplete,
         LevelCompleteMenu,
+        NetherModeComplete,
+        NetherModeCompleteMenu
     }
 
-    private FreeToPlayGameplayState gameplayState;
+    private NetherModeGameplayState gameplayState;
 
-    public FreeToPlayGameplayData gameplayData;
+    public NetherModeGameplayData gameplayData;
 
     public ServerGameplayController serverGameplayController;
     public GUIMenu MenuGUI;
@@ -84,7 +86,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
     public void Start()
     {
-        gameplayState = FreeToPlayGameplayState.RobotSelection;
+        gameplayState = NetherModeGameplayState.RobotSelection;
         ShowRobotSelectionMenu();
     }
 
@@ -136,11 +138,6 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
     public void StartLevel()
     {
-        if (currentLevelIndex < gameplayData.stopHpRefreshAfterLevel)
-        {
-            playerRoster.ResetRoster();
-        }
-
         match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)]);
 
         currentWaveIndex = 0;
@@ -149,9 +146,9 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 50 },
-                new BubbleBot() { hp = 50 },
-                new BubbleBot() { hp = 50 }
+                new BubbleBot() { hp = 10 },
+                new BubbleBot() { hp = 10 },
+                new BubbleBot() { hp = 10 }
             },
             completed = false
         };
@@ -166,7 +163,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         GameGUI.SetPlayerRobots(playerRoster);
 
 
-        gameplayState = FreeToPlayGameplayState.ShowingLevelText;
+        gameplayState = NetherModeGameplayState.ShowingLevelText;
     }
 
     public void StartNextLevel()
@@ -194,7 +191,11 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
     private void OnLevelFinished()
     {
-        gameplayState = FreeToPlayGameplayState.LevelComplete;
+        gameplayState = NetherModeGameplayState.LevelComplete;
+        if (currentLevelIndex >= gameplayData.levels.Count - 1)
+        {
+            gameplayState = NetherModeGameplayState.NetherModeComplete;
+        }
     }
 
     private void HitEnemy(int damage)
@@ -220,7 +221,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
     private void HitPlayer()
     {
-        if (gameplayState == FreeToPlayGameplayState.LevelComplete || currentWave.completed)
+        if (gameplayState == NetherModeGameplayState.LevelComplete || currentWave.completed)
         {
             return;
         }
@@ -310,31 +311,57 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     {
         switch (gameplayState)
         {
-            case FreeToPlayGameplayState.ShowingLevelText:
+            case NetherModeGameplayState.ShowingLevelText:
                 StartCoroutine(ShowLevelText(1f, 0.5f));
                 break;
-            case FreeToPlayGameplayState.Match3Playing:
+            case NetherModeGameplayState.Match3Playing:
                 match3Manager.UpdateMatch3Logic();
                 break;
-            case FreeToPlayGameplayState.LevelComplete:
+            case NetherModeGameplayState.LevelComplete:
                 StartCoroutine(EndLevelSequence());
                 match3Manager.UpdateMatch3Logic();
                 break;
+            case NetherModeGameplayState.NetherModeComplete:
+                StartCoroutine(EndGameSequence());
+                match3Manager.UpdateMatch3Logic();
+                break;
         }
+    }
+
+    IEnumerator EndGameSequence()
+    {
+        match3Manager.ExplodeAllSpecials();
+        yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
+        gameplayState = NetherModeGameplayState.NetherModeCompleteMenu;
+
+        UserManager.Instance?.SetPlayerScore((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore());
+        AnalyticsManager.Instance?.SendLevelEvent((int)GetScore());
+
+        //UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
+        sessionData.ResetPotentialBubbles();
+        GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+
+        GameGUI.DisplayLose((int)GetScore());
     }
 
     IEnumerator EndLevelSequence()
     {
         match3Manager.ExplodeAllSpecials();
         yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
-        gameplayState = FreeToPlayGameplayState.LevelCompleteMenu;
+        gameplayState = NetherModeGameplayState.LevelCompleteMenu;
 
-        UserManager.Instance.SetPlayerScore((int)GetScore());
-        serverGameplayController.EndGameplaySession((int)GetScore());
-        AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
+        UserManager.Instance?.SetPlayerScore((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore());
+        AnalyticsManager.Instance?.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
-
+        sessionData.ResetPotentialBubbles();
+        GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+        if (UserManager.Instance != null)
+        {
+            GameGUI.SetBubblesText(UserManager.Instance.GetBubbles());
+        }
 
         MenuGUI.DisplayWin();
     }
@@ -347,7 +374,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         currentEnemy = 0;
         GameGUI.TargetEnemy(currentEnemy);
 
-        gameplayState = FreeToPlayGameplayState.Match3Playing;
+        gameplayState = NetherModeGameplayState.Match3Playing;
     }
 
     private void OnBubbleExploded(int posX, int posY)
