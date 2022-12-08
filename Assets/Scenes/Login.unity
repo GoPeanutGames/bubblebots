@@ -1941,8 +1941,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b1981e44da4ae49a0e8e60e78004f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Development: 0
-  Production: 1
+  Development: 1
+  Production: 0
   Community: 0
   DevelopmentEnvironment:
     serverUrl: https://api-bb.peanuthub.dev

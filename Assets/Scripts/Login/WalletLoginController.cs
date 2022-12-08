@@ -30,12 +30,12 @@ public class WalletLoginController : MonoBehaviour
     {
         if (Application.isMobilePlatform)
         {
-            RequestSignature(schema, tempAddress);
+            string signature = await WalletConnect.ActiveSession.EthPersonalSign(tempAddress, schema);
+            SignatureLoginSuccess(signature);
         }
         else
         {
-            string signature = await WalletConnect.ActiveSession.EthPersonalSign(tempAddress, schema);
-            SignatureLoginSuccess(signature);
+            RequestSignature(schema, tempAddress);
         }
     }
     
