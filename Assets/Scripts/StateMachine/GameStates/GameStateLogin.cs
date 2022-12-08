@@ -8,7 +8,7 @@ public class GameStateLogin : GameState
 {
     private GameScreenLogin gameScreenLogin;
     private string tempAddress;
-    
+
     public override string GetGameStateName()
     {
         return "game state login";
@@ -19,9 +19,21 @@ public class GameStateLogin : GameState
 
     public override void Enable()
     {
+        SoundManager.Instance.FadeInMusic();
+        SoundManager.Instance.PlayStartMusicNew();
         gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         WalletConnect.Instance.NewSessionConnected.AddListener(OnNewWalletSessionConnectedEventFromPlugin);
+        TryLoginFromSave();
+    }
+
+    private void TryLoginFromSave()
+    {
+        string address = UserManager.Instance.GetPlayerWalletAddress();
+        if (string.IsNullOrEmpty(address) == false)
+        {
+            StartLogin(address);
+        }
     }
 
     private void OnGameEvent(string ev, object context)
@@ -41,7 +53,8 @@ public class GameStateLogin : GameState
                 gameScreenLogin.OnPlayAsGuestPressed();
                 break;
             case ButtonId.LoginGuestPlay:
-                PlayAsGuest();
+                //PlayAsGuest();
+                GoToMainMenu();
                 break;
             case ButtonId.LoginMetamask:
                 LoginWithMetamask();
@@ -59,7 +72,7 @@ public class GameStateLogin : GameState
 
     private void GoToMainMenu()
     {
-        //stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateMainMenu());
         //SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
     }
 
@@ -78,12 +91,17 @@ public class GameStateLogin : GameState
     [SkipRename]
     public void MetamaskLoginSuccess(string address)
     {
+        StartLogin(address);
+        gameScreenLogin.ShowLoadingScreen();
+        gameScreenLogin.HideLoginScreen();
+    }
+
+    private void StartLogin(string address)
+    {
         SoundManager.Instance.PlayMetamaskSfx();
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
         GetOrCreatePlayer(address);
         UserManager.PlayerType = PlayerType.LoggedInUser;
-        gameScreenLogin.ShowLoadingScreen();
-        gameScreenLogin.HideLoginScreen();
     }
 
     public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
@@ -99,7 +117,7 @@ public class GameStateLogin : GameState
         UserManager.Instance.SetWalletAddress(tempAddress);
     }
 
-    public void GetOrCreatePlayer(string address)
+    private void GetOrCreatePlayer(string address)
     {
         tempAddress = address;
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get,
@@ -108,10 +126,11 @@ public class GameStateLogin : GameState
             GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
             SetDataToUser(result);
             GoToMainMenu();
-            
+
         }
-        , address, 
-        (string data) => {
+        , address,
+        (string data) =>
+        {
             CreatePlayerData formData = new()
             {
                 address = tempAddress,

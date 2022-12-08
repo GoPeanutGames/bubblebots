@@ -15,7 +15,12 @@ public class Screens : MonoSingleton<Screens>
     public Camera uiCamera = null;
     private List<GameScreen> screensStack = new List<GameScreen>();
 
-    public List<ScreenLocationParent> screenLocationParents;
+    public List<ScreenLocationParent> screenLocationParentsMobile;
+    public List<ScreenLocationParent> screenLocationParentsDesktop;
+
+    public GameObject desktopCanvas;
+    public GameObject mobileCanvas;
+    private List<ScreenLocationParent> screenLocationParents;
 
     #region Screens
     public T PushScreen<T>(bool unique = false) where T : GameScreen
@@ -57,6 +62,25 @@ public class Screens : MonoSingleton<Screens>
         SetCamera(screen);
         return screen;
     }
+    private void Start()
+    {
+        if (Application.isMobilePlatform)
+        {
+            screenLocationParents = screenLocationParentsMobile;
+            desktopCanvas.SetActive(false);
+            RectTransform rTransformUI = mobileCanvas.GetComponent<RectTransform>();
+            rTransformUI.anchorMax = new Vector2(1, 1);
+            rTransformUI.anchorMin = new Vector2(0, 0);
+            rTransformUI.offsetMax = new Vector2(0, 0);
+            rTransformUI.offsetMin = new Vector2(0, 0);
+            rTransformUI.localScale = new Vector3(1, 1, 1);
+        } 
+        else
+        {
+            screenLocationParents = screenLocationParentsDesktop;
+            mobileCanvas.SetActive(false);
+        }
+    }
 
     public Transform GetParent(GameScreen.ScreenLocation location)
     {
@@ -65,14 +89,14 @@ public class Screens : MonoSingleton<Screens>
 
     private static void RefreshScreensSortingOrder()
     {
-        //for (int i = 0; i < Instance.screensStack.Count; i++)
-        //{
-        //    Instance.screensStack[i].SetSortingOrder((i + 1) * 50);
-        //    if (CurrentHud != null)
-        //    {
-        //        CurrentHud.SetHudType((i + 1) * 50 + 1, Instance.screensStack[i].HudType);
-        //    }
-        //}
+        for (int i = 0; i < Instance.screensStack.Count; i++)
+        {
+            Instance.screensStack[i].SetSortingOrder((i + 1) * 50);
+            //if (CurrentHud != null)
+            //{
+            //    CurrentHud.SetHudType((i + 1) * 50 + 1, Instance.screensStack[i].HudType);
+            //}
+        }
     }
     static T FindScreen<T>(IEnumerable<GameScreen> arrScreens) where T : GameScreen
     {

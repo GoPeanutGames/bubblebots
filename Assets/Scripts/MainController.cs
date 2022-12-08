@@ -8,13 +8,11 @@ public class MainController : MonoBehaviour
     {
         stateMachine.PopAll();
         stateMachine.PushState(new GameStateLogin());
-       
     }
 
 
     public void Update()
     {
         stateMachine.Update(Time.deltaTime);
-
     }
 }
