@@ -1226,6 +1226,8 @@ GameObject:
   m_Component:
   - component: {fileID: 8833733043466061611}
   - component: {fileID: 8833733043466061610}
+  - component: {fileID: 786640704231571279}
+  - component: {fileID: 2150561427873410362}
   m_Layer: 5
   m_Name: GameScreenStore
   m_TagString: Untagged
@@ -1281,6 +1283,44 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!223 &786640704231571279
+Canvas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8833733043466061612}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_RenderMode: 2
+  m_Camera: {fileID: 0}
+  m_PlaneDistance: 100
+  m_PixelPerfect: 0
+  m_ReceivesEvents: 1
+  m_OverrideSorting: 0
+  m_OverridePixelPerfect: 0
+  m_SortingBucketNormalizedSize: 0
+  m_AdditionalShaderChannelsFlag: 25
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+  m_TargetDisplay: 0
+--- !u!114 &2150561427873410362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8833733043466061612}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 876d9209ff2c4ab2af76a73cb642e561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  location: 0
+  animationSettings:
+    AnimatorComponent: {fileID: 0}
+    OpenStateId: 
+    CloseStateId: 
 --- !u!1 &8833733043556821416
 GameObject:
   m_ObjectHideFlags: 0

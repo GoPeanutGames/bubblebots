@@ -6,6 +6,7 @@ public class GameStateMainMenu : GameState
     private GameScreenMainMenuTopHUD gameScreenMainMenuTopHUD;
     private GameScreenMainMenu gameScreenMainMenu;
     private GameScreenModeSelect gameScreenModeSelect;
+    private GameScreenStore gameScreenStore;
 
     public override string GetGameStateName()
     {
@@ -39,6 +40,12 @@ public class GameStateMainMenu : GameState
                 break;
             case ButtonId.ModeSelectBackButton:
                 HideModeSelect();
+                break;
+            case ButtonId.MainMenuBottomHUDStore:
+                ShowStore();
+                break;
+            case ButtonId.MainMenuBottomHUDHome:
+                HideStore();
                 break;
             case ButtonId.ModeSelectFreeModeTooltip:
                 ShowFreeModeTooltip();
@@ -83,6 +90,24 @@ public class GameStateMainMenu : GameState
         Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
         gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
         gameScreenMainMenuTopHUD.HideSettingsGroup();
+    }
+
+    private void HideStore()
+    {
+        Screens.Instance.PopScreen(gameScreenStore);
+        gameScreenMainMenuTopHUD.ShowPlayerInfoGroup();
+        gameScreenMainMenuTopHUD.ShowSettingsGroup();
+        gameScreenMainMenuBottomHUD.HideHomeButton();
+    }
+
+    private void ShowStore()
+    {
+        gameScreenStore = Screens.Instance.PushScreen<GameScreenStore>();
+        Screens.Instance.BringToFront<GameScreenMainMenuBottomHUD>();
+        Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
+        gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+        gameScreenMainMenuTopHUD.HideSettingsGroup();
+        gameScreenMainMenuBottomHUD.ShowHomeButton();
     }
 
     public override void Disable()

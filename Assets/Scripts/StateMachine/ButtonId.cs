@@ -15,7 +15,8 @@ public static class ButtonId
 
     //main menu bottom hud
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";
-
+    public const string MainMenuBottomHUDStore = "mainmenu.bottomHUD.store";
+    public const string MainMenuBottomHUDHome = "mainmenu.bottomHUD.home";
 
     //mode select
     public const string ModeSelectBackButton = "modeselect.back";
