@@ -1,11 +1,6 @@
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CustomButtonData
-{
-    public string buttonId;
-}
-
 public class CustomButton : Button
 {
     public string buttonId = ButtonId.DefaultId;
@@ -24,7 +19,12 @@ public class CustomButton : Button
             return;
         }
 
-        GameEventsManager.Instance.PostEvent(GameEvents.ButtonTap,  new CustomButtonData() { buttonId = buttonId});
+        GameEventString buttonTapEventData = new()
+        {
+            eventName = GameEvents.ButtonTap,
+            stringData = buttonId
+        };
+        GameEventsManager.Instance.PostEvent(buttonTapEventData);
         //GameEventsManager.Instance.PostEvent(isAvailable ? soundId : unavailableSoundId);
     }
 

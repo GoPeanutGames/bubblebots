@@ -6,7 +6,7 @@ mergeInto(LibraryManager.library, {
 		if(accounts.length > 0)
 		{
 			console.warn(accounts[0]);
-			myGameInstance.SendMessage("Controllers/WalletLoginController", "MetamaskLoginSuccess", accounts[0]);
+			myGameInstance.SendMessage("Managers/JSLibConnectionManager", "MetamaskLoginSuccess", accounts[0]);
 		} else {
 			console.log("No wallet has been connected");
 		}
@@ -25,7 +25,7 @@ mergeInto(LibraryManager.library, {
         });
     
         myGameInstance.SendMessage(
-            "Controllers/WalletLoginController",
+            "Managers/JSLibConnectionManager",
             "SignatureLoginSuccess",
             signature
         );

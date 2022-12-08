@@ -35,11 +35,6 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
         return currentEnvironment.unityEnvironmentName;
     }
 
-    public string GetSceneName()
-    {
-        return currentEnvironment.sceneName;
-    }
-
     public bool ShouldChangeRobotImages()
     {
         return Community == false;

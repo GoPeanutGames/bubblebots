@@ -801,7 +801,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.000061035156, y: 0.000061035156}
+  m_AnchoredPosition: {x: 0, y: 0.000061035156}
   m_SizeDelta: {x: -0.00018311, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &799946359
@@ -1041,39 +1041,9 @@ MonoBehaviour:
   DevelopmentEnvironment:
     serverUrl: https://api-bb.peanuthub.dev
     unityEnvironmentName: development
-    sceneName: Main
-    encryptPass:
-      currentCryptoKey: 
-      hiddenValue: 
-      cryptoKey: f700cc00e700cf007900e8007a00
-      hiddenChars: bd00b500ac00ee002b00aa003f00bb00f5009700a50003009e003d009600e100810095000a00b8000f00a7008b00c90099002b0098000300b5009d00a700a500
-      inited: 1
-      fakeValue: JyK!RBEL9pjzvGa-fZsPuPG.VRpyBQ@j
-      fakeValueActive: 1
   ProductionEnvironment:
     serverUrl: https://api-bb.peanutgames.com
     unityEnvironmentName: production
-    sceneName: Main
-    encryptPass:
-      currentCryptoKey: 
-      hiddenValue: 
-      cryptoKey: 5b003b00020021001800ed001a00
-      hiddenChars: 110063006f004f00480086006b0016005200730074004a00c300540076000c00760057005a00a1006800020056006900570020009500790002005c0046007700
-      inited: 1
-      fakeValue: JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV
-      fakeValueActive: 1
-  CommunityEnvironment:
-    serverUrl: https://api-bb.peanutgames.com
-    unityEnvironmentName: production
-    sceneName: Community
-    encryptPass:
-      currentCryptoKey: 
-      hiddenValue: 
-      cryptoKey: 1400e3005b0094007e000a004900
-      hiddenChars: 5e00bb003600fa002e006100380059008a002a00c1002c00240007003900d4002f00e2003c0046003b004d008e003000e200460072002a004d0084001f00c200
-      inited: 1
-      fakeValue: JXmnPkqMiqUR.N-7tvBLrYmkv8xcYgDV
-      fakeValueActive: 1
 --- !u!1001 &1152536751
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1178,8 +1148,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 469.654, y: 0}
-  m_SizeDelta: {x: 151.318, y: 0}
+  m_AnchoredPosition: {x: 350, y: 0}
+  m_SizeDelta: {x: 85, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1253354695
 MonoBehaviour:
@@ -1366,8 +1336,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -470.787, y: 0}
-  m_SizeDelta: {x: 153.585, y: 0}
+  m_AnchoredPosition: {x: -350, y: 0}
+  m_SizeDelta: {x: 85, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1418853814
 MonoBehaviour:
@@ -1591,6 +1561,7 @@ Transform:
   - {fileID: 1811097132}
   - {fileID: 2077204507}
   - {fileID: 343168037}
+  - {fileID: 2140841178}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1616,7 +1587,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1907430930}
   - component: {fileID: 1907430932}
-  - component: {fileID: 1907430931}
+  - component: {fileID: 1907430933}
   m_Layer: 0
   m_Name: WalletConnectPluginManager
   m_TagString: Untagged
@@ -1639,7 +1610,7 @@ Transform:
   m_Father: {fileID: 1864773990}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1907430931
+--- !u!114 &1907430932
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1648,7 +1619,19 @@ MonoBehaviour:
   m_GameObject: {fileID: 1907430929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 801bffbf4c62cc244b55ea230d19649d, type: 3}
+  m_Script: {fileID: 11500000, guid: 17303ab972a16184e8ba0066d294c7ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1907430933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1907430929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f3eadec4973e1543b3c185d0a8a018f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   DefaultWallet: 4
@@ -1684,18 +1667,6 @@ MonoBehaviour:
     Icons:
     - https://peanutgames.com/assets/favicon.ico
     Name: Peanut
---- !u!114 &1907430932
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1907430929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 17303ab972a16184e8ba0066d294c7ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2026097178
 GameObject:
   m_ObjectHideFlags: 0
@@ -1790,7 +1761,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 788, y: 0}
+  m_SizeDelta: {x: 615, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2077204506
 GameObject:
@@ -1893,7 +1864,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000061035156, y: 0}
+  m_AnchoredPosition: {x: -0.00012207031, y: 0}
   m_SizeDelta: {x: -0.000061035, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &2114057819
@@ -2212,3 +2183,47 @@ MonoBehaviour:
   BombSfx: {fileID: 8300000, guid: 2972f67b8ef05894bb8d056d4e08fd3d, type: 3}
   StartButtonSfx: {fileID: 8300000, guid: 5d9ddc881cb14dd44b3fe3b1477b0fc1, type: 3}
   MetamaskSfx: {fileID: 8300000, guid: 277d85f203eb24c42a36b33429d6055c, type: 3}
+--- !u!1 &2140841177
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2140841178}
+  - component: {fileID: 2140841179}
+  m_Layer: 0
+  m_Name: JSLibConnectionManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2140841178
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2140841177}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1864773990}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2140841179
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2140841177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 995dbb49dc05ada4db38d67ab8e29406, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
