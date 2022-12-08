@@ -72,7 +72,13 @@ public class GameStateLogin : GameState
                 gameScreenLogin.OnPlayAsGuestPressed();
                 break;
             case ButtonId.LoginGuestPlay:
+#if UNITY_EDITOR
+                GoToMainMenu();
+#else
+        
                 PlayAsGuest();
+#endif
+
                 break;
             case ButtonId.LoginMetamask:
                 LoginWithMetamask();

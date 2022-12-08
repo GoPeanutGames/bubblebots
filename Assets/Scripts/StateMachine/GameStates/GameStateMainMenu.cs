@@ -1,8 +1,11 @@
+using UnityEngine;
+
 public class GameStateMainMenu : GameState
 {
     private GameScreenMainMenuBottomHUD gameScreenMainMenuBottomHUD;
     private GameScreenMainMenuTopHUD gameScreenMainMenuTopHUD;
     private GameScreenMainMenu gameScreenMainMenu;
+    private GameScreenModeSelect gameScreenModeSelect;
 
     public override string GetGameStateName()
     {
@@ -31,10 +34,32 @@ public class GameStateMainMenu : GameState
         GameEventString customButtonData = data as GameEventString;
         switch (customButtonData.stringData)
         {
+            case ButtonId.MainMenuBottomHUDPlay:
+                ShowModeSelect();
+                break;
+            case ButtonId.ModeSelectBackButton:
+                HideModeSelect();
+                break;
             default:
                 break;
         }
     }
+
+    private void HideModeSelect()
+    {
+        Screens.Instance.PopScreen(gameScreenModeSelect);
+        gameScreenMainMenuTopHUD.ShowPlayerInfoGroup();
+        gameScreenMainMenuTopHUD.ShowSettingsGroup();
+    }
+
+    private void ShowModeSelect()
+    {
+        gameScreenModeSelect = Screens.Instance.PushScreen<GameScreenModeSelect>();
+        Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
+        gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+        gameScreenMainMenuTopHUD.HideSettingsGroup();
+    }
+
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);

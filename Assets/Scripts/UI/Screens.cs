@@ -98,6 +98,14 @@ public class Screens : MonoSingleton<Screens>
             //}
         }
     }
+    public void BringToFront<T>() where T : GameScreen
+    {
+        T screen = FindScreen<T>(Instance.screensStack);
+        if (screen != null)
+        {
+            screen.SetSortingOrder(Instance.screensStack.Count * 50 + 1);
+       } 
+}
     static T FindScreen<T>(IEnumerable<GameScreen> arrScreens) where T : GameScreen
     {
         GameScreen screen = null;
