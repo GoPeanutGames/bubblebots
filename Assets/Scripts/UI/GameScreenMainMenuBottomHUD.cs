@@ -4,6 +4,7 @@ public class GameScreenMainMenuBottomHUD : GameScreen
 {
     public GameObject PlayButton;
     public GameObject HomeButton;
+    public GameObject StoreButtonGlow;
 
     public void ShowHomeButton()
     {
@@ -15,5 +16,15 @@ public class GameScreenMainMenuBottomHUD : GameScreen
     {
         PlayButton.SetActive(true);
         HomeButton.SetActive(false);
+    }
+
+    public void ActivateStoreButtonGlow()
+    {
+        StoreButtonGlow.SetActive(true);
+    }
+
+    public void DeactivateStoreButtonGlow()
+    {
+        StoreButtonGlow.SetActive(false);
     }
 }
