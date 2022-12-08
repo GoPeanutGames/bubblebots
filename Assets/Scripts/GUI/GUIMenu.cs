@@ -25,7 +25,6 @@ public class GUIMenu : MonoBehaviour
     public GameObject BtnBackFromHighscores;
     public GameObject BtnAirdrop;
 
-    GamePlayManager gamePlayManager = null;
     string fullName = "";
     int selectedRobot1 = -1;
     int selectedRobot2 = -1;
@@ -34,21 +33,17 @@ public class GUIMenu : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void Airdrop();
 
-    private void Awake()
-    {
-        gamePlayManager = FindObjectOfType<GamePlayManager>();
-    }
 
     private void Start()
     {
-        if(UserManager.PlayerType == PlayerType.Guest)
-        {
-            StartPlayingAsGuest();
-        }
-        else
-        {
-            InitSession(UserManager.Instance.GetPlayerWalletAddress());
-        }
+        //if(UserManager.PlayerType == PlayerType.Guest)
+        //{
+        //    StartPlayingAsGuest();
+        //}
+        //else
+        //{
+        //    InitSession(UserManager.Instance.GetPlayerWalletAddress());
+        //}
     }
 
     public void SwitchToMap()
@@ -65,26 +60,30 @@ public class GUIMenu : MonoBehaviour
         selectedRobot3 = robot3;
     }
 
-    public void StartLevel1()
+    //public void StartLevel1()
+    //{
+    //    MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
+    //    SoundManager.Instance.FadeOutMusic(() =>
+    //    {
+    //        SoundManager.Instance.PlayLevelMusicNew();
+    //        SoundManager.Instance.FadeInMusic();
+    //    });
+    //    GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
+    //    GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
+    //    UserManager.RobotsKilled = 0;
+    //    //SwitchToMultiplayer(1);
+    //}
+
+    public void ResetScores()
     {
-        MenuImage.GetComponent<CanvasGroup>().DOFade(0, 0.5f);
-        SoundManager.Instance.FadeOutMusic(() =>
-        {
-            SoundManager.Instance.PlayLevelMusicNew();
-            SoundManager.Instance.FadeInMusic();
-        });
         GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
-        GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
-        UserManager.RobotsKilled = 0;
-        gamePlayManager?.ResetGameplay();
-        SwitchToMultiplayer(1);
     }
 
-    public void SwitchToMultiplayer(int levelNumber)
-    {
-        StartCoroutine(TurnOffGUI());
-        StartCoroutine(TurnOnPlay());
-    }
+    //public void SwitchToMultiplayer(int levelNumber)
+    //{
+    //    StartCoroutine(TurnOffGUI());
+    //    StartCoroutine(TurnOnPlay());
+    //}
 
     IEnumerator TurnOffGUI()
     {
@@ -93,8 +92,10 @@ public class GUIMenu : MonoBehaviour
         PnlPlayerInfo.SetActive(false);
     }
 
-    IEnumerator TurnOnPlay()
+   IEnumerator CleanUI()
     {
+        GameImage.GetComponent<GUIGame>().TxtKilledRobots.text = "0";
+        //wtf
         Transform child;
         for (int i = 1; i < GameImage.transform.childCount; i++)
         {
@@ -102,13 +103,15 @@ public class GUIMenu : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
-                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus"
+                child.gameObject.name != "TxtScore" &&
+                child.gameObject.name != "TxtBubbles" &&
+                child.gameObject.name != "ImgBubbles" &&
+                child.gameObject.name != "TxtStatus"
                  && child.gameObject.name != "BtnHelp")
             {
                 Destroy(GameImage.transform.GetChild(i).gameObject);
             }
         }
-
         yield return new WaitForEndOfFrame();
 
         GameImage.gameObject.SetActive(true);
@@ -117,28 +120,66 @@ public class GUIMenu : MonoBehaviour
         GameImage.GetComponent<CanvasGroup>().alpha = 0;
         GameImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
 
-        gamePlayManager?.StartGamePlay();
+        //gamePlayManager?.StartGamePlay();
 
         yield return new WaitForSeconds(1);
 
-        Transform txtStatus = GameImage.transform.Find("TxtStatus");
-        txtStatus.gameObject.SetActive(true);
-        txtStatus.SetAsLastSibling();
-        txtStatus.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
-        txtStatus.GetComponent<TextMeshProUGUI>().DOFade(1, 0.5f);
-        txtStatus.GetComponent<TextMeshProUGUI>().text = "LEVEL " + (gamePlayManager.GetCurrentLevel() + 1);
-
-        yield return new WaitForSeconds(2);
-
-        txtStatus.GetComponent<TextMeshProUGUI>().DOFade(0, 0.5f);
-
-        yield return new WaitForSeconds(0.5f);
-
         GameImage.GetComponent<GUIGame>().CanSwapTiles = true;
         GameImage.GetComponent<GUIGame>().TargetEnemy(0);
-        txtStatus.gameObject.SetActive(false);
         MenuImage.gameObject.SetActive(false);
     }
+
+
+    //IEnumerator TurnOnPlay()
+    //{
+    //    //wtf again
+    //    Transform child;
+    //    for (int i = 1; i < GameImage.transform.childCount; i++)
+    //    {
+    //        child = GameImage.transform.GetChild(i);
+    //        if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
+    //            !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
+    //            !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
+    //            child.gameObject.name != "TxtScore" &&
+    //            child.gameObject.name != "TxtBubbles" &&
+    //            child.gameObject.name != "ImgBubbles" &&
+    //            child.gameObject.name != "TxtStatus"
+    //             && child.gameObject.name != "BtnHelp")
+    //        {
+    //            Destroy(GameImage.transform.GetChild(i).gameObject);
+    //        }
+    //    }
+
+    //    yield return new WaitForEndOfFrame();
+
+    //    GameImage.gameObject.SetActive(true);
+    //    GameImage.GetComponent<GUIGame>().RenewEnemyRobots();
+    //    GameImage.GetComponent<GUIGame>().SetRobots(selectedRobot1, selectedRobot2, selectedRobot3);
+    //    GameImage.GetComponent<CanvasGroup>().alpha = 0;
+    //    GameImage.GetComponent<CanvasGroup>().DOFade(1, 0.5f);
+
+    //    yield return new WaitForSeconds(1);
+
+    //    Transform txtStatus = GameImage.transform.Find("TxtStatus");
+    //    txtStatus.gameObject.SetActive(true);
+    //    txtStatus.SetAsLastSibling();
+    //    txtStatus.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
+    //    txtStatus.GetComponent<TextMeshProUGUI>().DOFade(1, 0.5f);
+    //    txtStatus.GetComponent<TextMeshProUGUI>().text = "LEVEL " + (gamePlayManager.GetCurrentLevel() + 1);
+
+    //    yield return new WaitForSeconds(2);
+
+    //    txtStatus.GetComponent<TextMeshProUGUI>().DOFade(0, 0.5f);
+
+    //    yield return new WaitForSeconds(0.5f);
+
+    //    GameImage.GetComponent<GUIGame>().CanSwapTiles = true;
+    //    GameImage.GetComponent<GUIGame>().TargetEnemy(0);
+    //    txtStatus.gameObject.SetActive(false);
+    //    MenuImage.gameObject.SetActive(false);
+    //}
+
+    
 
     public void StartPlayingAsGuest()
     {
@@ -178,7 +219,7 @@ public class GUIMenu : MonoBehaviour
         Transform imgLose = WinDialogImage.transform.Find("ImgLose");
         imgWin.gameObject.SetActive(false);
         imgLose.gameObject.SetActive(true);
-        imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = gamePlayManager.GetScore().ToString();
+        //imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = gamePlayManager.GetScore().ToString();
 
         imgLose.transform.localScale = Vector3.zero;
         imgLose.transform.DOScale(Vector3.one, 0.5f);
@@ -188,8 +229,8 @@ public class GUIMenu : MonoBehaviour
         WinDialogImage.gameObject.SetActive(false);
         MenuImage.gameObject.SetActive(true);
 
-        StartCoroutine(TurnOnPlay());
-        SoundManager.Instance.FadeInMusic();
+        StartCoroutine(CleanUI());
+        SoundManager.Instance?.FadeInMusic();
     }
 
     public void DisplayNoMoreMoves()

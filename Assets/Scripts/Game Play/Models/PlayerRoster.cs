@@ -11,7 +11,7 @@ namespace BubbleBots.Gameplay.Models
         {
             if (currentBot < bots.Count)
             {
-                bots[currentBot].hp = Math.Clamp(bots[currentBot].hp, 0, bots[currentBot].hp - damage);
+                bots[currentBot].hp = Math.Max(0, bots[currentBot].hp - damage);
             }
         }
         public bool IsDead(int botIndex)

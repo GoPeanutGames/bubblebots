@@ -1,16 +1,17 @@
 using UnityEngine;
+using BubbleBots.Match3.Data;
 
 namespace BubbleBots.Match3.Models
 {
     public class GemCreate
     {
         public Vector2Int At { get; }
-        public int Id { get; }
+        public GemData GemData { get; }
 
-        public GemCreate(Vector2Int at, int id)
+        public GemCreate(Vector2Int at, GemData gemData)
         {
             At = at;
-            Id = id;
+            GemData = gemData;
         }
     }
 }

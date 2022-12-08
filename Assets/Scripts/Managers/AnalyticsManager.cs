@@ -64,9 +64,8 @@ public class AnalyticsManager : MonoBehaviour
         });
     }
 
-    public void SendLevelEvent()
+    public void SendLevelEvent(int score)
     {
-        int score = UserManager.Instance.GetPlayerScore();
         AnalyticsService.Instance.CustomData("EndLevel", new Dictionary<string, object>
         {
             {"wallet_address", currentWalletAddress },

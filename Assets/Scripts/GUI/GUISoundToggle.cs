@@ -7,13 +7,16 @@ public class GUISoundToggle : MonoBehaviour
 
     void Start()
     {
-        if (SoundManager.Instance.IsMuted())
+        if (SoundManager.Instance != null)
         {
-            SoundOff();
-        }
-        else
-        {
-            SoundOn();
+            if (SoundManager.Instance.IsMuted())
+            {
+                SoundOff();
+            }
+            else
+            {
+                SoundOn();
+            }
         }
     }
 

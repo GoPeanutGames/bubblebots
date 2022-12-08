@@ -6,16 +6,18 @@ using UnityEngine.UI;
 using DG.Tweening;
 using Unity.VisualScripting;
 using TMPro;
-using UnityEngine.Rendering;
 using System.Runtime.InteropServices;
-using UnityEditor;
 
 using BubbleBots.Match3.Models;
 using BubbleBots.Gameplay.Models;
 using UnityEngine.SceneManagement;
+using BubbleBots.Match3.Data;
 
 public class GUIGame : MonoBehaviour
 {
+    public delegate void OnEnemyChanged(int id);
+    public event OnEnemyChanged onEnemyChanged;
+
     public ServerGameplayController serverGameplayController;
     public Image[] BackgroundTiles;
     public int Spacing = 4;
@@ -40,9 +42,15 @@ public class GUIGame : MonoBehaviour
     public Transform WinDialogImage;
     public GUIMenu Menu;
 
+
+    public TextMeshProUGUI bubblesScore;
+    public TextMeshProUGUI unclaimedBubblesScore;
+    public Image unclaimedBubblesImage;
+
+    public GameObject bubblesTextPrefab;
+    public GameObject bubblesImagePrefab;
+
     Image[,] backgroundTiles;
-    GamePlayManager gamePlayManager;
-    SkinManager skinManager;
     List<GameObject> explosionEffects = new List<GameObject>();
     int currentEnemy = 0;
     string lastLockedBy = "";
@@ -58,11 +66,6 @@ public class GUIGame : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void DisplayHelp();
 
-    private void Awake()
-    {
-        gamePlayManager = FindObjectOfType<GamePlayManager>();
-        skinManager = FindObjectOfType<SkinManager>();
-    }
     public void KillPlayerRobot(int id)
     {
         PlayerGauges[id].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = "0 / " + PlayerGauges[id].maxValue;
@@ -88,7 +91,7 @@ public class GUIGame : MonoBehaviour
         StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, id));
     }
 
-    public void DisplayLose()
+    public void DisplayLose(int score)
     {
         WinDialogImage.gameObject.SetActive(true);
         Transform imgWin = WinDialogImage.transform.Find("ImgWin");
@@ -97,7 +100,7 @@ public class GUIGame : MonoBehaviour
         btnContinue.gameObject.SetActive(false);
         imgWin.gameObject.SetActive(false);
         imgLose.gameObject.SetActive(true);
-        imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = gamePlayManager.GetScore().ToString();
+        imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = score.ToString();
 
         imgLose.transform.localScale = Vector3.zero;
         imgLose.transform.DOScale(Vector3.one, 0.5f);
@@ -179,7 +182,7 @@ public class GUIGame : MonoBehaviour
         }
 
         this.currentEnemy = currentEnemy;
-        gamePlayManager.SetEnemy(currentEnemy);
+        onEnemyChanged.Invoke(currentEnemy);
         for (int r = 0; r < EnemyRobots.Length; r++)
         {
             if (r == currentEnemy)
@@ -209,6 +212,7 @@ public class GUIGame : MonoBehaviour
         }
 
         // remove the old ones
+        //wtf
         Transform child;
         for (int i = 1; i < gameObject.transform.childCount; i++)
         {
@@ -216,8 +220,11 @@ public class GUIGame : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
-                child.gameObject.name != "TxtScore" && child.gameObject.name != "TxtStatus"
-                 && child.gameObject.name != "BtnHelp")
+                child.gameObject.name != "TxtScore" &&
+                child.gameObject.name != "TxtBubbles" &&
+                child.gameObject.name != "ImgBubbles" &&
+                child.gameObject.name != "TxtStatus" &&
+                child.gameObject.name != "BtnHelp")
             {
                 Destroy(gameObject.transform.GetChild(i).gameObject);
             }
@@ -251,19 +258,7 @@ public class GUIGame : MonoBehaviour
             itemNumber += 1;
         }
     }
-
-    public void RenderTiles(string[,] tileSet, int width, int height)
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                RenderTileOnObject(i, j, tileSet, width, height);
-            }
-        }
-    }
-
-    void RenderTileOnObject(int i, int j, string[,] tileSet, int levelWidth, int levelHeight)
+    void RenderTileOnObject(int i, int j, string id, int levelWidth, int levelHeight, LevelData levelData)
     {
         GameObject tile;
         Image tileImage;
@@ -283,12 +278,12 @@ public class GUIGame : MonoBehaviour
         rect.localScale = new Vector3(1, 1, 1);
 
         tileImage = tile.AddComponent<Image>();
-        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(tileSet[i, j]);
+        tileImage.sprite = levelData.GetGemData(id).gemSprite;
 
         guiTile = tile.AddComponent<GUITile>();
         guiTile.X = i;
         guiTile.Y = j;
-        guiTile.Key = tileSet[i, j];
+        guiTile.Key = id;
     }
 
     private void ClearSubElements(Transform transform)
@@ -307,6 +302,17 @@ public class GUIGame : MonoBehaviour
         }
 
         StartCoroutine(SwapTilesNow(x1, y1, x2, y2, changeInfo));
+    }
+
+
+    public void SwapTilesFail(int x1, int y1, int x2, int y2, bool changeInfo)
+    {
+        if (!(x1 == x2 || y1 == y2))
+        {
+            return;
+        }
+
+        StartCoroutine(SwapTilesFailNow(x1, y1, x2, y2, changeInfo));
     }
 
     IEnumerator SwapTilesNow(int x1, int y1, int x2, int y2, bool changeInfo)
@@ -359,11 +365,84 @@ public class GUIGame : MonoBehaviour
         }
     }
 
+    IEnumerator SwapTilesFailNow(int x1, int y1, int x2, int y2, bool changeInfo)
+    {
+        Transform tile1 = null;
+        Transform tile2 = null;
+        Vector2 tile1Pos = Vector2.zero;
+        Vector2 tile2Pos = Vector2.zero;
+
+        try
+        {
+            LockTiles("L1");
+            tile1 = transform.Find("Tile_" + x1 + "_" + y1);
+            tile2 = transform.Find("Tile_" + x2 + "_" + y2);
+
+            tile1Pos = tile1.GetComponent<RectTransform>().anchoredPosition;
+            tile2Pos = tile2.GetComponent<RectTransform>().anchoredPosition;
+            tile1.GetComponent<RectTransform>().DOPunchAnchorPos(10 * new Vector2(x1 - x2, y1 - y2), SwapDuration, 50, 10);
+            tile2.GetComponent<RectTransform>().DOPunchAnchorPos(10 * new Vector2(x2 - x1, y2 - y1), SwapDuration, 50, 10);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("E101: " + ex.Message);
+            Debug.LogError(ex.StackTrace);
+            yield break;
+        }
+        yield return new WaitForSeconds(SwapDuration);
+
+    }
+
     public void LockTiles(string lockSource)
     {
         lastLockedBy = lockSource;
         CanSwapTiles = false;
     }
+
+    public void ExplodeBubble(int x, int y, long value)
+    {
+        GameObject bubbleImage = Instantiate(bubblesImagePrefab, this.transform);
+        Transform tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+
+        // TODO: Remove in the future versions
+        if (tile == null)
+        {
+            //Debug.Log("EXP1");
+            return;
+        }
+
+        RectTransform rect = bubbleImage.GetComponent<RectTransform>();
+        if (rect == null)
+        {
+            rect = bubbleImage.AddComponent<RectTransform>();
+        }
+
+        bubbleImage.transform.position = tile.position;
+        rect.SetAsLastSibling();
+        DOTween.To(() => bubbleImage.transform.position, x =>
+        {
+            bubbleImage.transform.position = x;
+        }, unclaimedBubblesImage.transform.position, 3 * SwapDuration);
+
+        StartCoroutine(DespawnObject(bubbleImage, 3 * SwapDuration));
+
+
+        GameObject bubbleText = Instantiate(bubblesTextPrefab, this.transform);
+        bubbleText.transform.position = tile.position;
+        bubblesTextPrefab.transform.SetAsLastSibling();
+        bubbleText.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "+" + value.ToString();
+        bubbleText.GetComponentInChildren<TMPro.TextMeshProUGUI>().DOFade(0, 2f);
+        StartCoroutine(DespawnObject(bubbleText, 2f));
+    }
+
+    IEnumerator DespawnObject(GameObject bubbleImage, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+
+        Destroy(bubbleImage);
+    }
+
+
 
     public void ExplodeTile(int x, int y, bool destroyTile)
     {
@@ -437,12 +516,12 @@ public class GUIGame : MonoBehaviour
     }
 
 
-    internal void AppearAt(int x, int y, string key, int levelWidth, int levelHeight, float duration)
+    internal void AppearAt(int x, int y, string key, int levelWidth, int levelHeight, float duration, LevelData levelData)
     {
-        StartCoroutine(AppearDelayed(x, y, key, levelWidth, levelHeight, duration));
+        StartCoroutine(AppearDelayed(x, y, key, levelWidth, levelHeight, duration, levelData));
     }
 
-    IEnumerator AppearDelayed(int x, int y, string key, int levelWidth, int levelHeight, float duration)
+    IEnumerator AppearDelayed(int x, int y, string key, int levelWidth, int levelHeight, float duration, LevelData levelData)
     {
         Transform trans = transform.Find("Tile_" + x + "_" + y + "_deleted");
         GameObject tile;
@@ -478,7 +557,7 @@ public class GUIGame : MonoBehaviour
             tileImage = tile.AddComponent<Image>();
         }
 
-        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+        tileImage.sprite = levelData.GetGemData(key).gemSprite;
         tileImage.DOFade(0, 0);
         tileImage.DOFade(1, duration);
 
@@ -576,7 +655,7 @@ public class GUIGame : MonoBehaviour
         yield return new WaitForSeconds(0.21f);
     }
 
-    public void ColorChangeEffect(string key, List<Vector2Int> changedTiles)
+    public void ColorChangeEffect(string key, List<Vector2Int> changedTiles, LevelData levelData)
     {
         int x, y;
         for (int i = 0; i < changedTiles.Count; i++)
@@ -604,18 +683,18 @@ public class GUIGame : MonoBehaviour
             var duplicate = Instantiate(tile, tile.transform.parent);
             duplicate.transform.SetAsLastSibling();
             var dimage = duplicate.GetComponent<Image>();
-            dimage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+            dimage.sprite = levelData.GetGemData(key).gemSprite;
 
-            StartCoroutine(ChangeColor(tileImage, dimage, key));
+            StartCoroutine(ChangeColor(tileImage, dimage, key, levelData));
             Destroy(duplicate.gameObject, 1f);
         }
     }
-    public void ChangeColorScale(int posX, int posY, string key)
+    public void ChangeColorScale(int posX, int posY, string key, LevelData levelData)
     {
-        StartCoroutine(ScaleDownAndChangeColorAndScaleUp(posX, posY, key));
+        StartCoroutine(ScaleDownAndChangeColorAndScaleUp(posX, posY, key, levelData));
     }
 
-    IEnumerator ScaleDownAndChangeColorAndScaleUp(int posX, int posY, string key)  
+    IEnumerator ScaleDownAndChangeColorAndScaleUp(int posX, int posY, string key, LevelData levelData)  
     {
         Transform tile = transform.Find("Tile_" + posX + "_" + posY);
 
@@ -636,18 +715,18 @@ public class GUIGame : MonoBehaviour
         tileImage.transform.DOScale(0, 0.2f);
         
         yield return new WaitForSeconds(0.2f);
-        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+        tileImage.sprite = levelData.GetGemData(key).gemSprite;
         tileImage.transform.DOScale(1, 0.2f);
         yield return new WaitForSeconds(0.2f);
     }
 
-    IEnumerator ChangeColor(Image tileImage, Image dimage, string key)
+    IEnumerator ChangeColor(Image tileImage, Image dimage, string key, LevelData levelData)
     {
         dimage.color = new Color(1, 1, 1, 0);
         dimage.DOFade(1, 0.9f);
 
         yield return new WaitForSeconds(0.95f);
-        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(key);
+        tileImage.sprite = levelData.GetGemData(key).gemSprite;
         dimage.gameObject.SetActive(false);
     }
 
@@ -781,42 +860,42 @@ public class GUIGame : MonoBehaviour
 
 
     //refactored code
-    public void RenderTiles(BoardModel boardModel)
+    public void RenderTiles(BoardModel boardModel, LevelData levelData)
     {
         for (int i = 0; i < boardModel.width; i++)
         {
             for (int j = 0; j < boardModel.height; j++)
             {
-                RenderTileOnObject(i, j, boardModel[i][j].gem.GetId(), boardModel.width, boardModel.height);
+                RenderTileOnObject(i, j, boardModel[i][j].gem.GetId(), boardModel.width, boardModel.height, levelData);
             }
         }
     }
 
-    void RenderTileOnObject(int i, int j, int id, int levelWidth, int levelHeight)
+    public void ShowLevelText(int level, float duration, float fadeDuration)
     {
-        GameObject tile;
-        Image tileImage;
-        GUITile guiTile;
+        StartCoroutine(DisplayLevelText(level, duration, fadeDuration));
+    }
 
-        ClearSubElements(backgroundTiles[i, j].transform);
-        tile = new GameObject();
-        //tile.transform.SetParent(backgroundTiles[i, j].transform);
-        tile.transform.SetParent(transform);
-        tile.name = "Tile_" + i + "_" + j;
+    IEnumerator DisplayLevelText(int level, float duration, float fadeDuration)
+    {
+        Transform txtStatus = this.transform.Find("TxtStatus");
+        txtStatus.gameObject.SetActive(true);
+        txtStatus.SetAsLastSibling();
+        txtStatus.GetComponent<TextMeshProUGUI>().color = new Color(1, 1, 1, 0);
+        txtStatus.GetComponent<TextMeshProUGUI>().DOFade(1, 0.5f);
+        txtStatus.GetComponent<TextMeshProUGUI>().text = "LEVEL " + (level + 1);
+        yield return new WaitForSeconds(duration);
+        txtStatus.GetComponent<TextMeshProUGUI>().DOFade(0, fadeDuration);
+        yield return new WaitForSeconds(0.5f);
+    }
 
-        //yield return new WaitForEndOfFrame();
+    public void SetUnclaimedBubblesText(int val)
+    {
+        unclaimedBubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
+    }
 
-        RectTransform rect = tile.AddComponent<RectTransform>();
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelWidth / 2f * TileWidth + i * TileWidth + i * Spacing, -levelHeight / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
-        rect.sizeDelta = new Vector2(TileWidth, TileWidth);
-        rect.localScale = new Vector3(1, 1, 1);
-
-        tileImage = tile.AddComponent<Image>();
-        tileImage.sprite = skinManager.Skins[skinManager.SelectedSkin].FindSpriteFromKey(id.ToString());
-
-        guiTile = tile.AddComponent<GUITile>();
-        guiTile.X = i;
-        guiTile.Y = j;
-        guiTile.Key = id.ToString();
+    public void SetBubblesText(int val)
+    {
+        bubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
     }
 }

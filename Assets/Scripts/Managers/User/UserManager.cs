@@ -128,6 +128,20 @@ public class UserManager : MonoSingleton<UserManager>
         return CurrentUser.Score;
     }
 
+    //stub
+    private const string playerBubblesKey = "playerBubbles";
+    public int GetBubbles()
+    {
+        return PlayerPrefs.GetInt("playerBubblesKey");
+    }
+
+    public void AddBubbles(int bubbles)
+    {
+        int currentBubbles = GetBubbles();
+        currentBubbles += bubbles;
+        PlayerPrefs.SetInt("playerBubblesKey", currentBubbles);
+    }
+
     public void GetTop100Scores(Action<string> onComplete)
     {
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Top100, onComplete);
