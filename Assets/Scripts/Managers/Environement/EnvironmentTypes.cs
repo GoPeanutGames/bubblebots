@@ -9,6 +9,5 @@ namespace BubbleBots.Environment
         public string serverUrl;
         public string unityEnvironmentName;
         public string sceneName;
-        public ObscuredString encryptPass;
     }
 }

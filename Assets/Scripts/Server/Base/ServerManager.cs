@@ -9,6 +9,8 @@ using BubbleBots.Server.Signature;
 
 public class ServerManager : MonoSingleton<ServerManager>
 {
+    public static bool UseRSA = false;
+    
     private string sessionToken =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
 
@@ -34,12 +36,17 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     private string Encrypt(string jsonForm)
     {
-        string password = EnvironmentManager.Instance.GetEncryptPass();
         EncryptedData jsonEncryptedForm = new()
         {
-            data = SimpleAESEncryption.Encrypt2(jsonForm, password)
+            data = RSAUtility.Encrypt(jsonForm)
         };
         return JsonUtility.ToJson(jsonEncryptedForm);
+    }
+
+    private string Decrypt(string formEncryptedData)
+    {
+        EncryptedData jsonEncryptedData = JsonUtility.FromJson<EncryptedData>(formEncryptedData);
+        return RSAUtility.Decrypt(jsonEncryptedData.data);
     }
 
     private UnityWebRequest SetupPostWebRequest(string api, string formData)
@@ -74,13 +81,14 @@ public class ServerManager : MonoSingleton<ServerManager>
         operation.completed += (result) =>
         {
             string data = webRequest.downloadHandler.text;
+            string decryptedData = UseRSA ? Decrypt(data) : data;
             if (webRequest.result == UnityWebRequest.Result.Success)
             {
-                onComplete?.Invoke(data);
+                onComplete?.Invoke(decryptedData);
             }
             else
             {
-                onFail?.Invoke(data);
+                onFail?.Invoke(decryptedData);
             }
 
             webRequest.Dispose();
