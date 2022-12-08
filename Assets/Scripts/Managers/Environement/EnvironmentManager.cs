@@ -8,7 +8,6 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     [SerializeField] private bool Community;
     [SerializeField] private EnvironmentSpec DevelopmentEnvironment;
     [SerializeField] private EnvironmentSpec ProductionEnvironment;
-    [SerializeField] private EnvironmentSpec CommunityEnvironment;
 
     private EnvironmentSpec currentEnvironment;
 
@@ -36,18 +35,8 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
         return currentEnvironment.unityEnvironmentName;
     }
 
-    public string GetSceneName()
-    {
-        return currentEnvironment.sceneName;
-    }
-
     public bool ShouldChangeRobotImages()
     {
         return Community == false;
-    }
-
-    public string GetEncryptPass()
-    {
-        return currentEnvironment.encryptPass;
     }
 }

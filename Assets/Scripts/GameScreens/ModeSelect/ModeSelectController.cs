@@ -12,6 +12,5 @@ public class ModeSelectController : MonoBehaviour
     public void PlayFreeButtonClick()
     {
         ModeManager.Instance.SetMode(Mode.FREE);
-        SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
     }
 }

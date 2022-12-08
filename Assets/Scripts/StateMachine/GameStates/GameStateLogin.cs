@@ -1,13 +1,14 @@
-using WalletConnectSharp.Unity;
-using UnityEngine;
 using System.Runtime.InteropServices;
-using Beebyte.Obfuscator;
 using BubbleBots.Server.Player;
+using BubbleBots.Server.Signature;
+using UnityEngine;
+using WalletConnectSharp.Unity;
 
 public class GameStateLogin : GameState
 {
     private GameScreenLogin gameScreenLogin;
     private string tempAddress;
+    private string tempSignature;
 
     public override string GetGameStateName()
     {
@@ -17,12 +18,16 @@ public class GameStateLogin : GameState
     [DllImport("__Internal")]
     private static extern void Login();
 
+    [DllImport("__Internal")]
+    private static extern void RequestSignature(string schema, string address);
+
     public override void Enable()
     {
         SoundManager.Instance.FadeInMusic();
         SoundManager.Instance.PlayStartMusicNew();
         gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+        GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
         WalletConnect.Instance.NewSessionConnected.AddListener(OnNewWalletSessionConnectedEventFromPlugin);
         TryLoginFromSave();
     }
@@ -30,36 +35,48 @@ public class GameStateLogin : GameState
     private void TryLoginFromSave()
     {
         string address = UserManager.Instance.GetPlayerWalletAddress();
-        if (string.IsNullOrEmpty(address) == false)
+        string signature = UserManager.Instance.GetPlayerSignature();
+        if (string.IsNullOrEmpty(address) == false && string.IsNullOrEmpty(signature) == false)
         {
-            StartLogin(address);
+            StartLogin(address, signature);
         }
     }
 
-    private void OnGameEvent(string ev, object context)
+    private void OnGameEvent(GameEventData gameEvent)
     {
-        if (ev == GameEvents.ButtonTap)
+        if (gameEvent.eventName == GameEvents.ButtonTap)
         {
-            OnButtonTap(ev, context);
+            OnButtonTap(gameEvent);
         }
     }
 
-    private void OnButtonTap(string ev, object context)
+    private void OnMetamaskEvent(GameEventData data)
     {
-        CustomButtonData customButtonData = (CustomButtonData)context;
-        switch (customButtonData.buttonId)
+        GameEventString metamaskEvent = data as GameEventString;
+        if (data.eventName == GameEvents.MetamaskSuccess)
+        {
+            MetamaskLoginSuccess(metamaskEvent.stringData);
+        }
+        else if (data.eventName == GameEvents.SignatureSuccess)
+        {
+            SignatureLoginSuccess(metamaskEvent.stringData);
+        }
+    }
+
+    private void OnButtonTap(GameEventData data)
+    {
+        GameEventString buttonTapData = data as GameEventString;
+        switch (buttonTapData.stringData)
         {
             case ButtonId.LoginGuest:
                 gameScreenLogin.OnPlayAsGuestPressed();
                 break;
             case ButtonId.LoginGuestPlay:
-                //PlayAsGuest();
-                GoToMainMenu();
+                PlayAsGuest();
                 break;
             case ButtonId.LoginMetamask:
                 LoginWithMetamask();
                 break;
-
         }
     }
 
@@ -73,7 +90,6 @@ public class GameStateLogin : GameState
     private void GoToMainMenu()
     {
         stateMachine.PushState(new GameStateMainMenu());
-        //SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
     }
 
     private void LoginWithMetamask()
@@ -84,23 +100,43 @@ public class GameStateLogin : GameState
         }
         else
         {
-            Application.OpenURL(WalletConnect.Instance.ConnectURL);
+            WalletConnect.Instance.OpenDeepLink();
         }
     }
 
-    [SkipRename]
     public void MetamaskLoginSuccess(string address)
     {
-        StartLogin(address);
+        tempAddress = address;
+        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Get, (schema) => { RequestSignatureFromMetamask(schema.ToString()); }, address);
         gameScreenLogin.ShowLoadingScreen();
         gameScreenLogin.HideLoginScreen();
     }
 
-    private void StartLogin(string address)
+
+    private async void RequestSignatureFromMetamask(string schema)
+    {
+        if (Application.isMobilePlatform)
+        {
+            string signature = await WalletConnect.ActiveSession.EthPersonalSign(tempAddress, schema);
+            SignatureLoginSuccess(signature);
+        }
+        else
+        {
+            RequestSignature(schema, tempAddress);
+        }
+    }
+
+    public void SignatureLoginSuccess(string signature)
+    {
+        SoundManager.Instance.PlayMetamaskSfx();
+        StartLogin(tempAddress, signature);
+    }
+
+    private void StartLogin(string address, string signature)
     {
         SoundManager.Instance.PlayMetamaskSfx();
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
-        GetOrCreatePlayer(address);
+        GetOrCreatePlayer(address, signature);
         UserManager.PlayerType = PlayerType.LoggedInUser;
     }
 
@@ -117,39 +153,39 @@ public class GameStateLogin : GameState
         UserManager.Instance.SetWalletAddress(tempAddress);
     }
 
-    private void GetOrCreatePlayer(string address)
+    private void GetOrCreatePlayer(string address, string signature)
     {
         tempAddress = address;
+        tempSignature = signature;
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get,
-        (string data) =>
-        {
-            GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
-            SetDataToUser(result);
-            GoToMainMenu();
-
-        }
-        , address,
-        (string data) =>
-        {
-            CreatePlayerData formData = new()
-            {
-                address = tempAddress,
-            };
-            string jsonFormData = JsonUtility.ToJson(formData);
-            ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.Create, jsonFormData, (string data) =>
+            (string data) =>
             {
                 GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
                 SetDataToUser(result);
-                //should not go to main menu if fail on login?
-                //SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
+                GoToMainMenu();
+            }
+            , address,
+            (string data) =>
+            {
+                CreatePlayerData formData = new()
+                {
+                    address = tempAddress,
+                    signature = tempSignature
+                };
+                string jsonFormData = JsonUtility.ToJson(formData);
+                ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.Create, jsonFormData, (string data) =>
+                {
+                    GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
+                    SetDataToUser(result);
+                    GoToMainMenu();
+                });
             });
-
-        });
     }
 
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
+        GameEventsManager.Instance.RemoveGlobalListener(OnMetamaskEvent);
         Screens.Instance.PopScreen(gameScreenLogin);
         WalletConnect.Instance.NewSessionConnected.RemoveListener(OnNewWalletSessionConnectedEventFromPlugin);
         base.Disable();

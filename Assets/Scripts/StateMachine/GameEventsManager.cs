@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class GameEventsManager : MonoSingleton<GameEventsManager>
 {
-    public delegate void GameEventListener(string ev, object context);
+    public delegate void GameEventListener(GameEventData data);
 
     private Dictionary<string, GameEventListener> eventHandlers;
     private GameEventListener globalEventHandler;
@@ -16,7 +16,11 @@ public class GameEventsManager : MonoSingleton<GameEventsManager>
 
     protected void Start()
     {
-        PostEvent(GameEvents.AppStart);
+        GameEventData appStartData = new()
+        {
+            eventName = GameEvents.AppStart
+        };
+        PostEvent(appStartData);
     }
 
     private void Init()
@@ -27,18 +31,18 @@ public class GameEventsManager : MonoSingleton<GameEventsManager>
         }
     }
 
-    public void PostEvent(string ev, object context = null)
+    public void PostEvent(GameEventData context = null)
     {
-        if (ev == null)
+        if (context == null)
         {
             Debug.Log("null event posted");
             return;
         }
-        if (eventHandlers.ContainsKey(ev))
+        if (eventHandlers.ContainsKey(context.eventName))
         {
-            eventHandlers[ev]?.Invoke(ev, context);
+            eventHandlers[context.eventName]?.Invoke(context);
         }
-        globalEventHandler?.Invoke(ev, context);
+        globalEventHandler?.Invoke(context);
     }
 
     //should never be called on Awake() methods

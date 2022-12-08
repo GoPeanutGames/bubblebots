@@ -7,7 +7,11 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-public enum PlayerType { Guest, LoggedInUser }
+public enum PlayerType
+{
+    Guest,
+    LoggedInUser
+}
 
 public class UserManager : MonoSingleton<UserManager>
 {
@@ -15,25 +19,31 @@ public class UserManager : MonoSingleton<UserManager>
     public static int RobotsKilled = 0;
 
     private User CurrentUser;
-    private ObscuredString sessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
+
+    private ObscuredString sessionToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
 
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
     {
-        { PrefsKey.Nickname, "full_name"},
-        { PrefsKey.WalletAddress, "wallet_address"},
-        { PrefsKey.SessionToken, "session_token"},
-        { PrefsKey.Rank, "rank" }
+        { PrefsKey.Nickname, "full_name" },
+        { PrefsKey.WalletAddress, "wallet_address" },
+        { PrefsKey.SessionToken, "session_token" },
+        { PrefsKey.Rank, "rank" },
+        { PrefsKey.Signature, "signature" }
     };
 
     private void GetUserOrSetDefault()
     {
         CurrentUser = new()
         {
-            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], "Player" + UnityEngine.Random.Range(1000, 10000)),
+            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname],
+                "Player" + UnityEngine.Random.Range(1000, 10000)),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
-            SessionToken = ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),
+            SessionToken =
+                ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),
             Score = 0,
-            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999)
+            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
+            Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], "")
         };
     }
 
@@ -54,8 +64,19 @@ public class UserManager : MonoSingleton<UserManager>
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.WalletAddress], address);
     }
 
+    public void SetSignature(string signature)
+    {
+        CurrentUser.Signature = signature;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
+    }
+
     public void SetPlayerUserName(string userName, bool sendToServer)
     {
+        if (string.IsNullOrEmpty(userName))
+        {
+            return;
+        }
+
         CurrentUser.UserName = userName;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Nickname], userName);
         if (sendToServer)
@@ -81,6 +102,11 @@ public class UserManager : MonoSingleton<UserManager>
         return CurrentUser.UserName;
     }
 
+    public string GetPlayerSignature()
+    {
+        return CurrentUser.Signature;
+    }
+    
     public void SetPlayerRank(int rank)
     {
         CurrentUser.Rank = rank;

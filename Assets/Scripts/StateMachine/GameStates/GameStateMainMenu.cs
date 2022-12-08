@@ -18,19 +18,18 @@ public class GameStateMainMenu : GameState
     }
 
 
-    private void OnGameEvent(string ev, object context)
+    private void OnGameEvent(GameEventData data)
     {
-        if (ev == GameEvents.ButtonTap)
+        if (data.eventName == GameEvents.ButtonTap)
         {
-            OnButtonTap(ev, context);
+            OnButtonTap(data);
         }
     }
 
-    private void OnButtonTap(string evt, object context)
+    private void OnButtonTap(GameEventData data)
     {
-
-        CustomButtonData customButtonData = (CustomButtonData)context;
-        switch (customButtonData.buttonId)
+        GameEventString customButtonData = data as GameEventString;
+        switch (customButtonData.stringData)
         {
             default:
                 break;

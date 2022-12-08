@@ -7,5 +7,9 @@ public static class GameEvents
 
     //UI events
     public const string ButtonTap = "ui.button.tap";
+    
+    //JSLIB events
+    public const string MetamaskSuccess = "matamask.login.success";
+    public const string SignatureSuccess = "metamask.signature.success";
 
 }

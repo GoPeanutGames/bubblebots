@@ -6,11 +6,30 @@ mergeInto(LibraryManager.library, {
 		if(accounts.length > 0)
 		{
 			console.warn(accounts[0]);
-			myGameInstance.SendMessage("Controllers/WalletLoginController", "MetamaskLoginSuccess", accounts[0]);
+			myGameInstance.SendMessage("Managers/JSLibConnectionManager", "MetamaskLoginSuccess", accounts[0]);
 		} else {
 			console.log("No wallet has been connected");
 		}
 	},
+	
+	RequestSignature: async function (schema, account) {
+    
+        account = UTF8ToString(account);
+        schema = UTF8ToString(schema);
+        console.log(account, schema);
+    
+        const signature = await ethereum.request({
+            method: "eth_signTypedData_v4",
+            params: [account, schema],
+            from: account,
+        });
+    
+        myGameInstance.SendMessage(
+            "Managers/JSLibConnectionManager",
+            "SignatureLoginSuccess",
+            signature
+        );
+    },
 	
 	DisplayDebug: function()
 	{
