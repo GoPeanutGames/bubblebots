@@ -8,6 +8,7 @@ namespace BubbleBots.Server.Player
     public class CreatePlayerData
     {
         public string address;
+        public string signature;
     }
 
     [Serializable]

@@ -47,7 +47,7 @@ namespace WalletConnectSharp.Unity
         public event EventHandler NewSessionStarted;
 
         [BindComponent]
-        private NativeWebSocketTransport _transport;
+        protected NativeWebSocketTransport _transport;
 
         private static WalletConnect _instance;
 
@@ -245,7 +245,7 @@ namespace WalletConnectSharp.Unity
            
         }
 
-        private void SetupEvents()
+        protected virtual void SetupEvents()
         {
             #if UNITY_EDITOR || DEBUG
             //Useful for debug logging
@@ -494,7 +494,7 @@ namespace WalletConnectSharp.Unity
             OpenDeepLink();
         }
 
-        public void OpenMobileWallet()
+        public virtual void OpenMobileWallet()
         {
 #if UNITY_ANDROID
             var signingURL = ConnectURL.Split('@')[0];
@@ -531,7 +531,7 @@ namespace WalletConnectSharp.Unity
 #endif
         }
 
-        public void OpenDeepLink()
+        public virtual void OpenDeepLink()
         {
             if (!ActiveSession.ReadyForUserPrompt)
             {

@@ -12,6 +12,25 @@ mergeInto(LibraryManager.library, {
 		}
 	},
 	
+	RequestSignature: async function (schema, account) {
+    
+        account = UTF8ToString(account);
+        schema = UTF8ToString(schema);
+        console.log(account, schema);
+    
+        const signature = await ethereum.request({
+            method: "eth_signTypedData_v4",
+            params: [account, schema],
+            from: account,
+        });
+    
+        myGameInstance.SendMessage(
+            "Controllers/WalletLoginController",
+            "SignatureLoginSuccess",
+            signature
+        );
+    },
+	
 	DisplayDebug: function()
 	{
 		myGameInstance.SendMessage("Canvas/PnlGame", "DisplayDebug");

@@ -19,16 +19,17 @@ public class LoginController : MonoBehaviour
     private void TryLoginFromSave()
     {
         string address = UserManager.Instance.GetPlayerWalletAddress();
-        if(string.IsNullOrEmpty(address) == false)
+        string signature = UserManager.Instance.GetPlayerSignature();
+        if(string.IsNullOrEmpty(address) == false && string.IsNullOrEmpty(signature) == false)
         {
-            StartLogin(address);
+            StartLogin(address, signature);
         }
     }
 
-    private void StartLogin(string address)
+    private void StartLogin(string address, string signature)
     {
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
-        loginServerPlayerController.GetOrCreatePlayer(address);
+        loginServerPlayerController.GetOrCreatePlayer(address, signature);
         UserManager.PlayerType = PlayerType.LoggedInUser;
         LoginScreen.SetActive(false);
         LoadingScreen.SetActive(true);
@@ -52,8 +53,8 @@ public class LoginController : MonoBehaviour
         SceneManager.LoadScene(EnvironmentManager.Instance.GetSceneName());
     }
 
-    public void InitSession(string address)
+    public void InitSession(string address, string signature)
     {
-        StartLogin(address);
+        StartLogin(address, signature);
     }
 }

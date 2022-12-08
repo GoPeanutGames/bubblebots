@@ -1,14 +1,20 @@
-using UnityEngine;
 using System.Runtime.InteropServices;
-using WalletConnectSharp.Unity;
 using Beebyte.Obfuscator;
+using BubbleBots.Server.Signature;
+using UnityEngine;
+using WalletConnectSharp.Unity;
 
 public class WalletLoginController : MonoBehaviour
 {
     [DllImport("__Internal")]
     private static extern void Login();
 
+    [DllImport("__Internal")]
+    private static extern void RequestSignature(string schema, string address);
+
     public LoginController loginController;
+
+    private string tempAddress;
 
     private void Start()
     {
@@ -20,6 +26,19 @@ public class WalletLoginController : MonoBehaviour
         WalletConnect.Instance.NewSessionConnected.RemoveListener(OnNewWalletSessionConnectedEventFromPlugin);
     }
 
+    private async void RequestSignatureFromMetamask(string schema)
+    {
+        if (Application.isMobilePlatform)
+        {
+            RequestSignature(schema, tempAddress);
+        }
+        else
+        {
+            string signature = await WalletConnect.ActiveSession.EthPersonalSign(tempAddress, schema);
+            SignatureLoginSuccess(signature);
+        }
+    }
+    
     public void LoginWithMetamask()
     {
         if (Application.isMobilePlatform == false)
@@ -28,15 +47,22 @@ public class WalletLoginController : MonoBehaviour
         }
         else
         {
-            Application.OpenURL(WalletConnect.Instance.ConnectURL);
+            WalletConnect.Instance.OpenDeepLink();
         }
     }
 
     [SkipRename]
     public void MetamaskLoginSuccess(string address)
     {
+        tempAddress = address;
+        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Get, (schema) => { RequestSignatureFromMetamask(schema.ToString()); }, address);
+    }
+
+    [SkipRename]
+    public void SignatureLoginSuccess(string signature)
+    {
         SoundManager.Instance.PlayMetamaskSfx();
-        loginController.InitSession(address);
+        loginController.InitSession(tempAddress, signature);
     }
 
     public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
