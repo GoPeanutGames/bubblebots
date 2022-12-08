@@ -19,6 +19,12 @@ public static class ButtonId
 
     //mode select
     public const string ModeSelectBackButton = "modeselect.back";
+    public const string ModeSelectNethermode = "modeselect.nethermode";
+    public const string ModeSelectFreeMode = "modeselect.freemode";
+    public const string ModeSelectNetherModeTooltip = "modeselect.nethermode.tooltip";
+    public const string ModeSelectNetherModeTooltipBack = "modeselect.nethermode.tooltip.back";
+    public const string ModeSelectFreeModeTooltip = "modeselect.freemode.tooltip";
+    public const string ModeSelectFreeModeTooltipBack = "modeselect.freemode.tooltip.back";
 }
 
 public static class TypeUtilities

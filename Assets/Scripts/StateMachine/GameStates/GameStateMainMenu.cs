@@ -40,10 +40,35 @@ public class GameStateMainMenu : GameState
             case ButtonId.ModeSelectBackButton:
                 HideModeSelect();
                 break;
+            case ButtonId.ModeSelectFreeModeTooltip:
+                ShowFreeModeTooltip();
+                break;
+            case ButtonId.ModeSelectNetherModeTooltip:
+                ShowNetherModeTooltip();
+                break;
+            case ButtonId.ModeSelectFreeModeTooltipBack:
+            case ButtonId.ModeSelectNetherModeTooltipBack:
+                HideFreeModeTooltip();
+                break;
             default:
                 break;
         }
     }
+
+    private void ShowFreeModeTooltip()
+    {
+        gameScreenModeSelect.ShowToolTipFreeMode();
+    }
+
+    private void ShowNetherModeTooltip()
+    {
+        gameScreenModeSelect.ShowToolTipNetherMode();
+    }
+    private void HideFreeModeTooltip()
+    {
+        gameScreenModeSelect.HideToolTips();
+    }
+
 
     private void HideModeSelect()
     {
