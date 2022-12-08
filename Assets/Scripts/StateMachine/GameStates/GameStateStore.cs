@@ -1,13 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using BubbleBots.Store;
 
 public class GameStateStore : GameState
 {
     private GameScreenStore _gameScreenStore;
     private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
     private GameScreenMainMenuBottomHUD _gameScreenMainMenuBottomHUD;
-
+    private StoreTabs _activeTab = StoreTabs.Gems;
+    
     public override string GetGameStateName()
     {
         return "game state store";
@@ -25,8 +24,15 @@ public class GameStateStore : GameState
         _gameScreenMainMenuBottomHUD.ShowHomeButton();
         _gameScreenMainMenuTopHUD.HideSettingsGroup();
         _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+        ActivateTab(_activeTab);
     }
 
+    private void ActivateTab(StoreTabs tab)
+    {
+        _activeTab = tab;
+        _gameScreenStore.ActivateTab(_activeTab);
+    }
+    
     private void OnGameEvent(GameEventData data)
     {
         if (data.eventName == GameEvents.ButtonTap)
@@ -40,8 +46,21 @@ public class GameStateStore : GameState
         GameEventString customButtonData = data as GameEventString;
         switch (customButtonData.stringData)
         {
+            case ButtonId.StoreClose:
             case ButtonId.MainMenuBottomHUDHome:
                 HideStore();
+                break;
+            case ButtonId.StoreTabGems:
+                ActivateTab(StoreTabs.Gems);
+                break;
+            case ButtonId.StoreTabSkins:
+                ActivateTab(StoreTabs.Skins);
+                break;
+            case ButtonId.StoreTabOffers:
+                ActivateTab(StoreTabs.Offers);
+                break;
+            case ButtonId.StoreTabNuts:
+                ActivateTab(StoreTabs.Nuts);
                 break;
             default:
                 break;

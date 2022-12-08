@@ -26,6 +26,13 @@ public static class ButtonId
     public const string ModeSelectNetherModeTooltipBack = "modeselect.nethermode.tooltip.back";
     public const string ModeSelectFreeModeTooltip = "modeselect.freemode.tooltip";
     public const string ModeSelectFreeModeTooltipBack = "modeselect.freemode.tooltip.back";
+    
+    //store
+    public const string StoreTabGems = "store.tabs.gems";
+    public const string StoreTabSkins = "store.tabs.skins";
+    public const string StoreTabOffers = "store.tabs.offers";
+    public const string StoreTabNuts = "store.tabs.nuts";
+    public const string StoreClose = "store.close";
 }
 
 public static class TypeUtilities

@@ -20,17 +20,6 @@ public class StoreManager : MonoSingleton<StoreManager>
                 }
             }
         },
-        {StoreTabs.Bubbles, new StoreTab()
-            {
-                Layout = StoreTabContentLayout.Grid,
-                Items = new List<StoreItem>()
-                {
-                    new StoreItem(){TopLine = "Item 1",Image = "Placeholder",BottomLine = "Price 1"},
-                    new StoreItem(){TopLine = "Item 2",Image = "Placeholder",BottomLine = "Price 2"},
-                    new StoreItem(){TopLine = "Item 3",Image = "Placeholder",BottomLine = "Price 3"},
-                }
-            }
-        },
         {StoreTabs.Skins, new StoreTab()
             {
                 Layout = StoreTabContentLayout.Grid,
@@ -43,6 +32,17 @@ public class StoreManager : MonoSingleton<StoreManager>
             }
         },
         {StoreTabs.Offers, new StoreTab()
+            {
+                Layout = StoreTabContentLayout.Grid,
+                Items = new List<StoreItem>()
+                {
+                    new StoreItem(){TopLine = "Item 1",Image = "Placeholder",BottomLine = "Price 1"},
+                    new StoreItem(){TopLine = "Item 2",Image = "Placeholder",BottomLine = "Price 2"},
+                    new StoreItem(){TopLine = "Item 3",Image = "Placeholder",BottomLine = "Price 3"},
+                }
+            }
+        },
+        {StoreTabs.Nuts, new StoreTab()
             {
                 Layout = StoreTabContentLayout.Vertical,
                 Items = new List<StoreItem>()
