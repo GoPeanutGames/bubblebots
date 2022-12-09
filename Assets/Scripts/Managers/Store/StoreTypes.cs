@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BubbleBots.Store
 {
-    public enum StoreTabs { Gems, Bubbles, Skins, Offers }
+    public enum StoreTabs { Gems, Skins, Offers, Nuts }
     public enum StoreTabContentLayout { Grid, Vertical }
 
     [Serializable]

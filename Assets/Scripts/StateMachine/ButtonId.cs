@@ -14,6 +14,8 @@ public static class ButtonId
 
     //main menu bottom hud
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";
+    public const string MainMenuBottomHUDStore = "mainmenu.bottomHUD.store";
+    public const string MainMenuBottomHUDHome = "mainmenu.bottomHUD.home";
 
     //mode select
     public const string ModeSelectBackButton = "modeselect.back";
@@ -28,6 +30,13 @@ public static class ButtonId
     //robot selection
     public const string RobotSelectionBackButton = "robotSelection.back";
     public const string RobotSelectionStartButton = "robotSelection.start";
+    
+    //store
+    public const string StoreTabGems = "store.tabs.gems";
+    public const string StoreTabSkins = "store.tabs.skins";
+    public const string StoreTabOffers = "store.tabs.offers";
+    public const string StoreTabNuts = "store.tabs.nuts";
+    public const string StoreClose = "store.close";
 }
 
 public static class TypeUtilities
