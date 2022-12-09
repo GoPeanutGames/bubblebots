@@ -90,7 +90,7 @@ public class GameStateLogin : GameState
     {
         UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
-        stateMachine.PushState(new GameStateFreeToPlay());
+        stateMachine.PushState(new GameStateFreeMode());
     }
 
     private void GoToMainMenu()

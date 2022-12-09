@@ -1,16 +1,19 @@
 using UnityEngine.SceneManagement;
 
-public class GameStateFreeToPlay : GameState
+public class GameStateFreeMode : GameState
 {
+    private GameScreenRobotSelection gameScreenRobotSelection;
 
     public override string GetGameStateName()
     {
-        return "game state free to play";
+        return "game state free mode";
     }
 
     public override void Enable()
     {
-        SceneManager.LoadScene("FreeToPlayMode");
+        //SceneManager.LoadScene("FreeToPlayMode");
+        gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
+        gameScreenRobotSelection.PopulateSelectionList();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
     }
 
@@ -28,12 +31,21 @@ public class GameStateFreeToPlay : GameState
         GameEventString customButtonData = data as GameEventString;
         switch (customButtonData.stringData)
         {
+            case ButtonId.RobotSelectionBackButton:
+                GoToMainMenu();
+                break;
             default:
                 break;
         }
     }
+
+    private void GoToMainMenu()
+    {
+        stateMachine.PushState(new GameStateMainMenu());
+    }
     public override void Disable()
     {
+        Screens.Instance.PopScreen(gameScreenRobotSelection);
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
     }
 }

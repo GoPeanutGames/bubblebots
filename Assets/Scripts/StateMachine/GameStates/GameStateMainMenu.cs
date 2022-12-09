@@ -50,6 +50,9 @@ public class GameStateMainMenu : GameState
             case ButtonId.ModeSelectNetherModeTooltipBack:
                 HideFreeModeTooltip();
                 break;
+            case ButtonId.ModeSelectFreeMode:
+                PlayFreeMode();
+                break;
             default:
                 break;
         }
@@ -85,8 +88,19 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenuTopHUD.HideSettingsGroup();
     }
 
+
+    private void PlayFreeMode()
+    {
+        stateMachine.PushState(new GameStateFreeMode());
+    }
+
+
     public override void Disable()
     {
+        Screens.Instance.PopScreen(gameScreenMainMenu);
+        Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
+        Screens.Instance.PopScreen(gameScreenMainMenuBottomHUD);
+        Screens.Instance.PopScreen(gameScreenModeSelect);
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
     }
 }
