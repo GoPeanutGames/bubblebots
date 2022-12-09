@@ -23,6 +23,7 @@ namespace BubbleBots.Store
 
     public class SpecialOffer
     {
-        public string Name;
+        public string ButtonText;
+        public string Image;
     }
 }

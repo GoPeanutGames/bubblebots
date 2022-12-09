@@ -37,6 +37,8 @@ public static class ButtonId
     public const string StoreTabOffers = "store.tabs.offers";
     public const string StoreTabNuts = "store.tabs.nuts";
     public const string StoreClose = "store.close";
+    public const string StoreSpecialOfferLeft = "store.specialoffers.left";
+    public const string StoreSpecialOfferRight = "store.specialoffers.right";
 }
 
 public static class TypeUtilities
