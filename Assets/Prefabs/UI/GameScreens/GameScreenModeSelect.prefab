@@ -1501,6 +1501,7 @@ GameObject:
   - component: {fileID: 8556789620351625936}
   - component: {fileID: -4391623597808579907}
   - component: {fileID: 1143902020602953717}
+  - component: {fileID: 2984811342791659036}
   m_Layer: 5
   m_Name: GameScreenModeSelect
   m_TagString: Untagged
@@ -1637,3 +1638,20 @@ MonoBehaviour:
   toolTipParent: {fileID: 8556789620139003197}
   toolTipFreeMode: {fileID: 8556789620109522065}
   toolTupNetherMode: {fileID: 8556789619209384928}
+--- !u!114 &2984811342791659036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8556789620351625941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
