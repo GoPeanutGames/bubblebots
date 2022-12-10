@@ -1,3 +1,4 @@
+using BubbleBots.Server.Player;
 using UnityEngine;
 
 public class GameStateMainMenu : GameState
@@ -19,8 +20,19 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>();
         gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>();
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>();
+        SetPlayerResourceInfo();
     }
 
+    private void SetPlayerResourceInfo()
+    {
+        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+        {
+            GetPlayerWallet playerWallet = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
+            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Bubbles, playerWallet.bubbles);
+            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Gems, playerWallet.gems);
+            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Energy, playerWallet.energy);
+        }, UserManager.Instance.GetPlayerWalletAddress());
+    }
 
     private void OnGameEvent(GameEventData data)
     {
