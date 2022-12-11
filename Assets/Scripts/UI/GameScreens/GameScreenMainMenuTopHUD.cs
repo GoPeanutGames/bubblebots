@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GameScreenMainMenuTopHUD : GameScreen
 {
@@ -13,9 +14,10 @@ public class GameScreenMainMenuTopHUD : GameScreen
 
     public GameObject settingsGroup;
     public GameObject playerInfoGroup;
-    public TextMeshProUGUI BubblesText;
-    public TextMeshProUGUI GemsText;
-    public TextMeshProUGUI EnergyText;
+    public TextMeshProUGUI bubblesText;
+    public TextMeshProUGUI gemsText;
+    public TextMeshProUGUI energyText;
+    public TextMeshProUGUI usernameText;
 
     const int MAX_ENERGY = 10;
 
@@ -25,9 +27,9 @@ public class GameScreenMainMenuTopHUD : GameScreen
     {
         _resourceTextMap = new()
         {
-            { PlayerResource.Bubbles, BubblesText },
-            { PlayerResource.Energy, EnergyText },
-            { PlayerResource.Gems, GemsText }
+            { PlayerResource.Bubbles, bubblesText },
+            { PlayerResource.Energy, energyText },
+            { PlayerResource.Gems, gemsText }
         };
     }
 
@@ -61,5 +63,10 @@ public class GameScreenMainMenuTopHUD : GameScreen
         {
             _resourceTextMap[resource].text = value.ToString();
         }
+    }
+
+    public void SetUsername(string username)
+    {
+        usernameText.text = username;
     }
 }

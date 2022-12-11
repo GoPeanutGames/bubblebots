@@ -755,9 +755,10 @@ MonoBehaviour:
     CloseStateId: 
   settingsGroup: {fileID: 220336321262087773}
   playerInfoGroup: {fileID: 406194987807253304}
-  BubblesText: {fileID: 6590320459330942107}
-  GemsText: {fileID: 9158779583906392502}
-  EnergyText: {fileID: 9158779584845779363}
+  bubblesText: {fileID: 6590320459330942107}
+  gemsText: {fileID: 9158779583906392502}
+  energyText: {fileID: 9158779584845779363}
+  usernameText: {fileID: 377042734079655038}
 --- !u!1 &7157341303082221162
 GameObject:
   m_ObjectHideFlags: 0
