@@ -26,7 +26,8 @@ public class ServerManager : MonoSingleton<ServerManager>
         { PlayerAPI.Create, "/player" },
         { PlayerAPI.UpdateNickname, "/player/nickname" },
         { PlayerAPI.Get, "/player/me/" },
-        { PlayerAPI.Top100, "/player/score" }
+        { PlayerAPI.Top100, "/player/score" },
+        { PlayerAPI.Wallet , "/player/wallet/"}
     };
 
     private readonly Dictionary<SignatureLoginAPI, string> signatureAPIMap = new()

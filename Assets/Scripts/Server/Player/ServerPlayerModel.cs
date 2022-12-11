@@ -2,7 +2,7 @@ using System;
 
 namespace BubbleBots.Server.Player
 {
-    public enum PlayerAPI { Create, Get, UpdateNickname, Top100 };
+    public enum PlayerAPI { Create, Get, UpdateNickname, Top100, Wallet };
 
     [Serializable]
     public class CreatePlayerData
@@ -23,5 +23,13 @@ namespace BubbleBots.Server.Player
     {
         public string nickname;
         public int rank;
+    }
+
+    [Serializable]
+    public class GetPlayerWallet
+    {
+        public int gems;
+        public int energy;
+        public int bubbles;
     }
 }

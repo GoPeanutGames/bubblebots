@@ -1,3 +1,4 @@
+using BubbleBots.Server.Player;
 using UnityEngine;
 
 public class GameStateMainMenu : GameState
@@ -6,7 +7,7 @@ public class GameStateMainMenu : GameState
     private GameScreenMainMenuTopHUD gameScreenMainMenuTopHUD;
     private GameScreenMainMenu gameScreenMainMenu;
     private GameScreenModeSelect gameScreenModeSelect;
-    private GameScreenStore gameScreenStore;
+    private GameScreenLoading _gameScreenLoading;
 
     public override string GetGameStateName()
     {
@@ -19,8 +20,23 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>();
         gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>();
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>();
+        _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+        Screens.Instance.BringToFront<GameScreenLoading>();
+        LoadUserData();
     }
 
+    private void LoadUserData()
+    {
+        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+        {
+            GetPlayerWallet playerWallet = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
+            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Bubbles, playerWallet.bubbles);
+            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Gems, playerWallet.gems);
+            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Energy, playerWallet.energy);
+            gameScreenMainMenuTopHUD.SetUsername(UserManager.Instance.GetPlayerUserName());
+            Screens.Instance.PopScreen(_gameScreenLoading);
+        }, UserManager.Instance.GetPlayerWalletAddress());
+    }
 
     private void OnGameEvent(GameEventData data)
     {
