@@ -157,6 +157,7 @@ public class GameStateLogin : GameState
         UserManager.Instance.SetPlayerUserName(res.nickname, false);
         UserManager.Instance.SetPlayerRank(res.rank);
         UserManager.Instance.SetWalletAddress(tempAddress);
+        UserManager.Instance.SetSignature(tempSignature);
     }
 
     private void GetOrCreatePlayer(string address, string signature)

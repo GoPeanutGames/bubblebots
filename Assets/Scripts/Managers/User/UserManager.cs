@@ -4,6 +4,7 @@ using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
 
@@ -145,6 +146,15 @@ public class UserManager : MonoSingleton<UserManager>
     public void GetTop100Scores(Action<string> onComplete)
     {
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Top100, onComplete);
+    }
+
+    public void GetPlayerResources(Action<GetPlayerWallet> callbackWithData)
+    {
+        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+        {
+            GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
+            callbackWithData(walletData);
+        }, CurrentUser.WalletAddress);
     }
 
 #if UNITY_EDITOR

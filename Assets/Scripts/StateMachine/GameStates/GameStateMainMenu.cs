@@ -22,22 +22,18 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>();
         _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
         Screens.Instance.BringToFront<GameScreenLoading>();
-        LoadUserData();
+        UserManager.Instance.GetPlayerResources(SetUserData);
     }
 
-    private void LoadUserData()
+    private void SetUserData(GetPlayerWallet wallet)
     {
-        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
-        {
-            GetPlayerWallet playerWallet = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
-            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Bubbles, playerWallet.bubbles);
-            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Gems, playerWallet.gems);
-            gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Energy, playerWallet.energy);
-            gameScreenMainMenuTopHUD.SetUsername(UserManager.Instance.GetPlayerUserName());
-            Screens.Instance.PopScreen(_gameScreenLoading);
-        }, UserManager.Instance.GetPlayerWalletAddress());
+        gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Bubbles, wallet.bubbles);
+        gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Gems, wallet.gems);
+        gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Energy, wallet.energy);
+        gameScreenMainMenuTopHUD.SetUsername(UserManager.Instance.GetPlayerUserName());
+        Screens.Instance.PopScreen(_gameScreenLoading);
     }
-
+    
     private void OnGameEvent(GameEventData data)
     {
         if (data.eventName == GameEvents.ButtonTap)
