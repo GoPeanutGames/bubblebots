@@ -1,41 +1,76 @@
 using BubbleBots.Store;
 using System.Collections.Generic;
+using BubbleBots.Server.Store;
+using UnityEngine;
 
 public class StoreManager : MonoSingleton<StoreManager>
 {
-    private Dictionary<StoreTabs, StoreTab> storeTabItemsMap = new()
+    private Dictionary<StoreTabs, StoreTab> _storeTabItemsMap;
+    private List<SpecialOffer> _specialOffers;
+
+    private void CreateTabIfNotExists(StoreTabs tab)
     {
-        //TODO: placeholder, this will be taken from backend
-        {StoreTabs.Gems, new StoreTab()
+        _storeTabItemsMap ??= new Dictionary<StoreTabs, StoreTab>();
+        if (_storeTabItemsMap.ContainsKey(tab) == false)
+        {
+            _storeTabItemsMap[tab] = new StoreTab()
             {
                 Layout = StoreTabContentLayout.Grid,
                 Items = new List<StoreItem>()
+            };    
+        }
+    }
+    
+    private void AddStoreItem(StoreTabs tab, BundleData data)
+    {
+        CreateTabIfNotExists(tab);
+        StoreItem storeItem = new StoreItem()
+        {
+            TopLine = data.gems + "GEMS",
+            Image = "Store/Gems/Gem Chest Small",
+            BottomLine = "USDC " + data.price
+        };
+        _storeTabItemsMap[tab].Items.Add(storeItem);
+    }
+    
+    private void AddSpecialOffer(BundleData data)
+    {
+        Debug.Log("ADDING OFFERS");
+        _specialOffers ??= new List<SpecialOffer>();
+        SpecialOffer specialOffer = new()
+        {
+            ButtonText = "USDC " + data.price,
+            Image = "Store/Gems/Special Offer Save 40 on Gems"
+        };
+        _specialOffers.Add(specialOffer);
+    }
+    
+    private void Start()
+    {
+        ServerManager.Instance.GetStoreDataFromServer(StoreAPI.Bundles, (jsonData) =>
+        {
+            GetBundlesData bundlesData = JsonUtility.FromJson<GetBundlesData>(jsonData);
+            foreach (BundleData bundleData in bundlesData.bundles)
+            {
+                if (bundleData.isPromotion)
                 {
-                    new StoreItem(){TopLine = "Item 1",Image = "Store/Gems/Gem Chest Small",BottomLine = "Price 1"},
-                    new StoreItem(){TopLine = "Item 2",Image = "Store/Gems/Gem Chest Small",BottomLine = "Price 2"},
-                    new StoreItem(){TopLine = "Item 3",Image = "Store/Gems/Gem Chest Small",BottomLine = "Price 3"},
-                    new StoreItem(){TopLine = "Item 4",Image = "Store/Gems/Gem Chest Small",BottomLine = "Price 4"},
-                    new StoreItem(){TopLine = "Item 5",Image = "Store/Gems/Gem Chest Small",BottomLine = "Price 5"},
-                    new StoreItem(){TopLine = "Item 6",Image = "Store/Gems/Gem Chest Small",BottomLine = "Price 6"},
+                    AddSpecialOffer(bundleData);
+                }
+                else
+                {
+                    AddStoreItem(StoreTabs.Gems, bundleData);
                 }
             }
-        }
-    };
-
-    private List<SpecialOffer> specialOffers = new()
-    {
-        new SpecialOffer() {ButtonText = "Temporary", Image = "Store/Gems/Special Offer Save 40 on Gems"},
-        new SpecialOffer() {ButtonText = "Temporary 2", Image = "Store/Gems/Special Offer Save 40 on Gems"},
-        new SpecialOffer() {ButtonText = "Temporary 3", Image = "Store/Gems/Special Offer Save 40 on Gems"}
-    };
+        });
+    }
 
     public StoreTab GetStoreTabContent(StoreTabs tab)
     {
-        return storeTabItemsMap[tab];
+        return _storeTabItemsMap[tab];
     }
 
     public List<SpecialOffer> GetSpecialOffers()
     {
-        return specialOffers;
+        return _specialOffers;
     }
 }

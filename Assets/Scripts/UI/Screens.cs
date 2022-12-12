@@ -106,7 +106,7 @@ public class Screens : MonoSingleton<Screens>
             screen.SetSortingOrder(Instance.screensStack.Count * 50 + 1);
        } 
 }
-    static T FindScreen<T>(IEnumerable<GameScreen> arrScreens) where T : GameScreen
+    public static T FindScreen<T>(IEnumerable<GameScreen> arrScreens) where T : GameScreen
     {
         GameScreen screen = null;
 

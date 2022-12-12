@@ -18,8 +18,8 @@ public class GameStateStore : GameState
     {
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         _gameScreenStore = Screens.Instance.PushScreen<GameScreenStore>();
-        _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>();
-        _gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>();
+        _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
+        _gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
         Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
         Screens.Instance.BringToFront<GameScreenMainMenuBottomHUD>();
         _gameScreenMainMenuBottomHUD.ActivateStoreButtonGlow();
@@ -119,16 +119,14 @@ public class GameStateStore : GameState
 
     private void HideStore()
     {
-        stateMachine.PopState();
+        stateMachine.PushState(new GameStateMainMenu());
         Screens.Instance.PopScreen(_gameScreenStore);
-        Screens.Instance.PopScreen(_gameScreenMainMenuBottomHUD);
-        Screens.Instance.PopScreen(_gameScreenMainMenuTopHUD);
     }
 
     public override void Disable()
     {
         _gameScreenMainMenuBottomHUD.DeactivateStoreButtonGlow();
-        _gameScreenMainMenuBottomHUD.ShowHomeButton();
+        _gameScreenMainMenuBottomHUD.HideHomeButton();
         _gameScreenMainMenuTopHUD.ShowSettingsGroup();
         _gameScreenMainMenuTopHUD.ShowPlayerInfoGroup();
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);

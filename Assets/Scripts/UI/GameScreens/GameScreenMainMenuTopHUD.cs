@@ -22,6 +22,7 @@ public class GameScreenMainMenuTopHUD : GameScreen
     const int MAX_ENERGY = 10;
 
     private Dictionary<PlayerResource, TextMeshProUGUI> _resourceTextMap;
+    private bool _resourcesSet = false;
 
     private void Start()
     {
@@ -55,6 +56,7 @@ public class GameScreenMainMenuTopHUD : GameScreen
 
     public void SetTopInfo(PlayerResource resource, int value)
     {
+        _resourcesSet = true;
         if (resource == PlayerResource.Energy)
         {
             _resourceTextMap[resource].text = value.ToString() + "/" + MAX_ENERGY;
@@ -68,5 +70,10 @@ public class GameScreenMainMenuTopHUD : GameScreen
     public void SetUsername(string username)
     {
         usernameText.text = username;
+    }
+
+    public bool AreResourcesSet()
+    {
+        return _resourcesSet;
     }
 }

@@ -17,23 +17,31 @@ public class GameStateMainMenu : GameState
     public override void Enable()
     {
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
-        gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>();
-        gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>();
-        gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>();
-        _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+        gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>(true);
+        gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
+        gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
+#if !UNITY_EDITOR
+        if (gameScreenMainMenuTopHUD.AreResourcesSet() == false)
+        {
+            _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+        }
         Screens.Instance.BringToFront<GameScreenLoading>();
         UserManager.Instance.GetPlayerResources(SetUserData);
+#endif
     }
 
     private void SetUserData(GetPlayerWallet wallet)
     {
+        if (gameScreenMainMenuTopHUD.AreResourcesSet() == false)
+        {
+            Screens.Instance.PopScreen(_gameScreenLoading);
+        }
         gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Bubbles, wallet.bubbles);
         gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Gems, wallet.gems);
         gameScreenMainMenuTopHUD.SetTopInfo(GameScreenMainMenuTopHUD.PlayerResource.Energy, wallet.energy);
         gameScreenMainMenuTopHUD.SetUsername(UserManager.Instance.GetPlayerUserName());
-        Screens.Instance.PopScreen(_gameScreenLoading);
     }
-    
+
     private void OnGameEvent(GameEventData data)
     {
         if (data.eventName == GameEvents.ButtonTap)
@@ -83,11 +91,12 @@ public class GameStateMainMenu : GameState
     {
         gameScreenModeSelect.ShowToolTipNetherMode();
     }
+
     private void HideFreeModeTooltip()
     {
         gameScreenModeSelect.HideToolTips();
     }
-    
+
     private void HideModeSelect()
     {
         Screens.Instance.PopScreen(gameScreenModeSelect);
@@ -111,17 +120,11 @@ public class GameStateMainMenu : GameState
     private void ShowStore()
     {
         stateMachine.PushState(new GameStateStore());
-        Screens.Instance.PopScreen(gameScreenMainMenu);
-        Screens.Instance.PopScreen(gameScreenMainMenuBottomHUD);
-        Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
     }
 
     public override void Disable()
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);
-        Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
-        Screens.Instance.PopScreen(gameScreenMainMenuBottomHUD);
-        Screens.Instance.PopScreen(gameScreenModeSelect);
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
     }
 }
