@@ -11,8 +11,6 @@ public class GameStateFreeMode : GameState
 
     private FreeToPlayGameplayManager freeToPlayGameplayManager;
 
-
-
     [DllImport("__Internal")]
     private static extern void Premint();
 
@@ -97,6 +95,8 @@ public class GameStateFreeMode : GameState
 
     private void GoToMainMenu()
     {
+        GameObject.Destroy(freeToPlayGameplayManager.gameObject);
+        gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
         stateMachine.PushState(new GameStateMainMenu());
     }
 

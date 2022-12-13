@@ -211,6 +211,7 @@ public class GUIGame : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
+                !child.gameObject.name.StartsWith("Txt") && !child.gameObject.name.StartsWith("Img") &&
                 child.gameObject.name != "TxtScore" &&
                 child.gameObject.name != "TxtBubbles" &&
                 child.gameObject.name != "ImgBubbles" &&
@@ -480,6 +481,14 @@ public class GUIGame : MonoBehaviour
         explosionEffects.Add(newExplosion);
 
         return newExplosion;
+    }
+
+    public void DestroyExplosionEffects()
+    {
+        for (int i = 0; i < explosionEffects.Count; i++)
+        {
+            Destroy(explosionEffects[i].gameObject);
+        }
     }
 
     public void ScrollTileDown(int x, int y, int howMany, float duration)

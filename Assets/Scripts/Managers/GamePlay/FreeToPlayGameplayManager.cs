@@ -337,7 +337,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         switch (gameplayState)
         {
             case FreeToPlayGameplayState.ShowingLevelText:
-                StartCoroutine(ShowLevelText(1f, 0.5f));
+                StartCoroutine(ShowLevelText(2f, 0.5f));
                 break;
             case FreeToPlayGameplayState.Match3Playing:
                 match3Manager.UpdateMatch3Logic();
