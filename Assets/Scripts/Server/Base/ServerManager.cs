@@ -6,6 +6,8 @@ using BubbleBots.Server;
 using BubbleBots.Server.Gameplay;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
+using BubbleBots.Server.Store;
+using Org.BouncyCastle.Asn1.Ocsp;
 
 public class ServerManager : MonoSingleton<ServerManager>
 {
@@ -26,12 +28,18 @@ public class ServerManager : MonoSingleton<ServerManager>
         { PlayerAPI.Create, "/player" },
         { PlayerAPI.UpdateNickname, "/player/nickname" },
         { PlayerAPI.Get, "/player/me/" },
-        { PlayerAPI.Top100, "/player/score" }
+        { PlayerAPI.Top100, "/player/score" },
+        { PlayerAPI.Wallet , "/player/wallet/"}
     };
 
     private readonly Dictionary<SignatureLoginAPI, string> signatureAPIMap = new()
     {
         { SignatureLoginAPI.Get, "/auth/login-schema/" }
+    };
+
+    private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()
+    {
+        { StoreAPI.Bundles, "/bundles" }
     };
 
     private string Encrypt(string jsonForm)
@@ -119,6 +127,13 @@ public class ServerManager : MonoSingleton<ServerManager>
     public void GetLoginSignatureDataFromServer(SignatureLoginAPI api, Action<string> onComplete, string address = "", Action<string> onFail = null)
     {
         UnityWebRequest webRequest = SetupGetWebRequest(signatureAPIMap[api] + address);
+        SendWebRequest(webRequest, onComplete, onFail);
+    }
+
+    public void GetStoreDataFromServer(StoreAPI api, Action<string> onComplete, string address = "",
+        Action<string> onFail = null)
+    {
+        UnityWebRequest webRequest = SetupGetWebRequest(_storeAPIMap[api]);
         SendWebRequest(webRequest, onComplete, onFail);
     }
 }
