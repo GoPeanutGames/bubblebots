@@ -39,6 +39,12 @@ public static class ButtonId
     public const string StoreClose = "store.close";
     public const string StoreSpecialOfferLeft = "store.specialoffers.left";
     public const string StoreSpecialOfferRight = "store.specialoffers.right";
+
+    //level complete
+    public const string LevelCompleteContinue = "level.complete.continue";
+
+    //game end
+    public const string GameEndPremint = "game.end.premint";
 }
 
 public static class TypeUtilities

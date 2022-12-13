@@ -141,6 +141,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     public void ExplodeAllSpecials()
     {
+        inputLocked = true;
         //to do // implement
     }
 

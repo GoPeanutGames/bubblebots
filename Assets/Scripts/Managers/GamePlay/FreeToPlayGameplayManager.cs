@@ -57,7 +57,9 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         ShowingLevelText,
         Match3Playing,
         LevelComplete,
+        EndLevelSequence,
         LevelCompleteMenu,
+        GameEndMenu
     }
 
     private FreeToPlayGameplayState gameplayState;
@@ -89,16 +91,16 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         });
 
     }
-    public void StartSession()
+    public void StartSession(List<BubbleBotData> bots)
     {
         sessionData = new FreeToPlaySessionData();
         playerRoster = new PlayerRoster()
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot { maxHp = 30, hp = 30, id = 1 },
-                new BubbleBot { maxHp = 30, hp = 30, id = 2 },
-                new BubbleBot { maxHp = 30, hp = 30, id = 3 },
+                new BubbleBot { maxHp = 30, hp = 30, id = bots[0].id },
+                new BubbleBot { maxHp = 30, hp = 30, id = bots[1].id },
+                new BubbleBot { maxHp = 30, hp = 30, id = bots[2].id },
             },
             currentBot = 0
         };
@@ -128,6 +130,11 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         {
             SetEnemy((data as GameEventInt).intData);
         }
+    }
+
+    public void SetPlayerRoster()
+    {
+
     }
 
     public void StartLevel()
@@ -161,7 +168,8 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         GameEventsManager.Instance.PostEvent(new GameEventLevelStart() { eventName = GameEvents.FreeModeLevelStart, enemies = currentWave.bots, playerRoster = this.playerRoster });
 
-        //GameGUI.SetRobotGauges(currentWave.bots);
+        FindObjectOfType<GUIGame>().SetRobotGauges(currentWave.bots);
+        FindObjectOfType<GUIGame>().SetPlayerRobots(playerRoster);
         //GameGUI.SetPlayerRobots(playerRoster);
 
 
@@ -207,6 +215,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() {eventName = GameEvents.FreeModeEnemyRobotDamage, enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
         //GameGUI.DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
+        FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
 
 
         if (currentWave.bots[currentEnemy].hp <= 0)
@@ -233,24 +242,29 @@ public class FreeToPlayGameplayManager : MonoBehaviour
             OnPlayerLost();
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
             //GameGUI.KillPlayerRobot(playerRoster.currentBot);
+            FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
         }
         else if (playerRoster.IsDead(playerRoster.currentBot))
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
             //GameGUI.KillPlayerRobot(playerRoster.currentBot);
+            FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
             playerRoster.currentBot++;
         }
         else
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotDamage() { eventName = GameEvents.FreeModePlayerRobotDamage, id = playerRoster.currentBot, damage = (int)enemyDamage });
             //GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
+            FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
         }
     }
 
     private void OnPlayerLost()
     {
+        gameplayState = FreeToPlayGameplayState.GameEndMenu;
         GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore() });
         //GameGUI.DisplayLose((int)GetScore());
+        FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore());
     }
 
@@ -262,7 +276,9 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         serverGameplayController?.UpdateGameplaySession((int)GetScore());
 
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotKilled() { eventName = GameEvents.FreeModeEnemyRobotKilled, id = currentEnemy });
+        FindObjectOfType<GUIGame>().KillEnemy();
         //GameGUI.KillEnemy();
+
         bool allEnemiesKilled = true;
 
         currentEnemy = (currentEnemy + 1) % currentWave.bots.Count;
@@ -286,6 +302,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         if (!allEnemiesKilled)
         {
             GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
+            FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy, false);
         }
         return allEnemiesKilled;
     }
@@ -312,6 +329,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore());
         GameEventsManager.Instance.PostEvent(new GameEventScoreUpdate() { eventName = GameEvents.FreeModeScoreUpdate, score = (int)sessionData.GetScore() });
         //GameGUI.UpdateScore((int)sessionData.GetScore());
+        FindObjectOfType<GUIGame>().UpdateScore((int)sessionData.GetScore());
     }
 
     private void Update()
@@ -328,20 +346,31 @@ public class FreeToPlayGameplayManager : MonoBehaviour
                 StartCoroutine(EndLevelSequence());
                 match3Manager.UpdateMatch3Logic();
                 break;
+            case FreeToPlayGameplayState.EndLevelSequence:
+                match3Manager.UpdateMatch3Logic();
+                break;
         }
     }
 
     IEnumerator EndLevelSequence()
     {
+        gameplayState = FreeToPlayGameplayState.EndLevelSequence;
         match3Manager.ExplodeAllSpecials();
         yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
-        gameplayState = FreeToPlayGameplayState.LevelCompleteMenu;
 
+        gameplayState = FreeToPlayGameplayState.LevelCompleteMenu;
         UserManager.Instance.SetPlayerScore((int)GetScore());
-        serverGameplayController.EndGameplaySession((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore());
         AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
+
+        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetPotentialBubbles() });
+
+        sessionData.ResetPotentialBubbles();
+        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+
+        
 
         //MenuGUI.DisplayWin();
     }
@@ -350,10 +379,12 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     {
         GameEventsManager.Instance.PostEvent(new GameEventShowLevelText() { eventName = GameEvents.ShowLevetText, duration = _duration, fadeDuration = _fadeDuration });
         //GameGUI.ShowLevelText(currentLevelIndex, duration, fadeDuration);
+        FindObjectOfType<GUIGame>().ShowLevelText(currentLevelIndex, _duration, _fadeDuration);
         yield return new WaitForSeconds(_duration);
 
         currentEnemy = 0;
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
+        FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
         //GameGUI.TargetEnemy(currentEnemy);
 
         gameplayState = FreeToPlayGameplayState.Match3Playing;
@@ -364,8 +395,10 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         int reward = StubGetBubblesValue();
         sessionData.AddPotentialBubbles(reward);
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
+        FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, reward);
         //GameGUI.ExplodeBubble(posX, posY, reward);
         GameEventsManager.Instance.PostEvent(new GameEventUpdateUnclaimedBubbles() { eventName = GameEvents.BubblesUnclaimedUpdate, balance = sessionData.GetPotentialBubbles() });
+        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
         //GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
     }
 

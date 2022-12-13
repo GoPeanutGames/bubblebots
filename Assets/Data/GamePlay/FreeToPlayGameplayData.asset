@@ -15,4 +15,5 @@ MonoBehaviour:
   levels:
   - {fileID: 11400000, guid: a071d739e102572428c31244c15f4257, type: 2}
   - {fileID: 11400000, guid: 2133ded61b09b5646acd635d2a09d5cc, type: 2}
-  stopHpRefreshAfterLevel: 5
+  - {fileID: 11400000, guid: eec9c9c1166f62d4da05206d2b2bf276, type: 2}
+  stopHpRefreshAfterLevel: 0

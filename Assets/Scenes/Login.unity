@@ -825,7 +825,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   freeToPlayGameplayData: {fileID: 11400000, guid: 4d1c9df41976a0040aca7ff09efdb606,
     type: 2}
-  freeToPlayEnemyDamage: 1
+  freeToPlayEnemyDamage: 5
   freeToPlayGameplayManager: {fileID: 1545353200619720768, guid: dc4cd5017ec47ad43b04c417e425468f,
     type: 3}
 --- !u!1 &593814763
@@ -1052,6 +1052,12 @@ PrefabInstance:
 --- !u!4 &776278661 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 430054, guid: 1beb0a8414c49964fa16289d0fb73952,
+    type: 3}
+  m_PrefabInstance: {fileID: 776278660}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &776278662 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 149394, guid: 1beb0a8414c49964fa16289d0fb73952,
     type: 3}
   m_PrefabInstance: {fileID: 776278660}
   m_PrefabAsset: {fileID: 0}
@@ -1428,8 +1434,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b1981e44da4ae49a0e8e60e78004f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Development: 0
-  Production: 1
+  Development: 1
+  Production: 0
   Community: 0
   DevelopmentEnvironment:
     serverUrl: https://api-bb.peanuthub.dev
@@ -1695,6 +1701,10 @@ MonoBehaviour:
   LineExplosionEffect: {fileID: 980658586}
   ColorExplosionEffect: {fileID: 753544692}
   ColorChangingEffect: {fileID: 782916370}
+  enemyBullets:
+  - {fileID: 1524852735}
+  - {fileID: 2063437765}
+  - {fileID: 776278662}
 --- !u!1 &1253354693
 GameObject:
   m_ObjectHideFlags: 0
@@ -2095,6 +2105,12 @@ PrefabInstance:
 --- !u!4 &1524852734 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 426034, guid: eae69d44360b6274ba18e56d229d8fc0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1524852733}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1524852735 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 191176, guid: eae69d44360b6274ba18e56d229d8fc0,
     type: 3}
   m_PrefabInstance: {fileID: 1524852733}
   m_PrefabAsset: {fileID: 0}
@@ -3062,6 +3078,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2063437763}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2063437765 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 189946, guid: 08fba7ace305c404da9c77c309850d22,
+    type: 3}
+  m_PrefabInstance: {fileID: 2063437763}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2069761545
 GameObject:
   m_ObjectHideFlags: 0
@@ -3154,6 +3176,8 @@ MonoBehaviour:
   - {fileID: 2150561427873410362, guid: 913bf352e0463e646a9efe560a468c11, type: 3}
   - {fileID: -6765568567771343533, guid: 31fab7717676b1846b098cb6ec562bc3, type: 3}
   - {fileID: 415841699742652084, guid: b7b72207b5e3b0844889131f026150de, type: 3}
+  - {fileID: 6600031227573021996, guid: fdfbedf868a9b5a4ca84df74962e8680, type: 3}
+  - {fileID: 4863116776912790222, guid: 85648f9e2eee2894b8e52e6b50ac05df, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0

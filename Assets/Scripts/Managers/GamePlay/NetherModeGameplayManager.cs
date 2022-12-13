@@ -162,7 +162,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         GameGUI.SetRobotGauges(currentWave.bots);
         GameGUI.SetPlayerRobots(playerRoster);
 
-
+        sessionData.ResetPotentialBubbles();
         gameplayState = NetherModeGameplayState.ShowingLevelText;
     }
 
@@ -338,9 +338,9 @@ public class NetherModeGameplayManager : MonoBehaviour
         serverGameplayController?.EndGameplaySession((int)GetScore());
         AnalyticsManager.Instance?.SendLevelEvent((int)GetScore());
 
-        //UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
-        sessionData.ResetPotentialBubbles();
+        UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
         GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+        sessionData.ResetPotentialBubbles();
 
         GameGUI.DisplayLose((int)GetScore());
     }
@@ -356,8 +356,10 @@ public class NetherModeGameplayManager : MonoBehaviour
         AnalyticsManager.Instance?.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
-        sessionData.ResetPotentialBubbles();
         GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+
+        sessionData.ResetPotentialBubbles();
+        
         if (UserManager.Instance != null)
         {
             GameGUI.SetBubblesText(UserManager.Instance.GetBubbles());
