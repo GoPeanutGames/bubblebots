@@ -81,6 +81,9 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     public void Initialize(LevelData _levelData)
     {
+        //todo fix this 
+        GameGUI = FindObjectOfType<GUIGame>();
+
         levelData = _levelData;
         boardController = new BoardController();
         boardController.Initialize(levelData, matchPrecedence);
@@ -88,6 +91,8 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         RenderStartLevel();
         gameplayState = GameplayState.WaitForInput;
         inputLocked = false;
+
+
     }
 
     //public void PrepareLevel(int levelNumber)

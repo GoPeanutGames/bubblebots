@@ -129,8 +129,8 @@ public class NetherModeGameplayManager : MonoBehaviour
         match3Manager.onBubbleExploded -= OnBubbleExploded;
         match3Manager.onBubbleExploded += OnBubbleExploded;
 
-        GameGUI.onEnemyChanged -= SetEnemy;
-        GameGUI.onEnemyChanged += SetEnemy;
+        //GameGUI.onEnemyChanged -= SetEnemy;
+        //GameGUI.onEnemyChanged += SetEnemy;
 
         MenuGUI.ResetScores();
         StartLevel();

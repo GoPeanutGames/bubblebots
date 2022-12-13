@@ -1,8 +1,13 @@
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class GameStateFreeMode : GameState
 {
     private GameScreenRobotSelection gameScreenRobotSelection;
+    private GameScreenGame gameScreenGame;
+
+
+    private FreeToPlayGameplayManager freeToPlayGameplayManager;
 
     public override string GetGameStateName()
     {
@@ -34,6 +39,9 @@ public class GameStateFreeMode : GameState
             case ButtonId.RobotSelectionBackButton:
                 GoToMainMenu();
                 break;
+            case ButtonId.RobotSelectionStartButton:
+                StartPlay();
+                break;
             default:
                 break;
         }
@@ -43,6 +51,20 @@ public class GameStateFreeMode : GameState
     {
         stateMachine.PushState(new GameStateMainMenu());
     }
+
+    private void StartPlay()
+    {
+        Screens.Instance.PopScreen(gameScreenRobotSelection);
+        gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
+        freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freeToPlayGameplayManager).GetComponent<FreeToPlayGameplayManager>();
+
+        freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeToPlayGameplayData;
+        freeToPlayGameplayManager.enemyDamage = GameSettingsManager.Instance.freeToPlayEnemyDamage;
+
+        freeToPlayGameplayManager.StartSession();
+    }
+
+
     public override void Disable()
     {
         Screens.Instance.PopScreen(gameScreenRobotSelection);

@@ -15,18 +15,10 @@ using BubbleBots.Match3.Data;
 
 public class GUIGame : MonoBehaviour
 {
-    public delegate void OnEnemyChanged(int id);
-    public event OnEnemyChanged onEnemyChanged;
-
-    public ServerGameplayController serverGameplayController;
     public Image[] BackgroundTiles;
     public int Spacing = 4;
     public int TileWidth = 150;
     public float SwapDuration = 0.33f;
-    public GameObject ExplosionEffect;
-    public GameObject LineExplosionEffect;
-    public GameObject ColorExplosionEffect;
-    public GameObject ColorChangingEffect;
     public GameObject[] EnemyBullets;
     public RobotEffects[] EnemyRobots;
     public Slider[] EnemyGauges;
@@ -39,8 +31,8 @@ public class GUIGame : MonoBehaviour
     public TextMeshProUGUI TxtKilledRobots;
     public Sprite[] RobotSprites;
     public Sprite[] EnemySprites;
-    public Transform WinDialogImage;
-    public GUIMenu Menu;
+    //public Transform WinDialogImage;
+    //public GUIMenu Menu;
 
 
     public TextMeshProUGUI bubblesScore;
@@ -93,17 +85,17 @@ public class GUIGame : MonoBehaviour
 
     public void DisplayLose(int score)
     {
-        WinDialogImage.gameObject.SetActive(true);
-        Transform imgWin = WinDialogImage.transform.Find("ImgWin");
-        Transform imgLose = WinDialogImage.transform.Find("ImgLose");
-        Transform btnContinue = WinDialogImage.transform.Find("BtnContinue");
-        btnContinue.gameObject.SetActive(false);
-        imgWin.gameObject.SetActive(false);
-        imgLose.gameObject.SetActive(true);
-        imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = score.ToString();
+        //WinDialogImage.gameObject.SetActive(true);
+        //Transform imgWin = WinDialogImage.transform.Find("ImgWin");
+        //Transform imgLose = WinDialogImage.transform.Find("ImgLose");
+        //Transform btnContinue = WinDialogImage.transform.Find("BtnContinue");
+        //btnContinue.gameObject.SetActive(false);
+        //imgWin.gameObject.SetActive(false);
+        //imgLose.gameObject.SetActive(true);
+        //imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = score.ToString();
 
-        imgLose.transform.localScale = Vector3.zero;
-        imgLose.transform.DOScale(Vector3.one, 0.5f);
+        //imgLose.transform.localScale = Vector3.zero;
+        //imgLose.transform.DOScale(Vector3.one, 0.5f);
     }
 
     IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy, int id)
@@ -182,7 +174,7 @@ public class GUIGame : MonoBehaviour
         }
 
         this.currentEnemy = currentEnemy;
-        onEnemyChanged.Invoke(currentEnemy);
+        GameEventsManager.Instance.PostEvent(new GameEventInt() { eventName = GameEvents.FreeModeEnemyChanged, intData = currentEnemy });
         for (int r = 0; r < EnemyRobots.Length; r++)
         {
             if (r == currentEnemy)
@@ -251,7 +243,7 @@ public class GUIGame : MonoBehaviour
                 backgroundTile.GetComponent<Image>().enabled = true;
                 backgroundTile.gameObject.name = "TileBackground_" + x + "_" + y;
                 backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelWidth / 2f * tileWidth + x * tileWidth + x * Spacing, -levelHeight / 2f * tileHeight + y * tileHeight + y * Spacing - TopBias);
-
+                backgroundTile.AddComponent<Canvas>();
                 backgroundTiles[x, y] = backgroundTile;
             }
 
@@ -281,6 +273,7 @@ public class GUIGame : MonoBehaviour
         tileImage.sprite = levelData.GetGemData(id).gemSprite;
 
         guiTile = tile.AddComponent<GUITile>();
+        tile.AddComponent<GraphicRaycaster>();
         guiTile.X = i;
         guiTile.Y = j;
         guiTile.Key = id;
@@ -456,7 +449,7 @@ public class GUIGame : MonoBehaviour
             return;
         }
 
-        explosionEffect.transform.position = tile.position + new Vector3(0, 1, -5);
+        explosionEffect.transform.position = tile.position + new Vector3(0, 1, -10);
         explosionEffect.SetActive(true);
 
         StartCoroutine(DespawnExplosion(explosionEffect));
@@ -484,7 +477,7 @@ public class GUIGame : MonoBehaviour
             }
         }
 
-        GameObject newExplosion = Instantiate(ExplosionEffect);
+        GameObject newExplosion = Instantiate(VFXManager.Instance.ExplosionEffect);
         explosionEffects.Add(newExplosion);
 
         return newExplosion;
@@ -567,6 +560,11 @@ public class GUIGame : MonoBehaviour
             guiTile = tile.AddComponent<GUITile>();
         }
 
+        if (tile.GetComponent<GraphicRaycaster>() == null)
+        {
+            tile.AddComponent<GraphicRaycaster>();
+        }
+
         guiTile.X = x;
         guiTile.Y = y;
         guiTile.Key = key;
@@ -576,8 +574,8 @@ public class GUIGame : MonoBehaviour
 
     public void LineDestroyEffect(int x, int y, bool vertical)
     {
-        GameObject explosionEffect1 = Instantiate(LineExplosionEffect);
-        GameObject explosionEffect2 = Instantiate(LineExplosionEffect);
+        GameObject explosionEffect1 = Instantiate(VFXManager.Instance.LineExplosionEffect);
+        GameObject explosionEffect2 = Instantiate(VFXManager.Instance.LineExplosionEffect);
         Transform tile = transform.Find("TileBackground_" + x + "_" + y);
 
         // TODO: Remove in the future versions
@@ -591,11 +589,11 @@ public class GUIGame : MonoBehaviour
             }
         }
 
-        explosionEffect1.transform.position = tile.position + new Vector3(0, 1, -5);
+        explosionEffect1.transform.position = tile.position + new Vector3(0, 1, -10);
         explosionEffect1.SetActive(true);
         explosionEffect1.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * 35 : Vector3.left * 35), 0.33f).SetEase(Ease.Linear);
 
-        explosionEffect2.transform.position = tile.position + new Vector3(0, 1, -5);
+        explosionEffect2.transform.position = tile.position + new Vector3(0, 1, -10);
         explosionEffect2.SetActive(true);
         explosionEffect2.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * -35 : Vector3.left * -35), 0.33f).SetEase(Ease.Linear);
 
@@ -605,7 +603,7 @@ public class GUIGame : MonoBehaviour
 
     public void ColorBlastEffect(int x, int y)
     {
-        GameObject colorExplosionEffect = Instantiate(ColorExplosionEffect);
+        GameObject colorExplosionEffect = Instantiate(VFXManager.Instance.ColorExplosionEffect);
         Transform tile = transform.Find("Tile_" + x + "_" + y);
 
         if (tile == null)
@@ -806,26 +804,26 @@ public class GUIGame : MonoBehaviour
 
     public void PremintButton()
     {
-        WinDialogImage.gameObject.SetActive(false);
-#if !UNITY_EDITOR
-        Premint();
-#endif
+//        //WinDialogImage.gameObject.SetActive(false);
+//#if !UNITY_EDITOR
+//        Premint();
+//#endif
 
-        Menu.gameObject.SetActive(true);
-        Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
-        if (UserManager.PlayerType == PlayerType.Guest)
-        {
-            //Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
-            SceneManager.LoadScene("Login");
-        }
-        else
-        {
-            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
-            Menu.DisplayHighScores();
-            Menu.ReverseHighScoreButtons();
-        }
+//        Menu.gameObject.SetActive(true);
+//        Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
+//        if (UserManager.PlayerType == PlayerType.Guest)
+//        {
+//            //Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+//            SceneManager.LoadScene("Login");
+//        }
+//        else
+//        {
+//            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
+//            Menu.DisplayHighScores();
+//            Menu.ReverseHighScoreButtons();
+//        }
 
-        gameObject.SetActive(false);
+//        gameObject.SetActive(false);
     }
 
     public void RenewEnemyRobots()
