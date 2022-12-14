@@ -332,6 +332,12 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         FindObjectOfType<GUIGame>().UpdateScore((int)sessionData.GetScore());
     }
 
+    public bool CanShowQuitPopup()
+    {
+        return gameplayState == FreeToPlayGameplayState.Match3Playing &&
+            match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput;
+    }
+
     private void Update()
     {
         switch (gameplayState)

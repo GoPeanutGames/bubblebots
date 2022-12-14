@@ -148,9 +148,9 @@ public class NetherModeGameplayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 50 },
-                new BubbleBot() { hp = 50 },
-                new BubbleBot() { hp = 50 }
+                new BubbleBot() { hp = 100 },
+                new BubbleBot() { hp = 100 },
+                new BubbleBot() { hp = 100 }
             },
             completed = false
         };
@@ -330,6 +330,12 @@ public class NetherModeGameplayManager : MonoBehaviour
         GameEventsManager.Instance.PostEvent(new GameEventScoreUpdate() { eventName = GameEvents.FreeModeScoreUpdate, score = (int)sessionData.GetScore() });
         //GameGUI.UpdateScore((int)sessionData.GetScore());
         FindObjectOfType<GUIGame>().UpdateScore((int)sessionData.GetScore());
+    }
+
+    public bool CanShowQuitPopup()
+    {
+        return gameplayState == NethermodeGameplayState.Match3Playing &&
+            match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput;
     }
 
     private void Update()

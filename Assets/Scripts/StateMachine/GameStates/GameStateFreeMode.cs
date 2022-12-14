@@ -8,6 +8,7 @@ public class GameStateFreeMode : GameState
     private GameScreenGame gameScreenGame;
     private GameScreenLevelComplete gameScreenLevelComplete;
     private GameScreenGameEnd gameScreenGameEnd;
+    private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
 
     private FreeToPlayGameplayManager freeToPlayGameplayManager;
 
@@ -64,11 +65,32 @@ public class GameStateFreeMode : GameState
             case ButtonId.GameEndPremint:
                 PremintPressed();
                 break;
+            case ButtonId.QuitGame:
+                ShowQuitGameMenu();
+                break;
+            case ButtonId.QuitGameMenuPlay:
+                ContinuePlaying();
+                break;
+            case ButtonId.QuitGameMenuQuit:
+                GoToMainMenu();
+                break;
             default:
                 break;
         }
     }
 
+    private void ContinuePlaying()
+    {
+        Screens.Instance.PopScreen(gameScreenQuitToMainMenu);
+    }
+
+    private void ShowQuitGameMenu()
+    {
+        if (freeToPlayGameplayManager.CanShowQuitPopup())
+        {
+            gameScreenQuitToMainMenu = Screens.Instance.PushScreen<GameScreenQuitToMainMenu>();
+        }
+    }
 
     private void PremintPressed()
     {
@@ -117,7 +139,7 @@ public class GameStateFreeMode : GameState
 
         freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeModeGameplayData;
         freeToPlayGameplayManager.enemyDamage = GameSettingsManager.Instance.freeModeEnemyDamage;
-        freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
+        //freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
 
@@ -130,6 +152,8 @@ public class GameStateFreeMode : GameState
         Screens.Instance.PopScreen(gameScreenRobotSelection);
         Screens.Instance.PopScreen(gameScreenGameEnd);
         Screens.Instance.PopScreen(gameScreenGame);
+        Screens.Instance.PopScreen(gameScreenQuitToMainMenu);
+        Screens.Instance.PopScreen(gameScreenLevelComplete);
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
     }
 }

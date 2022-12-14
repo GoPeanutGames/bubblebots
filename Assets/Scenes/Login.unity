@@ -825,12 +825,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   freeModeGameplayData: {fileID: 11400000, guid: 4d1c9df41976a0040aca7ff09efdb606,
     type: 2}
-  freeModeEnemyDamage: 2
+  freeModeEnemyDamage: 1
   freemodeGameplayManager: {fileID: 1545353200619720768, guid: dc4cd5017ec47ad43b04c417e425468f,
     type: 3}
   netherModeGameplayData: {fileID: 11400000, guid: e4ade18aa4c0c4b498c9cf65560466e6,
     type: 2}
-  netherModeEnemyDamage: 5
+  netherModeEnemyDamage: 2
   netherModeGameplayManager: {fileID: 1545353200619720768, guid: 4a4e59a392bded24394985e48730c4f6,
     type: 3}
 --- !u!1 &593814763
@@ -3228,6 +3228,8 @@ MonoBehaviour:
   - {fileID: 415841699742652084, guid: b7b72207b5e3b0844889131f026150de, type: 3}
   - {fileID: 6600031227573021996, guid: fdfbedf868a9b5a4ca84df74962e8680, type: 3}
   - {fileID: 4863116776912790222, guid: 85648f9e2eee2894b8e52e6b50ac05df, type: 3}
+  - {fileID: 7016109565207699287, guid: c08a1872ad7867141b425f4136e0e3be, type: 3}
+  - {fileID: 9027070982741754900, guid: 789bc037baa917049b5fed3437a8b18b, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0

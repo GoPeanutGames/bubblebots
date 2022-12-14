@@ -213,6 +213,7 @@ public class GUIGame : MonoBehaviour
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
                 !child.gameObject.name.StartsWith("Txt") && !child.gameObject.name.StartsWith("Img") &&
                 child.gameObject.name != "TxtScore" &&
+                child.gameObject.name != "quitButton" &&
                 child.gameObject.name != "TxtBubbles" &&
                 child.gameObject.name != "ImgBubbles" &&
                 child.gameObject.name != "TxtStatus" &&

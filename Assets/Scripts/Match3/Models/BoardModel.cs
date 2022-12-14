@@ -246,7 +246,7 @@ namespace BubbleBots.Match3.Models
                             }
                             else
                             {
-                                if (canSpawnBubbles && Random.Range(0, 100) < levelData.bubbleSpawnChance)
+                                if (canSpawnBubbles && Random.Range(0f, 100f) < levelData.bubbleSpawnChance)
                                 {
                                     cells[i][j].SetGem(new BoardGem("14", GemType.Bubble));
                                 }
