@@ -11,6 +11,10 @@ public class GameEventString: GameEventData
     public string stringData;
 }
 
+public class GameEventStore : GameEventString
+{
+    public int bundleId;
+}
 
 public class GameEventInt : GameEventData
 {

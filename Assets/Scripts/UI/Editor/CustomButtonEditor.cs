@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using UnityEditor;
+using UnityEditor.UI;
 
-[CustomEditor(typeof(CustomButton))]
-public class CustomButtonEditor : UnityEditor.UI.ButtonEditor
+[CustomEditor(typeof(CustomButton), true)]
+public class CustomButtonEditor : ButtonEditor
 {
     private int _choice = 0;
 

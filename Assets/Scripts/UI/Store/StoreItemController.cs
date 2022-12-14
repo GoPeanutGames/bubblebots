@@ -1,3 +1,4 @@
+using BubbleBots.Store;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,19 +8,21 @@ public class StoreItemController : MonoBehaviour
     public TextMeshProUGUI TopText;
     public TextMeshProUGUI BottomText;
     public Image ItemImage;
+    public CustomStoreButton buyButton;
 
     private void LoadImage(string path)
     {
         ItemImage.sprite = Resources.Load<Sprite>(path);
     }
     
-    public void SetupItem(string top, string bottom, string image = "")
+    public void SetupItem(StoreItem item)
     {
-        TopText.text = top;
-        BottomText.text = bottom;
-        if (string.IsNullOrEmpty(image) == false)
+        TopText.text = item.TopLine;
+        BottomText.text = item.BottomLine;
+        if (string.IsNullOrEmpty(item.Image) == false)
         {
-            LoadImage(image);
+            LoadImage(item.Image);
         }
+        buyButton.SetBundleId(item.Bundle.bundleId);
     }
 }

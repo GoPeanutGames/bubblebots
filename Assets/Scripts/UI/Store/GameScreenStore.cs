@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using BubbleBots.Store;
-using TMPro;
 using UnityEngine;
 
 public class GameScreenStore : GameScreen
@@ -54,14 +53,14 @@ public class GameScreenStore : GameScreen
         foreach (StoreItem storeItem in items)
         {
             GameObject itemGO = Instantiate(_currentLayout == StoreTabContentLayout.Grid ? GridItemPrefab : VerticalItemPrefab, _spawnedItemContainer.transform);
-            itemGO.GetComponent<StoreItemController>().SetupItem(storeItem.TopLine, storeItem.BottomLine, storeItem.Image);
+            itemGO.GetComponent<StoreItemController>().SetupItem(storeItem);
         }
     }
 
     public void GenerateSpecialOffer(SpecialOffer offer)
     {
         GameObject offerGO = Instantiate(SpecialOfferPrefab, SpecialOffersContentParent.transform);
-        offerGO.GetComponent<SpecialOfferController>().SetupSpecialOffer(offer.ButtonText, offer.Image);
+        offerGO.GetComponent<SpecialOfferController>().SetupSpecialOffer(offer);
         _currentSpecialOfferGO = offerGO;
     }
 

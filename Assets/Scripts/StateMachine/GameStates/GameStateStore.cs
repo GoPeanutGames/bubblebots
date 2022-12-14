@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BubbleBots.Store;
+using UnityEngine;
 
 public class GameStateStore : GameState
 {
@@ -17,7 +18,7 @@ public class GameStateStore : GameState
     public override void Enable()
     {
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
-        _gameScreenStore = Screens.Instance.PushScreen<GameScreenStore>();
+        _gameScreenStore = Screens.Instance.PushScreen<GameScreenStore>(true);
         _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
         _gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
         Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
@@ -112,23 +113,33 @@ public class GameStateStore : GameState
             case ButtonId.StoreSpecialOfferRight:
                 ClickRight();
                 break;
+            case ButtonId.StoreBuy:
+                BuyButtonClick(data);
+                break;
             default:
                 break;
         }
     }
 
+    
+    private void BuyButtonClick(GameEventData data)
+    {
+        GameEventStore gameEventStore = data as GameEventStore;
+        stateMachine.PushState(new GameStateConfirmTransaction(gameEventStore.bundleId));
+    }
+    
     private void HideStore()
     {
         stateMachine.PushState(new GameStateMainMenu());
         Screens.Instance.PopScreen(_gameScreenStore);
-    }
-
-    public override void Disable()
-    {
         _gameScreenMainMenuBottomHUD.DeactivateStoreButtonGlow();
         _gameScreenMainMenuBottomHUD.HideHomeButton();
         _gameScreenMainMenuTopHUD.ShowSettingsGroup();
         _gameScreenMainMenuTopHUD.ShowPlayerInfoGroup();
+    }
+
+    public override void Disable()
+    {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
     }
 }

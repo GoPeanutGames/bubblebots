@@ -39,7 +39,11 @@ public static class ButtonId
     public const string StoreClose = "store.close";
     public const string StoreSpecialOfferLeft = "store.specialoffers.left";
     public const string StoreSpecialOfferRight = "store.specialoffers.right";
-
+    public const string StoreBuy = "store.buy";
+    
+    //confirm transaction
+    public const string ConfirmTransactionClose = "confirmtransaction.close";
+    public const string ConfirmTransactionBuy = "confirmtransaction.buy";
 
     //game
     public const string QuitGame = "game.quit";
