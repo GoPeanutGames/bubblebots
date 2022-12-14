@@ -20,6 +20,7 @@ namespace BubbleBots.Server.Store
         public bool isPromotion;
         public int price;
         public int gems;
+        public int bundleId;
     }
     
     [Serializable]

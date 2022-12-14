@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4842580619766582971}
   - component: {fileID: 2167818148008781670}
   - component: {fileID: 6380248442253159067}
-  - component: {fileID: 5225155996478847888}
+  - component: {fileID: 6435725375713681066}
   m_Layer: 5
   m_Name: BuyButton
   m_TagString: Untagged
@@ -78,7 +78,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5225155996478847888
+--- !u!114 &6435725375713681066
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2446377906235248762}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Script: {fileID: 11500000, guid: 8aa06f2aa199aa84a86b5f89627c1fac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Navigation:
@@ -122,6 +122,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+  buttonId: store.buy
 --- !u!1 &6594590362725982439
 GameObject:
   m_ObjectHideFlags: 0
@@ -373,6 +374,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SpecialOfferImage: {fileID: 8467368110368592591}
   ButtonText: {fileID: 9078095607517166220}
+  buyButton: {fileID: 6435725375713681066}
 --- !u!223 &4672891176197610381
 Canvas:
   m_ObjectHideFlags: 0

@@ -1428,8 +1428,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57b1981e44da4ae49a0e8e60e78004f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Development: 0
-  Production: 1
+  Development: 1
+  Production: 0
   Community: 0
   DevelopmentEnvironment:
     serverUrl: https://api-bb.peanuthub.dev
@@ -2003,6 +2003,50 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 22
   m_TargetDisplay: 0
+--- !u!1 &1474682881
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1474682882}
+  - component: {fileID: 1474682883}
+  m_Layer: 0
+  m_Name: MetamaskMAnager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1474682882
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474682881}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1864773990}
+  m_RootOrder: 13
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1474682883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474682881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3455d803f36e5634b89b2e8b19fec572, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1524852733
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2651,6 +2695,7 @@ Transform:
   - {fileID: 1073275977}
   - {fileID: 573524998}
   - {fileID: 1209695668}
+  - {fileID: 1474682882}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3154,6 +3199,8 @@ MonoBehaviour:
   - {fileID: 2150561427873410362, guid: 913bf352e0463e646a9efe560a468c11, type: 3}
   - {fileID: -6765568567771343533, guid: 31fab7717676b1846b098cb6ec562bc3, type: 3}
   - {fileID: 415841699742652084, guid: b7b72207b5e3b0844889131f026150de, type: 3}
+  - {fileID: 4517260359929873612, guid: 8facaad4bedaaaa42b62ce45fc2669a6, type: 3}
+  - {fileID: 6954776349591162396, guid: b82ab928c3bbaea468750008f83f99d2, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0
