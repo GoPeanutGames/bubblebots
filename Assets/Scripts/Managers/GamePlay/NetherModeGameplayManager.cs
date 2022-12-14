@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetherModeSessionData
+public class NethermodeSessionData
 {
     ObscuredLong score = 0;
 
@@ -52,31 +52,29 @@ public class NetherModeSessionData
 
 public class NetherModeGameplayManager : MonoBehaviour
 {
-    private enum NetherModeGameplayState
+    private enum NethermodeGameplayState
     {
-        RobotSelection,
         ShowingLevelText,
         Match3Playing,
         LevelComplete,
+        EndLevelSequence,
         LevelCompleteMenu,
-        NetherModeComplete,
-        NetherModeCompleteMenu
+        GameEndMenu,
+        NetherModeComplete
     }
 
-    private NetherModeGameplayState gameplayState;
+    private NethermodeGameplayState gameplayState;
 
     public NetherModeGameplayData gameplayData;
 
     public ServerGameplayController serverGameplayController;
-    public GUIMenu MenuGUI;
-    public GUIGame GameGUI;
-    public GUIRobotSelection RobotSelectionGUI;
-    public float DamageOfRobot2 = 0.05f;
+    //public GUIGame GameGUI;
+    public float enemyDamage = 0.05f;
 
     int currentLevelIndex = 0;
     int currentEnemy = 0;
 
-    private FreeToPlaySessionData sessionData;
+    private NethermodeSessionData sessionData;
 
     private PlayerRoster playerRoster;
     private Wave currentWave;
@@ -86,33 +84,24 @@ public class NetherModeGameplayManager : MonoBehaviour
 
     public void Start()
     {
-        gameplayState = NetherModeGameplayState.RobotSelection;
-        ShowRobotSelectionMenu();
-    }
-
-    private void ShowRobotSelectionMenu()
-    {
+        gameplayState = NethermodeGameplayState.ShowingLevelText;
         SoundManager.Instance?.FadeOutMusic(() =>
         {
             SoundManager.Instance.PlayRobotSelectMusicNew();
             SoundManager.Instance.FadeInMusic();
         });
 
-        RobotSelectionGUI.gameObject.SetActive(true);
-        MenuGUI.gameObject.SetActive(false);
-        GameGUI.gameObject.SetActive(false);
     }
-
-    public void StartSession()
+    public void StartSession(List<BubbleBotData> bots)
     {
-        sessionData = new FreeToPlaySessionData();
+        sessionData = new NethermodeSessionData();
         playerRoster = new PlayerRoster()
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot { maxHp = 30, hp = 30, id = 1 },
-                new BubbleBot { maxHp = 30, hp = 30, id = 2 },
-                new BubbleBot { maxHp = 30, hp = 30, id = 3 },
+                new BubbleBot { maxHp = 30, hp = 30, id = bots[0].id },
+                new BubbleBot { maxHp = 30, hp = 30, id = bots[1].id },
+                new BubbleBot { maxHp = 30, hp = 30, id = bots[2].id },
             },
             currentBot = 0
         };
@@ -129,11 +118,24 @@ public class NetherModeGameplayManager : MonoBehaviour
         match3Manager.onBubbleExploded -= OnBubbleExploded;
         match3Manager.onBubbleExploded += OnBubbleExploded;
 
-        //GameGUI.onEnemyChanged -= SetEnemy;
-        //GameGUI.onEnemyChanged += SetEnemy;
+        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 
-        MenuGUI.ResetScores();
+        GameEventsManager.Instance.PostEvent(new GameEventData() { eventName = GameEvents.FreeModeSessionStarted });
+        //MenuGUI.ResetScores();
         StartLevel();
+    }
+
+    private void OnGameEvent(GameEventData data)
+    {
+        if (data.eventName == GameEvents.FreeModeEnemyChanged)
+        {
+            SetEnemy((data as GameEventInt).intData);
+        }
+    }
+
+    public void SetPlayerRoster()
+    {
+
     }
 
     public void StartLevel()
@@ -146,30 +148,34 @@ public class NetherModeGameplayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 10 },
-                new BubbleBot() { hp = 10 },
-                new BubbleBot() { hp = 10 }
+                new BubbleBot() { hp = 50 },
+                new BubbleBot() { hp = 50 },
+                new BubbleBot() { hp = 50 }
             },
             completed = false
         };
 
-        GameGUI.gameObject.SetActive(true);
-        MenuGUI.gameObject.SetActive(false);
-        
+        //GameGUI.gameObject.SetActive(true);
+        //MenuGUI.gameObject.SetActive(false);
+
         AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex);
         serverGameplayController?.StartGameplaySession(currentLevelIndex);
 
-        GameGUI.SetRobotGauges(currentWave.bots);
-        GameGUI.SetPlayerRobots(playerRoster);
 
-        sessionData.ResetPotentialBubbles();
-        gameplayState = NetherModeGameplayState.ShowingLevelText;
+        GameEventsManager.Instance.PostEvent(new GameEventLevelStart() { eventName = GameEvents.FreeModeLevelStart, enemies = currentWave.bots, playerRoster = this.playerRoster });
+
+        FindObjectOfType<GUIGame>().SetRobotGauges(currentWave.bots);
+        FindObjectOfType<GUIGame>().SetPlayerRobots(playerRoster);
+        //GameGUI.SetPlayerRobots(playerRoster);
+
+
+        gameplayState = NethermodeGameplayState.ShowingLevelText;
     }
 
     public void StartNextLevel()
     {
         currentLevelIndex++;
-        MenuGUI.HideWin();
+        //MenuGUI.HideWin();
         StartLevel();
     }
 
@@ -191,10 +197,10 @@ public class NetherModeGameplayManager : MonoBehaviour
 
     private void OnLevelFinished()
     {
-        gameplayState = NetherModeGameplayState.LevelComplete;
+        gameplayState = NethermodeGameplayState.LevelComplete;
         if (currentLevelIndex >= gameplayData.levels.Count - 1)
         {
-            gameplayState = NetherModeGameplayState.NetherModeComplete;
+            gameplayState = NethermodeGameplayState.NetherModeComplete;
         }
     }
 
@@ -206,7 +212,11 @@ public class NetherModeGameplayManager : MonoBehaviour
         }
 
         currentWave.bots[currentEnemy].hp -= damage;
-        GameGUI.DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
+
+        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() { eventName = GameEvents.FreeModeEnemyRobotDamage, enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
+        //GameGUI.DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
+        FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
+
 
         if (currentWave.bots[currentEnemy].hp <= 0)
         {
@@ -221,31 +231,40 @@ public class NetherModeGameplayManager : MonoBehaviour
 
     private void HitPlayer()
     {
-        if (gameplayState == NetherModeGameplayState.LevelComplete || currentWave.completed)
+        if (gameplayState == NethermodeGameplayState.LevelComplete || currentWave.completed)
         {
             return;
         }
-        playerRoster.TakeDamage((int)DamageOfRobot2);
+        playerRoster.TakeDamage((int)enemyDamage);
 
         if (playerRoster.AreAllBotsDead())
         {
             OnPlayerLost();
-            GameGUI.KillPlayerRobot(playerRoster.currentBot);
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
+            //GameGUI.KillPlayerRobot(playerRoster.currentBot);
+            FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
         }
         else if (playerRoster.IsDead(playerRoster.currentBot))
         {
-            GameGUI.KillPlayerRobot(playerRoster.currentBot);
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
+            //GameGUI.KillPlayerRobot(playerRoster.currentBot);
+            FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
             playerRoster.currentBot++;
         }
         else
         {
-            GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)DamageOfRobot2);
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotDamage() { eventName = GameEvents.FreeModePlayerRobotDamage, id = playerRoster.currentBot, damage = (int)enemyDamage });
+            //GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
+            FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
         }
     }
 
     private void OnPlayerLost()
     {
-        GameGUI.DisplayLose((int)GetScore());
+        gameplayState = NethermodeGameplayState.GameEndMenu;
+        GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore() });
+        //GameGUI.DisplayLose((int)GetScore());
+        FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore());
     }
 
@@ -256,7 +275,10 @@ public class NetherModeGameplayManager : MonoBehaviour
         AnalyticsManager.Instance?.SendRobotKillEvent(UserManager.RobotsKilled);
         serverGameplayController?.UpdateGameplaySession((int)GetScore());
 
-        GameGUI.KillEnemy();
+        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotKilled() { eventName = GameEvents.FreeModeEnemyRobotKilled, id = currentEnemy });
+        FindObjectOfType<GUIGame>().KillEnemy();
+        //GameGUI.KillEnemy();
+
         bool allEnemiesKilled = true;
 
         currentEnemy = (currentEnemy + 1) % currentWave.bots.Count;
@@ -279,7 +301,8 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         if (!allEnemiesKilled)
         {
-            GameGUI.TargetEnemy(currentEnemy, false);
+            GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
+            FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy, false);
         }
         return allEnemiesKilled;
     }
@@ -304,87 +327,79 @@ public class NetherModeGameplayManager : MonoBehaviour
     {
         sessionData.IncrementScore(toAdd);
         serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore());
-        GameGUI.UpdateScore((int)sessionData.GetScore());
+        GameEventsManager.Instance.PostEvent(new GameEventScoreUpdate() { eventName = GameEvents.FreeModeScoreUpdate, score = (int)sessionData.GetScore() });
+        //GameGUI.UpdateScore((int)sessionData.GetScore());
+        FindObjectOfType<GUIGame>().UpdateScore((int)sessionData.GetScore());
     }
 
     private void Update()
     {
         switch (gameplayState)
         {
-            case NetherModeGameplayState.ShowingLevelText:
-                StartCoroutine(ShowLevelText(1f, 0.5f));
+            case NethermodeGameplayState.ShowingLevelText:
+                StartCoroutine(ShowLevelText(2f, 0.5f));
                 break;
-            case NetherModeGameplayState.Match3Playing:
+            case NethermodeGameplayState.Match3Playing:
                 match3Manager.UpdateMatch3Logic();
                 break;
-            case NetherModeGameplayState.LevelComplete:
+            case NethermodeGameplayState.LevelComplete:
                 StartCoroutine(EndLevelSequence());
                 match3Manager.UpdateMatch3Logic();
                 break;
-            case NetherModeGameplayState.NetherModeComplete:
-                StartCoroutine(EndGameSequence());
+            case NethermodeGameplayState.EndLevelSequence:
                 match3Manager.UpdateMatch3Logic();
                 break;
         }
-    }
-
-    IEnumerator EndGameSequence()
-    {
-        match3Manager.ExplodeAllSpecials();
-        yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
-        gameplayState = NetherModeGameplayState.NetherModeCompleteMenu;
-
-        UserManager.Instance?.SetPlayerScore((int)GetScore());
-        serverGameplayController?.EndGameplaySession((int)GetScore());
-        AnalyticsManager.Instance?.SendLevelEvent((int)GetScore());
-
-        UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
-        GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
-        sessionData.ResetPotentialBubbles();
-
-        GameGUI.DisplayLose((int)GetScore());
     }
 
     IEnumerator EndLevelSequence()
     {
+        gameplayState = NethermodeGameplayState.EndLevelSequence;
         match3Manager.ExplodeAllSpecials();
         yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
-        gameplayState = NetherModeGameplayState.LevelCompleteMenu;
 
-        UserManager.Instance?.SetPlayerScore((int)GetScore());
+        gameplayState = NethermodeGameplayState.LevelCompleteMenu;
+        UserManager.Instance.SetPlayerScore((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore());
-        AnalyticsManager.Instance?.SendLevelEvent((int)GetScore());
+        AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
-        GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+
+        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetPotentialBubbles() });
 
         sessionData.ResetPotentialBubbles();
-        
-        if (UserManager.Instance != null)
-        {
-            GameGUI.SetBubblesText(UserManager.Instance.GetBubbles());
-        }
+        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
 
-        MenuGUI.DisplayWin();
+
+
+        //MenuGUI.DisplayWin();
     }
 
-    IEnumerator ShowLevelText(float duration, float fadeDuration)
+    IEnumerator ShowLevelText(float _duration, float _fadeDuration)
     {
-        GameGUI.ShowLevelText(currentLevelIndex, duration, fadeDuration);
-        yield return new WaitForSeconds(duration);
+        GameEventsManager.Instance.PostEvent(new GameEventShowLevelText() { eventName = GameEvents.ShowLevetText, duration = _duration, fadeDuration = _fadeDuration });
+        //GameGUI.ShowLevelText(currentLevelIndex, duration, fadeDuration);
+        FindObjectOfType<GUIGame>().ShowLevelText(currentLevelIndex, _duration, _fadeDuration);
+        yield return new WaitForSeconds(_duration);
 
         currentEnemy = 0;
-        GameGUI.TargetEnemy(currentEnemy);
+        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
+        FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
+        //GameGUI.TargetEnemy(currentEnemy);
 
-        gameplayState = NetherModeGameplayState.Match3Playing;
+        gameplayState = NethermodeGameplayState.Match3Playing;
     }
 
-    private void OnBubbleExploded(int posX, int posY)
+    private void OnBubbleExploded(int _posX, int _posY)
     {
         int reward = StubGetBubblesValue();
         sessionData.AddPotentialBubbles(reward);
-        GameGUI.ExplodeBubble(posX, posY, reward);
-        GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+        GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
+        FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, reward);
+        //GameGUI.ExplodeBubble(posX, posY, reward);
+        GameEventsManager.Instance.PostEvent(new GameEventUpdateUnclaimedBubbles() { eventName = GameEvents.BubblesUnclaimedUpdate, balance = sessionData.GetPotentialBubbles() });
+        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+        //GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
     }
 
     private int StubGetBubblesValue()
@@ -394,11 +409,11 @@ public class NetherModeGameplayManager : MonoBehaviour
         if (firstRoll < 50)
         {
             return Random.Range(1, 21);
-        } 
+        }
         else if (firstRoll < 80)
         {
             return Random.Range(21, 101);
-        } 
+        }
         else if (firstRoll < 95)
         {
             return Random.Range(101, 300);
@@ -406,7 +421,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         else if (firstRoll < 99)
         {
             return Random.Range(301, 450);
-        } 
+        }
         else
         {
             return Random.Range(451, 501);

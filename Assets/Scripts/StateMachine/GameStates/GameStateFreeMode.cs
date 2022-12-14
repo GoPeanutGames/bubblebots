@@ -95,19 +95,29 @@ public class GameStateFreeMode : GameState
 
     private void GoToMainMenu()
     {
-        GameObject.Destroy(freeToPlayGameplayManager.gameObject);
-        gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
+        if (freeToPlayGameplayManager != null)
+        {
+            GameObject.Destroy(freeToPlayGameplayManager.gameObject);
+            freeToPlayGameplayManager = null;
+        }
+
+        if (gameScreenGame != null)
+        {
+            gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
+        }
+
         stateMachine.PushState(new GameStateMainMenu());
     }
 
     private void StartPlay()
     {
-        
+        Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
-        freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freeToPlayGameplayManager).GetComponent<FreeToPlayGameplayManager>();
+        freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freemodeGameplayManager).GetComponent<FreeToPlayGameplayManager>();
 
-        freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeToPlayGameplayData;
-        freeToPlayGameplayManager.enemyDamage = GameSettingsManager.Instance.freeToPlayEnemyDamage;
+        freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeModeGameplayData;
+        freeToPlayGameplayManager.enemyDamage = GameSettingsManager.Instance.freeModeEnemyDamage;
+        freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
 

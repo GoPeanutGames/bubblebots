@@ -20,6 +20,7 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>(true);
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
         gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
+        Screens.Instance.ResetBackground();
 #if !UNITY_EDITOR
         if (gameScreenMainMenuTopHUD.AreResourcesSet() == false)
         {
@@ -77,6 +78,9 @@ public class GameStateMainMenu : GameState
             case ButtonId.ModeSelectFreeMode:
                 PlayFreeMode();
                 break;
+            case ButtonId.ModeSelectNethermode:
+                PlayNetherMode();
+                break;
             default:
                 break;
         }
@@ -119,6 +123,15 @@ public class GameStateMainMenu : GameState
         Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
         Screens.Instance.PopScreen(gameScreenModeSelect);
         stateMachine.PushState(new GameStateFreeMode());
+    }
+
+    private void PlayNetherMode()
+    {
+        Screens.Instance.PopScreen(gameScreenMainMenu);
+        Screens.Instance.PopScreen(gameScreenMainMenuBottomHUD);
+        Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
+        Screens.Instance.PopScreen(gameScreenModeSelect);
+        stateMachine.PushState(new GameStateNetherMode());
     }
 
     private void ShowStore()
