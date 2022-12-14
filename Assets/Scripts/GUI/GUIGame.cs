@@ -19,7 +19,6 @@ public class GUIGame : MonoBehaviour
     public int Spacing = 4;
     public int TileWidth = 150;
     public float SwapDuration = 0.33f;
-    public GameObject[] EnemyBullets;
     public RobotEffects[] EnemyRobots;
     public Slider[] EnemyGauges;
     public RobotEffects[] PlayerRobots;
@@ -64,8 +63,8 @@ public class GUIGame : MonoBehaviour
         PlayerGauges[id].DOValue(0, SwapDuration);
         PlayerRobots[id].Die();
 
-        GameObject bullet = Instantiate(EnemyBullets[currentEnemy], EnemyBullets[currentEnemy].transform.parent);
-        bullet.transform.position = EnemyBullets[currentEnemy].transform.position;
+        GameObject bullet = Instantiate(VFXManager.Instance.enemyBullets[currentEnemy], VFXManager.Instance.enemyBullets[currentEnemy].transform.parent);
+        bullet.transform.position = VFXManager.Instance.enemyBullets[currentEnemy].transform.position;
         bullet.gameObject.SetActive(true);
         bullet.transform.DOMove(new Vector3(PlayerRobots[id].transform.position.x, PlayerRobots[id].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
         StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, id));
@@ -76,8 +75,8 @@ public class GUIGame : MonoBehaviour
         PlayerGauges[id].DOValue(PlayerGauges[id].value - damage, SwapDuration);
         PlayerGauges[id].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, PlayerGauges[id].value - damage) + " / " + PlayerGauges[id].maxValue;
 
-        GameObject bullet = Instantiate(EnemyBullets[currentEnemy], EnemyBullets[currentEnemy].transform.parent);
-        bullet.transform.position = EnemyBullets[currentEnemy].transform.position;
+        GameObject bullet = Instantiate(VFXManager.Instance.enemyBullets[currentEnemy], VFXManager.Instance.enemyBullets[currentEnemy].transform.parent);
+        bullet.transform.position = EnemyRobots[currentEnemy].transform.position;
         bullet.gameObject.SetActive(true);
         bullet.transform.DOMove(new Vector3(PlayerRobots[id].transform.position.x, PlayerRobots[id].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
         StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, id));
@@ -163,7 +162,7 @@ public class GUIGame : MonoBehaviour
 
     public void TargetEnemy(int currentEnemy, bool manual)
     {
-        if (manual && !CanSwapTiles)
+        if (manual && FindObjectOfType<Match3GameplayManager>().inputLocked)
         {
             return;
         }
@@ -212,7 +211,9 @@ public class GUIGame : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
+                !child.gameObject.name.StartsWith("Txt") && !child.gameObject.name.StartsWith("Img") &&
                 child.gameObject.name != "TxtScore" &&
+                child.gameObject.name != "quitButton" &&
                 child.gameObject.name != "TxtBubbles" &&
                 child.gameObject.name != "ImgBubbles" &&
                 child.gameObject.name != "TxtStatus" &&
@@ -481,6 +482,14 @@ public class GUIGame : MonoBehaviour
         explosionEffects.Add(newExplosion);
 
         return newExplosion;
+    }
+
+    public void DestroyExplosionEffects()
+    {
+        for (int i = 0; i < explosionEffects.Count; i++)
+        {
+            Destroy(explosionEffects[i].gameObject);
+        }
     }
 
     public void ScrollTileDown(int x, int y, int howMany, float duration)

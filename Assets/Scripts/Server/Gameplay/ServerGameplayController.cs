@@ -2,7 +2,7 @@ using BubbleBots.Server.Gameplay;
 using System;
 using UnityEngine;
 
-public class ServerGameplayController : MonoBehaviour
+public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 {
     private string currentGameplaySessionID;
     private int currentLevel;

@@ -1,3 +1,4 @@
+using BubbleBots.Data;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,17 @@ public class GameScreenRobotSelection : GameScreen
 
     private List<int> selectedRobots;
     
+
+
+    public List<BubbleBotData> GetSelectedBots()
+    {
+        List<BubbleBotData> selectedBots = new List<BubbleBotData>();
+        for (int i = 0; i < selectedRobots.Count; ++i)
+        {
+            selectedBots.Add(availableBots.Find(x => x.id == selectedRobots[i]));
+        }
+        return selectedBots;
+    }
 
     public void PopulateSelectionList()
     {

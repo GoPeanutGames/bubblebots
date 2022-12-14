@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class VFXManager : MonoSingleton<VFXManager>
@@ -6,4 +7,6 @@ public class VFXManager : MonoSingleton<VFXManager>
     public GameObject LineExplosionEffect;
     public GameObject ColorExplosionEffect;
     public GameObject ColorChangingEffect;
+
+    public List<GameObject> enemyBullets;
 }

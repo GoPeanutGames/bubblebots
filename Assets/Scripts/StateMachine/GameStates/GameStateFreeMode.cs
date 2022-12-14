@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -5,9 +6,14 @@ public class GameStateFreeMode : GameState
 {
     private GameScreenRobotSelection gameScreenRobotSelection;
     private GameScreenGame gameScreenGame;
-
+    private GameScreenLevelComplete gameScreenLevelComplete;
+    private GameScreenGameEnd gameScreenGameEnd;
+    private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
 
     private FreeToPlayGameplayManager freeToPlayGameplayManager;
+
+    [DllImport("__Internal")]
+    private static extern void Premint();
 
     public override string GetGameStateName()
     {
@@ -28,6 +34,16 @@ public class GameStateFreeMode : GameState
         if (data.eventName == GameEvents.ButtonTap)
         {
             OnButtonTap(data);
+        } 
+        else if (data.eventName == GameEvents.FreeModeLevelComplete)
+        {
+            gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
+            gameScreenLevelComplete.SetMessage("You won " + (data as GameEventLevelComplete).numBubblesWon.ToString() + " bubbles!");
+        }
+        else if (data.eventName == GameEvents.FreeModeLose)
+        {
+            gameScreenGameEnd = Screens.Instance.PushScreen<GameScreenGameEnd>();
+            gameScreenGameEnd.SetScore((data as GameEventFreeModeLose).score.ToString());
         }
     }
 
@@ -42,32 +58,102 @@ public class GameStateFreeMode : GameState
             case ButtonId.RobotSelectionStartButton:
                 StartPlay();
                 break;
+            case ButtonId.LevelCompleteContinue:
+                freeToPlayGameplayManager.StartNextLevel();
+                Screens.Instance.PopScreen(gameScreenLevelComplete);
+                break;
+            case ButtonId.GameEndPremint:
+                PremintPressed();
+                break;
+            case ButtonId.QuitGame:
+                ShowQuitGameMenu();
+                break;
+            case ButtonId.QuitGameMenuPlay:
+                ContinuePlaying();
+                break;
+            case ButtonId.QuitGameMenuQuit:
+                GoToMainMenu();
+                break;
             default:
                 break;
         }
     }
 
+    private void ContinuePlaying()
+    {
+        Screens.Instance.PopScreen(gameScreenQuitToMainMenu);
+    }
+
+    private void ShowQuitGameMenu()
+    {
+        if (freeToPlayGameplayManager.CanShowQuitPopup())
+        {
+            gameScreenQuitToMainMenu = Screens.Instance.PushScreen<GameScreenQuitToMainMenu>();
+        }
+    }
+
+    private void PremintPressed()
+    {
+#if !UNITY_EDITOR
+                Premint();
+#endif
+        GoToMainMenu();
+        //        Menu.gameObject.SetActive(true);
+        //        Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
+        //        if (UserManager.PlayerType == PlayerType.Guest)
+        //        {
+        //            //Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+        //            SceneManager.LoadScene("Login");
+        //        }
+        //        else
+        //        {
+        //            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
+        //            Menu.DisplayHighScores();
+        //            Menu.ReverseHighScoreButtons();
+        //        }
+
+        //        gameObject.SetActive(false);
+    }
+
     private void GoToMainMenu()
     {
+        if (freeToPlayGameplayManager != null)
+        {
+            GameObject.Destroy(freeToPlayGameplayManager.gameObject);
+            freeToPlayGameplayManager = null;
+        }
+
+        if (gameScreenGame != null)
+        {
+            gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
+        }
+
         stateMachine.PushState(new GameStateMainMenu());
     }
 
     private void StartPlay()
     {
-        Screens.Instance.PopScreen(gameScreenRobotSelection);
+        Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
-        freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freeToPlayGameplayManager).GetComponent<FreeToPlayGameplayManager>();
+        freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freemodeGameplayManager).GetComponent<FreeToPlayGameplayManager>();
 
-        freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeToPlayGameplayData;
-        freeToPlayGameplayManager.enemyDamage = GameSettingsManager.Instance.freeToPlayEnemyDamage;
+        freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeModeGameplayData;
+        freeToPlayGameplayManager.enemyDamage = GameSettingsManager.Instance.freeModeEnemyDamage;
+        //freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
-        freeToPlayGameplayManager.StartSession();
+        freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
+
+        Screens.Instance.PopScreen(gameScreenRobotSelection);
     }
 
 
     public override void Disable()
     {
         Screens.Instance.PopScreen(gameScreenRobotSelection);
+        Screens.Instance.PopScreen(gameScreenGameEnd);
+        Screens.Instance.PopScreen(gameScreenGame);
+        Screens.Instance.PopScreen(gameScreenQuitToMainMenu);
+        Screens.Instance.PopScreen(gameScreenLevelComplete);
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
     }
 }

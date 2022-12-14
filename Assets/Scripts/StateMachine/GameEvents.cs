@@ -23,6 +23,7 @@ public static class GameEvents
     public const string FreeModeSessionStarted = "freemode.session.start";
     public const string FreeModeEnemyChanged = "freemode.enemy.changed";
     public const string FreeModeLevelStart = "freemode.level.start";
+    public const string FreeModeLevelComplete = "freemode.level.complete";
     public const string FreeModeEnemyRobotDamage = "freemode.enemy.robot.damage";
     public const string FreeModeEnemyRobotKilled = "freemode.enemy.robot.killed";
     public const string FreeModeEnemyRobotTargeted = "freemode.enemy.robot.target";

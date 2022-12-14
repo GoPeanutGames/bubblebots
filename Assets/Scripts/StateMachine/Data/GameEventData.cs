@@ -28,6 +28,11 @@ public class GameEventLevelStart : GameEventData
     public PlayerRoster playerRoster;
 }
 
+public class GameEventLevelComplete : GameEventData
+{
+    public int numBubblesWon;
+}
+
 public class GameEventEnemyRobotDamage : GameEventData
 {
     public int enemyRobotNewHp;

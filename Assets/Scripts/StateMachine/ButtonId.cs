@@ -44,6 +44,19 @@ public static class ButtonId
     //confirm transaction
     public const string ConfirmTransactionClose = "confirmtransaction.close";
     public const string ConfirmTransactionBuy = "confirmtransaction.buy";
+
+    //game
+    public const string QuitGame = "game.quit";
+
+    //level complete
+    public const string LevelCompleteContinue = "level.complete.continue";
+
+    //game end
+    public const string GameEndPremint = "game.end.premint";
+
+    //quit game menu
+    public const string QuitGameMenuQuit = "quit.game.quit";
+    public const string QuitGameMenuPlay = "quit.game.play";
 }
 
 public static class TypeUtilities

@@ -8,5 +8,6 @@ namespace BubbleBots.Data
     public class GameplayData : ScriptableObject
     {
         public List<LevelData> levels;
+        public Sprite backgroundSprite;
     }
  }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Screens : MonoSingleton<Screens>
 {
@@ -22,7 +23,28 @@ public class Screens : MonoSingleton<Screens>
     public GameObject mobileCanvas;
     private List<ScreenLocationParent> screenLocationParents;
 
+
+    public Sprite defaultBackground;
+
+    public Image backgroundMobile;
+    public Image backgroundDesktop;
+
+    private Image backgroundObject;
+
     #region Screens
+
+
+    public void ResetBackground()
+    {
+        backgroundObject.sprite = defaultBackground;
+    }
+
+    public void SetBackground(Sprite sprite)
+    {
+        backgroundObject.sprite = sprite;
+    }
+
+
     public T PushScreen<T>(bool unique = false) where T : GameScreen
     {
         T screen = null;
@@ -74,9 +96,11 @@ public class Screens : MonoSingleton<Screens>
             rTransformUI.offsetMax = new Vector2(0, 0);
             rTransformUI.offsetMin = new Vector2(0, 0);
             rTransformUI.localScale = new Vector3(1, 1, 1);
+            backgroundObject = backgroundMobile;
         } 
         else
         {
+            backgroundObject = backgroundDesktop;
             screenLocationParents = screenLocationParentsDesktop;
             mobileCanvas.SetActive(false);
         }

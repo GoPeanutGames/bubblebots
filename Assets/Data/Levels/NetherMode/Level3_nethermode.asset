@@ -15,16 +15,17 @@ MonoBehaviour:
   width: 8
   height: 6
   gemSet:
-  - {fileID: 11400000, guid: 1c9e94b20f9b04246b957f21b7e72024, type: 2}
-  - {fileID: 11400000, guid: 3afbf9a86a05bb44f8955b85e35a84b9, type: 2}
-  - {fileID: 11400000, guid: 27dbf7e0e8a03654b802ac708efa798a, type: 2}
-  - {fileID: 11400000, guid: a50b5c87d21b5574e9a4dd8651d4f3a3, type: 2}
+  - {fileID: 11400000, guid: ca6027387f95de74fb550170e9aea25c, type: 2}
+  - {fileID: 11400000, guid: 3d7c99d1439db30459404f8995b09022, type: 2}
+  - {fileID: 11400000, guid: 45be4362e532ee541a33cb6abf3066e8, type: 2}
+  - {fileID: 11400000, guid: 542e6dc0107533d46a1e5ddfbac0eae9, type: 2}
+  - {fileID: 11400000, guid: db54d3c15b0aa774f8daa7cf07ac514e, type: 2}
   gemSetSpecials:
-  - {fileID: 11400000, guid: 9c9de2f263b6f80498c40e997d11cd25, type: 2}
-  - {fileID: 11400000, guid: 9f5237e6128befb4ea73dde921625b74, type: 2}
-  - {fileID: 11400000, guid: 18c95f747305c0b4b8eb9a09847c9419, type: 2}
-  - {fileID: 11400000, guid: d5a81c8f927a87d4e99fcab8e43f9619, type: 2}
-  - {fileID: 11400000, guid: 1a94f9fe74b42c642aa1406e23e6d78a, type: 2}
-  bubbleGem: {fileID: 11400000, guid: b73f5367a90e0eb4a83343753ad46142, type: 2}
+  - {fileID: 11400000, guid: dc77722c1ea079647bb87321ac10779c, type: 2}
+  - {fileID: 11400000, guid: 37c3b2650c4c2d24883bdf805dc6e210, type: 2}
+  - {fileID: 11400000, guid: 9982ea6f9ab0b9b498beb152f05a5745, type: 2}
+  - {fileID: 11400000, guid: 46add4e051cbab4419508d1ff0b5c4b4, type: 2}
+  - {fileID: 11400000, guid: b6bdeacecc602d64fa3cf2b87c20a298, type: 2}
+  bubbleGem: {fileID: 11400000, guid: 3fa8df6be3452ff4da486565c687a0d0, type: 2}
   waves: 1
-  bubbleSpawnChance: 5
+  bubbleSpawnChance: 1

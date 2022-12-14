@@ -103,7 +103,11 @@ public class GUIMenu : MonoBehaviour
             if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
                 !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
                 !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
+                !child.gameObject.name.StartsWith("Txt") && !child.gameObject.name.StartsWith("Img") &&
                 child.gameObject.name != "TxtScore" &&
+                child.gameObject.name != "TxtX" &&
+                child.gameObject.name != "TxtUnclaimedBubbles" &&
+                child.gameObject.name != "ImgRobotLife" &&
                 child.gameObject.name != "TxtBubbles" &&
                 child.gameObject.name != "ImgBubbles" &&
                 child.gameObject.name != "TxtStatus"
