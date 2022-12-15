@@ -17,7 +17,7 @@ public class RobotSelectedUIElement : MonoBehaviour
         bubbleBotData = _bubbleBotData;
         avatar.SetActive(true);
         avatar.GetComponent<Image>().enabled = true;
-        avatar.GetComponent<Image>().sprite = bubbleBotData.sprite;
+        avatar.GetComponent<Image>().sprite = bubbleBotData.robotSelection;
         plus.SetActive(false);
         cross.SetActive(true);
         button.onClick.RemoveAllListeners();

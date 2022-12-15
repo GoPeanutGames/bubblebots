@@ -27,4 +27,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b6bdeacecc602d64fa3cf2b87c20a298, type: 2}
   bubbleGem: {fileID: 11400000, guid: 3fa8df6be3452ff4da486565c687a0d0, type: 2}
   waves: 1
-  bubbleSpawnChance: 1
+  bubbleSpawnChance: 2

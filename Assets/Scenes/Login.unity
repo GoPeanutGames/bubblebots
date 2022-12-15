@@ -830,7 +830,7 @@ MonoBehaviour:
     type: 3}
   netherModeGameplayData: {fileID: 11400000, guid: e4ade18aa4c0c4b498c9cf65560466e6,
     type: 2}
-  netherModeEnemyDamage: 2
+  netherModeEnemyDamage: 1
   netherModeGameplayManager: {fileID: 1545353200619720768, guid: 4a4e59a392bded24394985e48730c4f6,
     type: 3}
 --- !u!1 &593814763

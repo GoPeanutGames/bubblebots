@@ -36,7 +36,7 @@ public class GameScreenRobotSelection : GameScreen
         {
             GameObject selectionObject = Instantiate(selectionRobotPrefab, selectionListRoot.transform);
             selectionObject.SetActive(true);
-            selectionObject.GetComponent<RobotSelectionUIElement>().Setup(availableBots[i].frameSprite, availableBots[i].id, OnRobotPressed);
+            selectionObject.GetComponent<RobotSelectionUIElement>().Setup(availableBots[i].robotSelection, availableBots[i].labelSprite, availableBots[i].botName, availableBots[i].id, OnRobotPressed);
             selectableRobots.Add(selectionObject.GetComponent<RobotSelectionUIElement>());
         }
     }

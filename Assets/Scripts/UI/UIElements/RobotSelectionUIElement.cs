@@ -5,13 +5,17 @@ public class RobotSelectionUIElement : MonoBehaviour
 {
     [SerializeField] private Image robotImage;
     [SerializeField] private Button button;
+    [SerializaField] public Image labelImage;
+    [SerializaField] public TMPro.TextMeshProUGUI labelName;
 
     private int robotId;
 
-    public void Setup(Sprite sprite, int id, System.Action<int> callback)
+    public void Setup(Sprite sprite, Sprite label, string robotName, int id, System.Action<int> callback)
     {
         robotId = id;
         robotImage.sprite = sprite;
+        labelImage.sprite = label;
+        labelName.text = robotName.ToUpper();
         button.onClick.RemoveAllListeners();
         button.onClick.AddListener(() => { callback(robotId); });
     }

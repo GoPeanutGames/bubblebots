@@ -9,5 +9,8 @@ namespace BubbleBots.Data
         public string botName;
         public Sprite sprite;
         public Sprite frameSprite;
+
+        public Sprite robotSelection;
+        public Sprite labelSprite;
     }
 }
