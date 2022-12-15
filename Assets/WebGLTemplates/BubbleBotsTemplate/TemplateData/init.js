@@ -217,10 +217,11 @@ window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
 
       await gemsContract.connect(provider.getSigner()).purchaseGemsByToken(bundleId);
 
+      return true;
+
     }
-    else {
-      console.log('Not Enough balance to purchase')
-    }
+
+    return false;
   }
 }
 
