@@ -220,8 +220,6 @@ window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
       return true;
 
     }
-
-    return false;
   }
 }
 
