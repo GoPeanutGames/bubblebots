@@ -73,8 +73,8 @@ public class GameStateLogin : GameState
                 break;
             case ButtonId.LoginGuestPlay:
 #if UNITY_EDITOR
-                PlayAsGuest();
-                // GoToMainMenu();
+                // PlayAsGuest();
+                GoToMainMenu();
                 // UserManager.PlayerType = PlayerType.Guest;
                 // AnalyticsManager.Instance.InitAnalyticsGuest();
 #else

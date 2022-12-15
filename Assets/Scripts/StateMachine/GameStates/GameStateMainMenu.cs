@@ -8,6 +8,7 @@ public class GameStateMainMenu : GameState
     private GameScreenMainMenu gameScreenMainMenu;
     private GameScreenModeSelect gameScreenModeSelect;
     private GameScreenLoading _gameScreenLoading;
+    private GameScreenChangeNickname _gameScreenChangeNickname;
 
     public override string GetGameStateName()
     {
@@ -81,6 +82,16 @@ public class GameStateMainMenu : GameState
             case ButtonId.ModeSelectNethermode:
                 PlayNetherMode();
                 break;
+            case ButtonId.MainMenuTopHUDChangeNickname:
+                OpenChangeNickname();
+                break;
+            case ButtonId.ChangeNicknameClose:
+                CloseChangeNickname();
+                break;
+            case ButtonId.ChangeNicknameOk:
+                ChangeNickname();
+                CloseChangeNickname();
+                break;
             default:
                 break;
         }
@@ -139,6 +150,24 @@ public class GameStateMainMenu : GameState
         stateMachine.PushState(new GameStateStore());
     }
 
+    private void OpenChangeNickname()
+    {
+        _gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
+        _gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
+    }
+
+    private void CloseChangeNickname()
+    {
+        Screens.Instance.PopScreen(_gameScreenChangeNickname);
+    }
+
+    private void ChangeNickname()
+    {
+        UserManager.Instance.SetPlayerUserName(_gameScreenChangeNickname.GetNicknameText(), true);
+        gameScreenMainMenuTopHUD.SetUsername(_gameScreenChangeNickname.GetNicknameText());
+        CloseChangeNickname();
+    }
+    
     public override void Disable()
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);
