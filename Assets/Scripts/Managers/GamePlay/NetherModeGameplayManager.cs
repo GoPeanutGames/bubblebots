@@ -99,9 +99,9 @@ public class NetherModeGameplayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot { maxHp = 10, hp = 10, id = bots[0].id },
-                new BubbleBot { maxHp = 10, hp = 10, id = bots[1].id },
-                new BubbleBot { maxHp = 10, hp = 10, id = bots[2].id },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[0].id },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[1].id },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[2].id },
             },
             currentBot = 0
         };
@@ -148,9 +148,9 @@ public class NetherModeGameplayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 50 },
-                new BubbleBot() { hp = 50 },
-                new BubbleBot() { hp = 50 }
+                new BubbleBot() { hp = 60 },
+                new BubbleBot() { hp = 60 },
+                new BubbleBot() { hp = 60 }
             },
             completed = false
         };

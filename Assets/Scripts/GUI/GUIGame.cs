@@ -34,9 +34,9 @@ public class GUIGame : MonoBehaviour
     //public GUIMenu Menu;
 
 
-    public TextMeshProUGUI bubblesScore;
+    //public TextMeshProUGUI bubblesScore;
     public TextMeshProUGUI unclaimedBubblesScore;
-    public Image unclaimedBubblesImage;
+    //public Image unclaimedBubblesImage;
 
     public GameObject bubblesTextPrefab;
     public GameObject bubblesImagePrefab;
@@ -413,10 +413,10 @@ public class GUIGame : MonoBehaviour
 
         bubbleImage.transform.position = tile.position;
         rect.SetAsLastSibling();
-        DOTween.To(() => bubbleImage.transform.position, x =>
-        {
-            bubbleImage.transform.position = x;
-        }, unclaimedBubblesImage.transform.position, 3 * SwapDuration);
+        //DOTween.To(() => bubbleImage.transform.position, x =>
+        //{
+        //    bubbleImage.transform.position = x;
+        //}, unclaimedBubblesImage.transform.position, 3 * SwapDuration);
 
         StartCoroutine(DespawnObject(bubbleImage, 3 * SwapDuration));
 
@@ -903,6 +903,6 @@ public class GUIGame : MonoBehaviour
 
     public void SetBubblesText(int val)
     {
-        bubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
+        //bubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
     }
 }

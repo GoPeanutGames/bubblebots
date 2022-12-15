@@ -1,3 +1,4 @@
+using System;
 using BubbleBots.Store;
 using System.Collections.Generic;
 using BubbleBots.Server.Store;
@@ -17,40 +18,41 @@ public class StoreManager : MonoSingleton<StoreManager>
             {
                 Layout = StoreTabContentLayout.Grid,
                 Items = new List<StoreItem>()
-            };    
+            };
         }
     }
-    
+
     private void AddStoreItem(StoreTabs tab, BundleData data)
     {
         CreateTabIfNotExists(tab);
         StoreItem storeItem = new StoreItem()
         {
+            Bundle = data,
             TopLine = data.gems + "GEMS",
             Image = "Store/Gems/Gem Chest Small",
             BottomLine = "USDC " + data.price
         };
         _storeTabItemsMap[tab].Items.Add(storeItem);
     }
-    
+
     private void AddSpecialOffer(BundleData data)
     {
         Debug.Log("ADDING OFFERS");
         _specialOffers ??= new List<SpecialOffer>();
         SpecialOffer specialOffer = new()
         {
+            Bundle = data,
             ButtonText = "USDC " + data.price,
             Image = "Store/Gems/Special Offer Save 40 on Gems"
         };
         _specialOffers.Add(specialOffer);
     }
-    
+
     private void Start()
     {
-        ServerManager.Instance.GetStoreDataFromServer(StoreAPI.Bundles, (jsonData) =>
+        GetBundlesData((bundles) =>
         {
-            GetBundlesData bundlesData = JsonUtility.FromJson<GetBundlesData>(jsonData);
-            foreach (BundleData bundleData in bundlesData.bundles)
+            foreach (BundleData bundleData in bundles)
             {
                 if (bundleData.isPromotion)
                 {
@@ -64,6 +66,15 @@ public class StoreManager : MonoSingleton<StoreManager>
         });
     }
 
+    private void GetBundlesData(Action<List<BundleData>> bundleCallback)
+    {
+        ServerManager.Instance.GetStoreDataFromServer(StoreAPI.Bundles, (jsonData) =>
+        {
+            GetBundlesData bundlesData = JsonUtility.FromJson<GetBundlesData>(jsonData);
+            bundleCallback(bundlesData.bundles);
+        });
+    }
+
     public StoreTab GetStoreTabContent(StoreTabs tab)
     {
         return _storeTabItemsMap[tab];
@@ -72,5 +83,14 @@ public class StoreManager : MonoSingleton<StoreManager>
     public List<SpecialOffer> GetSpecialOffers()
     {
         return _specialOffers;
+    }
+
+    public void GetBundleFromId(int bundleId, Action<BundleData> bundleCallback)
+    {
+        GetBundlesData((bundles) =>
+        {
+            BundleData data = bundles.Find((a) => a.bundleId == bundleId);
+            bundleCallback(data);
+        });
     }
 }
