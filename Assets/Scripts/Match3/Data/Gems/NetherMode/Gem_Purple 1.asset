@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Gem_Purple 1
   m_EditorClassIdentifier: 
   gemId: 1
-  gemSprite: {fileID: 21300000, guid: d6efd5a30f94eae418552e5fbb48659e, type: 3}
+  gemSprite: {fileID: 21300000, guid: a4df8bf0e7ddfa14fb87715d90762a09, type: 3}

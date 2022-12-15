@@ -99,9 +99,9 @@ public class NetherModeGameplayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot { maxHp = 12, hp = 12, id = bots[0].id },
-                new BubbleBot { maxHp = 12, hp = 12, id = bots[1].id },
-                new BubbleBot { maxHp = 12, hp = 12, id = bots[2].id },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[0].id, bubbleBotData = bots[0] },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[1].id, bubbleBotData = bots[1] },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[2].id, bubbleBotData = bots[2] },
             },
             currentBot = 0
         };
@@ -121,6 +121,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 
         GameEventsManager.Instance.PostEvent(new GameEventData() { eventName = GameEvents.FreeModeSessionStarted });
+        UserManager.RobotsKilled = 0;
         //MenuGUI.ResetScores();
         StartLevel();
     }
@@ -394,6 +395,10 @@ public class NetherModeGameplayManager : MonoBehaviour
         //GameGUI.TargetEnemy(currentEnemy);
 
         gameplayState = NethermodeGameplayState.Match3Playing;
+    }
+    public void TargetEnemy(int index)
+    {
+        currentEnemy = index;
     }
 
     private void OnBubbleExploded(int _posX, int _posY)

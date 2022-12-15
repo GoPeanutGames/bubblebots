@@ -25,6 +25,8 @@ public class GameStateFreeMode : GameState
         //SceneManager.LoadScene("FreeToPlayMode");
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
         gameScreenRobotSelection.PopulateSelectionList();
+        Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
+        Screens.Instance.HideGameBackground();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
     }
 
@@ -38,12 +40,14 @@ public class GameStateFreeMode : GameState
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
-            gameScreenLevelComplete.SetMessage("You won " + (data as GameEventLevelComplete).numBubblesWon.ToString() + " bubbles!");
+            gameScreenLevelComplete.SetMessage("You earned " + (data as GameEventLevelComplete).numBubblesWon.ToString() + " bubbles!");
+            gameScreenLevelComplete.SetButtonText("Continue");
         }
         else if (data.eventName == GameEvents.FreeModeLose)
         {
             gameScreenGameEnd = Screens.Instance.PushScreen<GameScreenGameEnd>();
-            gameScreenGameEnd.SetScore((data as GameEventFreeModeLose).score.ToString());
+            gameScreenGameEnd.SetMessage("You earned " + (data as GameEventFreeModeLose).numBubblesWon.ToString() + " Bubbles and lost "
+                + (data as GameEventFreeModeLose).lastLevelPotentialBubbles + " Bubbles for failing to complete the last level!");
         }
     }
 
@@ -52,9 +56,7 @@ public class GameStateFreeMode : GameState
         GameEventString customButtonData = data as GameEventString;
         switch (customButtonData.stringData)
         {
-            case ButtonId.RobotSelectionBackButton:
-                GoToMainMenu();
-                break;
+            
             case ButtonId.RobotSelectionStartButton:
                 StartPlay();
                 break;
@@ -62,15 +64,14 @@ public class GameStateFreeMode : GameState
                 freeToPlayGameplayManager.StartNextLevel();
                 Screens.Instance.PopScreen(gameScreenLevelComplete);
                 break;
-            case ButtonId.GameEndPremint:
-                PremintPressed();
-                break;
             case ButtonId.QuitGame:
                 ShowQuitGameMenu();
                 break;
             case ButtonId.QuitGameMenuPlay:
                 ContinuePlaying();
                 break;
+            case ButtonId.RobotSelectionBackButton:
+            case ButtonId.GameEndGoToMainMenu:
             case ButtonId.QuitGameMenuQuit:
                 GoToMainMenu();
                 break;
@@ -133,7 +134,7 @@ public class GameStateFreeMode : GameState
 
     private void StartPlay()
     {
-        Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
+        
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
         freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freemodeGameplayManager).GetComponent<FreeToPlayGameplayManager>();
 
@@ -142,8 +143,9 @@ public class GameStateFreeMode : GameState
         //freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
-
+        Screens.Instance.SetGameBackground(GameSettingsManager.Instance.freeModeGameplayData.gamebackgroundSprite);
         Screens.Instance.PopScreen(gameScreenRobotSelection);
+        Screens.Instance.PopScreen<GameScreenMainMenuTopHUD>();
     }
 
 

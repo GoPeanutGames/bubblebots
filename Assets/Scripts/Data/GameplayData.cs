@@ -9,5 +9,6 @@ namespace BubbleBots.Data
     {
         public List<LevelData> levels;
         public Sprite backgroundSprite;
+        public Sprite gamebackgroundSprite;
     }
  }

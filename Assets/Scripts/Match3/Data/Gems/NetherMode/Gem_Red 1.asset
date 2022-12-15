@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Gem_Red 1
   m_EditorClassIdentifier: 
   gemId: 2
-  gemSprite: {fileID: 21300000, guid: d97a5f2859697384a8e93f36f501b525, type: 3}
+  gemSprite: {fileID: 21300000, guid: 776f18fdc8045cd4fbcd22163bb3df0d, type: 3}

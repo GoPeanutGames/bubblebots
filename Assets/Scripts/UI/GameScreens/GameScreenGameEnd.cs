@@ -1,9 +1,10 @@
 public class GameScreenGameEnd : GameScreen
 {
-    [SerializaField] public TMPro.TextMeshProUGUI score;
+    [SerializaField] public TMPro.TextMeshProUGUI message;
 
-    public void SetScore(string scoreText)
+    public void SetMessage(string messageText)
     {
-        score.text = scoreText;
+        message.text = messageText;
     }
+
 }

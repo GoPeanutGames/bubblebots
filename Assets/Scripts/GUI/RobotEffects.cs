@@ -8,7 +8,6 @@ public class RobotEffects : MonoBehaviour
     public GameObject Crossair;
     public GameObject HitEffect;
 
-
     private bool damageAnimationIsRunning = false;
 
     Image robotImage;
@@ -91,10 +90,17 @@ public class RobotEffects : MonoBehaviour
     internal virtual void Initialize()
     {
         Crossair.transform.localScale = Vector3.one;
+        robotImage = GetComponent<Image>();
         if (robotImage != null)
         {
             robotImage.DOFade(1f, 0f);
             robotImage.transform.DOScale(1f, 0f);
         }
+    }
+
+
+    public void SetRobotImage(Sprite sprite)
+    {
+        robotImage.sprite = sprite;
     }
 }

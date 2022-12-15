@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: Gem_Yellow 1
   m_EditorClassIdentifier: 
   gemId: 4
-  gemSprite: {fileID: 21300000, guid: 7cf503722ffbbef46b8c4c31492dd716, type: 3}
+  gemSprite: {fileID: 21300000, guid: 1299ebe55d2182a46b3110be0600931b, type: 3}

@@ -21,6 +21,7 @@ public class GameStateNetherMode : GameState
 
     public override void Enable()
     {
+        Screens.Instance.SetBackground(GameSettingsManager.Instance.netherModeGameplayData.backgroundSprite);
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
         gameScreenRobotSelection.PopulateSelectionList();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
@@ -36,12 +37,13 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
-            gameScreenLevelComplete.SetMessage("You won " + (data as GameEventLevelComplete).numBubblesWon.ToString() + " bubbles!");
+            gameScreenLevelComplete.SetMessage("You earned " + (data as GameEventLevelComplete).numBubblesWon.ToString() + " bubbles!");
+            gameScreenLevelComplete.SetButtonText("Continue");
         }
         else if (data.eventName == GameEvents.FreeModeLose)
         {
             gameScreenGameEnd = Screens.Instance.PushScreen<GameScreenGameEnd>();
-            gameScreenGameEnd.SetScore((data as GameEventFreeModeLose).score.ToString());
+            //gameScreenGameEnd.SetScore((data as GameEventFreeModeLose).score.ToString());
         }
     }
 
@@ -70,6 +72,7 @@ public class GameStateNetherMode : GameState
                 ContinuePlaying();
                 break;
             case ButtonId.QuitGameMenuQuit:
+            case ButtonId.GameEndGoToMainMenu:
                 GoToMainMenu();
                 break;
             default:
@@ -131,7 +134,7 @@ public class GameStateNetherMode : GameState
 
     private void StartPlay()
     {
-        Screens.Instance.SetBackground(GameSettingsManager.Instance.netherModeGameplayData.backgroundSprite);
+        
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
         netherModeGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.netherModeGameplayManager).GetComponent<NetherModeGameplayManager>();
 
@@ -142,6 +145,8 @@ public class GameStateNetherMode : GameState
         netherModeGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
 
         Screens.Instance.PopScreen(gameScreenRobotSelection);
+        Screens.Instance.PopScreen<GameScreenMainMenuTopHUD>();
+        Screens.Instance.HideGameBackground();
     }
 
 

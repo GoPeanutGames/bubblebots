@@ -15,6 +15,8 @@ public class FreeToPlaySessionData
 
     private int potentialBubbles = 0;
 
+    private int totalBubbles = 0;
+
     public void IncrementScore(int toAdd)
     {
         score += toAdd * scoreMultiplier;
@@ -44,6 +46,17 @@ public class FreeToPlaySessionData
     {
         return potentialBubbles;
     }
+
+    public void AddTotalBubbles(int val)
+    {
+        totalBubbles += val;
+    }
+
+    public int GetTotalBubbles()
+    {
+        return totalBubbles;
+    }
+
     public void ResetPotentialBubbles()
     {
         potentialBubbles = 0;
@@ -98,9 +111,9 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot { maxHp = 12, hp = 12, id = bots[0].id },
-                new BubbleBot { maxHp = 12, hp = 12, id = bots[1].id },
-                new BubbleBot { maxHp = 12, hp = 12, id = bots[2].id },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[0].id, bubbleBotData = bots[0] },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[1].id, bubbleBotData = bots[1] },
+                new BubbleBot { maxHp = 12, hp = 12, id = bots[2].id, bubbleBotData = bots[2] },
             },
             currentBot = 0
         };
@@ -120,6 +133,8 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 
         GameEventsManager.Instance.PostEvent( new GameEventData() { eventName = GameEvents.FreeModeSessionStarted });
+        UserManager.RobotsKilled = 0;
+
         //MenuGUI.ResetScores();
         StartLevel();
     }
@@ -262,7 +277,8 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     private void OnPlayerLost()
     {
         gameplayState = FreeToPlayGameplayState.GameEndMenu;
-        GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore() });
+        GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore(), numBubblesWon = sessionData.GetTotalBubbles(),
+            lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() }); ;
         //GameGUI.DisplayLose((int)GetScore());
         FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore());
@@ -306,7 +322,10 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         }
         return allEnemiesKilled;
     }
-
+    public void TargetEnemy(int index)
+    {
+        currentEnemy = index;
+    }
 
     public void SetEnemy(int currentEmeny)
     {
@@ -371,7 +390,9 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
 
-        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetPotentialBubbles() });
+        sessionData.AddTotalBubbles(sessionData.GetPotentialBubbles());
+
+        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetTotalBubbles(), lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
 
         sessionData.ResetPotentialBubbles();
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());

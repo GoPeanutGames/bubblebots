@@ -31,6 +31,11 @@ public class Screens : MonoSingleton<Screens>
 
     private Image backgroundObject;
 
+    public Image gameBackgroundMobile;
+    public Image gameBackgroundDesktop;
+
+    private Image gameBackgroundObject;
+
     #region Screens
 
 
@@ -44,6 +49,16 @@ public class Screens : MonoSingleton<Screens>
         backgroundObject.sprite = sprite;
     }
 
+    public void HideGameBackground()
+    {
+        gameBackgroundObject.enabled = false;
+    }
+
+    public void SetGameBackground(Sprite sprite)
+    {
+        gameBackgroundObject.enabled = true;
+        gameBackgroundObject.sprite = sprite;
+    }
 
     public T PushScreen<T>(bool unique = false) where T : GameScreen
     {
@@ -97,10 +112,12 @@ public class Screens : MonoSingleton<Screens>
             rTransformUI.offsetMin = new Vector2(0, 0);
             rTransformUI.localScale = new Vector3(1, 1, 1);
             backgroundObject = backgroundMobile;
+            gameBackgroundObject = gameBackgroundMobile;
         } 
         else
         {
             backgroundObject = backgroundDesktop;
+            gameBackgroundObject = gameBackgroundDesktop;
             screenLocationParents = screenLocationParentsDesktop;
             mobileCanvas.SetActive(false);
         }

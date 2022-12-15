@@ -31,6 +31,7 @@ public class GameEventLevelStart : GameEventData
 public class GameEventLevelComplete : GameEventData
 {
     public int numBubblesWon;
+    public int lastLevelPotentialBubbles;
 }
 
 public class GameEventEnemyRobotDamage : GameEventData
@@ -52,6 +53,8 @@ public class GameEventPlayerRobotDamage : GameEventData
 public class GameEventFreeModeLose : GameEventData
 {
     public int score;
+    public int numBubblesWon;
+    public int lastLevelPotentialBubbles;
 }
 
 public class GameEventEnemyRobotKilled : GameEventData

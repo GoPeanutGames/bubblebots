@@ -16,4 +16,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 21283ddba34d24f40b2a2473e3c0c87a, type: 2}
   - {fileID: 11400000, guid: c04049a08766c3e4c85a71b3b7cd9a04, type: 2}
   - {fileID: 11400000, guid: f69e38c485285714eac2234c192eadde, type: 2}
-  backgroundSprite: {fileID: 21300000, guid: 26d2c84c34ee10045bb43d5b0e9c00dd, type: 3}
+  backgroundSprite: {fileID: 21300000, guid: 37a320c54921f364c89cc7ea114c532b, type: 3}

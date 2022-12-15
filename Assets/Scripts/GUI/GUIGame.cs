@@ -142,6 +142,11 @@ public class GUIGame : MonoBehaviour
             PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = PlayerGauges[g].value + " / " + PlayerGauges[g].maxValue;
             PlayerRobots[g].Initialize();
         }
+
+        for (int i = 0; i < PlayerRobots.Length; ++i)
+        {
+            PlayerRobots[i].SetRobotImage(roster.bots[i].bubbleBotData.robotSelection);
+        }
     }
 
     public void SetRobotGauges(List<BubbleBot> bots)
@@ -174,6 +179,9 @@ public class GUIGame : MonoBehaviour
 
         this.currentEnemy = currentEnemy;
         GameEventsManager.Instance.PostEvent(new GameEventInt() { eventName = GameEvents.FreeModeEnemyChanged, intData = currentEnemy });
+        FindObjectOfType<FreeToPlayGameplayManager>()?.TargetEnemy(currentEnemy);
+        FindObjectOfType<NetherModeGameplayManager>()?.TargetEnemy(currentEnemy);
+
         for (int r = 0; r < EnemyRobots.Length; r++)
         {
             if (r == currentEnemy)
@@ -244,6 +252,7 @@ public class GUIGame : MonoBehaviour
                 backgroundTile.GetComponent<Image>().enabled = true;
                 backgroundTile.gameObject.name = "TileBackground_" + x + "_" + y;
                 backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelWidth / 2f * tileWidth + x * tileWidth + x * Spacing, -levelHeight / 2f * tileHeight + y * tileHeight + y * Spacing - TopBias);
+                backgroundTile.GetComponent<RectTransform>().localScale = new Vector3(.97f, .97f, .97f);
                 backgroundTile.AddComponent<Canvas>();
                 backgroundTiles[x, y] = backgroundTile;
             }
@@ -395,7 +404,7 @@ public class GUIGame : MonoBehaviour
 
     public void ExplodeBubble(int x, int y, long value)
     {
-        GameObject bubbleImage = Instantiate(bubblesImagePrefab, this.transform);
+        //GameObject bubbleImage = Instantiate(bubblesImagePrefab, this.transform);
         Transform tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
 
         // TODO: Remove in the future versions
@@ -405,20 +414,20 @@ public class GUIGame : MonoBehaviour
             return;
         }
 
-        RectTransform rect = bubbleImage.GetComponent<RectTransform>();
-        if (rect == null)
-        {
-            rect = bubbleImage.AddComponent<RectTransform>();
-        }
-
-        bubbleImage.transform.position = tile.position;
-        rect.SetAsLastSibling();
-        //DOTween.To(() => bubbleImage.transform.position, x =>
+        //RectTransform rect = bubbleImage.GetComponent<RectTransform>();
+        //if (rect == null)
         //{
-        //    bubbleImage.transform.position = x;
-        //}, unclaimedBubblesImage.transform.position, 3 * SwapDuration);
+        //    rect = bubbleImage.AddComponent<RectTransform>();
+        //}
 
-        StartCoroutine(DespawnObject(bubbleImage, 3 * SwapDuration));
+        //bubbleImage.transform.position = tile.position;
+        //rect.SetAsLastSibling();
+        ////DOTween.To(() => bubbleImage.transform.position, x =>
+        ////{
+        ////    bubbleImage.transform.position = x;
+        ////}, unclaimedBubblesImage.transform.position, 3 * SwapDuration);
+
+        //StartCoroutine(DespawnObject(bubbleImage, 3 * SwapDuration));
 
 
         GameObject bubbleText = Instantiate(bubblesTextPrefab, this.transform);

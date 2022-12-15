@@ -53,6 +53,7 @@ public static class ButtonId
 
     //game end
     public const string GameEndPremint = "game.end.premint";
+    public const string GameEndGoToMainMenu = "game.end.mainmenu";
 
     //quit game menu
     public const string QuitGameMenuQuit = "quit.game.quit";
