@@ -78,7 +78,7 @@ public class GameStateLogin : GameState
                 // UserManager.PlayerType = PlayerType.Guest;
                 // AnalyticsManager.Instance.InitAnalyticsGuest();
 #else
-        
+
                 PlayAsGuest();
 #endif
 
