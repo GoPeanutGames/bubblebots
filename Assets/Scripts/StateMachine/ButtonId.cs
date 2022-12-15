@@ -16,6 +16,9 @@ public static class ButtonId
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";
     public const string MainMenuBottomHUDStore = "mainmenu.bottomHUD.store";
     public const string MainMenuBottomHUDHome = "mainmenu.bottomHUD.home";
+    
+    //main menu top hud
+    public const string MainMenuTopHUDChangeNickname = "mainmenu.topHUD.changenickname";
 
     //mode select
     public const string ModeSelectBackButton = "modeselect.back";
@@ -25,7 +28,6 @@ public static class ButtonId
     public const string ModeSelectNetherModeTooltipBack = "modeselect.nethermode.tooltip.back";
     public const string ModeSelectFreeModeTooltip = "modeselect.freemode.tooltip";
     public const string ModeSelectFreeModeTooltipBack = "modeselect.freemode.tooltip.back";
-
 
     //robot selection
     public const string RobotSelectionBackButton = "robotSelection.back";
@@ -58,6 +60,10 @@ public static class ButtonId
     //quit game menu
     public const string QuitGameMenuQuit = "quit.game.quit";
     public const string QuitGameMenuPlay = "quit.game.play";
+    
+    //change nickname popup
+    public const string ChangeNicknameClose = "changenickname.close";
+    public const string ChangeNicknameOk = "changenickname.ok";
 }
 
 public static class TypeUtilities
