@@ -32,6 +32,10 @@ public static class GameEvents
     public const string FreeModeLose = "freemode.lose";
     public const string FreeModeScoreUpdate = "freemode.score.update";
 
+
+    //nether mode
+    public const string NetherModeComplete = "nether.mode.complete";
+
     // server comms
     public const string UpdateSessionResponse = "server.session.update";
     

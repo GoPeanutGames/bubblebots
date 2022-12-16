@@ -204,6 +204,8 @@ public class NetherModeGameplayManager : MonoBehaviour
         if (currentLevelIndex >= gameplayData.levels.Count - 1)
         {
             gameplayState = NethermodeGameplayState.NetherModeComplete;
+
+            OnNetherModeComplete();
         }
     }
 
@@ -358,7 +360,20 @@ public class NetherModeGameplayManager : MonoBehaviour
             case NethermodeGameplayState.EndLevelSequence:
                 match3Manager.UpdateMatch3Logic();
                 break;
+            case NethermodeGameplayState.NetherModeComplete:
+                break;
         }
+    }
+
+    public bool IsFinished()
+    {
+        return gameplayState == NethermodeGameplayState.NetherModeComplete;
+    }
+
+    private void OnNetherModeComplete()
+    {
+        serverGameplayController?.EndGameplaySession((int)GetScore());
+        GameEventsManager.Instance.PostEvent(new GameEventNetherModeComplete() { eventName = GameEvents.NetherModeComplete, numBubblesWon = sessionData.GetPotentialBubbles()});
     }
 
     IEnumerator EndLevelSequence()
@@ -407,7 +422,7 @@ public class NetherModeGameplayManager : MonoBehaviour
     {
         serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true);
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
-        FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, 0);
+        //FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, 0);
         //GameEventsManager.Instance.PostEvent(new GameEventUpdateUnclaimedBubbles() { eventName = GameEvents.BubblesUnclaimedUpdate, balance = sessionData.GetPotentialBubbles() });
         //FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
         //GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());

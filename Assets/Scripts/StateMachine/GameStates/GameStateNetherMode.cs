@@ -54,6 +54,12 @@ public class GameStateNetherMode : GameState
         {
             netherModeGameplayManager.OnNewBubblesCount((data as GameEventUpdateSession).bubbles);
            
+        } 
+        else if (data.eventName == GameEvents.NetherModeComplete)
+        {
+            gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
+            gameScreenLevelComplete.SetMessage("You earned " + (data as GameEventNetherModeComplete).numBubblesWon.ToString() + " bubbles and extra 10,000 Bubbles for completing all levels!");
+            gameScreenLevelComplete.SetButtonText("GO TO HOME");
         }
     }
 
@@ -69,8 +75,15 @@ public class GameStateNetherMode : GameState
                 StartPlay();
                 break;
             case ButtonId.LevelCompleteContinue:
-                netherModeGameplayManager.StartNextLevel();
-                Screens.Instance.PopScreen(gameScreenLevelComplete);
+                if (netherModeGameplayManager.IsFinished())
+                {
+                    GoToMainMenu();
+                } 
+                else
+                { 
+                    netherModeGameplayManager.StartNextLevel();
+                    Screens.Instance.PopScreen(gameScreenLevelComplete);
+                }
                 break;
             case ButtonId.GameEndPremint:
                 PremintPressed();

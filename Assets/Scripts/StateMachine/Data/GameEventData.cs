@@ -34,6 +34,12 @@ public class GameEventLevelComplete : GameEventData
     public int lastLevelPotentialBubbles;
 }
 
+
+public class GameEventNetherModeComplete : GameEventData
+{
+    public int numBubblesWon;
+}
+
 public class GameEventEnemyRobotDamage : GameEventData
 {
     public int enemyRobotNewHp;

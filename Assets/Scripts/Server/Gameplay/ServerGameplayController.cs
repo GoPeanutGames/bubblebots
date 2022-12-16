@@ -24,10 +24,10 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 
     public void StartGameplaySession(int level)
     {
-        //if (UserManager.PlayerType == PlayerType.Guest)
-        //{
-        //    return;
-        //}
+        if (UserManager.PlayerType == PlayerType.Guest)
+        {
+            return;
+        }
         string address = UserManager.Instance.GetPlayerWalletAddress();
         currentLevel = level;
         GameplaySessionStartData formData = new()
@@ -48,7 +48,6 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
             return;
         }
 
-
         previousScore = score;
         GameplaySessionUpdateData formData = new()
         {
@@ -60,7 +59,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, (response) => {
-            GameplaySessionUpdateData r = JsonUtility.FromJson<GameplaySessionUpdateData>(response);
+            GameplaySessionUpdateDataResponse r = JsonUtility.FromJson<GameplaySessionUpdateDataResponse>(response);
             GameEventsManager.Instance.PostEvent(new GameEventUpdateSession() { eventName = GameEvents.UpdateSessionResponse, bubbles = r.bubbles });
         });
     }

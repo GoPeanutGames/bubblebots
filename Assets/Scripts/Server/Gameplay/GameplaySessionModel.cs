@@ -27,6 +27,16 @@ namespace BubbleBots.Server.Gameplay
         public int score;
         public int kills;
         public bool specialBurst;
+    }
+
+    [Serializable]
+    public class GameplaySessionUpdateDataResponse
+    {
+        public string sessionId;
+        public int level;
+        public int score;
+        public int kills;
+        public bool specialBurst;
         public int bubbles;
     }
 
