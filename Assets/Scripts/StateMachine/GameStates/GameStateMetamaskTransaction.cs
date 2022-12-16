@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using System.Threading.Tasks;
 using UnityEngine;
 
 public class GameStateMetamaskTransaction : GameState
@@ -26,6 +24,7 @@ public class GameStateMetamaskTransaction : GameState
     private void TransactionFail()
     {
         _gameScreenMetamaskTransaction.SetFail();
+        _gameScreenMetamaskTransaction.StartCoroutine(ClosePopup());
     }
 
     private IEnumerator ClosePopup()

@@ -537,7 +537,6 @@ GameObject:
   - component: {fileID: 8230780016840581237}
   - component: {fileID: 7431702990358125265}
   - component: {fileID: 1067618103714959781}
-  - component: {fileID: 3555326835622989186}
   m_Layer: 5
   m_Name: ImgFail
   m_TagString: Untagged
@@ -603,19 +602,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3555326835622989186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6873621595597843615}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb414ce9d2a4d044380242379116d1bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed: -250
 --- !u!1 &6877213682557042152
 GameObject:
   m_ObjectHideFlags: 0
