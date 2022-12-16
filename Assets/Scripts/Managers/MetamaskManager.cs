@@ -7,9 +7,9 @@ public class MetamaskManager : MonoSingleton<MetamaskManager>
     private static extern void BuyBundle(int bundleId, bool isDev);
 
     private Action _onCompleteCallback;
-    private Action _onFailCallback;
+    private Action<string> _onFailCallback;
 
-    public void BuyStoreBundle(int bundleId, bool isDev, Action onComplete, Action onFail)
+    public void BuyStoreBundle(int bundleId, bool isDev, Action onComplete, Action<string> onFail)
     {
         _onCompleteCallback = onComplete;
         _onFailCallback = onFail;
@@ -27,6 +27,11 @@ public class MetamaskManager : MonoSingleton<MetamaskManager>
 
     public void StoreBundleBuyFail()
     {
-        _onFailCallback?.Invoke();
+        _onFailCallback?.Invoke("error");
+    }
+    
+    public void StoreBundleBuyFailBalance()
+    {
+        _onFailCallback?.Invoke("balance");
     }
 }

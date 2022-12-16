@@ -20,9 +20,9 @@ public class GameStateMetamaskTransaction : GameState
         _gameScreenMetamaskTransaction.StartCoroutine(ClosePopup());
     }
 
-    private void TransactionFail()
+    private void TransactionFail(string reason)
     {
-        _gameScreenMetamaskTransaction.SetFail();
+        _gameScreenMetamaskTransaction.SetFail(reason);
         _gameScreenMetamaskTransaction.StartCoroutine(ClosePopup());
     }
 

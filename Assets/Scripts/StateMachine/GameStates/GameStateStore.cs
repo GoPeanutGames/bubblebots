@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using BubbleBots.Store;
-using UnityEngine;
 
 public class GameStateStore : GameState
 {
@@ -39,28 +38,28 @@ public class GameStateStore : GameState
 
     private void ClickRight()
     {
-        _gameScreenStore.MoveOutLeftSpecialOffer();
-        currentlyShowingOfferIndex++;
-        if (currentlyShowingOfferIndex >= StoreManager.Instance.GetSpecialOffers().Count)
-        {
-            currentlyShowingOfferIndex = 0;
-        }
-
-        GenerateSpecialOffer();
-        _gameScreenStore.MoveInRightSpecialOffer();
+        // _gameScreenStore.MoveOutLeftSpecialOffer();
+        // currentlyShowingOfferIndex++;
+        // if (currentlyShowingOfferIndex >= StoreManager.Instance.GetSpecialOffers().Count)
+        // {
+        //     currentlyShowingOfferIndex = 0;
+        // }
+        //
+        // GenerateSpecialOffer();
+        // _gameScreenStore.MoveInRightSpecialOffer();
     }
 
     private void ClickLeft()
     {
-        _gameScreenStore.MoveOutRightSpecialOffer();
-        currentlyShowingOfferIndex--;
-        if (currentlyShowingOfferIndex < 0)
-        {
-            currentlyShowingOfferIndex = StoreManager.Instance.GetSpecialOffers().Count - 1;
-        }
-
-        GenerateSpecialOffer();
-        _gameScreenStore.MoveInLeftSpecialOffer();
+        // _gameScreenStore.MoveOutRightSpecialOffer();
+        // currentlyShowingOfferIndex--;
+        // if (currentlyShowingOfferIndex < 0)
+        // {
+        //     currentlyShowingOfferIndex = StoreManager.Instance.GetSpecialOffers().Count - 1;
+        // }
+        //
+        // GenerateSpecialOffer();
+        // _gameScreenStore.MoveInLeftSpecialOffer();
     }
 
     public void GenerateSpecialOffer()
@@ -75,7 +74,7 @@ public class GameStateStore : GameState
         _activeTab = tab;
         _gameScreenStore.ActivateTab(_activeTab);
         SetupTabContent();
-        GenerateSpecialOffer();
+        // GenerateSpecialOffer();
     }
 
     private void OnGameEvent(GameEventData data)
