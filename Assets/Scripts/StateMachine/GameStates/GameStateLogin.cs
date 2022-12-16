@@ -75,7 +75,8 @@ public class GameStateLogin : GameState
 #if UNITY_EDITOR
                 // PlayAsGuest();
                 GoToMainMenu();
-                UserManager.PlayerType = PlayerType.Guest;
+                //UserManager.PlayerType = PlayerType.Guest;
+                UserManager.PlayerType = PlayerType.LoggedInUser;
                 AnalyticsManager.Instance.InitAnalyticsGuest();
 #else
         
@@ -120,7 +121,6 @@ public class GameStateLogin : GameState
         gameScreenLogin.ShowLoadingScreen();
         gameScreenLogin.HideLoginScreen();
     }
-
 
     private async void RequestSignatureFromMetamask(string schema)
     {

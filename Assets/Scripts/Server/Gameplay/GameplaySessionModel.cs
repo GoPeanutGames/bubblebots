@@ -26,6 +26,8 @@ namespace BubbleBots.Server.Gameplay
         public int level;
         public int score;
         public int kills;
+        public bool specialBurst;
+        public int bubbles;
     }
 
     [Serializable]

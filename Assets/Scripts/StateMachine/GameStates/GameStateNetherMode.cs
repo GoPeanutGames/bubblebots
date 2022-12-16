@@ -50,6 +50,11 @@ public class GameStateNetherMode : GameState
             gameScreenGameEnd = Screens.Instance.PushScreen<GameScreenGameEnd>();
             //gameScreenGameEnd.SetScore((data as GameEventFreeModeLose).score.ToString());
         }
+        else if (data.eventName == GameEvents.UpdateSessionResponse)
+        {
+            netherModeGameplayManager.OnNewBubblesCount((data as GameEventUpdateSession).bubbles);
+           
+        }
     }
 
     private void OnButtonTap(GameEventData data)
@@ -150,7 +155,7 @@ public class GameStateNetherMode : GameState
 
         netherModeGameplayManager.gameplayData = GameSettingsManager.Instance.netherModeGameplayData;
         netherModeGameplayManager.enemyDamage = GameSettingsManager.Instance.netherModeEnemyDamage;
-        //netherModeGameplayManager.serverGameplayController = ServerGameplayController.Instance;
+        netherModeGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         netherModeGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
 

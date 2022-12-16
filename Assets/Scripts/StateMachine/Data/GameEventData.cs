@@ -88,3 +88,9 @@ public class GameEventUpdateUnclaimedBubbles : GameEventData
 {
     public int balance;
 }
+
+
+public class GameEventUpdateSession : GameEventData
+{
+    public int bubbles;
+}

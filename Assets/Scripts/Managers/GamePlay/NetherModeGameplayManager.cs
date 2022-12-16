@@ -1,5 +1,6 @@
 using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
+using BubbleBots.Modes;
 using CodeStage.AntiCheat.ObscuredTypes;
 using System.Collections;
 using System.Collections.Generic;
@@ -94,6 +95,7 @@ public class NetherModeGameplayManager : MonoBehaviour
     }
     public void StartSession(List<BubbleBotData> bots)
     {
+        ModeManager.Instance.SetMode(Mode.PAID);
         sessionData = new NethermodeSessionData();
         playerRoster = new PlayerRoster()
         {
@@ -403,39 +405,18 @@ public class NetherModeGameplayManager : MonoBehaviour
 
     private void OnBubbleExploded(int _posX, int _posY)
     {
-        int reward = StubGetBubblesValue();
-        sessionData.AddPotentialBubbles(reward);
+        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true);
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
-        FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, reward);
-        //GameGUI.ExplodeBubble(posX, posY, reward);
-        GameEventsManager.Instance.PostEvent(new GameEventUpdateUnclaimedBubbles() { eventName = GameEvents.BubblesUnclaimedUpdate, balance = sessionData.GetPotentialBubbles() });
-        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+        FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, 0);
+        //GameEventsManager.Instance.PostEvent(new GameEventUpdateUnclaimedBubbles() { eventName = GameEvents.BubblesUnclaimedUpdate, balance = sessionData.GetPotentialBubbles() });
+        //FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
         //GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
     }
 
-    private int StubGetBubblesValue()
+    public void OnNewBubblesCount(int newValue)
     {
-        int firstRoll = Random.Range(0, 100);
-
-        if (firstRoll < 50)
-        {
-            return Random.Range(1, 21);
-        }
-        else if (firstRoll < 80)
-        {
-            return Random.Range(21, 101);
-        }
-        else if (firstRoll < 95)
-        {
-            return Random.Range(101, 300);
-        }
-        else if (firstRoll < 99)
-        {
-            return Random.Range(301, 450);
-        }
-        else
-        {
-            return Random.Range(451, 501);
-        }
+        int diff = newValue - sessionData.GetPotentialBubbles();
+        sessionData.AddPotentialBubbles(diff);
+        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
     }
 }

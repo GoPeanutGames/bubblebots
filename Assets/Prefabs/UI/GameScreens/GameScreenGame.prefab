@@ -5588,7 +5588,7 @@ MonoBehaviour:
   - {fileID: 6781989969290018515}
   - {fileID: 6781989969096146095}
   - {fileID: 6781989968175817302}
-  TopBias: 50
+  TopBias: 75
   CanSwapTiles: 1
   TxtScore: {fileID: 6781989968034825752}
   TxtKilledRobots: {fileID: 6781989968146509685}

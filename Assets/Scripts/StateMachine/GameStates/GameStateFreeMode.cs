@@ -35,7 +35,6 @@ public class GameStateFreeMode : GameState
         });
     }
 
-
     private void OnGameEvent(GameEventData data)
     {
         if (data.eventName == GameEvents.ButtonTap)
@@ -53,6 +52,10 @@ public class GameStateFreeMode : GameState
             gameScreenGameEnd = Screens.Instance.PushScreen<GameScreenGameEnd>();
             gameScreenGameEnd.SetMessage("You earned " + (data as GameEventFreeModeLose).numBubblesWon.ToString() + " Bubbles and lost "
                 + (data as GameEventFreeModeLose).lastLevelPotentialBubbles + " Bubbles for failing to complete the last level!");
+        }
+        else if (data.eventName == GameEvents.UpdateSessionResponse)
+        {
+            Debug.Log("update session bubbles " + (data as GameEventUpdateSession).bubbles.ToString());
         }
     }
 
@@ -144,13 +147,12 @@ public class GameStateFreeMode : GameState
 
     private void StartPlay()
     {
-        
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
         freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freemodeGameplayManager).GetComponent<FreeToPlayGameplayManager>();
 
         freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeModeGameplayData;
         freeToPlayGameplayManager.enemyDamage = GameSettingsManager.Instance.freeModeEnemyDamage;
-        //freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
+        freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
         Screens.Instance.SetGameBackground(GameSettingsManager.Instance.freeModeGameplayData.gamebackgroundSprite);

@@ -31,6 +31,9 @@ public static class GameEvents
     public const string FreeModePlayerRobotKilled = "freemode.player.robot.killed";
     public const string FreeModeLose = "freemode.lose";
     public const string FreeModeScoreUpdate = "freemode.score.update";
+
+    // server comms
+    public const string UpdateSessionResponse = "server.session.update";
     
 
 }
