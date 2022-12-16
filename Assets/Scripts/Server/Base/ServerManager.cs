@@ -59,7 +59,7 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     private UnityWebRequest SetupPostWebRequest(string api, string formData)
     {
-        string encryptedFormData = Encrypt(formData);
+        string encryptedFormData = UseRSA ? Encrypt(formData) : formData;
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
         UnityWebRequest webRequest = UnityWebRequest.Post(serverUrl + api, encryptedFormData);
         UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(encryptedFormData));
