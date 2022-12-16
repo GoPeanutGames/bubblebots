@@ -17,7 +17,6 @@ public class GameStateMetamaskTransaction : GameState
     private void TransactionSuccess()
     {
         _gameScreenMetamaskTransaction.SetSuccess();
-        UserManager.Instance.GetPlayerResources();
         _gameScreenMetamaskTransaction.StartCoroutine(ClosePopup());
     }
 
@@ -29,7 +28,8 @@ public class GameStateMetamaskTransaction : GameState
 
     private IEnumerator ClosePopup()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(5f);
+        UserManager.Instance.GetPlayerResources();
         stateMachine.PushState(new GameStateMainMenu());
     }
     
