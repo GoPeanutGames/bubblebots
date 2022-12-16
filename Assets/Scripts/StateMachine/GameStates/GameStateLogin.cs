@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using UnityEngine;
+using WalletConnectSharp.Core.Models;
 using WalletConnectSharp.Unity;
 
 public class GameStateLogin : GameState
@@ -126,7 +127,8 @@ public class GameStateLogin : GameState
     {
         if (Application.isMobilePlatform)
         {
-            string signature = await WalletConnect.ActiveSession.EthPersonalSign(tempAddress, schema);
+            EIP712Domain domain = new EIP712Domain("BubbleBot Game Access", "1", 1, "0x0000000000000000000000000000000000000000");
+            string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, schema, domain);
             SignatureLoginSuccess(signature);
         }
         else
