@@ -36,8 +36,12 @@ mergeInto(LibraryManager.library, {
         console.log(isDev);
         
         try{
-            await window.metamaskBundleBuying(bundleId, isDev);
-            myGameInstance.SendMessage("Managers/JSLibConnectionManager","BundleBuySuccess");
+            const success = await window.metamaskBundleBuying(bundleId, isDev);
+            if(success){
+                myGameInstance.SendMessage("Managers/JSLibConnectionManager","BundleBuySuccess");
+            }else{
+                myGameInstance.SendMessage("Managers/JSLibConnectionManager","BundleBuyFailBalance");
+            }
         }catch(error){
             myGameInstance.SendMessage("Managers/JSLibConnectionManager","BundleBuyFail");
         }
