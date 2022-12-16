@@ -99,7 +99,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         gameplayState = FreeToPlayGameplayState.ShowingLevelText;
         SoundManager.Instance?.FadeOutMusic(() =>
         {
-            SoundManager.Instance.PlayRobotSelectMusicNew();
+            SoundManager.Instance.PlayLevelMusicNew();
             SoundManager.Instance.FadeInMusic();
         });
 

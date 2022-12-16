@@ -28,6 +28,11 @@ public class GameStateFreeMode : GameState
         Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
         Screens.Instance.HideGameBackground();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+        SoundManager.Instance?.FadeOutMusic(() =>
+        {
+            SoundManager.Instance.PlayRobotSelectMusicNew();
+            SoundManager.Instance.FadeInMusic();
+        });
     }
 
 
@@ -130,6 +135,11 @@ public class GameStateFreeMode : GameState
         }
 
         stateMachine.PushState(new GameStateMainMenu());
+        SoundManager.Instance.FadeOutMusic(() =>
+        {
+            SoundManager.Instance.PlayStartMusicNew();
+            SoundManager.Instance.FadeInMusic();
+        });
     }
 
     private void StartPlay()
