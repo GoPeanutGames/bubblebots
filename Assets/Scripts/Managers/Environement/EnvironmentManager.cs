@@ -39,4 +39,9 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     {
         return Community == false;
     }
+
+    public bool IsDevelopment()
+    {
+        return Development;
+    }
 }

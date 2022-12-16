@@ -1,3 +1,8 @@
+using System;
+using System.Collections;
+using System.Threading.Tasks;
+using UnityEngine;
+
 public class GameStateMetamaskTransaction : GameState
 {
     private GameScreenMetamaskTransaction _gameScreenMetamaskTransaction;
@@ -6,11 +11,29 @@ public class GameStateMetamaskTransaction : GameState
     {
         StoreManager.Instance.GetBundleFromId(bundleId, (data) =>
         {
-            _gameScreenMetamaskTransaction.SetSuccess();
-            stateMachine.PushState(new GameStateMainMenu());
+            bool isDev = EnvironmentManager.Instance.IsDevelopment();
+            MetamaskManager.Instance.BuyStoreBundle(bundleId, isDev, TransactionSuccess, TransactionFail);
         });
     }
 
+    private void TransactionSuccess()
+    {
+        _gameScreenMetamaskTransaction.SetSuccess();
+        UserManager.Instance.GetPlayerResources();
+        _gameScreenMetamaskTransaction.StartCoroutine(ClosePopup());
+    }
+
+    private void TransactionFail()
+    {
+        _gameScreenMetamaskTransaction.SetFail();
+    }
+
+    private IEnumerator ClosePopup()
+    {
+        yield return new WaitForSeconds(0.5f);
+        stateMachine.PushState(new GameStateMainMenu());
+    }
+    
     public override void Enable()
     {
         _gameScreenMetamaskTransaction = Screens.Instance.PushScreen<GameScreenMetamaskTransaction>();

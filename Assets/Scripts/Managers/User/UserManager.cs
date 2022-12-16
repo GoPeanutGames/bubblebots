@@ -18,6 +18,7 @@ public class UserManager : MonoSingleton<UserManager>
 {
     public static PlayerType PlayerType;
     public static int RobotsKilled = 0;
+    public static Action<GetPlayerWallet> CallbackWithResources;
 
     private User CurrentUser;
 
@@ -148,12 +149,12 @@ public class UserManager : MonoSingleton<UserManager>
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Top100, onComplete);
     }
 
-    public void GetPlayerResources(Action<GetPlayerWallet> callbackWithData)
+    public void GetPlayerResources()
     {
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
         {
             GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
-            callbackWithData(walletData);
+            CallbackWithResources?.Invoke(walletData);
         }, CurrentUser.WalletAddress);
     }
 

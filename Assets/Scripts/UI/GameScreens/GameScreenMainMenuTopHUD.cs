@@ -1,7 +1,8 @@
+using System;
 using System.Collections.Generic;
+using BubbleBots.Server.Player;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class GameScreenMainMenuTopHUD : GameScreen
 {
@@ -11,6 +12,8 @@ public class GameScreenMainMenuTopHUD : GameScreen
         Gems,
         Energy
     }
+
+    public static Action ResourcesSet;
 
     public GameObject settingsGroup;
     public GameObject playerInfoGroup;
@@ -32,6 +35,21 @@ public class GameScreenMainMenuTopHUD : GameScreen
             { PlayerResource.Energy, energyText },
             { PlayerResource.Gems, gemsText }
         };
+        UserManager.Instance.GetPlayerResources();
+        UserManager.CallbackWithResources += SetResources;
+    }
+
+    private void OnDestroy()
+    {
+        UserManager.CallbackWithResources -= SetResources;
+    }
+
+    private void SetResources(GetPlayerWallet wallet)
+    {
+        SetTopInfo(PlayerResource.Bubbles, wallet.bubbles);
+        SetTopInfo(PlayerResource.Energy, wallet.energy);
+        SetTopInfo(PlayerResource.Gems, wallet.gems);
+        ResourcesSet?.Invoke();
     }
 
     public void ShowSettingsGroup()
@@ -54,7 +72,7 @@ public class GameScreenMainMenuTopHUD : GameScreen
         playerInfoGroup.SetActive(false);
     }
 
-    public void SetTopInfo(PlayerResource resource, int value)
+    private void SetTopInfo(PlayerResource resource, int value)
     {
         _resourcesSet = true;
         if (resource == PlayerResource.Energy)

@@ -24,4 +24,16 @@ public class JSLibConnectionManager : MonoBehaviour
         };
         GameEventsManager.Instance.PostEvent(metamaskSignatureEventData);
     }
+
+    [SkipRename]
+    public void BundleBuySuccess()
+    {
+        MetamaskManager.Instance.StoreBundleBuySuccess();
+    }
+
+    [SkipRename]
+    public void BundleBuyFail()
+    {
+        MetamaskManager.Instance.StoreBundleBuyFail();
+    }
 }

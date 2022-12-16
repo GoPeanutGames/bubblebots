@@ -30,6 +30,18 @@ mergeInto(LibraryManager.library, {
             signature
         );
     },
+    
+    BuyBundle: async function(bundleId, isDev){
+        console.log(bundleId);
+        console.log(isDev);
+        
+        try{
+            await window.metamaskBundleBuying(bundleId, isDev);
+            myGameInstance.SendMessage("Managers/JSLibConnectionManager","BundleBuySuccess");
+        }catch(error){
+            myGameInstance.SendMessage("Managers/JSLibConnectionManager","BundleBuyFail");
+        }
+    },
 	
 	DisplayDebug: function()
 	{
