@@ -95,7 +95,7 @@ public class NetherModeGameplayManager : MonoBehaviour
     }
     public void StartSession(List<BubbleBotData> bots)
     {
-        ModeManager.Instance.SetMode(Mode.PAID);
+        ModeManager.Instance.SetMode(Mode.PRO);
         sessionData = new NethermodeSessionData();
         playerRoster = new PlayerRoster()
         {

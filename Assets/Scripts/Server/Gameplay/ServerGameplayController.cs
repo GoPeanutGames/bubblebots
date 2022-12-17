@@ -1,5 +1,5 @@
-using BubbleBots.Server.Gameplay;
 using System;
+using BubbleBots.Server.Gameplay;
 using UnityEngine;
 
 public class ServerGameplayController : MonoSingleton<ServerGameplayController>
@@ -29,10 +29,13 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
             return;
         }
         string address = UserManager.Instance.GetPlayerWalletAddress();
+        string signature = UserManager.Instance.GetPlayerSignature();
         currentLevel = level;
         GameplaySessionStartData formData = new()
         {
+            signature = signature,
             address = address,
+            level = level,
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString("O"),

@@ -13,9 +13,11 @@ namespace BubbleBots.Server.Gameplay
     [Serializable]
     public class GameplaySessionStartData
     {
+        public string signature;
         public string address;
         public string timezone;
         public string mode;
+        public int level;
         public string startTime;
     }
 
