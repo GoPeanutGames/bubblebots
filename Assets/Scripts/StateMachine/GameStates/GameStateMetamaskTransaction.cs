@@ -28,8 +28,10 @@ public class GameStateMetamaskTransaction : GameState
 
     private IEnumerator ClosePopup()
     {
-        yield return new WaitForSeconds(5f);
-        UserManager.Instance.GetPlayerResources();
+        yield return new WaitForSeconds(2f);
+        UserManager.Instance.GetPlayerResourcesAfter(3);
+        UserManager.Instance.GetPlayerResourcesAfter(8);
+        UserManager.Instance.GetPlayerResourcesAfter(12);
         stateMachine.PushState(new GameStateMainMenu());
     }
     

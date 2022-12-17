@@ -3,6 +3,7 @@ using System;
 namespace BubbleBots.Server.Gameplay
 {
     public enum GameplaySessionAPI { Start, Update, End };
+    public enum GameStatus {WON, LOSE, PLAYING}
 
     [Serializable]
     public class GameplaySessionResult
@@ -29,6 +30,7 @@ namespace BubbleBots.Server.Gameplay
         public int score;
         public int kills;
         public bool specialBurst;
+        public GameStatus status;
     }
 
     [Serializable]
@@ -48,5 +50,6 @@ namespace BubbleBots.Server.Gameplay
         public string sessionId;
         public int score;
         public string endTime;
+        public GameStatus status;
     }
 }

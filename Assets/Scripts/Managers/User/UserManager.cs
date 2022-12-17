@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using BubbleBots.User;
@@ -156,6 +157,17 @@ public class UserManager : MonoSingleton<UserManager>
             GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
             CallbackWithResources?.Invoke(walletData);
         }, CurrentUser.WalletAddress);
+    }
+
+    private IEnumerator CallGetPlayerResourcesAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        GetPlayerResources();
+    }
+    
+    public void GetPlayerResourcesAfter(float seconds)
+    {
+        StartCoroutine(CallGetPlayerResourcesAfter(seconds));
     }
 
 #if UNITY_EDITOR

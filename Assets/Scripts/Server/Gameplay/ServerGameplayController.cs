@@ -46,6 +46,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 
     public void UpdateGameplaySession(int score, bool bubbleBurst = false)
     {
+        //TODO: pass status
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
@@ -58,7 +59,8 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
             score = score,
             level = currentLevel,
             specialBurst = bubbleBurst,
-            kills = UserManager.RobotsKilled
+            kills = UserManager.RobotsKilled,
+            // status = 
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, (response) => {
@@ -69,6 +71,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 
     public void EndGameplaySession(int score)
     {
+        //TODO: pass status
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
@@ -79,6 +82,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
             sessionId = currentGameplaySessionID,
             score = score,
             endTime = DateTime.Now.ToString("O"),
+            // status = 
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.End, jsonFormData, OnGameplaySessionEnd);
