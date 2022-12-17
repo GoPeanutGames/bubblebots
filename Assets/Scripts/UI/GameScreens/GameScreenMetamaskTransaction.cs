@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class GameScreenMetamaskTransaction : GameScreen
@@ -5,6 +6,7 @@ public class GameScreenMetamaskTransaction : GameScreen
     public GameObject loadingParent;
     public GameObject successParent;
     public GameObject failParent;
+    public TextMeshProUGUI FailExplanationText;
 
     private void ResetState()
     {
@@ -25,8 +27,17 @@ public class GameScreenMetamaskTransaction : GameScreen
         successParent.SetActive(true);
     }
 
-    public void SetFail()
+    public void SetFail(string reason)
     {
+        if (reason == "error")
+        {
+            FailExplanationText.text = "Unexpected error occured, try Again.";
+        }
+        else if (reason == "balance")
+        {
+            FailExplanationText.text = "Not enough balance.";
+        }
+
         ResetState();
         failParent.SetActive(true);
     }

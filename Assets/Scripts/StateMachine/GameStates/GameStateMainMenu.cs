@@ -1,6 +1,3 @@
-using BubbleBots.Server.Player;
-using UnityEngine;
-
 public class GameStateMainMenu : GameState
 {
     private GameScreenMainMenuBottomHUD gameScreenMainMenuBottomHUD;
@@ -20,7 +17,7 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenuBottomHUD.DeactivateStoreButtonGlow();
         gameScreenMainMenuBottomHUD.HideHomeButton();
     }
-    
+
     public override void Enable()
     {
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
@@ -64,6 +61,7 @@ public class GameStateMainMenu : GameState
             case ButtonId.ModeSelectBackButton:
                 HideModeSelect();
                 break;
+            case ButtonId.MainMenuTopHUDGemPlus:
             case ButtonId.MainMenuBottomHUDStore:
                 ShowStore();
                 break;
@@ -168,7 +166,7 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenuTopHUD.SetUsername(_gameScreenChangeNickname.GetNicknameText());
         CloseChangeNickname();
     }
-    
+
     public override void Disable()
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);

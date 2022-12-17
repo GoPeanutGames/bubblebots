@@ -1,6 +1,5 @@
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class GameStateFreeMode : GameState
 {
@@ -155,6 +154,7 @@ public class GameStateFreeMode : GameState
         freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
+        UserManager.Instance.GetPlayerResources();
         Screens.Instance.SetGameBackground(GameSettingsManager.Instance.freeModeGameplayData.gamebackgroundSprite);
         Screens.Instance.PopScreen(gameScreenRobotSelection);
         Screens.Instance.PopScreen<GameScreenMainMenuTopHUD>();

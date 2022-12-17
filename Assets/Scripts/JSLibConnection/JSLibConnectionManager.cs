@@ -36,4 +36,10 @@ public class JSLibConnectionManager : MonoBehaviour
     {
         MetamaskManager.Instance.StoreBundleBuyFail();
     }
+    
+    [SkipRename]
+    public void BundleBuyFailBalance()
+    {
+        MetamaskManager.Instance.StoreBundleBuyFailBalance();
+    }
 }

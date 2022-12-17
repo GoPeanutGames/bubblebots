@@ -1,7 +1,7 @@
 using System;
-using BubbleBots.Store;
 using System.Collections.Generic;
 using BubbleBots.Server.Store;
+using BubbleBots.Store;
 using UnityEngine;
 
 public class StoreManager : MonoSingleton<StoreManager>
@@ -22,15 +22,20 @@ public class StoreManager : MonoSingleton<StoreManager>
         }
     }
 
+    private string GetGemText(int gems)
+    {
+        return gems > 1 ? gems + " GEMS" : gems + " GEM";
+    }
+
     private void AddStoreItem(StoreTabs tab, BundleData data)
     {
         CreateTabIfNotExists(tab);
         StoreItem storeItem = new StoreItem()
         {
             Bundle = data,
-            TopLine = data.gems + "GEMS",
+            TopLine = GetGemText(data.gems),
             Image = "Store/Gems/Gem Chest Small",
-            BottomLine = "USDC " + data.price
+            BottomLine = "USDC " + data.price.ToString("##.##")
         };
         _storeTabItemsMap[tab].Items.Add(storeItem);
     }

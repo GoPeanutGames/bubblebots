@@ -18,7 +18,7 @@ namespace BubbleBots.Server.Store
         public int position;
         public bool isActive;
         public bool isPromotion;
-        public int price;
+        public float price;
         public int gems;
         public int bundleId;
     }

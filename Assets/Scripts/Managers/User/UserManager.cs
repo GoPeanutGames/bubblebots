@@ -1,12 +1,12 @@
+using System;
+using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using BubbleBots.User;
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum PlayerType
 {
@@ -39,7 +39,7 @@ public class UserManager : MonoSingleton<UserManager>
         CurrentUser = new()
         {
             UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname],
-                "Player" + UnityEngine.Random.Range(1000, 10000)),
+                "Player" + Random.Range(1000, 10000)),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
             SessionToken =
                 ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),

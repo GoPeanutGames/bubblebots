@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
+using System.Text;
 using BubbleBots.Server;
 using BubbleBots.Server.Gameplay;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using BubbleBots.Server.Store;
-using Org.BouncyCastle.Asn1.Ocsp;
+using UnityEngine;
+using UnityEngine.Networking;
 
 public class ServerManager : MonoSingleton<ServerManager>
 {
@@ -62,7 +62,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         string encryptedFormData = UseRSA ? Encrypt(formData) : formData;
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
         UnityWebRequest webRequest = UnityWebRequest.Post(serverUrl + api, encryptedFormData);
-        UploadHandler customUploadHandler = new UploadHandlerRaw(System.Text.Encoding.UTF8.GetBytes(encryptedFormData));
+        UploadHandler customUploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(encryptedFormData));
         customUploadHandler.contentType = "application/json";
         webRequest.uploadHandler = customUploadHandler;
         webRequest.SetRequestHeader("Authorization", "Bearer " + sessionToken);
