@@ -35,6 +35,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
         {
             signature = signature,
             address = address,
+            level = 1,
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString("O"),

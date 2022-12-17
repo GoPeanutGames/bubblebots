@@ -17,6 +17,7 @@ namespace BubbleBots.Server.Gameplay
         public string address;
         public string timezone;
         public string mode;
+        public int level;
         public string startTime;
     }
 
