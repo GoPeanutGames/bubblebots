@@ -22,13 +22,18 @@ public class StoreManager : MonoSingleton<StoreManager>
         }
     }
 
+    private string GetGemText(int gems)
+    {
+        return gems > 1 ? gems + " GEMS" : gems + " GEM";
+    }
+
     private void AddStoreItem(StoreTabs tab, BundleData data)
     {
         CreateTabIfNotExists(tab);
         StoreItem storeItem = new StoreItem()
         {
             Bundle = data,
-            TopLine = data.gems + "GEMS",
+            TopLine = GetGemText(data.gems),
             Image = "Store/Gems/Gem Chest Small",
             BottomLine = "USDC " + data.price.ToString("##.##")
         };

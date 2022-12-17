@@ -1348,6 +1348,11 @@ PrefabInstance:
       propertyPath: m_PreserveAspect
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3374042583156430062, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: buttonId
+      value: mainmenu.topHUD.gems.plus
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a28c5ae8845fa645abaccee566f6ee6, type: 3}
 --- !u!224 &9158779583817850295 stripped
@@ -1552,6 +1557,11 @@ PrefabInstance:
       propertyPath: m_PreserveAspect
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5471914685567318658, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a28c5ae8845fa645abaccee566f6ee6, type: 3}
 --- !u!114 &9158779584845779363 stripped
@@ -1744,6 +1754,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_PreserveAspect
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5471914685567318658, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a28c5ae8845fa645abaccee566f6ee6, type: 3}

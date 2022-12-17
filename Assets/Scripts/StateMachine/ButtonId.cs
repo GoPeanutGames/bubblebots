@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using System;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 public static class ButtonId
 {
@@ -19,6 +19,7 @@ public static class ButtonId
     
     //main menu top hud
     public const string MainMenuTopHUDChangeNickname = "mainmenu.topHUD.changenickname";
+    public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
 
     //mode select
     public const string ModeSelectBackButton = "modeselect.back";
