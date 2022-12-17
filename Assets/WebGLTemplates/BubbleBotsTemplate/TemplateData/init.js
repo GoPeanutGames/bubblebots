@@ -204,7 +204,9 @@ window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
     if( tokenAllowance < bundlePrice ){
       let MAX_INT = 11579208923731619542357098500868790785
 
-      await usdcContract.connect(provider.getSigner()).approve(currentEnv.gemsContract,BigInt(MAX_INT));
+      const tx = await usdcContract.connect(provider.getSigner()).approve(currentEnv.gemsContract,BigInt(MAX_INT));
+
+      await tx.wait();
     }
 
     //get the token balance of user
@@ -215,8 +217,11 @@ window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
     //if he has enough balance purchase the gems here
     if( userBalance >= bundlePrice ){
 
-      await gemsContract.connect(provider.getSigner()).purchaseGemsByToken(bundleId);
+      const tx = await gemsContract.connect(provider.getSigner()).purchaseGemsByToken(bundleId);
 
+      await tx.wait();
+
+      return true;
     }
     else {
       console.log('Not Enough balance to purchase')
