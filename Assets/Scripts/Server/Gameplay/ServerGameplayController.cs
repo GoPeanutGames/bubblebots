@@ -1,5 +1,5 @@
-using BubbleBots.Server.Gameplay;
 using System;
+using BubbleBots.Server.Gameplay;
 using UnityEngine;
 
 public class ServerGameplayController : MonoSingleton<ServerGameplayController>
@@ -35,7 +35,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
         {
             signature = signature,
             address = address,
-            level = 1,
+            level = level,
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString("O"),
