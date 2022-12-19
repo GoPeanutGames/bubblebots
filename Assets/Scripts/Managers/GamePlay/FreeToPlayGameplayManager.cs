@@ -121,7 +121,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         };
         currentLevelIndex = 0;
 
-        match3Manager.Initialize(gameplayData.levels[currentLevelIndex], true);
+        match3Manager.Initialize(gameplayData.levels[currentLevelIndex], false);
 
         match3Manager.onGemsExploded -= OnGemsExploded;
         match3Manager.onGemsExploded += OnGemsExploded;
@@ -161,7 +161,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
             playerRoster.ResetRoster();
         }
 
-        match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)], true);
+        match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)]);
 
         currentWaveIndex = 0;
         currentEnemy = 0;
@@ -433,34 +433,9 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
     }
 
-    public void SetCanSapwnBubbles(bool canSpawn)
+    public void SetCanSpawnBubbles(bool canSpawn)
     {
         match3Manager.SetCanSpawnBubbles(canSpawn);
     }
 
-    //private int StubGetBubblesValue()
-    //{
-    //    int firstRoll = Random.Range(0, 100);
-
-    //    if (firstRoll < 50)
-    //    {
-    //        return Random.Range(1, 21);
-    //    } 
-    //    else if (firstRoll < 80)
-    //    {
-    //        return Random.Range(21, 101);
-    //    } 
-    //    else if (firstRoll < 95)
-    //    {
-    //        return Random.Range(101, 300);
-    //    }
-    //    else if (firstRoll < 99)
-    //    {
-    //        return Random.Range(301, 450);
-    //    } 
-    //    else
-    //    {
-    //        return Random.Range(451, 501);
-    //    }
-    //}
 }

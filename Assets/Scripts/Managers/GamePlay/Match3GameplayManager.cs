@@ -93,8 +93,22 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         gameplayState = GameplayState.WaitForInput;
         inputLocked = false;
         canSpawnBubbles = _canSpawnBubbles;
-
     }
+
+    public void Initialize(LevelData _levelData)
+    {
+        //todo fix this 
+        GameGUI = FindObjectOfType<GUIGame>();
+
+        levelData = _levelData;
+        boardController = new BoardController();
+        boardController.Initialize(levelData, matchPrecedence);
+        boardController.PopulateBoardWithSeed(Random.Range(0, 1337));
+        RenderStartLevel();
+        gameplayState = GameplayState.WaitForInput;
+        inputLocked = false;
+    }
+
     private void RenderStartLevel()
     {
         GameGUI.RenderLevelBackground(boardController.GetBoardModel().width, boardController.GetBoardModel().height);

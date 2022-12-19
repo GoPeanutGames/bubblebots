@@ -159,7 +159,6 @@ public class GameStateFreeMode : GameState
         freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
-        UserManager.CallbackWithResources += ResourcesReceived;
         UserManager.Instance.GetPlayerResources();
         Screens.Instance.SetGameBackground(GameSettingsManager.Instance.freeModeGameplayData.gamebackgroundSprite);
         Screens.Instance.PopScreen(gameScreenRobotSelection);
@@ -170,7 +169,7 @@ public class GameStateFreeMode : GameState
     {
         if (freeToPlayGameplayManager != null)
         {
-            freeToPlayGameplayManager.SetCanSapwnBubbles(wallet.energy > 9);
+            freeToPlayGameplayManager.SetCanSpawnBubbles(wallet.energy > 0);
         }
     }
 

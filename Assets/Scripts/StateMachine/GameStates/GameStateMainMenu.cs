@@ -11,6 +11,8 @@ public class GameStateMainMenu : GameState
     private GameScreenNotEnoughGems gameScreenNotEnoughGems;
 
     private bool canPlayNetherMode = false;
+    private bool canPlayFreeMode = false;
+
     public override string GetGameStateName()
     {
         return "game state main menu";
@@ -25,6 +27,7 @@ public class GameStateMainMenu : GameState
     public override void Enable()
     {
         canPlayNetherMode = false;
+        canPlayFreeMode = false;
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>(true);
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
@@ -146,6 +149,10 @@ public class GameStateMainMenu : GameState
         stateMachine.PushState(new GameStateFreeMode());
     }
 
+    private void TryPlayFreeMode()
+    {
+
+    }
 
     private void TryPlayNetherMode()
     {
@@ -208,5 +215,6 @@ public class GameStateMainMenu : GameState
     private void ResourcesReceived(GetPlayerWallet wallet)
     {
         canPlayNetherMode = wallet.gems > 0;
+        canPlayFreeMode = wallet.energy > 0;
     }
 }
