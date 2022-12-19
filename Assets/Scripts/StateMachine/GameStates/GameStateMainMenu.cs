@@ -1,4 +1,5 @@
 using BubbleBots.Server.Player;
+using UnityEngine;
 
 public class GameStateMainMenu : GameState
 {
@@ -9,6 +10,7 @@ public class GameStateMainMenu : GameState
     private GameScreenLoading _gameScreenLoading;
     private GameScreenChangeNickname _gameScreenChangeNickname;
     private GameScreenNotEnoughGems gameScreenNotEnoughGems;
+    private GameScreenPremint _gameScreenPremint;
 
     private bool canPlayNetherMode = false;
     private bool canPlayFreeMode = false;
@@ -75,6 +77,15 @@ public class GameStateMainMenu : GameState
             case ButtonId.MainMenuTopHUDGemPlus:
             case ButtonId.MainMenuBottomHUDStore:
                 ShowStore();
+                break;
+            case ButtonId.MainMenuTopHUDPremint:
+                OpenPremintPopup();
+                break;
+            case ButtonId.PremintOk:
+                PremintClick();
+                break;
+            case ButtonId.PremintClose:
+                ClosePremintPopup();
                 break;
             case ButtonId.ModeSelectFreeModeTooltip:
                 ShowFreeModeTooltip();
@@ -205,6 +216,21 @@ public class GameStateMainMenu : GameState
         CloseChangeNickname();
     }
 
+    private void OpenPremintPopup()
+    {
+        _gameScreenPremint = Screens.Instance.PushScreen<GameScreenPremint>();
+    }
+
+    private void PremintClick()
+    {
+        Application.OpenURL("https://www.premint.xyz/peanutgames-bubble-bots-mini-game/");
+    }
+    
+    private void ClosePremintPopup()
+    {
+        Screens.Instance.PopScreen(_gameScreenPremint);
+    }
+    
     public override void Disable()
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);

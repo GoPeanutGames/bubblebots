@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class GameStateNetherMode : GameState
@@ -10,9 +9,6 @@ public class GameStateNetherMode : GameState
     private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
 
     private NetherModeGameplayManager netherModeGameplayManager;
-
-    [DllImport("__Internal")]
-    private static extern void Premint();
 
     public override string GetGameStateName()
     {
@@ -119,7 +115,7 @@ public class GameStateNetherMode : GameState
     private void PremintPressed()
     {
 #if !UNITY_EDITOR
-                Premint();
+                Application.OpenURL("https://www.premint.xyz/peanutgames-bubble-bots-mini-game/");
 #endif
         GoToMainMenu();
         //        Menu.gameObject.SetActive(true);

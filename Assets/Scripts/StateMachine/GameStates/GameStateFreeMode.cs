@@ -1,5 +1,4 @@
 using BubbleBots.Server.Player;
-using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class GameStateFreeMode : GameState
@@ -11,9 +10,6 @@ public class GameStateFreeMode : GameState
     private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
 
     private FreeToPlayGameplayManager freeToPlayGameplayManager;
-
-    [DllImport("__Internal")]
-    private static extern void Premint();
 
     public override string GetGameStateName()
     {
@@ -108,7 +104,7 @@ public class GameStateFreeMode : GameState
     private void PremintPressed()
     {
 #if !UNITY_EDITOR
-                Premint();
+                Application.OpenURL("https://www.premint.xyz/peanutgames-bubble-bots-mini-game/");
 #endif
         GoToMainMenu();
         //        Menu.gameObject.SetActive(true);
