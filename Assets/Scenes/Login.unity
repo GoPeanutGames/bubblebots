@@ -3785,6 +3785,7 @@ MonoBehaviour:
   StartMusic: {fileID: 8300000, guid: 6fb91789a4997c8489e0a75255fb1502, type: 3}
   RobotSelectMusic: {fileID: 8300000, guid: 62e8be8495ccaf641bf6ffda81744d9d, type: 3}
   LevelMusic: {fileID: 8300000, guid: 1691a0e673a75b247a0abda38d14fd94, type: 3}
+  NetherModeMusic: {fileID: 8300000, guid: 1d800c45034730648ac6533de5d7f339, type: 3}
   ComboSfxs:
   - {fileID: 8300000, guid: 8418327d943224041bb5adc01a5f0c62, type: 3}
   - {fileID: 8300000, guid: 8418327d943224041bb5adc01a5f0c62, type: 3}

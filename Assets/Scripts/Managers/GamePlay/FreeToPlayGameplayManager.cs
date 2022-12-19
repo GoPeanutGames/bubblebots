@@ -421,7 +421,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
     private void OnBubbleExploded(int _posX, int _posY)
     {
-        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true);
+        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true, (val) => { FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, val);});
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
         //FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, 0);
     }

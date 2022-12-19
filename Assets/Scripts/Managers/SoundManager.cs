@@ -11,6 +11,7 @@ public class SoundManager : MonoSingleton<SoundManager>
     public AudioClip StartMusic;
     public AudioClip RobotSelectMusic;
     public AudioClip LevelMusic;
+    public AudioClip NetherModeMusic;
     public List<AudioClip> ComboSfxs;
     public AudioClip HammerSfx;
     public AudioClip ColorSfx;
@@ -141,6 +142,12 @@ public class SoundManager : MonoSingleton<SoundManager>
     public void PlayLevelMusicNew()
     {
         musicSource.clip = LevelMusic;
+        musicSource.Play();
+    }
+
+    public void PlayNetherModeMusic()
+    {
+        musicSource.clip = NetherModeMusic;
         musicSource.Play();
     }
 }
