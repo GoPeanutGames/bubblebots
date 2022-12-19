@@ -11,6 +11,9 @@ public class GameStateMainMenu : GameState
     private GameScreenChangeNickname _gameScreenChangeNickname;
     private GameScreenNotEnoughGems gameScreenNotEnoughGems;
     private GameScreenPremint _gameScreenPremint;
+    private GameScreenComingSoonGeneric _gameScreenComingSoonGeneric;
+    private GameScreenComingSoonNether _gameScreenComingSoonNether;
+    private GameScreenComingSoonItems _gameScreenComingSoonItems;
 
     private bool canPlayNetherMode = false;
     private bool canPlayFreeMode = false;
@@ -71,6 +74,21 @@ public class GameStateMainMenu : GameState
             case ButtonId.MainMenuBottomHUDPlay:
                 ShowModeSelect();
                 break;
+            case ButtonId.MainMenuBottomHUDFriends:
+                ShowComingSoonGeneric();
+                break;
+            case ButtonId.MainMenuBottomHUDNetherpass:
+                ShowComingSoonNether();
+                break;
+            case ButtonId.ComingSoonNetherpassClose:
+                HideComingSoonNether();
+                break;
+            case ButtonId.MainMenuBottomHUDItems:
+                ShowComingSoonItems();
+                break;
+            case ButtonId.ComingSoonItemsClose:
+                HideComingSoonItems();
+                break;
             case ButtonId.ModeSelectBackButton:
                 HideModeSelect();
                 break;
@@ -80,6 +98,12 @@ public class GameStateMainMenu : GameState
                 break;
             case ButtonId.MainMenuTopHUDPremint:
                 OpenPremintPopup();
+                break;
+            case ButtonId.MainMenuTopHUDLeaderboard:
+                ShowComingSoonGeneric();
+                break;
+            case ButtonId.ComingSoonGenericClose:
+                HideComingSoonGeneric();
                 break;
             case ButtonId.PremintOk:
                 PremintClick();
@@ -119,6 +143,36 @@ public class GameStateMainMenu : GameState
             default:
                 break;
         }
+    }
+
+    private void ShowComingSoonGeneric()
+    {
+        _gameScreenComingSoonGeneric = Screens.Instance.PushScreen<GameScreenComingSoonGeneric>();
+    }
+
+    private void HideComingSoonGeneric()
+    {
+        Screens.Instance.PopScreen(_gameScreenComingSoonGeneric);
+    }
+
+    private void ShowComingSoonNether()
+    {
+        _gameScreenComingSoonNether = Screens.Instance.PushScreen<GameScreenComingSoonNether>();
+    }
+
+    private void HideComingSoonNether()
+    {
+        Screens.Instance.PopScreen(_gameScreenComingSoonNether);
+    }
+
+    private void ShowComingSoonItems()
+    {
+        _gameScreenComingSoonItems = Screens.Instance.PushScreen<GameScreenComingSoonItems>();
+    }
+
+    private void HideComingSoonItems()
+    {
+        Screens.Instance.PopScreen(_gameScreenComingSoonItems);
     }
 
     private void ShowFreeModeTooltip()

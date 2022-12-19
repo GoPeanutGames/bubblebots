@@ -16,12 +16,21 @@ public static class ButtonId
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";
     public const string MainMenuBottomHUDStore = "mainmenu.bottomHUD.store";
     public const string MainMenuBottomHUDHome = "mainmenu.bottomHUD.home";
+    public const string MainMenuBottomHUDFriends = "mainmenu.bottomHUD.friends";
+    public const string MainMenuBottomHUDNetherpass = "mainmenu.bottomHUD.netherpass";
+    public const string MainMenuBottomHUDItems = "mainmenu.bottomHUD.items";
     
     //main menu top hud
     public const string MainMenuTopHUDChangeNickname = "mainmenu.topHUD.changenickname";
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
     public const string MainMenuTopHUDPremint = "mainmenu.topHUD.premint";
+    public const string MainMenuTopHUDLeaderboard = "mainmenu.topHUD.leaderboard";
 
+    //coming soon
+    public const string ComingSoonGenericClose = "comingsoon.generic.close";
+    public const string ComingSoonNetherpassClose = "comingsoon.netherpass.close";
+    public const string ComingSoonItemsClose = "comingsoon.items.close";
+    
     //mode select
     public const string ModeSelectBackButton = "modeselect.back";
     public const string ModeSelectNethermode = "modeselect.nethermode";

@@ -3434,6 +3434,9 @@ MonoBehaviour:
   - {fileID: 6852108186862858203, guid: 5ebb376695fd3f3428c2f8429a0b1d9a, type: 3}
   - {fileID: -1312035993938228030, guid: fb20430fadfec6c4f8df5b165f86ff88, type: 3}
   - {fileID: 614840099462105615, guid: 1ab0eca7f8b88d744a94826a3493a4d7, type: 3}
+  - {fileID: 1896057103663101010, guid: 63d43a9946b9a5e4fba7334f14bfb05e, type: 3}
+  - {fileID: -2363525908864316044, guid: 67704ef825b1d5640bd290fddd254892, type: 3}
+  - {fileID: -7879914156153614160, guid: b729debc04d8fca47a4b8a87c030e3e4, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0
