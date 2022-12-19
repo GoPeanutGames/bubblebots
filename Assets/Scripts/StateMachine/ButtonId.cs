@@ -20,6 +20,7 @@ public static class ButtonId
     //main menu top hud
     public const string MainMenuTopHUDChangeNickname = "mainmenu.topHUD.changenickname";
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
+    public const string MainMenuTopHUDPremint = "mainmenu.topHUD.premint";
 
     //mode select
     public const string ModeSelectBackButton = "modeselect.back";
@@ -68,6 +69,10 @@ public static class ButtonId
     //change nickname popup
     public const string ChangeNicknameClose = "changenickname.close";
     public const string ChangeNicknameOk = "changenickname.ok";
+    
+    //premint popup
+    public const string PremintOk = "premint.ok";
+    public const string PremintClose = "premint.close";
 }
 
 public static class TypeUtilities

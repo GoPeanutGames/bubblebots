@@ -57,11 +57,6 @@ mergeInto(LibraryManager.library, {
 		myGameInstance.SendMessage("Canvas/PnlGame", "DebugTileList");
 	},
 
-	Premint: function()
-	{
-		window.open("https://www.premint.xyz/peanutgames-bubble-bots-mini-game/");
-	},
-
 	Airdrop: function()
 	{
 		window.open("https://peanutgames.com/airdrop");

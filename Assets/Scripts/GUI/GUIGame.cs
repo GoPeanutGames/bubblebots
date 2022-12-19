@@ -1,17 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using BubbleBots.Gameplay.Models;
+using BubbleBots.Match3.Data;
+using BubbleBots.Match3.Models;
+using DG.Tweening;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
-using Unity.VisualScripting;
-using TMPro;
-using System.Runtime.InteropServices;
-
-using BubbleBots.Match3.Models;
-using BubbleBots.Gameplay.Models;
-using UnityEngine.SceneManagement;
-using BubbleBots.Match3.Data;
 
 public class GUIGame : MonoBehaviour
 {
@@ -47,9 +45,6 @@ public class GUIGame : MonoBehaviour
     string lastLockedBy = "";
 
     public delegate void OnGUIEvent(object param);
-
-    [DllImport("__Internal")]
-    private static extern void Premint();
 
     [DllImport("__Internal")]
     private static extern void Reload();
