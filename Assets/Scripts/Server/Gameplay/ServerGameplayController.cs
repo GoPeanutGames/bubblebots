@@ -35,9 +35,9 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
         {
             signature = signature,
             address = address,
+            mode = ModeManager.Instance.Mode.ToString(),
             level = level,
             timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
-            mode = ModeManager.Instance.Mode.ToString(),
             startTime = DateTime.Now.ToString("O"),
         };
         string jsonFormData = JsonUtility.ToJson(formData);
@@ -46,7 +46,6 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 
     public void UpdateGameplaySession(int score, bool bubbleBurst = false)
     {
-        //TODO: pass status
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
@@ -58,9 +57,10 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
             sessionId = currentGameplaySessionID,
             score = score,
             level = currentLevel,
+            mode = ModeManager.Instance.Mode.ToString(),
             specialBurst = bubbleBurst,
             kills = UserManager.RobotsKilled,
-            // status = 
+            status = Enum.GetName(typeof(GameStatus), GameStatus.PLAYING) // should always be this
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, (response) => {
@@ -69,9 +69,8 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
         });
     }
 
-    public void EndGameplaySession(int score)
+    public void EndGameplaySession(int score, GameStatus gameStatus)
     {
-        //TODO: pass status
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
@@ -82,7 +81,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
             sessionId = currentGameplaySessionID,
             score = score,
             endTime = DateTime.Now.ToString("O"),
-            // status = 
+            status = Enum.GetName(typeof(GameStatus), gameStatus)
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.End, jsonFormData, OnGameplaySessionEnd);
@@ -92,7 +91,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
     {
         if (sessionStarted)
         {
-            EndGameplaySession(previousScore);
+            EndGameplaySession(previousScore, GameStatus.LOSE);
         }
     }
 }

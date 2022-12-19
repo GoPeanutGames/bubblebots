@@ -219,10 +219,10 @@ namespace BubbleBots.Match3.Models
             }
         }
 
-        public List<GemMove> RefillBoard(List<GemData> gemSet, LevelData levelData)
+        public List<GemMove> RefillBoard(List<GemData> gemSet, LevelData levelData, bool _canSpawnBubbles)
         {
             InvalidateHint();
-            bool canSpawnBubbles = levelData.bubbleSpawnChance > 0;
+            bool canSpawnBubbles = _canSpawnBubbles && levelData.bubbleSpawnChance > 0;
             List<GemMove> gemMoves = new List<GemMove>();
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < height; j++)

@@ -53,7 +53,6 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.UpdateSessionResponse)
         {
             netherModeGameplayManager.OnNewBubblesCount((data as GameEventUpdateSession).bubbles);
-           
         } 
         else if (data.eventName == GameEvents.NetherModeComplete)
         {

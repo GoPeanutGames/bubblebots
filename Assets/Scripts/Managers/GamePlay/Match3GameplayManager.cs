@@ -64,6 +64,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
 
+    private bool canSpawnBubbles = true;
 
     public event IMatch3Events.OnGemsExploded onGemsExploded;
     public event IMatch3Events.OnBoardEventsEnded onBoardEventsEnded;
@@ -79,7 +80,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         return runningCoroutinesByStringName.Count > 0 || runningCoroutinesByEnumerator.Count > 0 || gameplayState != GameplayState.WaitForInput;
     }
 
-    public void Initialize(LevelData _levelData)
+    public void Initialize(LevelData _levelData, bool _canSpawnBubbles)
     {
         //todo fix this 
         GameGUI = FindObjectOfType<GUIGame>();
@@ -91,47 +92,9 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         RenderStartLevel();
         gameplayState = GameplayState.WaitForInput;
         inputLocked = false;
-
+        canSpawnBubbles = _canSpawnBubbles;
 
     }
-
-    //public void PrepareLevel(int levelNumber)
-    //{
-    //    MenuGUI.SwitchToMultiplayer(levelNumber);
-    //}
-    //public void StartLevel(LevelData levelData)
-    //{
-    //    playerRoster.ResetRoster();
-    //    levelComplete = false;
-    //    currentWaveIndex = 0;
-    //    currentWave = new Wave()
-    //    {
-    //        bots = new List<BubbleBot>()
-    //        {
-    //            new BubbleBot() { hp = 50 },
-    //            new BubbleBot() { hp = 50 },
-    //            new BubbleBot() { hp = 50 }
-    //        },
-    //        completed = false
-    //    };
-    //    ModeManager.Instance.SetMode(Mode.FREE);
-    //    AnalyticsManager.Instance.SendPlayEvent(currentLevelIndex);
-    //    serverGameplayController.StartGameplaySession(currentLevelIndex);
-
-    //    boardController = new BoardController();
-    //    boardController.Initialize(levelData, matchPrecedence);
-    //    boardController.PopulateBoardWithSeed(UnityEngine.Random.Range(0, 1337));
-    //    //boardController.PopulateBoardWithPredefinedGems(testLevel);
-
-    //    RenderStartLevel();
-
-    //    gameplayState = GameplayState.WaitForInput;
-    //    inputLocked = false;
-
-    //    GameGUI.SetRobotGauges(currentWave.bots);
-    //    GameGUI.SetPlayerRobots(playerRoster);
-    //}
-
     private void RenderStartLevel()
     {
         GameGUI.RenderLevelBackground(boardController.GetBoardModel().width, boardController.GetBoardModel().height);
@@ -144,25 +107,6 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         inputLocked = true;
         //to do // implement
     }
-
-
-    //public void StartGamePlay()
-    //{
-    //    playerRoster = new PlayerRoster()
-    //    {
-    //        bots = new List<BubbleBot>()
-    //        {
-    //            new BubbleBot { maxHp = 30, hp = 30, id = 1 },
-    //            new BubbleBot { maxHp = 30, hp = 30, id = 2 },
-    //            new BubbleBot { maxHp = 30, hp = 30, id = 3 },
-    //        },
-    //        currentBot = 0
-    //    };
-
-    //    StartLevel(gameplayData.levels[currentLevelIndex]);
-    //    AnalyticsManager.Instance.SendPlayEvent(currentLevelIndex);
-    //    return;
-    //}
 
     public void SetDownTile(int x, int y)
     {
@@ -179,86 +123,6 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         releaseTileX = x;
         releaseTileY = y;
     }
-
-    //private void OnWaveFinished()
-    //{
-    //    //SoundManager.Instance.FadeOutMusic();
-    //    currentWaveIndex++;
-    //    currentWave.completed = true;
-
-    //    if (currentWaveIndex >= gameplayData.levels[currentLevelIndex].waves)
-    //    {
-    //        OnLevelFinished();
-    //    }
-    //}
-
-    //private void OnLevelFinished()
-    //{
-    //    levelComplete = true;
-    //}
-
-    //private void HitPlayer()
-    //{
-    //    if (levelComplete || currentWave.completed)
-    //    {
-    //        return;
-    //    }
-    //    playerRoster.TakeDamage((int)DamageOfRobot2);
-    //    if (playerRoster.AreAllBotsDead())
-    //    {
-    //        OnPlayerLost();
-    //    }
-    //    else if (playerRoster.IsDead(playerRoster.currentBot))
-    //    {
-    //        GameGUI.KillPlayerRobot(playerRoster.currentBot);
-    //        playerRoster.currentBot++;
-    //    }
-    //    else
-    //    {
-    //        GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)DamageOfRobot2);
-    //    }
-    //}
-
-    //private void OnPlayerLost()
-    //{
-    //    GameGUI.DisplayLose();
-    //    serverGameplayController.EndGameplaySession((int)GetScore());
-    //}
-
-    //private bool KillEnemy()
-    //{
-    //    UserManager.RobotsKilled++;
-    //    AnalyticsManager.Instance.SendRobotKillEvent(UserManager.RobotsKilled);
-    //    serverGameplayController.UpdateGameplaySession((int)score);
-
-    //    GameGUI.KillEnemy();
-    //    bool allEnemiesKilled = true;
-
-    //    currentEnemy = (currentEnemy + 1) % currentWave.bots.Count;
-    //    if (currentWave.bots[currentEnemy].hp <= 0)
-    //    {
-    //        for (int i = currentWave.bots.Count - 1; i >= 0; i--)
-    //        {
-    //            if (currentWave.bots[i].hp > 0)
-    //            {
-    //                currentEnemy = i;
-    //                allEnemiesKilled = false;
-    //                break;
-    //            }
-    //        }
-    //    }
-    //    else
-    //    {
-    //        allEnemiesKilled = false;
-    //    }
-
-    //    if (!allEnemiesKilled)
-    //    {
-    //        GameGUI.TargetEnemy(currentEnemy, false);
-    //    }
-    //    return allEnemiesKilled;
-    //}
-
     IEnumerator SwapTilesBackAndForthOnGUI(int x1, int y1, int x2, int y2)
     {
         GameGUI.SwapTiles(x1, y1, x2, y2, false);
@@ -318,51 +182,6 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
         ZeroReleasedTiles();
     }
-    //public void SetEnemy(int currentEmeny)
-    //{
-    //    this.currentEnemy = currentEmeny;
-    //}
-    //public long GetScore()
-    //{
-    //    return score;
-    //}
-
-    //public int GetCurrentLevel()
-    //{
-    //    return currentLevelIndex;
-    //}
-
-    //public long IncrementScore(int toAdd)
-    //{
-    //    score += toAdd * 10; // hardcoded score multiplier
-    //    serverGameplayController.UpdateGameplaySession((int)score);
-    //    GameGUI.UpdateScore((int)score);
-    //    return score;
-    //}
-
-
-    //private void StartNextWave()
-    //{
-    //    currentWave.bots = new List<BubbleBot>()
-    //    {
-    //        new BubbleBot() { hp = 50 },
-    //        new BubbleBot() { hp = 50 },
-    //        new BubbleBot() { hp = 50 }
-    //    };
-    //    currentWave.completed = false;
-    //    gameplayState = GameplayState.WaveComplete;
-    //    GameGUI.StartNextWave();
-    //}
-
-    //private void PrepareNextLevel()
-    //{
-    //    currentLevelIndex++;
-    //    currentWave.completed = false;
-    //    levelComplete = false;
-    //    MenuGUI.gameObject.SetActive(true);
-    //    MenuGUI.DisplayWin();
-    //}
-
     IEnumerator ShuffleBoard()
     {
         gameplayState = GameplayState.Shuffle;
@@ -422,7 +241,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         }
         else if (gameplayState == GameplayState.RefillBoard)
         {
-            List<GemMove> gemMoves = boardController.RefillBoard();
+            List<GemMove> gemMoves = boardController.RefillBoard(canSpawnBubbles);
             StartTrackedCoroutine(RefillBoard(gemMoves));
             gameplayState = GameplayState.RefillBoardInProgress;
         }
@@ -728,5 +547,10 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
     {
         onBubbleExploded(posX, posy);
         //GameGUI.ExplodeBubble(posX, posy);
+    }
+
+    public void SetCanSpawnBubbles(bool canSpawn)
+    {
+        canSpawnBubbles = canSpawn;
     }
 }

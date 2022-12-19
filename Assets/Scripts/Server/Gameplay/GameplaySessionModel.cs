@@ -29,8 +29,9 @@ namespace BubbleBots.Server.Gameplay
         public int level;
         public int score;
         public int kills;
+        public string mode;
         public bool specialBurst;
-        public GameStatus status;
+        public string status;
     }
 
     [Serializable]
@@ -50,6 +51,7 @@ namespace BubbleBots.Server.Gameplay
         public string sessionId;
         public int score;
         public string endTime;
-        public GameStatus status;
+        public string mode;
+        public string status;
     }
 }

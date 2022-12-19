@@ -1,3 +1,5 @@
+using BubbleBots.Server.Player;
+
 public class GameStateMainMenu : GameState
 {
     private GameScreenMainMenuBottomHUD gameScreenMainMenuBottomHUD;
@@ -6,7 +8,9 @@ public class GameStateMainMenu : GameState
     private GameScreenModeSelect gameScreenModeSelect;
     private GameScreenLoading _gameScreenLoading;
     private GameScreenChangeNickname _gameScreenChangeNickname;
+    private GameScreenNotEnoughGems gameScreenNotEnoughGems;
 
+    private bool canPlayNetherMode = false;
     public override string GetGameStateName()
     {
         return "game state main menu";
@@ -20,6 +24,7 @@ public class GameStateMainMenu : GameState
 
     public override void Enable()
     {
+        canPlayNetherMode = false;
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>(true);
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
@@ -35,6 +40,9 @@ public class GameStateMainMenu : GameState
         GameScreenMainMenuTopHUD.ResourcesSet += ResourcesSet;
         gameScreenMainMenuTopHUD.SetUsername(UserManager.Instance.GetPlayerUserName());
 #endif
+
+        UserManager.CallbackWithResources += ResourcesReceived;
+        UserManager.Instance.GetPlayerResources();
     }
 
     private void ResourcesSet()
@@ -79,7 +87,7 @@ public class GameStateMainMenu : GameState
                 PlayFreeMode();
                 break;
             case ButtonId.ModeSelectNethermode:
-                PlayNetherMode();
+                TryPlayNetherMode();
                 break;
             case ButtonId.MainMenuTopHUDChangeNickname:
                 OpenChangeNickname();
@@ -90,6 +98,9 @@ public class GameStateMainMenu : GameState
             case ButtonId.ChangeNicknameOk:
                 ChangeNickname();
                 CloseChangeNickname();
+                break;
+            case ButtonId.NotEnoughGemsBack:
+                CloseNotEnoughGems();
                 break;
             default:
                 break;
@@ -135,6 +146,26 @@ public class GameStateMainMenu : GameState
         stateMachine.PushState(new GameStateFreeMode());
     }
 
+
+    private void TryPlayNetherMode()
+    {
+        if (canPlayNetherMode)
+        {
+            PlayNetherMode();
+        } 
+        else
+        {
+            gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+        }
+        UserManager.Instance.GetPlayerResources();
+    }
+
+    private void CloseNotEnoughGems()
+    {
+        Screens.Instance.PopScreen(gameScreenNotEnoughGems);
+        Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
+    }
+
     private void PlayNetherMode()
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);
@@ -171,5 +202,11 @@ public class GameStateMainMenu : GameState
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
+        UserManager.CallbackWithResources -= ResourcesReceived;
+    }
+
+    private void ResourcesReceived(GetPlayerWallet wallet)
+    {
+        canPlayNetherMode = wallet.gems > 0;
     }
 }

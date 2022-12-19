@@ -867,9 +867,9 @@ namespace BubbleBots.Match3.Controllers
 
 
 
-        public List<GemMove> RefillBoard()
+        public List<GemMove> RefillBoard(bool canSpawnBubbles)
         {
-            return boardModel.RefillBoard(levelData.gemSet, levelData);
+            return boardModel.RefillBoard(levelData.gemSet, levelData, canSpawnBubbles);
         }
     }
 }

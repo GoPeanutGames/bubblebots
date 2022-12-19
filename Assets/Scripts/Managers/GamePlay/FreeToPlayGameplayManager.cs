@@ -121,7 +121,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         };
         currentLevelIndex = 0;
 
-        match3Manager.Initialize(gameplayData.levels[currentLevelIndex]);
+        match3Manager.Initialize(gameplayData.levels[currentLevelIndex], true);
 
         match3Manager.onGemsExploded -= OnGemsExploded;
         match3Manager.onGemsExploded += OnGemsExploded;
@@ -161,7 +161,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
             playerRoster.ResetRoster();
         }
 
-        match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)]);
+        match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)], true);
 
         currentWaveIndex = 0;
         currentEnemy = 0;
@@ -179,8 +179,8 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         //GameGUI.gameObject.SetActive(true);
         //MenuGUI.gameObject.SetActive(false);
         
-        AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex);
-        serverGameplayController?.StartGameplaySession(currentLevelIndex);
+        AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex + 1);
+        serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);
 
 
         GameEventsManager.Instance.PostEvent(new GameEventLevelStart() { eventName = GameEvents.FreeModeLevelStart, enemies = currentWave.bots, playerRoster = this.playerRoster });
@@ -283,7 +283,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
             lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() }); ;
         //GameGUI.DisplayLose((int)GetScore());
         FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
-        serverGameplayController?.EndGameplaySession((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
     }
 
     private bool KillEnemy()
@@ -387,7 +387,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         gameplayState = FreeToPlayGameplayState.LevelCompleteMenu;
         UserManager.Instance.SetPlayerScore((int)GetScore());
-        serverGameplayController?.EndGameplaySession((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
         AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
@@ -431,6 +431,11 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         int diff = newValue - sessionData.GetPotentialBubbles();
         sessionData.AddPotentialBubbles(diff);
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+    }
+
+    public void SetCanSapwnBubbles(bool canSpawn)
+    {
+        match3Manager.SetCanSpawnBubbles(canSpawn);
     }
 
     //private int StubGetBubblesValue()

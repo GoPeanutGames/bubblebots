@@ -1,3 +1,4 @@
+using BubbleBots.Server.Player;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
@@ -32,6 +33,7 @@ public class GameStateFreeMode : GameState
             SoundManager.Instance.PlayRobotSelectMusicNew();
             SoundManager.Instance.FadeInMusic();
         });
+        UserManager.CallbackWithResources += ResourcesReceived;
     }
 
     private void OnGameEvent(GameEventData data)
@@ -39,7 +41,7 @@ public class GameStateFreeMode : GameState
         if (data.eventName == GameEvents.ButtonTap)
         {
             OnButtonTap(data);
-        } 
+        }
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
@@ -54,7 +56,10 @@ public class GameStateFreeMode : GameState
         }
         else if (data.eventName == GameEvents.UpdateSessionResponse)
         {
-            Debug.Log("update session bubbles " + (data as GameEventUpdateSession).bubbles.ToString());
+            if (freeToPlayGameplayManager != null)
+            {
+                freeToPlayGameplayManager.OnNewBubblesCount((data as GameEventUpdateSession).bubbles);
+            }
         }
     }
 
@@ -63,7 +68,7 @@ public class GameStateFreeMode : GameState
         GameEventString customButtonData = data as GameEventString;
         switch (customButtonData.stringData)
         {
-            
+
             case ButtonId.RobotSelectionStartButton:
                 StartPlay();
                 break;
@@ -154,10 +159,19 @@ public class GameStateFreeMode : GameState
         freeToPlayGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
         freeToPlayGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
+        UserManager.CallbackWithResources += ResourcesReceived;
         UserManager.Instance.GetPlayerResources();
         Screens.Instance.SetGameBackground(GameSettingsManager.Instance.freeModeGameplayData.gamebackgroundSprite);
         Screens.Instance.PopScreen(gameScreenRobotSelection);
-        Screens.Instance.PopScreen<GameScreenMainMenuTopHUD>();
+        //Screens.Instance.PopScreen<GameScreenMainMenuTopHUD>();
+    }
+
+    private void ResourcesReceived(GetPlayerWallet wallet)
+    {
+        if (freeToPlayGameplayManager != null)
+        {
+            freeToPlayGameplayManager.SetCanSapwnBubbles(wallet.energy > 9);
+        }
     }
 
 
@@ -169,5 +183,6 @@ public class GameStateFreeMode : GameState
         Screens.Instance.PopScreen(gameScreenQuitToMainMenu);
         Screens.Instance.PopScreen(gameScreenLevelComplete);
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
+        UserManager.CallbackWithResources -= ResourcesReceived;
     }
 }

@@ -109,7 +109,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         };
         currentLevelIndex = 0;
 
-        match3Manager.Initialize(gameplayData.levels[currentLevelIndex]);
+        match3Manager.Initialize(gameplayData.levels[currentLevelIndex], true);
 
         match3Manager.onGemsExploded -= OnGemsExploded;
         match3Manager.onGemsExploded += OnGemsExploded;
@@ -143,7 +143,7 @@ public class NetherModeGameplayManager : MonoBehaviour
 
     public void StartLevel()
     {
-        match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)]);
+        match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)], true);
 
         currentWaveIndex = 0;
         currentEnemy = 0;
@@ -161,8 +161,8 @@ public class NetherModeGameplayManager : MonoBehaviour
         //GameGUI.gameObject.SetActive(true);
         //MenuGUI.gameObject.SetActive(false);
 
-        AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex);
-        serverGameplayController?.StartGameplaySession(currentLevelIndex);
+        AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex + 1);
+        serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);
 
 
         GameEventsManager.Instance.PostEvent(new GameEventLevelStart() { eventName = GameEvents.FreeModeLevelStart, enemies = currentWave.bots, playerRoster = this.playerRoster });
@@ -270,7 +270,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore() });
         //GameGUI.DisplayLose((int)GetScore());
         FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
-        serverGameplayController?.EndGameplaySession((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
     }
 
     private bool KillEnemy()
@@ -372,7 +372,7 @@ public class NetherModeGameplayManager : MonoBehaviour
 
     private void OnNetherModeComplete()
     {
-        serverGameplayController?.EndGameplaySession((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
         GameEventsManager.Instance.PostEvent(new GameEventNetherModeComplete() { eventName = GameEvents.NetherModeComplete, numBubblesWon = sessionData.GetPotentialBubbles()});
     }
 
@@ -384,7 +384,7 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         gameplayState = NethermodeGameplayState.LevelCompleteMenu;
         UserManager.Instance.SetPlayerScore((int)GetScore());
-        serverGameplayController?.EndGameplaySession((int)GetScore());
+        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
         AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
@@ -420,7 +420,7 @@ public class NetherModeGameplayManager : MonoBehaviour
 
     private void OnBubbleExploded(int _posX, int _posY)
     {
-        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true);
+        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore());
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
         //FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, 0);
         //GameEventsManager.Instance.PostEvent(new GameEventUpdateUnclaimedBubbles() { eventName = GameEvents.BubblesUnclaimedUpdate, balance = sessionData.GetPotentialBubbles() });

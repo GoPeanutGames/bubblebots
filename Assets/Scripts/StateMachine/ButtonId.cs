@@ -48,6 +48,9 @@ public static class ButtonId
     public const string ConfirmTransactionClose = "confirmtransaction.close";
     public const string ConfirmTransactionBuy = "confirmtransaction.buy";
 
+    //not enough gems 
+    public const string NotEnoughGemsBack = "notenoughgems.back";
+
     //game
     public const string QuitGame = "game.quit";
 
