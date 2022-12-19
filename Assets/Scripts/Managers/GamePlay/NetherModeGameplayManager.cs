@@ -16,6 +16,18 @@ public class NethermodeSessionData
 
     private int potentialBubbles = 0;
 
+    private int totalBubbles = 0;
+
+    public void AddTotalBubbles(int val)
+    {
+        totalBubbles += val;
+    }
+
+    public int GetTotalBubbles()
+    {
+        return totalBubbles;
+    }
+
     public void IncrementScore(int toAdd)
     {
         score += toAdd * scoreMultiplier;
@@ -204,7 +216,6 @@ public class NetherModeGameplayManager : MonoBehaviour
         if (currentLevelIndex >= gameplayData.levels.Count - 1)
         {
             gameplayState = NethermodeGameplayState.NetherModeComplete;
-
             OnNetherModeComplete();
         }
     }
@@ -267,7 +278,14 @@ public class NetherModeGameplayManager : MonoBehaviour
     private void OnPlayerLost()
     {
         gameplayState = NethermodeGameplayState.GameEndMenu;
-        GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore() });
+        //GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore() });
+        GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose()
+        {
+            eventName = GameEvents.FreeModeLose,
+            score = (int)GetScore(),
+            numBubblesWon = sessionData.GetTotalBubbles(),
+            lastLevelPotentialBubbles = sessionData.GetPotentialBubbles()
+        });
         //GameGUI.DisplayLose((int)GetScore());
         FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
@@ -373,7 +391,7 @@ public class NetherModeGameplayManager : MonoBehaviour
     private void OnNetherModeComplete()
     {
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
-        GameEventsManager.Instance.PostEvent(new GameEventNetherModeComplete() { eventName = GameEvents.NetherModeComplete, numBubblesWon = sessionData.GetPotentialBubbles()});
+        GameEventsManager.Instance.PostEvent(new GameEventNetherModeComplete() { eventName = GameEvents.NetherModeComplete, numBubblesWon = sessionData.GetTotalBubbles()});
     }
 
     IEnumerator EndLevelSequence()
@@ -389,7 +407,9 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
 
-        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetPotentialBubbles() });
+        sessionData.AddTotalBubbles(sessionData.GetPotentialBubbles());
+
+        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetTotalBubbles(), lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
 
         sessionData.ResetPotentialBubbles();
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());

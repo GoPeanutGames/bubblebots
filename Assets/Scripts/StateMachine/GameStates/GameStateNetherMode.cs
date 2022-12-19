@@ -42,13 +42,14 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
-            gameScreenLevelComplete.SetMessage("You earned " + (data as GameEventLevelComplete).numBubblesWon.ToString() + " bubbles!");
+            gameScreenLevelComplete.SetMessage("You earned " + (data as GameEventLevelComplete).lastLevelPotentialBubbles.ToString() + " bubbles!");
             gameScreenLevelComplete.SetButtonText("Continue");
         }
         else if (data.eventName == GameEvents.FreeModeLose)
         {
             gameScreenGameEnd = Screens.Instance.PushScreen<GameScreenGameEnd>();
-            //gameScreenGameEnd.SetScore((data as GameEventFreeModeLose).score.ToString());
+            gameScreenGameEnd.SetMessage("You earned " + (data as GameEventFreeModeLose).numBubblesWon.ToString() + " Bubbles and lost "
+                + (data as GameEventFreeModeLose).lastLevelPotentialBubbles + " Bubbles for failing to complete the last level!");
         }
         else if (data.eventName == GameEvents.UpdateSessionResponse)
         {

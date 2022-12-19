@@ -280,7 +280,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     {
         gameplayState = FreeToPlayGameplayState.GameEndMenu;
         GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore(), numBubblesWon = sessionData.GetTotalBubbles(),
-            lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() }); ;
+            lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
         //GameGUI.DisplayLose((int)GetScore());
         FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
