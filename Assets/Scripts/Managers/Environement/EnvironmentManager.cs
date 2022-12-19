@@ -35,6 +35,11 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
         return currentEnvironment.unityEnvironmentName;
     }
 
+    public string GetCurrentPublicKey()
+    {
+        return string.Join("\n", currentEnvironment.publicKey);
+    }
+
     public bool ShouldChangeRobotImages()
     {
         return Community == false;

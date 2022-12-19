@@ -39,7 +39,7 @@ public class RSAUtility
 
     public static string Decrypt(List<string> encryptedData, string publicKey = "")
     {
-        publicKey = string.IsNullOrEmpty(publicKey) ? Environment.GetEnvironmentVariable("PUBLIC_KEY") : publicKey;
+        publicKey = string.IsNullOrEmpty(publicKey) ? EnvironmentManager.Instance.GetCurrentPublicKey() : publicKey;
 
         List<string> decryptedData = new();
         foreach (string part in encryptedData)
@@ -61,7 +61,7 @@ public class RSAUtility
 
     public static List<string> Encrypt(string data, string publicKey = "")
     {
-        publicKey = string.IsNullOrEmpty(publicKey) ? Environment.GetEnvironmentVariable("PUBLIC_KEY") : publicKey;
+        publicKey = string.IsNullOrEmpty(publicKey) ? EnvironmentManager.Instance.GetCurrentPublicKey() : publicKey;
 
         List<string> encryptedData = new();
         List<string> spltData = SplitDataIntoList(data);

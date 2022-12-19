@@ -1,5 +1,5 @@
-using CodeStage.AntiCheat.ObscuredTypes;
 using System;
+using System.Collections.Generic;
 
 namespace BubbleBots.Environment
 {
@@ -8,5 +8,6 @@ namespace BubbleBots.Environment
     {
         public string serverUrl;
         public string unityEnvironmentName;
+        public List<string> publicKey;
     }
 }

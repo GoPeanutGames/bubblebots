@@ -59,7 +59,9 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     private UnityWebRequest SetupPostWebRequest(string api, string formData)
     {
+        Debug.Log("Before encryption: " + formData);
         string encryptedFormData = UseRSA ? Encrypt(formData) : formData;
+        Debug.Log("After encryption: " + encryptedFormData);
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
         UnityWebRequest webRequest = UnityWebRequest.Post(serverUrl + api, encryptedFormData);
         UploadHandler customUploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(encryptedFormData));
@@ -89,7 +91,9 @@ public class ServerManager : MonoSingleton<ServerManager>
         operation.completed += (result) =>
         {
             string data = webRequest.downloadHandler.text;
+            Debug.Log("Before decryption: " + data);
             string decryptedData = UseRSA ? Decrypt(data) : data;
+            Debug.Log("After decryption: " + decryptedData);
             if (webRequest.result == UnityWebRequest.Result.Success)
             {
                 onComplete?.Invoke(decryptedData);
