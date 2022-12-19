@@ -65,11 +65,11 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, (response) => {
             GameplaySessionUpdateDataResponse r = JsonUtility.FromJson<GameplaySessionUpdateDataResponse>(response);
-            GameEventsManager.Instance.PostEvent(new GameEventUpdateSession() { eventName = GameEvents.UpdateSessionResponse, bubbles = r.bubbles });
             if (callback != null)
             {
                 callback(r.bubbles);
             }
+            GameEventsManager.Instance.PostEvent(new GameEventUpdateSession() { eventName = GameEvents.UpdateSessionResponse, bubbles = r.bubbles });
         });
     }
 

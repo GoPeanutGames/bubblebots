@@ -110,6 +110,7 @@ public class GUIMenu : MonoBehaviour
                 child.gameObject.name != "ImgRobotLife" &&
                 child.gameObject.name != "TxtBubbles" &&
                 child.gameObject.name != "ImgBubbles" &&
+                !child.gameObject.name.StartsWith("Music") &&
                 child.gameObject.name != "TxtStatus"
                  && child.gameObject.name != "BtnHelp")
             {

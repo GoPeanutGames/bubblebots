@@ -220,6 +220,7 @@ public class GUIGame : MonoBehaviour
                 child.gameObject.name != "TxtBubbles" &&
                 child.gameObject.name != "ImgBubbles" &&
                 child.gameObject.name != "TxtStatus" &&
+                !child.gameObject.name.StartsWith("Music") &&
                 child.gameObject.name != "BtnHelp")
             {
                 Destroy(gameObject.transform.GetChild(i).gameObject);
