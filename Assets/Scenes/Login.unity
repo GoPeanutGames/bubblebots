@@ -1546,7 +1546,15 @@ MonoBehaviour:
   ProductionEnvironment:
     serverUrl: https://api-bb.peanutgames.com
     unityEnvironmentName: production
-    publicKey: []
+    publicKey:
+    - -----BEGIN RSA PUBLIC KEY-----
+    - MIIBCgKCAQEAyT4Z3tvzwe9F/lQwpqDOZWQA4aF15PYoikBJfgOPsOpKwzu4HutI
+    - AQ6DzYq7ziX8UPhf0FMRTO1rotPdPY7M/4pg18Vk5UtDNlTDnJRolZpbrgGD/Hl2
+    - qDeGgwkv281FDUrcgZZRI1f6mMV4n60N22Z0UsdnaZVYYycKdauo/i9zygmTjjB3
+    - 6Bj+7o9pmRTQBX8XTmNl1tr6I3jog9VCkgpuu1mfSB0p9y1R5/zMdumn7tHRXB9h
+    - lORcG6qrXFxW2Yl9yY/rWiVYYpindw9LrAq2kCWqkRO7pIofpJ9l28nIUj5vUb8k
+    - nEmr4FedhKA1/ug868eSFWLxOFRdu7XqqwIDAQAB
+    - -----END RSA PUBLIC KEY-----
 --- !u!1 &980658586 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 109530, guid: 8a30595d8f5ffe244b5b70512f0dc5fc,
