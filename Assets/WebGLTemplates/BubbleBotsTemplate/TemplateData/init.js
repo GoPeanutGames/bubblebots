@@ -148,8 +148,8 @@ const env = {
   },
   prod: {
     chainId: 137,
-    gemsContract: '0xB37F565A4205B6A0dA009262e1d9B3b9d494E166',
-    tokenContract: '0xeef2D7cA3d6fD039dF5Eb899378a37F541bDefA0',
+    gemsContract: '0xcA0ccb920267C78259CF333959F48D649Be13E34',
+    tokenContract: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
     connectionConfig: {
       rpcUrls: ["https://polygon-rpc.com"],
       chainName: "Polygon Mainnet",
