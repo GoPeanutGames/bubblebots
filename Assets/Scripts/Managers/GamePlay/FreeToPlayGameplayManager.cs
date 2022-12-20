@@ -1,9 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
 using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
 using BubbleBots.Modes;
 using CodeStage.AntiCheat.ObscuredTypes;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FreeToPlaySessionData
@@ -108,6 +108,10 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     public void StartSession(List<BubbleBotData> bots)
     {
         ModeManager.Instance.SetMode(Mode.FREE);
+        if (EnvironmentManager.Instance.IsRhym())
+        {
+            ModeManager.Instance.SetMode(Mode.RHYM);
+        }
         sessionData = new FreeToPlaySessionData();
         playerRoster = new PlayerRoster()
         {
@@ -436,6 +440,10 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     public void SetCanSpawnBubbles(bool canSpawn)
     {
         match3Manager.SetCanSpawnBubbles(canSpawn);
+        if (EnvironmentManager.Instance.IsRhym())
+        {
+            match3Manager.SetCanSpawnBubbles(false);
+        }
     }
 
 }

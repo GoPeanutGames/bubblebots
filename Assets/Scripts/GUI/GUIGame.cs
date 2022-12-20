@@ -842,10 +842,6 @@ public class GUIGame : MonoBehaviour
 
     public void RenewEnemyRobots()
     {
-        if (EnvironmentManager.Instance.ShouldChangeRobotImages() == false)
-        {
-            return;
-        }
         int robot1 = UnityEngine.Random.Range(0, EnemySprites.Length);
         int robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
         int robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
