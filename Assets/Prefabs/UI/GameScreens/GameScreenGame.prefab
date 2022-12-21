@@ -1258,7 +1258,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30.05
+  m_fontSize: 34.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1560,7 +1560,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30.05
+  m_fontSize: 34.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5799,6 +5799,8 @@ MonoBehaviour:
   Spacing: 0
   TileWidth: 70
   SwapDuration: 0.26
+  SpecialSwapDuration: 2
+  DefaultSwapDuration: 0.26
   EnemyRobots:
   - {fileID: 6781989968466881343}
   - {fileID: 6781989968598352053}

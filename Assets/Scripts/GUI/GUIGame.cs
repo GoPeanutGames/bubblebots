@@ -17,6 +17,8 @@ public class GUIGame : MonoBehaviour
     public int Spacing = 4;
     public int TileWidth = 150;
     public float SwapDuration = 0.33f;
+    public float SpecialSwapDuration = 0.33f;
+    public float DefaultSwapDuration = 0.33f;
     public RobotEffects[] EnemyRobots;
     public Slider[] EnemyGauges;
     public RobotEffects[] PlayerRobots;

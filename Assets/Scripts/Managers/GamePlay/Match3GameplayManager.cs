@@ -64,6 +64,8 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
     public GUIMenu MenuGUI;
     public GUIGame GameGUI;
 
+
+    private bool specialSpecialMatch = false; 
     private bool canSpawnBubbles = true;
 
     public event IMatch3Events.OnGemsExploded onGemsExploded;
@@ -168,6 +170,17 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
     {
         GameGUI.SwapTiles(x1, y1, x2, y2, true);
         yield return new WaitForSeconds(GameGUI.SwapDuration);
+
+
+        if (boardController.GetBoardModel()[x1][y1].gem.IsSpecial() &&
+            boardController.GetBoardModel()[x2][y2].gem.IsSpecial())
+        {
+            GameGUI.ColorBombEffect(x1, y1);
+            GameGUI.ColorBombEffect(x2, y2);
+            specialSpecialMatch = true;
+            yield return new WaitForSeconds(1.1f);
+        }
+
 
         //ReleaseTiles();
         releaseTileX = -1;
@@ -444,6 +457,12 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     IEnumerator ProcessSwapResult(NewSwapResult swapResult)
     {
+        if (specialSpecialMatch)
+        {
+            GameGUI.SwapDuration = GameGUI.SpecialSwapDuration;
+        }
+
+
         for (int i = 0; swapResult.explodeEvents != null && i < swapResult.explodeEvents.Count; ++i)
         {
             if (swapResult.explodeEvents[i].toExplode == null ||
@@ -516,6 +535,9 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
             //IncrementScore(swapResult.explodeEvents[i].toExplode.Count);
         }
 
+        specialSpecialMatch = false;
+        GameGUI.SwapDuration = GameGUI.DefaultSwapDuration;
+
         yield return new WaitForSeconds(GameGUI.SwapDuration / 2);
 
         bool createdGems = false;
@@ -554,6 +576,8 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
                 yield return new WaitForSeconds(1f);
             }
         }
+
+     
         gameplayState = GameplayState.RefillBoard;
     }
 
