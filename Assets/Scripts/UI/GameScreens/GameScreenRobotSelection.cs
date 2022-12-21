@@ -1,5 +1,5 @@
-using BubbleBots.Data;
 using System.Collections.Generic;
+using BubbleBots.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,7 +36,7 @@ public class GameScreenRobotSelection : GameScreen
         {
             GameObject selectionObject = Instantiate(selectionRobotPrefab, selectionListRoot.transform);
             selectionObject.SetActive(true);
-            selectionObject.GetComponent<RobotSelectionUIElement>().Setup(availableBots[i].robotSelection, availableBots[i].labelSprite, availableBots[i].botName, availableBots[i].id, OnRobotPressed);
+            selectionObject.GetComponent<RobotSelectionUIElement>().Setup(availableBots[i], OnRobotPressed);
             selectableRobots.Add(selectionObject.GetComponent<RobotSelectionUIElement>());
         }
     }
@@ -82,10 +82,5 @@ public class GameScreenRobotSelection : GameScreen
     private BubbleBots.Data.BubbleBotData GetDataForId(int id)
     {
         return availableBots.Find(x => x.id == id);
-    }
-
-    private Sprite GetRobotSelectedSpriteById(int id)
-    {
-        return availableBots.Find(x => x.id == id).sprite;
     }
 }

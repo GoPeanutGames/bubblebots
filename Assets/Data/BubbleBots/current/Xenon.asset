@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c955b5fd4038bae42ad0c75853757942, type: 3}
-  m_Name: Dustie
+  m_Name: Xenon
   m_EditorClassIdentifier: 
-  id: 4
-  botName: Dustie
-  bgSprite: {fileID: 21300000, guid: 291b5d5e8d82e514281494f44f3b0213, type: 3}
-  robotSprite: {fileID: 21300000, guid: 46f61f720d71a23428987a1959cfc054, type: 3}
-  frameSprite: {fileID: 21300000, guid: c26875dd29d09c24d89016f531374613, type: 3}
-  badgeSprite: {fileID: 21300000, guid: 32e8128d7d14fc94eb6df1e694940ac2, type: 3}
+  id: 1
+  botName: Xenon
+  bgSprite: {fileID: 21300000, guid: 56b6b9fa9f406fd49925c19ab9e42289, type: 3}
+  robotSprite: {fileID: 21300000, guid: 2003f7a4791019c4a8115573c4a04c2e, type: 3}
+  frameSprite: {fileID: 21300000, guid: c274edd08c43c17448883e4b529ce470, type: 3}
+  badgeSprite: {fileID: 21300000, guid: 8704189ec375d744eab93975ac2c963c, type: 3}
   labelSprite: {fileID: 21300000, guid: ab3a153e23816274db3a1174c92f3440, type: 3}
-  robotSelection: {fileID: 21300000, guid: 06245b71e8c873d48be5414a0cbbf803, type: 3}
+  robotSelection: {fileID: 21300000, guid: 3372b02caa9fe724990294428a716411, type: 3}
