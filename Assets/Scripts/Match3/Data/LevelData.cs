@@ -8,7 +8,39 @@ namespace BubbleBots.Match3.Data
     {
         public int width;
         public int height;
-        public List<int> gemSet;
+        public List<GemData> gemSet;
+        public List<GemData> gemSetSpecials;
+        public GemData bubbleGem;
         public int waves;
+        
+        [Range(0, 100)]
+        public float bubbleSpawnChance = 0;
+
+
+        public GemData GetGemData(string id)
+        {
+            for (int i = 0; i < gemSet.Count; ++i)
+            {
+                if (gemSet[i].gemId == id)
+                {
+                    return gemSet[i];
+                }
+            }
+
+            for (int i = 0; i < gemSetSpecials.Count; ++i)
+            {
+                if (gemSetSpecials[i].gemId == id)
+                {
+                    return gemSetSpecials[i];
+                }
+            }
+
+            if (id == bubbleGem.gemId)
+            {
+                return bubbleGem;
+            }
+
+            return null;
+        }
     }
 }

@@ -16,6 +16,6 @@ namespace BubbleBots.Match3.Data
         [SerializeField]
         public List<MatchOffsets> offsets;
 
-        public int matchOutcome = -1;
+        public GemData matchOutcome = null;
     }
 }

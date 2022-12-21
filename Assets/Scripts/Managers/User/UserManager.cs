@@ -1,39 +1,52 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using BubbleBots.User;
 using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
-using System;
-using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
-public enum PlayerType { Guest, LoggedInUser }
+public enum PlayerType
+{
+    Guest,
+    LoggedInUser
+}
 
 public class UserManager : MonoSingleton<UserManager>
 {
     public static PlayerType PlayerType;
     public static int RobotsKilled = 0;
+    public static Action<GetPlayerWallet> CallbackWithResources;
 
     private User CurrentUser;
-    private ObscuredString sessionToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
+
+    private ObscuredString sessionToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
 
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
     {
-        { PrefsKey.Nickname, "full_name"},
-        { PrefsKey.WalletAddress, "wallet_address"},
-        { PrefsKey.SessionToken, "session_token"},
-        { PrefsKey.Rank, "rank" }
+        { PrefsKey.Nickname, "full_name" },
+        { PrefsKey.WalletAddress, "wallet_address" },
+        { PrefsKey.SessionToken, "session_token" },
+        { PrefsKey.Rank, "rank" },
+        { PrefsKey.Signature, "signature" }
     };
 
     private void GetUserOrSetDefault()
     {
         CurrentUser = new()
         {
-            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], "Player" + UnityEngine.Random.Range(1000, 10000)),
+            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname],
+                "Player" + Random.Range(1000, 10000)),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
-            SessionToken = ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),
+            SessionToken =
+                ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),
             Score = 0,
-            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999)
+            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
+            Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], "")
         };
     }
 
@@ -54,8 +67,19 @@ public class UserManager : MonoSingleton<UserManager>
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.WalletAddress], address);
     }
 
+    public void SetSignature(string signature)
+    {
+        CurrentUser.Signature = signature;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
+    }
+
     public void SetPlayerUserName(string userName, bool sendToServer)
     {
+        if (string.IsNullOrEmpty(userName))
+        {
+            return;
+        }
+
         CurrentUser.UserName = userName;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Nickname], userName);
         if (sendToServer)
@@ -81,6 +105,11 @@ public class UserManager : MonoSingleton<UserManager>
         return CurrentUser.UserName;
     }
 
+    public string GetPlayerSignature()
+    {
+        return CurrentUser.Signature;
+    }
+    
     public void SetPlayerRank(int rank)
     {
         CurrentUser.Rank = rank;
@@ -102,9 +131,43 @@ public class UserManager : MonoSingleton<UserManager>
         return CurrentUser.Score;
     }
 
+    //stub
+    private const string playerBubblesKey = "playerBubbles";
+    public int GetBubbles()
+    {
+        return PlayerPrefs.GetInt("playerBubblesKey");
+    }
+
+    public void AddBubbles(int bubbles)
+    {
+        int currentBubbles = GetBubbles();
+        currentBubbles += bubbles;
+        PlayerPrefs.SetInt("playerBubblesKey", currentBubbles);
+    }
+
     public void GetTop100Scores(Action<string> onComplete)
     {
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Top100, onComplete);
+    }
+
+    public void GetPlayerResources()
+    {
+        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+        {
+            GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
+            CallbackWithResources?.Invoke(walletData);
+        }, CurrentUser.WalletAddress);
+    }
+
+    private IEnumerator CallGetPlayerResourcesAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        GetPlayerResources();
+    }
+    
+    public void GetPlayerResourcesAfter(float seconds)
+    {
+        StartCoroutine(CallGetPlayerResourcesAfter(seconds));
     }
 
 #if UNITY_EDITOR

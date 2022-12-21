@@ -34,12 +34,11 @@ public class GUIRobotSelection : MonoBehaviour
 
     public void Play()
     {
-        SoundManager.Instance.FadeOutMusic();
-        SoundManager.Instance.PlayStartButtonSfx();
+        SoundManager.Instance?.FadeOutMusic();
+        SoundManager.Instance?.PlayStartButtonSfx();
 
-        PnlMenuUI.SetActive(true);
+        //PnlMenuUI.SetActive(true);
         PnlMenuUI.GetComponent<GUIMenu>().SetSelectedRobots(selectedRobot1, selectedRobot2, selectedRobot3);
-        PnlMenuUI.GetComponent<GUIMenu>().StartLevel1();
         gameObject.SetActive(false);
     }
 

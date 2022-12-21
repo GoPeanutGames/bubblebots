@@ -1,8 +1,8 @@
-using BubbleBots.Server.Gameplay;
 using System;
+using BubbleBots.Server.Gameplay;
 using UnityEngine;
 
-public class ServerGameplayController : MonoBehaviour
+public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 {
     private string currentGameplaySessionID;
     private int currentLevel;
@@ -29,37 +29,51 @@ public class ServerGameplayController : MonoBehaviour
             return;
         }
         string address = UserManager.Instance.GetPlayerWalletAddress();
+        string signature = UserManager.Instance.GetPlayerSignature();
         currentLevel = level;
         GameplaySessionStartData formData = new()
         {
+            signature = signature,
             address = address,
-            timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             mode = ModeManager.Instance.Mode.ToString(),
+            level = level,
+            timezone = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).TotalHours.ToString(),
             startTime = DateTime.Now.ToString("O"),
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Start, jsonFormData, OnGameplaySessionStart);
     }
 
-    public void UpdateGameplaySession(int score)
+    public void UpdateGameplaySession(int score, bool bubbleBurst = false, System.Action<int> callback = null)
     {
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
         }
+
         previousScore = score;
         GameplaySessionUpdateData formData = new()
         {
             sessionId = currentGameplaySessionID,
             score = score,
             level = currentLevel,
-            kills = UserManager.RobotsKilled
+            mode = ModeManager.Instance.Mode.ToString(),
+            specialBurst = bubbleBurst,
+            kills = UserManager.RobotsKilled,
+            status = Enum.GetName(typeof(GameStatus), GameStatus.PLAYING) // should always be this
         };
         string jsonFormData = JsonUtility.ToJson(formData);
-        ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, _ => { });
+        ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Update, jsonFormData, (response) => {
+            GameplaySessionUpdateDataResponse r = JsonUtility.FromJson<GameplaySessionUpdateDataResponse>(response);
+            if (callback != null)
+            {
+                callback(r.bubbles);
+            }
+            GameEventsManager.Instance.PostEvent(new GameEventUpdateSession() { eventName = GameEvents.UpdateSessionResponse, bubbles = r.bubbles });
+        });
     }
 
-    public void EndGameplaySession(int score)
+    public void EndGameplaySession(int score, GameStatus gameStatus)
     {
         if (UserManager.PlayerType == PlayerType.Guest)
         {
@@ -71,6 +85,7 @@ public class ServerGameplayController : MonoBehaviour
             sessionId = currentGameplaySessionID,
             score = score,
             endTime = DateTime.Now.ToString("O"),
+            status = Enum.GetName(typeof(GameStatus), gameStatus)
         };
         string jsonFormData = JsonUtility.ToJson(formData);
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.End, jsonFormData, OnGameplaySessionEnd);
@@ -80,7 +95,7 @@ public class ServerGameplayController : MonoBehaviour
     {
         if (sessionStarted)
         {
-            EndGameplaySession(previousScore);
+            EndGameplaySession(previousScore, GameStatus.LOSE);
         }
     }
 }

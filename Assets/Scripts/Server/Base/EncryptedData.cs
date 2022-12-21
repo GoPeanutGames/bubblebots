@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 
 namespace BubbleBots.Server
 {
     [Serializable]
     public class EncryptedData
     {
-        public string data;
+        public List<string> data;
     }
 }

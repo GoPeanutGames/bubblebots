@@ -16,7 +16,7 @@ namespace BubbleBots.Match3.Models
         
         //special bug
         private Vector2Int lastCreatedSpecialPosittion;
-        private int lastCreatedSpecialType;
+        private string lastCreatedSpecialType;
         private bool canCreateSpecial = false;
 
         public BoardModel(int _width, int _height)
@@ -41,9 +41,14 @@ namespace BubbleBots.Match3.Models
             set => cells[i] = value;
         }
 
-        public void RandomizeGem(int posX, int posY, List<int> gemSet, bool excludeCurrent = true)
+        public void RandomizeGem(int posX, int posY, List<GemData> gemSet, bool excludeCurrent = true)
         {
-            List<int> possibleValues = new List<int>(gemSet);
+            List<string> possibleValues = new List<string>();
+            foreach(GemData gemData in gemSet)
+            {
+                possibleValues.Add(gemData.gemId);
+            }
+
             if (excludeCurrent)
             {
                 possibleValues.Remove(cells[posX][posY].gem.GetId());
@@ -89,6 +94,10 @@ namespace BubbleBots.Match3.Models
 
         public MatchTestResult TestMatch(int posX, int posY, MatchShape shape, List<Vector2Int> exclusionList)
         {
+            if (!cells[posX][posY].gem.IsMatchable())
+            {
+                return null;
+            }
             MatchTestResult matchTestResult = new MatchTestResult();
             for (int i = 0; i < shape.offsets.Count; ++i)
             {
@@ -126,7 +135,7 @@ namespace BubbleBots.Match3.Models
                 if (foundMatch)
                 {
                     matchTestResult.match = match;
-                    if (shape.matchOutcome != -1)
+                    if (shape.matchOutcome != null)
                     {
                         matchTestResult.outcome = new GemCreate(new Vector2Int(posX, posY), shape.matchOutcome);
                     }
@@ -137,8 +146,22 @@ namespace BubbleBots.Match3.Models
             return null;
         }
 
+        public bool IsSwapAllowed(int startX, int startY, int releaseX, int releaseY)
+        {
+            if (!cells[startX][startY].gem.IsSwappable() ||
+                !cells[releaseX][releaseY].gem.IsSwappable())
+            {
+                return false;
+            }
+            return true;
+        }
         public bool CanSwap(int startX, int startY, int releaseX, int releaseY, List<MatchShape> matchPrecedenceList)
         {
+            if (!cells[startX][startY].gem.IsSwappable() ||
+                !cells[releaseX][releaseY].gem.IsSwappable())
+            {
+                return false;
+            }
             if (cells[startX][startY].gem.IsSpecial() || cells[releaseX][releaseY].gem.IsSpecial())
             {
                 return true;
@@ -160,7 +183,7 @@ namespace BubbleBots.Match3.Models
 
         public void SwapGems(int oldPosX, int oldPosy, int newPosX, int newPosY)
         {
-            int id = cells[oldPosX][oldPosy].gem.GetId();
+            string id = cells[oldPosX][oldPosy].gem.GetId();
             cells[oldPosX][oldPosy].gem.SetId(cells[newPosX][newPosY].gem.GetId());
             cells[newPosX][newPosY].gem.SetId(id);
         }
@@ -189,16 +212,17 @@ namespace BubbleBots.Match3.Models
                 {
                     continue;
                 }
-                cells[toCreate[i].At.x][toCreate[i].At.y].SetGem(new BoardGem(toCreate[i].Id, GemType.Special));
+                cells[toCreate[i].At.x][toCreate[i].At.y].SetGem(new BoardGem(toCreate[i].GemData.gemId, GemType.Special));
                 lastCreatedSpecialPosittion = new Vector2Int(toCreate[i].At.x, toCreate[i].At.y);
-                lastCreatedSpecialType = toCreate[i].Id;
+                lastCreatedSpecialType = toCreate[i].GemData.gemId;
                 //Debug.Log("last created special: " + lastCreatedSpecialPosittion.ToString());
             }
         }
 
-        public List<GemMove> RefillBoard(List<int> gemSet)
+        public List<GemMove> RefillBoard(List<GemData> gemSet, LevelData levelData, bool _canSpawnBubbles)
         {
             InvalidateHint();
+            bool canSpawnBubbles = _canSpawnBubbles && levelData.bubbleSpawnChance > 0;
             List<GemMove> gemMoves = new List<GemMove>();
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < height; j++)
@@ -222,7 +246,14 @@ namespace BubbleBots.Match3.Models
                             }
                             else
                             {
-                                cells[i][j].gem = new BoardGem(gemSet[Random.Range(0, gemSet.Count)]);
+                                if (canSpawnBubbles && Random.Range(0f, 100f) < levelData.bubbleSpawnChance)
+                                {
+                                    cells[i][j].SetGem(new BoardGem("14", GemType.Bubble));
+                                }
+                                else
+                                {
+                                    cells[i][j].SetGem(new BoardGem(gemSet[Random.Range(0, gemSet.Count)].gemId));
+                                }
                             }
 
                             gemMoves.Add(new GemMove(new Vector2Int(i, j), new Vector2Int(i, j + height)));
@@ -346,7 +377,7 @@ namespace BubbleBots.Match3.Models
         }
 
 
-        public List<Vector2Int> GetPossibleColorChanges(int targetColor)
+        public List<Vector2Int> GetPossibleColorChanges(string targetColor)
         {
             List<Vector2Int> possibleChanges = new List<Vector2Int>();
             for (int i = 0; i < width; ++i)
@@ -364,7 +395,7 @@ namespace BubbleBots.Match3.Models
             return possibleChanges;
         }
 
-        public List<Vector2Int> GetAllById(int targetColor)
+        public List<Vector2Int> GetAllById(string targetColor)
         {
             List<Vector2Int> gemsOfColor = new List<Vector2Int>();
             for (int i = 0; i < width; ++i)
@@ -383,7 +414,7 @@ namespace BubbleBots.Match3.Models
 
         }
 
-        public void ApplyColorChanges(List<Vector2Int> toChange, int targetColor, List<Vector2Int> exclusionList = null)
+        public void ApplyColorChanges(List<Vector2Int> toChange, string targetColor, List<Vector2Int> exclusionList = null)
         {
             for (int i = 0; toChange != null && i < toChange.Count; ++i)
             {
@@ -480,7 +511,7 @@ namespace BubbleBots.Match3.Models
         }
         public void Shuffle()
         {
-            List<int> gemIds = new List<int>();
+            List<string> gemIds = new List<string>();
 
             for (int i = 0; i < width; ++i)
                 for (int j = 0; j < height; ++j)
@@ -495,7 +526,7 @@ namespace BubbleBots.Match3.Models
             {
                 n--;
                 int index = rng.Next(n + 1);
-                int val = gemIds[index];
+                string val = gemIds[index];
                 gemIds[index] = gemIds[n];
                 gemIds[n] = val;
             }

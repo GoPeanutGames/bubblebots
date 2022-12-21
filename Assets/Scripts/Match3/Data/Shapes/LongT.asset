@@ -157,4 +157,4 @@ MonoBehaviour:
     - {x: 1, y: 2}
     - {x: 1, y: -1}
     - {x: 1, y: -2}
-  matchOutcome: 13
+  matchOutcome: {fileID: 11400000, guid: 18c95f747305c0b4b8eb9a09847c9419, type: 2}

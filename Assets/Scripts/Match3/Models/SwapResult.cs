@@ -47,7 +47,7 @@ namespace BubbleBots.Match3.Data
 
     public class ColorChangeEvent : ExplodeEvent
     {
-        public int targetColor;
+        public string targetColor;
         public List<Vector2Int> toChange;
     }
 }

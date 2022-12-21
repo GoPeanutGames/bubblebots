@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9de2a0551e942154bbe6d56f9021e02a, type: 3}
+  m_Name: Level3_nethermode
+  m_EditorClassIdentifier: 
+  width: 8
+  height: 6
+  gemSet:
+  - {fileID: 11400000, guid: ca6027387f95de74fb550170e9aea25c, type: 2}
+  - {fileID: 11400000, guid: 3d7c99d1439db30459404f8995b09022, type: 2}
+  - {fileID: 11400000, guid: 45be4362e532ee541a33cb6abf3066e8, type: 2}
+  - {fileID: 11400000, guid: 542e6dc0107533d46a1e5ddfbac0eae9, type: 2}
+  - {fileID: 11400000, guid: db54d3c15b0aa774f8daa7cf07ac514e, type: 2}
+  gemSetSpecials:
+  - {fileID: 11400000, guid: dc77722c1ea079647bb87321ac10779c, type: 2}
+  - {fileID: 11400000, guid: 37c3b2650c4c2d24883bdf805dc6e210, type: 2}
+  - {fileID: 11400000, guid: 9982ea6f9ab0b9b498beb152f05a5745, type: 2}
+  - {fileID: 11400000, guid: 46add4e051cbab4419508d1ff0b5c4b4, type: 2}
+  - {fileID: 11400000, guid: b6bdeacecc602d64fa3cf2b87c20a298, type: 2}
+  bubbleGem: {fileID: 11400000, guid: 3fa8df6be3452ff4da486565c687a0d0, type: 2}
+  waves: 1
+  bubbleSpawnChance: 2

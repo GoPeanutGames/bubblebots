@@ -9,11 +9,11 @@ public class GUITile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IP
     public int Y = 0;
     public string Key = "";
 
-    GamePlayManager gamePlayManager;
+    Match3GameplayManager gamePlayManager;
 
     private void Start()
     {
-        gamePlayManager = FindObjectOfType<GamePlayManager>();
+        gamePlayManager = FindObjectOfType<Match3GameplayManager>();
     }
 
     public void OnPointerDown(PointerEventData eventData)

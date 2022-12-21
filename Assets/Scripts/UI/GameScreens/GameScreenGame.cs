@@ -1,0 +1,4 @@
+public class GameScreenGame : GameScreen
+{
+
+}
