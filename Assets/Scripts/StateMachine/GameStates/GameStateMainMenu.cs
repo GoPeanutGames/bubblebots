@@ -27,6 +27,8 @@ public class GameStateMainMenu : GameState
     {
         gameScreenMainMenuBottomHUD.DeactivateStoreButtonGlow();
         gameScreenMainMenuBottomHUD.HideHomeButton();
+        gameScreenMainMenuTopHUD.ShowSettingsGroup();
+        gameScreenMainMenuTopHUD.ShowPlayerInfoGroup();
     }
 
     public override void Enable()

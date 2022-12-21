@@ -1530,7 +1530,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Development: 1
   Production: 0
-  Community: 0
+  Rhym: 0
   DevelopmentEnvironment:
     serverUrl: https://api-bb.peanuthub.dev
     unityEnvironmentName: development

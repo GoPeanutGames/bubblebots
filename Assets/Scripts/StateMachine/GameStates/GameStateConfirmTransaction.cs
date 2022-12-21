@@ -45,10 +45,6 @@ public class GameStateConfirmTransaction : GameState
             case ButtonId.ConfirmTransactionBuy:
                 Screens.Instance.PopScreen<GameScreenStore>();
                 stateMachine.PushState(new GameStateMetamaskTransaction(_bundleId));
-                //on buy get data again and call metamask (later)
-                //set confirm popup that spins
-                //on done confirm success
-                //go to home
                 break;
             default:
                 break;
