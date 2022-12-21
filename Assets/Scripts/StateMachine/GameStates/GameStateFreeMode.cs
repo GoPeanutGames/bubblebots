@@ -20,8 +20,8 @@ public class GameStateFreeMode : GameState
     {
         //SceneManager.LoadScene("FreeToPlayMode");
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
-        gameScreenRobotSelection.PopulateSelectionList();
         Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
+        gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
         Screens.Instance.HideGameBackground();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         SoundManager.Instance?.FadeOutMusic(() =>

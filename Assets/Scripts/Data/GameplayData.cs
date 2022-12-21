@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine;
 using BubbleBots.Match3.Data;
+using UnityEngine;
 
 namespace BubbleBots.Data
 {
@@ -8,6 +8,7 @@ namespace BubbleBots.Data
     public class GameplayData : ScriptableObject
     {
         public List<LevelData> levels;
+        public List<BubbleBotData> robotsAvailable;
         public Sprite backgroundSprite;
         public Sprite gamebackgroundSprite;
     }

@@ -19,7 +19,7 @@ public class GameStateNetherMode : GameState
     {
         Screens.Instance.SetBackground(GameSettingsManager.Instance.netherModeGameplayData.backgroundSprite);
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
-        gameScreenRobotSelection.PopulateSelectionList();
+        gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.netherModeGameplayData.robotsAvailable);
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         SoundManager.Instance?.FadeOutMusic(() =>
         {
