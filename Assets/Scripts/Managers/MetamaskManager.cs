@@ -1,8 +1,37 @@
 using System;
 using System.Runtime.InteropServices;
+using WalletConnectSharp.Core.Models.Ethereum;
 
 public class MetamaskManager : MonoSingleton<MetamaskManager>
 {
+    public static EthChainData mumbaiChain = new EthChainData()
+    {
+        chainId = "0x13881",
+        chainName = "Matic Mumbai",
+        rpcUrls = new[] { "https://rpc-mumbai.maticvigil.com" },
+        blockExplorerUrls = new[] { "https://mumbai.polygonscan.com/" },
+        nativeCurrency = new NativeCurrency()
+        {
+            decimals = 18,
+            name = "MATIC",
+            symbol = "MATIC"
+        }
+    };
+    
+    public static EthChainData polygonChain = new EthChainData()
+    {
+        chainId = "0x89",
+        chainName = "Polygon Mainnet",
+        rpcUrls = new[] { "https://polygon-rpc.com" },
+        blockExplorerUrls = new[] { "https://polygonscan.com/" },
+        nativeCurrency = new NativeCurrency()
+        {
+            decimals = 18,
+            name = "MATIC",
+            symbol = "MATIC"
+        }
+    };
+    
     [DllImport("__Internal")]
     private static extern void BuyBundle(int bundleId, bool isDev);
 
