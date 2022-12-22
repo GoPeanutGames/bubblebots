@@ -1,11 +1,10 @@
-using BubbleBots.Data;
 using System.Collections.Generic;
+using BubbleBots.Data;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameScreenRobotSelection : GameScreen
 {
-    public List<BubbleBots.Data.BubbleBotData> availableBots;
 
     [SerializeField] private GameObject selectionListRoot;
     [SerializeField] private GameObject selectionRobotPrefab;
@@ -13,6 +12,7 @@ public class GameScreenRobotSelection : GameScreen
     [SerializeField] private List<RobotSelectedUIElement> playerRobotsImages;
 
     private List<RobotSelectionUIElement> selectableRobots;
+    private List<BubbleBotData> availableBots;
 
     private List<int> selectedRobots;
     
@@ -28,15 +28,16 @@ public class GameScreenRobotSelection : GameScreen
         return selectedBots;
     }
 
-    public void PopulateSelectionList()
+    public void PopulateSelectionList(List<BubbleBotData> botsForMode)
     {
+        availableBots = botsForMode;
         selectedRobots = new List<int>();
         selectableRobots = new List<RobotSelectionUIElement>();
         for (int i = 0; i < availableBots.Count; ++i)
         {
             GameObject selectionObject = Instantiate(selectionRobotPrefab, selectionListRoot.transform);
             selectionObject.SetActive(true);
-            selectionObject.GetComponent<RobotSelectionUIElement>().Setup(availableBots[i].robotSelection, availableBots[i].labelSprite, availableBots[i].botName, availableBots[i].id, OnRobotPressed);
+            selectionObject.GetComponent<RobotSelectionUIElement>().Setup(availableBots[i], OnRobotPressed);
             selectableRobots.Add(selectionObject.GetComponent<RobotSelectionUIElement>());
         }
     }
@@ -82,10 +83,5 @@ public class GameScreenRobotSelection : GameScreen
     private BubbleBots.Data.BubbleBotData GetDataForId(int id)
     {
         return availableBots.Find(x => x.id == id);
-    }
-
-    private Sprite GetRobotSelectedSpriteById(int id)
-    {
-        return availableBots.Find(x => x.id == id).sprite;
     }
 }
