@@ -1,15 +1,34 @@
 mergeInto(LibraryManager.library, {
-	Login: async function()
+	Login: async function(isDev)
 	{
-		const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+	    const currentEnv = isDev ? env.dev : env.prod
 
-		if(accounts.length > 0)
-		{
-			console.warn(accounts[0]);
-			myGameInstance.SendMessage("Managers/JSLibConnectionManager", "MetamaskLoginSuccess", accounts[0]);
-		} else {
-			console.log("No wallet has been connected");
-		}
+        let chainId = await ethereum.request({ method: 'eth_chainId' });
+
+        chainId = parseInt(chainId);
+
+        if (chainId !== currentEnv.chainId) {
+          await window.ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [
+              {
+                chainId: ethers.utils.hexValue(currentEnv.chainId),
+                ...currentEnv.connectionConfig,
+              },
+            ],
+          });
+        }
+
+        if (chainId === currentEnv.chainId) {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+
+            if(accounts.length > 0)
+            {
+                 myGameInstance.SendMessage("Managers/JSLibConnectionManager", "MetamaskLoginSuccess", accounts[0]);
+            }  else {
+                console.log("No wallet has been connected");
+            }
+        }
 	},
 
 	RequestSignature: async function (schema, account) {
