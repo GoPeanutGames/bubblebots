@@ -34,7 +34,8 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     private readonly Dictionary<SignatureLoginAPI, string> signatureAPIMap = new()
     {
-        { SignatureLoginAPI.Get, "/auth/login-schema/" }
+        { SignatureLoginAPI.Get, "/auth/login-schema/" },
+        { SignatureLoginAPI.Web3LoginCheck , "/auth/web3-login"}
     };
 
     private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()
@@ -118,6 +119,12 @@ public class ServerManager : MonoSingleton<ServerManager>
         Action<string> onFail = null)
     {
         UnityWebRequest webRequest = SetupPostWebRequest(playerAPIMap[api], formData);
+        SendWebRequest(webRequest, onComplete, onFail);
+    }
+
+    public void SendLoginDataToServer(SignatureLoginAPI api, string formData, Action<string> onComplete, Action<string> onFail = null)
+    {
+        UnityWebRequest webRequest = SetupPostWebRequest(signatureAPIMap[api], formData);
         SendWebRequest(webRequest, onComplete, onFail);
     }
 

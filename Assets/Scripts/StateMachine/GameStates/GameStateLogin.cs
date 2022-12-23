@@ -40,7 +40,20 @@ public class GameStateLogin : GameState
         string signature = UserManager.Instance.GetPlayerSignature();
         if (string.IsNullOrEmpty(address) == false && string.IsNullOrEmpty(signature) == false)
         {
-            StartLogin(address, signature);
+            PostWeb3Login web3LoginData = new PostWeb3Login()
+            {
+                address = address,
+                signature = signature
+            };
+            string data = JsonUtility.ToJson(web3LoginData);
+            ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Web3LoginCheck, data, (res) =>
+            {
+                ResponseWeb3Login loginResponse = JsonUtility.FromJson<ResponseWeb3Login>(res);
+                if (loginResponse.status)
+                {
+                    StartLogin(address, signature);
+                }
+            });
         }
     }
 
@@ -129,15 +142,11 @@ public class GameStateLogin : GameState
         if (Application.isMobilePlatform)
         {
             EthChainData chainData =  EnvironmentManager.Instance.IsDevelopment() ? MetamaskManager.mumbaiChain : MetamaskManager.polygonChain; 
-            Debug.LogWarning("befor add");
             await WalletConnect.ActiveSession.WalletAddEthChain(chainData);
-            Debug.LogWarning("after add, before switch");
             EthChain chainId = new EthChain() { chainId = chainData.chainId };
             await WalletConnect.ActiveSession.WalletSwitchEthChain(chainId);
-            Debug.LogWarning("after switch, before signature");
             EIP712Domain domain = new EIP712Domain(loginSchema.domain.name, loginSchema.domain.version.ToString(), loginSchema.domain.chainId, loginSchema.domain.verifyingContract);
             string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, loginSchema, domain);
-            Debug.LogWarning("after signature");
             SignatureLoginSuccess(signature);
         }
         else

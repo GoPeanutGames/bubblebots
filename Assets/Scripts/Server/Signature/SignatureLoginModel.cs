@@ -4,7 +4,8 @@ namespace BubbleBots.Server.Signature
 {
     public enum SignatureLoginAPI
     {
-        Get
+        Get,
+        Web3LoginCheck
     }
 
     [Serializable]
@@ -28,5 +29,18 @@ namespace BubbleBots.Server.Signature
     {
         public string description;
         public string signer;
+    }
+
+    [Serializable]
+    public class PostWeb3Login
+    {
+        public string address;
+        public string signature;
+    }
+
+    [Serializable]
+    public class ResponseWeb3Login
+    {
+        public bool status;
     }
 }
