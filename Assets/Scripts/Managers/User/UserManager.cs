@@ -87,6 +87,7 @@ public class UserManager : MonoSingleton<UserManager>
             string sanitizedUsername = userName.Replace("\"", "'").Trim();
             ChangeUserNameData formData = new()
             {
+                signature = UserManager.Instance.GetPlayerSignature(),
                 address = CurrentUser.WalletAddress,
                 nickname = sanitizedUsername
             };

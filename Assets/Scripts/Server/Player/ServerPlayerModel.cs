@@ -14,6 +14,7 @@ namespace BubbleBots.Server.Player
     [Serializable]
     public class ChangeUserNameData
     {
+        public string signature;
         public string address;
         public string nickname;
     }
