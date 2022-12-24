@@ -1,15 +1,18 @@
 mergeInto(LibraryManager.library, {
-	Login: async function()
+	Login: async function(isDev)
 	{
-		const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-
-		if(accounts.length > 0)
-		{
-			console.warn(accounts[0]);
-			myGameInstance.SendMessage("Managers/JSLibConnectionManager", "MetamaskLoginSuccess", accounts[0]);
-		} else {
-			console.log("No wallet has been connected");
-		}
+	    try {
+	        const userAddress = await metamaskLogin(isDev);
+	        if( userAddress ) {
+	            myGameInstance.SendMessage("Managers/JSLibConnectionManager", "MetamaskLoginSuccess", userAddress);
+	        }
+	        else{
+	            console.log('Error Connecting, show modal')
+	        }
+	    }
+	    catch(e) {
+	        console.log('Error Connecting, show modal for catch')
+	    }
 	},
 
 	RequestSignature: async function (schema, account) {

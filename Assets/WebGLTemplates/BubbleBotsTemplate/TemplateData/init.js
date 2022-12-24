@@ -163,6 +163,39 @@ const env = {
   }
 }
 
+  window.metamaskLogin = async (isDev = true) => {
+    const currentEnv = isDev ? env.dev : env.prod
+
+    let chainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+    chainId = parseInt(chainId);
+
+    if (chainId !== currentEnv.chainId) {
+      await window.ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [
+          {
+            chainId: ethers.utils.hexValue(currentEnv.chainId),
+            ...currentEnv.connectionConfig,
+          },
+        ],
+      });
+    }
+
+    if (chainId === currentEnv.chainId) {
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+
+      if(accounts.length > 0)
+      {
+        return accounts[0];
+      }
+      else {
+        console.log("No wallet has been connected");
+      }
+    }
+
+    return false;
+}
 
 window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
 

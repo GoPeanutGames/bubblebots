@@ -18,7 +18,7 @@ public class GameStateLogin : GameState
     }
 
     [DllImport("__Internal")]
-    private static extern void Login();
+    private static extern void Login(bool isDev);
 
     [DllImport("__Internal")]
     private static extern void RequestSignature(string schema, string address);
@@ -120,7 +120,8 @@ public class GameStateLogin : GameState
     {
         if (Application.isMobilePlatform == false)
         {
-            Login();
+            bool isDev = EnvironmentManager.Instance.IsDevelopment();
+            Login(isDev);
         }
         else
         {
@@ -141,7 +142,7 @@ public class GameStateLogin : GameState
         GetLoginSchema loginSchema = JsonUtility.FromJson<GetLoginSchema>(schema);
         if (Application.isMobilePlatform)
         {
-            EthChainData chainData =  EnvironmentManager.Instance.IsDevelopment() ? MetamaskManager.mumbaiChain : MetamaskManager.polygonChain; 
+            EthChainData chainData =  EnvironmentManager.Instance.IsDevelopment() ? MetamaskManager.mumbaiChain : MetamaskManager.polygonChain;
             await WalletConnect.ActiveSession.WalletAddEthChain(chainData);
             EthChain chainId = new EthChain() { chainId = chainData.chainId };
             await WalletConnect.ActiveSession.WalletSwitchEthChain(chainId);
