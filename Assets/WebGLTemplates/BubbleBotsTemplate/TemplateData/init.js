@@ -163,49 +163,47 @@ const env = {
   }
 }
 
-  window.metamaskLogin = async (isDev = true) => {
-    const currentEnv = isDev ? env.dev : env.prod
+window.metamaskLogin = async (isDev = true) => {
+  const currentEnv = isDev ? env.dev : env.prod
 
-    let chainId = await window.ethereum.request({ method: 'eth_chainId' });
-
-    chainId = parseInt(chainId);
-
-    if (chainId !== currentEnv.chainId) {
-      await window.ethereum.request({
-        method: "wallet_addEthereumChain",
-        params: [
-          {
-            chainId: ethers.utils.hexValue(currentEnv.chainId),
-            ...currentEnv.connectionConfig,
-          },
-        ],
-      });
-    }
-
-    if (chainId === currentEnv.chainId) {
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-
-      if(accounts.length > 0)
-      {
-        return accounts[0];
-      }
-      else {
-        console.log("No wallet has been connected");
-      }
-    }
-
-    return false;
-}
-
-window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
-
-  const currentEnv = isDev ? env.dev : env.prod;
-
-  let chainId = await ethereum.request({ method: 'eth_chainId' });
+  let chainId = await window.ethereum.request({method: 'eth_chainId'});
 
   chainId = parseInt(chainId);
 
-  if( chainId !== currentEnv.chainId ) {
+  if (chainId !== currentEnv.chainId) {
+    await window.ethereum.request({
+      method: "wallet_addEthereumChain",
+      params: [
+        {
+          chainId: ethers.utils.hexValue(currentEnv.chainId),
+          ...currentEnv.connectionConfig,
+        },
+      ],
+    });
+  }
+
+  if (chainId === currentEnv.chainId) {
+    const accounts = await ethereum.request({method: 'eth_requestAccounts'});
+
+    if (accounts.length > 0) {
+      return accounts[0];
+    } else {
+      console.log("No wallet has been connected");
+    }
+  }
+
+  return false;
+}
+
+window.metamaskBundleBuying = async (bundleId = 1, isDev = true) => {
+
+  const currentEnv = isDev ? env.dev : env.prod;
+
+  let chainId = await ethereum.request({method: 'eth_chainId'});
+
+  chainId = parseInt(chainId);
+
+  if (chainId !== currentEnv.chainId) {
 
     await window.ethereum.request({
       method: "wallet_addEthereumChain",
@@ -216,10 +214,10 @@ window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
     });
   }
 
-  if( chainId === currentEnv.chainId ) {
+  if (chainId === currentEnv.chainId) {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
-    const gemsContract =  new ethers.ethers.Contract(currentEnv.gemsContract, contractAbi, provider);
+    const gemsContract = new ethers.ethers.Contract(currentEnv.gemsContract, contractAbi, provider);
     const usdcContract = new ethers.ethers.Contract(currentEnv.tokenContract, contractAbi, provider);
 
     let userAddress = await ethereum.request({method: 'eth_requestAccounts'});
@@ -234,10 +232,10 @@ window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
     const tokenAllowance = await usdcContract.allowance(userAddress, currentEnv.gemsContract);
 
     //if not approved, approve the balance, max number so next time user won't have to approve again
-    if( tokenAllowance < bundlePrice ){
+    if (tokenAllowance < bundlePrice) {
       let MAX_INT = 11579208923731619542357098500868790785
 
-      const tx = await usdcContract.connect(provider.getSigner()).approve(currentEnv.gemsContract,BigInt(MAX_INT));
+      const tx = await usdcContract.connect(provider.getSigner()).approve(currentEnv.gemsContract, BigInt(MAX_INT));
 
       await tx.wait();
     }
@@ -248,15 +246,14 @@ window.metamaskBundleBuying = async ( bundleId = 1 , isDev = true) => {
     userBalance = userBalance.toNumber();
 
     //if he has enough balance purchase the gems here
-    if( userBalance >= bundlePrice ){
+    if (userBalance >= bundlePrice) {
 
       const tx = await gemsContract.connect(provider.getSigner()).purchaseGemsByToken(bundleId);
 
       await tx.wait();
 
       return true;
-    }
-    else {
+    } else {
       console.log('Not Enough balance to purchase')
     }
   }
@@ -277,14 +274,16 @@ switch (window.location.hostname) {
 if (MEASUREMENT_ID) {
   var analyticsScript = document.getElementById("analytics");
 
-  if(analyticsScript) {
+  if (analyticsScript) {
     analyticsScript.onload = function () {
       analyticsScript.src += MEASUREMENT_ID;
     };
     window.dataLayer = window.dataLayer || [];
+
     function gtag() {
       dataLayer.push(arguments);
     }
+
     gtag("js", new Date());
 
     gtag("config", MEASUREMENT_ID);
