@@ -276,14 +276,17 @@ switch (window.location.hostname) {
 
 if (MEASUREMENT_ID) {
   var analyticsScript = document.getElementById("analytics");
-  analyticsScript.onload = function () {
-    analyticsScript.src += MEASUREMENT_ID;
-  };
-  window.dataLayer = window.dataLayer || [];
-  function gtag() {
-    dataLayer.push(arguments);
-  }
-  gtag("js", new Date());
 
-  gtag("config", MEASUREMENT_ID);
+  if(analyticsScript) {
+    analyticsScript.onload = function () {
+      analyticsScript.src += MEASUREMENT_ID;
+    };
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+    gtag("js", new Date());
+
+    gtag("config", MEASUREMENT_ID);
+  }
 }
