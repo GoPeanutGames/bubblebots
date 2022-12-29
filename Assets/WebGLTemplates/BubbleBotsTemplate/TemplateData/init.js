@@ -304,4 +304,35 @@ document.addEventListener("readystatechange", () => {
       gtag("config", MEASUREMENT_ID);
     }
   }
+
+  window.openChangeNickNamePopup = (nickname, registerCallBack) => {
+    let popUpView = `<div class="popup-container">
+        <div class="popup">
+          <div class="head">
+            <h2>Change Your Nickname</h2>
+            <div class="close-popup" id="closeBtn"><a href="#">X</a></div>
+          </div>
+          <input class="nickname" value="${nickname}" type="text" name="nickname"/>
+          <a href="#" class="popup-btn">Save</a>
+        </div>`;
+
+    document.querySelector("#popup").innerHTML = popUpView;
+    document.querySelector("#popup").style.display = "block";
+    setTimeout(() => document.querySelector("#popup input").focus(), 500);
+
+    const evListener = () => {
+      registerCallBack(document.querySelector("#popup input").value);
+      document.querySelector("#closeBtn").click();
+    };
+
+    document.querySelector(".popup-btn").addEventListener("click", evListener);
+
+    document.querySelector("#closeBtn").addEventListener("click", () => {
+      document
+        .querySelector(".popup-btn")
+        .removeEventListener("click", evListener);
+      document.querySelector("#popup").innerHTML = "";
+      document.querySelector("#popup").style.display = "none";
+    });
+  };
 });

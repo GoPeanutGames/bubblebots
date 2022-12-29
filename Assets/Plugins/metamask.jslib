@@ -74,4 +74,16 @@ mergeInto(LibraryManager.library, {
   DisplayHelp: function () {
     window.open("https://www.youtube.com/watch?v=w10rwbbQVr8");
   },
+
+  OpenChangeNickNameMobile: function (nickname) {
+    nickname = UTF8ToString(nickname);
+
+    openChangeNickNamePopup(nickname, (changedNickname) => {
+      myGameInstance.SendMessage(
+        "Managers/JSLibConnectionManager",
+        "NickNameChangeForMobile",
+        changedNickname
+      );
+    });
+  },
 });
