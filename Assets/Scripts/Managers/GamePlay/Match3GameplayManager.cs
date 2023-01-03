@@ -38,7 +38,9 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         LevelComplete,
         LevelFailed,
         WaveComplete,
-        Shuffle
+        Shuffle,
+        ExplodeAllSpecials,
+        ExplodeAllSpecialsIntro
     }
 
     private GameplayState gameplayState = GameplayState.RobotSelection;
@@ -121,7 +123,13 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
     public void ExplodeAllSpecials()
     {
         inputLocked = true;
-        //to do // implement
+        gameplayState = GameplayState.ExplodeAllSpecialsIntro;
+        StartTrackedCoroutine(ShakeAllSpecials());
+    }
+
+    public bool HasSpecials()
+    {
+        return boardController.GetBoardModel().HasSpecials();
     }
 
     public void SetDownTile(int x, int y)
@@ -175,18 +183,32 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         if (boardController.GetBoardModel()[x1][y1].gem.IsSpecial() &&
             boardController.GetBoardModel()[x2][y2].gem.IsSpecial())
         {
-            GameGUI.ColorBombEffect(x1, y1);
-            GameGUI.ColorBombEffect(x2, y2);
+            GameGUI.ShakeEffect(x1, y1, 2, 0.2f);
+            GameGUI.ShakeEffect(x2, y2, 2, 0.2f);
             specialSpecialMatch = true;
-            yield return new WaitForSeconds(1.1f);
+            yield return new WaitForSeconds(0.8f);
         }
-
 
         //ReleaseTiles();
         releaseTileX = -1;
         releaseTileY = -1;
         gameplayState = GameplayState.CheckExplosionsAfterSwap;
     }
+
+    IEnumerator ShakeAllSpecials()
+    {
+        for (int i = 0; i < boardController.GetBoardModel().width; ++i) 
+            for (int j = 0; j < boardController.GetBoardModel().height; ++j)
+            {
+                if (boardController.GetBoardModel()[i][j].gem.IsSpecial())
+                {
+                    GameGUI.ShakeEffect(i, j, 2, 0.2f);
+                }
+            }
+        yield return new WaitForSeconds(0.8f);
+        gameplayState = GameplayState.ExplodeAllSpecials;
+    }
+
 
     public void ZeroReleasedTiles()
     {
@@ -283,6 +305,21 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
             {
                 StartTrackedCoroutine(ProcessSwapResult(swapResult));
                 gameplayState = GameplayState.ExplosionsInProgress;
+            }
+            else
+            {
+                onBoardEventsEnded?.Invoke();
+                gameplayState = GameplayState.WaitForInput;
+                ZeroReleasedTiles();
+            }
+        } 
+        else if (gameplayState == GameplayState.ExplodeAllSpecials)
+        {
+            NewSwapResult swapResult = boardController.ExplodeAllSpecials();
+            if (swapResult.explodeEvents != null && swapResult.explodeEvents.Count > 0)
+            {
+                gameplayState = GameplayState.ExplosionsInProgress;
+                StartTrackedCoroutine(ProcessSwapResult(swapResult, 0.2f));
             }
             else
             {
@@ -455,7 +492,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         GameGUI.CanSwapTiles = true;
     }
 
-    IEnumerator ProcessSwapResult(NewSwapResult swapResult)
+    IEnumerator ProcessSwapResult(NewSwapResult swapResult, float colorChangeDuration = 0.95f)
     {
         if (specialSpecialMatch)
         {
@@ -567,13 +604,14 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         {
             yield return new WaitForSeconds(GameGUI.SwapDuration / 2);
         }
+        
         for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
         {
             ColorChangeEvent colorChangeEvent = swapResult.explodeEvents[i] as ColorChangeEvent;
             if (colorChangeEvent != null)
             {
-                GameGUI.ColorChangeEffect(colorChangeEvent.targetColor, colorChangeEvent.toChange, levelData);
-                yield return new WaitForSeconds(1f);
+                GameGUI.ColorChangeEffect(colorChangeEvent.targetColor, colorChangeEvent.toChange, levelData, colorChangeDuration);
+                yield return new WaitForSeconds(colorChangeDuration);
             }
         }
 

@@ -381,14 +381,27 @@ public class FreeToPlayGameplayManager : MonoBehaviour
                 match3Manager.UpdateMatch3Logic();
                 break;
         }
+
+
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            match3Manager.ExplodeAllSpecials();
+        }
     }
 
     IEnumerator EndLevelSequence()
     {
         gameplayState = FreeToPlayGameplayState.EndLevelSequence;
-        match3Manager.ExplodeAllSpecials();
         yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
-
+        while (match3Manager.HasSpecials())
+        {
+            match3Manager.ExplodeAllSpecials();
+            yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
+            if (match3Manager.HasSpecials())
+            {
+                yield return new WaitForSeconds(.1f);
+            }
+        }
         gameplayState = FreeToPlayGameplayState.LevelCompleteMenu;
         UserManager.Instance.SetPlayerScore((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);

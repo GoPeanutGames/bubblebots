@@ -669,7 +669,37 @@ public class GUIGame : MonoBehaviour
         yield return new WaitForSeconds(0.21f);
     }
 
-    public void ColorChangeEffect(string key, List<Vector2Int> changedTiles, LevelData levelData)
+
+    public void ShakeEffect(int x, int y, int numShakes, float shakeDuration)
+    {
+        Transform tile = transform.Find("Tile_" + x + "_" + y);
+
+        if (tile == null)
+        {
+            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            if (tile == null)
+            {
+                Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x + "_" + y);
+                return;
+            }
+        }
+        Image tileImage = tile.GetComponent<Image>();
+        StartCoroutine(ShakeObject(tileImage, numShakes, shakeDuration));
+    }
+
+
+    IEnumerator ShakeObject(Image tileImage, int numShakes, float shakeDuration)
+    {
+        while (numShakes-- > 0)
+        {
+            tileImage.transform.DOScale(new Vector3(.9f, .9f, .9f), shakeDuration);
+            yield return new WaitForSeconds(shakeDuration);
+            tileImage.transform.DOScale(Vector3.one, shakeDuration);
+            yield return new WaitForSeconds(shakeDuration);
+        }
+    }
+
+    public void ColorChangeEffect(string key, List<Vector2Int> changedTiles, LevelData levelData, float duration)
     {
         int x, y;
         for (int i = 0; i < changedTiles.Count; i++)
@@ -699,8 +729,8 @@ public class GUIGame : MonoBehaviour
             var dimage = duplicate.GetComponent<Image>();
             dimage.sprite = levelData.GetGemData(key).gemSprite;
 
-            StartCoroutine(ChangeColor(tileImage, dimage, key, levelData));
-            Destroy(duplicate.gameObject, 1f);
+            StartCoroutine(ChangeColor(tileImage, dimage, key, levelData, duration));
+            Destroy(duplicate.gameObject, duration + 0.02f);
         }
     }
     public void ChangeColorScale(int posX, int posY, string key, LevelData levelData)
@@ -734,12 +764,12 @@ public class GUIGame : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
     }
 
-    IEnumerator ChangeColor(Image tileImage, Image dimage, string key, LevelData levelData)
+    IEnumerator ChangeColor(Image tileImage, Image dimage, string key, LevelData levelData, float duration)
     {
         dimage.color = new Color(1, 1, 1, 0);
-        dimage.DOFade(1, 0.9f);
+        dimage.DOFade(1, duration);
 
-        yield return new WaitForSeconds(0.95f);
+        yield return new WaitForSeconds(duration);
         tileImage.sprite = levelData.GetGemData(key).gemSprite;
         dimage.gameObject.SetActive(false);
     }

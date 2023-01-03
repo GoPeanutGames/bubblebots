@@ -397,9 +397,16 @@ public class NetherModeGameplayManager : MonoBehaviour
     IEnumerator EndLevelSequence()
     {
         gameplayState = NethermodeGameplayState.EndLevelSequence;
-        match3Manager.ExplodeAllSpecials();
         yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
-
+        while (match3Manager.HasSpecials())
+        {
+            match3Manager.ExplodeAllSpecials();
+            yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
+            if (match3Manager.HasSpecials())
+            {
+                yield return new WaitForSeconds(.1f);
+            }
+        }
         gameplayState = NethermodeGameplayState.LevelCompleteMenu;
         UserManager.Instance.SetPlayerScore((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);

@@ -385,7 +385,8 @@ namespace BubbleBots.Match3.Models
                 {
                     if (cells[i][j].empty ||
                         cells[i][j].gem.IsSpecial() ||
-                        cells[i][j].gem.GetId() == targetColor)
+                        cells[i][j].gem.GetId() == targetColor ||
+                        cells[i][j].gem.IsBubble())
                     {
                         continue;
                     }
@@ -447,6 +448,19 @@ namespace BubbleBots.Match3.Models
         {
             Vector2Int hint = GetHint(matchPrecedenceList);
             return hint != -Vector2Int.one;
+        }
+
+        public bool HasSpecials()
+        {
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    if (cells[i][j].gem.IsSpecial())
+                    {
+                        return true;
+                    }
+                }
+            return false;
         }
 
         public Vector2Int GetHint(List<MatchShape> matchPrecedenceList)

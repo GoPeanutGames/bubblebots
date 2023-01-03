@@ -59,7 +59,7 @@ namespace BubbleBots.Match3.Controllers
                     //}
                     //else
                     //{
-                        boardModel[i][j].SetGem(new BoardGem(levelData.gemSet[Random.Range(0, levelData.gemSet.Count)].gemId));
+                    boardModel[i][j].SetGem(new BoardGem(levelData.gemSet[Random.Range(0, levelData.gemSet.Count)].gemId));
                     //}
                 }
 
@@ -380,14 +380,14 @@ namespace BubbleBots.Match3.Controllers
                         targetColor = target,
                         toChange = candidates,
                         toCreate = null,
-                        toExplode = null
+                        toExplode = new List<Vector2Int>()
                     };
                     swapResult.explodeEvents.Add(colorChangeEvent);
                     break;
                 case "10":
                     string targetColor = levelData.gemSet[Random.Range(0, levelData.gemSet.Count)].gemId;
                     List<Vector2Int> toDestroy = boardModel.GetAllById(targetColor);
-                    
+
                     toDestroy.Add(explosion.position);
                     toDestroy.RemoveAll(x => processed.Contains(x));
 
@@ -471,7 +471,7 @@ namespace BubbleBots.Match3.Controllers
 
                 int normalPositionX = boardModel[startX][startY].gem.IsSpecial() ? releaseX : startX;
                 int normalPositionY = boardModel[startX][startY].gem.IsSpecial() ? releaseY : startY;
-               
+
                 MatchTestResult matchTestResult = boardModel.TestForMatchOnPosition(normalPositionX, normalPositionY, matchPrecedence.matches, null);
 
                 if (matchTestResult != null)
@@ -579,7 +579,7 @@ namespace BubbleBots.Match3.Controllers
                             candidates.RemoveAt(Random.Range(0, candidates.Count));
                         }
                         candidates.Add(boardModel[startX][startY].gem.IsSpecial() ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY));
-                        
+
 
                         ColorChangeEvent colorChangeEvent = new ColorChangeEvent()
                         {
@@ -594,9 +594,9 @@ namespace BubbleBots.Match3.Controllers
                         string targetColor = boardModel[startX][startY].gem.IsSpecial() ? boardModel[releaseX][releaseY].gem.GetId() :
                             boardModel[startX][startY].gem.GetId();
                         List<Vector2Int> toDestroy = boardModel.GetAllById(targetColor);
-                        
+
                         toDestroy.Add(boardModel[startX][startY].gem.IsSpecial() ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY));
-                       
+
                         foreach (Vector2Int explosion in toDestroy)
                         {
                             toExplode.Add(new ToExplode()
@@ -630,7 +630,7 @@ namespace BubbleBots.Match3.Controllers
             {
                 boardModel.DisableSpecialBug();
                 string specialId = boardModel[startX][startY].gem.GetId();
-                
+
                 switch (specialId)
                 {
                     case "9": // lightning-lightning
@@ -780,11 +780,11 @@ namespace BubbleBots.Match3.Controllers
                 string specialId1 = boardModel[startX][startY].gem.GetId();
                 string specialId2 = boardModel[releaseX][releaseY].gem.GetId();
 
-                if (specialId1 == "13" || specialId2 == "13" || 
+                if (specialId1 == "13" || specialId2 == "13" ||
                     specialId1 == "10" || specialId2 == "10") // color switch and color bomb with anything = board blast
                 {
                     List<Vector2Int> boardBlastColorSwitch = boardModel.BoardBlast();
-                    
+
                     BoardBlastEvent boardBlastEventColorSwitch = new BoardBlastEvent()
                     {
                         blastPosition = new Vector2Int(startX, startY),
@@ -871,7 +871,89 @@ namespace BubbleBots.Match3.Controllers
         {
             return boardModel.RefillBoard(levelData.gemSet, levelData, canSpawnBubbles);
         }
+
+        public NewSwapResult ExplodeAllSpecials()
+        {
+            NewSwapResult swapResult = new NewSwapResult()
+            {
+                explodeEvents = new List<ExplodeEvent>()
+            };
+
+            HashSet<ToExplode> toExplode = new HashSet<ToExplode>();
+            for (int i = 0; i < boardModel.width ; i++)
+                for (int j = 0; j < boardModel.height; ++j)
+                {
+                    if (boardModel[i][j].gem.IsSpecial())
+                    {
+                        toExplode.Add(new ToExplode() { position = new Vector2Int(i, j), explosionSource = ToExplode.ExplosionSource.Chain });
+                    }
+                }
+
+            Queue<ToExplode> specialsToProcess = new Queue<ToExplode>();
+            List<Vector2Int> processed = new List<Vector2Int>();
+
+            foreach (ToExplode explosion in toExplode)
+            {
+                if (boardModel[explosion.position.x][explosion.position.y].gem.IsSpecial() &&
+                    !processed.Contains(explosion.position))
+                {
+                    specialsToProcess.Enqueue(explosion);
+                    processed.Add(new Vector2Int(explosion.position.x, explosion.position.y));
+                }
+            }
+
+            while (specialsToProcess.Count > 0)
+            {
+                ToExplode currentSpecial = specialsToProcess.Dequeue();
+
+                string specialId = boardModel[currentSpecial.position.x][currentSpecial.position.y].gem.GetId();
+                HashSet<ToExplode> specialOutcome = ExplodeSpecial(ref swapResult, currentSpecial, processed);
+
+                foreach (ToExplode outcome in specialOutcome)
+                {
+                    if (processed.Contains(outcome.position))
+                    {
+                        continue;
+                    }
+                    if (boardModel[outcome.position.x][outcome.position.y].gem.IsSpecial())
+                    {
+                        continue;
+                    }
+                    else if (!processed.Contains(outcome.position) && !toExplode.Contains(outcome))
+                    {
+                        processed.Add(outcome.position);
+                        toExplode.Add(outcome);
+                    }
+                }
+                if (swapResult.explodeEvents == null)
+                {
+                    swapResult.explodeEvents.Add(new ExplodeEvent()
+                    {
+                        toExplode = new List<Vector2Int>()
+                    });
+                }
+                swapResult.explodeEvents[0].toExplode.Add(new Vector2Int(currentSpecial.position.x, currentSpecial.position.y));
+            }
+
+            for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
+            {
+                boardModel.RemoveGems(swapResult.explodeEvents[i].toExplode);
+            }
+
+            for (int i = 0; i < swapResult.explodeEvents.Count; ++i)
+            {
+                boardModel.CreateGems(swapResult.explodeEvents[i].toCreate);
+                ColorChangeEvent colorChangeEvent = swapResult.explodeEvents[i] as ColorChangeEvent;
+                if (colorChangeEvent != null)
+                {
+                    boardModel.ApplyColorChanges(colorChangeEvent.toChange, colorChangeEvent.targetColor);
+                }
+            }
+            return swapResult;
+        }
     }
+
+
 }
 
 public class ToExplode
