@@ -1,6 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
 using WalletConnectSharp.Core.Models.Ethereum;
+using System.Threading.Tasks;
+using BubbleBots.Server.Signature;
+using WalletConnectSharp.Core;
+
 
 public class MetamaskManager : MonoSingleton<MetamaskManager>
 {
@@ -63,4 +67,14 @@ public class MetamaskManager : MonoSingleton<MetamaskManager>
     {
         _onFailCallback?.Invoke("balance");
     }
+
+    public static async Task<string> EthSignForMobile(WalletConnectSession activeSession, string address, string schema)
+    {
+        var request = new EthSignTypeDataV4(address, schema);
+
+        var response = await activeSession.Send<EthSignTypeDataV4, EthResponse>(request);
+
+        return response.Result;
+    }
+
 }

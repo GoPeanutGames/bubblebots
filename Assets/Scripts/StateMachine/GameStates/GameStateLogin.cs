@@ -146,8 +146,11 @@ public class GameStateLogin : GameState
             await WalletConnect.ActiveSession.WalletAddEthChain(chainData);
             EthChain chainId = new EthChain() { chainId = chainData.chainId };
             await WalletConnect.ActiveSession.WalletSwitchEthChain(chainId);
-            EIP712Domain domain = new EIP712Domain(loginSchema.domain.name, loginSchema.domain.version.ToString(), loginSchema.domain.chainId, loginSchema.domain.verifyingContract);
-            string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, loginSchema, domain);
+
+            string signature = await MetamaskManager.EthSignForMobile(WalletConnect.ActiveSession, tempAddress, schema);
+
+            //EIP712Domain domain = new EIP712Domain(loginSchema.domain.name, loginSchema.domain.version.ToString(), loginSchema.domain.chainId, loginSchema.domain.verifyingContract);
+            //string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, loginSchema.message, domain);
             SignatureLoginSuccess(signature);
         }
         else

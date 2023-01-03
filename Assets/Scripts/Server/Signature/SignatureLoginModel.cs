@@ -1,4 +1,6 @@
 using System;
+using Newtonsoft.Json;
+using WalletConnectSharp.Core.Models;
 
 namespace BubbleBots.Server.Signature
 {
@@ -12,7 +14,7 @@ namespace BubbleBots.Server.Signature
     public class GetLoginSchema
     {
         public DomainValue domain;
-        public MessageValue message;
+        public metaType message;
     }
 
     [Serializable]
@@ -25,7 +27,7 @@ namespace BubbleBots.Server.Signature
     }
 
     [Serializable]
-    public class MessageValue
+    public class metaType
     {
         public string description;
         public string signer;
@@ -35,6 +37,7 @@ namespace BubbleBots.Server.Signature
     public class PostWeb3Login
     {
         public string address;
+
         public string signature;
     }
 
@@ -42,5 +45,18 @@ namespace BubbleBots.Server.Signature
     public class ResponseWeb3Login
     {
         public bool status;
+    }
+    
+    public sealed class EthSignTypeDataV4: JsonRpcRequest
+    {
+        [JsonProperty("params")]
+        private string[] _parameters;
+
+        public EthSignTypeDataV4(string address, string schema) : base()
+        {
+            this.Method = "eth_signTypedData";
+
+            this._parameters = new string[] { address, schema };
+        }
     }
 }

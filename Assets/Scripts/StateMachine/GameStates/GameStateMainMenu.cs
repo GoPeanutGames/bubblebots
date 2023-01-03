@@ -1,5 +1,6 @@
 using BubbleBots.Server.Player;
 using UnityEngine;
+using System.Runtime.InteropServices;
 
 public class GameStateMainMenu : GameState
 {
@@ -17,6 +18,9 @@ public class GameStateMainMenu : GameState
 
     private bool canPlayNetherMode = false;
     private bool canPlayFreeMode = false;
+
+    [DllImport("__Internal")]
+    private static extern void OpenChangeNickNameMobile(string nickname);
 
     public override string GetGameStateName()
     {
@@ -65,6 +69,13 @@ public class GameStateMainMenu : GameState
         if (data.eventName == GameEvents.ButtonTap)
         {
             OnButtonTap(data);
+        }
+
+        if( data.eventName == GameEvents.NickNameChangedForMobile )
+        {
+            GameEventString nickNameData = data as GameEventString;
+
+            ChangeNickNameWithJs(nickNameData.stringData);
         }
     }
 
@@ -256,8 +267,15 @@ public class GameStateMainMenu : GameState
 
     private void OpenChangeNickname()
     {
-        _gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
-        _gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
+        if (Application.isMobilePlatform == true)
+        {
+            OpenChangeNickNameMobile(UserManager.Instance.GetPlayerUserName());
+        }
+        else
+        {
+            _gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
+            _gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
+        }        
     }
 
     private void CloseChangeNickname()
@@ -265,8 +283,16 @@ public class GameStateMainMenu : GameState
         Screens.Instance.PopScreen(_gameScreenChangeNickname);
     }
 
+    private void ChangeNickNameWithJs(string nickname)
+    {
+        UserManager.Instance.SetPlayerUserName(nickname, true);
+        gameScreenMainMenuTopHUD.SetUsername(nickname);
+    
+    }
+
     private void ChangeNickname()
     {
+
         UserManager.Instance.SetPlayerUserName(_gameScreenChangeNickname.GetNicknameText(), true);
         gameScreenMainMenuTopHUD.SetUsername(_gameScreenChangeNickname.GetNicknameText());
         CloseChangeNickname();
