@@ -10,9 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c955b5fd4038bae42ad0c75853757942, type: 3}
-  m_Name: Indigo
+  m_Name: Torg
   m_EditorClassIdentifier: 
-  id: 1
-  botName: Indigo
-  sprite: {fileID: 21300000, guid: a0d5d678afd815f4cb43b1c498ceba3a, type: 3}
-  frameSprite: {fileID: 698380775, guid: 69d389800c77f334d810468526c99621, type: 3}
+  id: 16
+  botName: Torg
+  bgSprite: {fileID: 0}
+  robotSprite: {fileID: 0}
+  asEnemySprite: {fileID: 21300000, guid: f045d66d48b1d91439ebbface65918d9, type: 3}
+  frameSprite: {fileID: 0}
+  badgeSprite: {fileID: 0}
+  labelSprite: {fileID: 0}
+  robotSelection: {fileID: 0}

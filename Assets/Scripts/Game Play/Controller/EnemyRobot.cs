@@ -1,29 +1,33 @@
 using System.Collections;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RobotEffects : MonoBehaviour
+public class EnemyRobot : MonoBehaviour
 {
     public GameObject Crossair;
     public GameObject HitEffect;
-    public Image EnemyRobot;
+    public Image robotImage;
+    public Slider hpSlider;
+    public TextMeshProUGUI hpText;
 
     private bool damageAnimationIsRunning = false;
-
-    Image robotImage;
+    private int maxHp;
     
     void Start()
     {
-        robotImage = GetComponent<Image>();
 
         HitEffect.SetActive(false);
         Crossair.SetActive(false);
 
         Crossair.transform.localScale = Vector3.one;
-        robotImage.DOFade(1f, 0f);
-        robotImage.transform.DOScale(1f, 0f);
         damageAnimationIsRunning = false;
+    }
+
+    private void SetHpText(int value, int max)
+    {
+        hpText.text = value + " / " + max;
     }
 
     public virtual void Damage()
@@ -41,32 +45,19 @@ public class RobotEffects : MonoBehaviour
         hitObject.SetActive(true);
         Destroy(hitObject, 2);
 
-        robotImage.CrossFadeColor(Color.red, 0.35f, false, false);
         yield return new WaitForSeconds(0.35f);
-        robotImage.CrossFadeColor(Color.white, 0.35f, false, false);
         damageAnimationIsRunning = false;
-    }
-
-    public void FadeOut()
-    {
-        robotImage.DOFade(0f, 0.33f);
-    }
-
-    public void FadeIn()
-    {
-        robotImage.DOFade(1f, 0.33f);
     }
 
     public virtual void Die()
     {
+        SetHpTo(0);
         StartCoroutine(DieEffect());
     }
 
     IEnumerator DieEffect()
     {
         Crossair.transform.DOScale(0, 0.3f);
-        robotImage.DOFade(0.35f, 0.5f);
-        robotImage.transform.DOScale(0.9f, 0.5f);
 
         yield return new WaitForSeconds(0.3f);
 
@@ -86,21 +77,25 @@ public class RobotEffects : MonoBehaviour
     internal virtual void Initialize()
     {
         Crossair.transform.localScale = Vector3.one;
-        robotImage = GetComponent<Image>();
-        if (robotImage != null)
-        {
-            robotImage.DOFade(1f, 0f);
-            robotImage.transform.DOScale(1f, 0f);
-        }
-    }
-
-    public void SetRobotImage(Sprite sprite)
-    {
-        robotImage.sprite = sprite;
     }
 
     public void SetEnemyRobotImage(Sprite sprite)
     {
-        EnemyRobot.sprite = sprite;
+        robotImage.sprite = sprite;
+    }
+    
+    public void SetMaxHpTo(int hp)
+    {
+        this.maxHp = hp;
+        hpSlider.minValue = 0;
+        hpSlider.maxValue = hp;
+        hpSlider.value = hp;
+        SetHpText(hp,hp);
+    }
+    
+    public void SetHpTo(int currentHp)
+    {
+        hpSlider.DOValue(currentHp,0.33f);
+        SetHpText(currentHp, maxHp);
     }
 }

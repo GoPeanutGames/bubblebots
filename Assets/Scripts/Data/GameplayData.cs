@@ -14,6 +14,6 @@ namespace BubbleBots.Data
         [Header("Player robot settings")]
         public List<BubbleBotData> robotsAvailable;
         [Header("Enemy robot settings")]
-        public List<EnemyRobot> enemyRobots;
+        public List<BubbleBotData> enemyRobots;
     }
  }

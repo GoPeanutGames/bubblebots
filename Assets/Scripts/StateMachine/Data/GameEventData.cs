@@ -1,5 +1,5 @@
-using BubbleBots.Gameplay.Models;
 using System.Collections.Generic;
+using BubbleBots.Gameplay.Models;
 
 public class GameEventData
 {
@@ -21,7 +21,6 @@ public class GameEventInt : GameEventData
     public int intData;
 }
 
-
 public class GameEventLevelStart : GameEventData
 {
     public List<BubbleBot> enemies;
@@ -42,17 +41,20 @@ public class GameEventNetherModeComplete : GameEventData
 
 public class GameEventEnemyRobotDamage : GameEventData
 {
+    public int index;
     public int enemyRobotNewHp;
 }
 
 public class GameEventPlayerRobotKilled : GameEventData
 {
     public int id; // as in order in list for ui. needs refactoring
+    public int enemyIndex; // as in order in list for ui. needs refactoring
 }
 
 public class GameEventPlayerRobotDamage : GameEventData
 {
     public int id; // as in order in list for ui. needs refactoring
+    public int enemyIndex; // as in order in list for ui. needs refactoring
     public int damage;
 }
 

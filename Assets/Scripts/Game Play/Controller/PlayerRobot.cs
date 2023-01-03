@@ -1,29 +1,32 @@
 using System.Collections;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class RobotEffects : MonoBehaviour
+public class PlayerRobot : MonoBehaviour
 {
-    public GameObject Crossair;
     public GameObject HitEffect;
-    public Image EnemyRobot;
+    public Slider hpSlider;
+    public TextMeshProUGUI hpText;
 
     private bool damageAnimationIsRunning = false;
 
-    Image robotImage;
-    
+    private Image robotImage;
+    private int maxHp;
+
     void Start()
     {
         robotImage = GetComponent<Image>();
-
         HitEffect.SetActive(false);
-        Crossair.SetActive(false);
-
-        Crossair.transform.localScale = Vector3.one;
         robotImage.DOFade(1f, 0f);
         robotImage.transform.DOScale(1f, 0f);
         damageAnimationIsRunning = false;
+    }
+
+    private void SetHpText(int value, int max)
+    {
+        hpText.text = value + " / " + max;
     }
 
     public virtual void Damage()
@@ -59,33 +62,20 @@ public class RobotEffects : MonoBehaviour
 
     public virtual void Die()
     {
+        hpSlider.DOValue(0, 0.33f);
+        SetHpText(0, maxHp);
         StartCoroutine(DieEffect());
     }
 
     IEnumerator DieEffect()
     {
-        Crossair.transform.DOScale(0, 0.3f);
         robotImage.DOFade(0.35f, 0.5f);
         robotImage.transform.DOScale(0.9f, 0.5f);
-
-        yield return new WaitForSeconds(0.3f);
-
-        Crossair.SetActive(false);
-    }
-
-    public void SetTarget()
-    {
-        Crossair.SetActive(true);
-    }
-
-    public void ClearTarget()
-    {
-        Crossair.SetActive(false);
+        yield return null;
     }
 
     internal virtual void Initialize()
     {
-        Crossair.transform.localScale = Vector3.one;
         robotImage = GetComponent<Image>();
         if (robotImage != null)
         {
@@ -99,8 +89,18 @@ public class RobotEffects : MonoBehaviour
         robotImage.sprite = sprite;
     }
 
-    public void SetEnemyRobotImage(Sprite sprite)
+    public void SetMaxHpTo(int hp)
     {
-        EnemyRobot.sprite = sprite;
+        this.maxHp = hp;
+        hpSlider.minValue = 0;
+        hpSlider.maxValue = hp;
+        hpSlider.value = hp;
+        SetHpText(hp, hp);
+    }
+
+    public void DecreaseHpBy(int damage)
+    {
+        hpSlider.DOValue(maxHp - damage, 0.33f);
+        SetHpText(maxHp - damage, maxHp);
     }
 }

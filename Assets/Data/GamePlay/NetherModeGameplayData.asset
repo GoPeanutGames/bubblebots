@@ -26,21 +26,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e56b7cb2d6b55b6438dee25bd57e2d1c, type: 2}
   - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
   enemyRobots:
-  - robot: {fileID: 11400000, guid: c5d3c7bf2b4d7a24f88b1d9b45f2961e, type: 2}
-    position: 0
-  - robot: {fileID: 11400000, guid: 7876ec073967a774f808878c371e60e2, type: 2}
-    position: 1
-  - robot: {fileID: 11400000, guid: 41d28e19a1153834589d424feff10faf, type: 2}
-    position: 2
-  - robot: {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
-    position: 0
-  - robot: {fileID: 11400000, guid: 73aab45eb8bb10940b4170e8a9130db2, type: 2}
-    position: 1
-  - robot: {fileID: 11400000, guid: c42d1a7588658c3489f740923306f36e, type: 2}
-    position: 2
-  - robot: {fileID: 11400000, guid: 17ec5d13caa88014f9c1e52f7238c6cd, type: 2}
-    position: 0
-  - robot: {fileID: 11400000, guid: cd493d55ca450204a92882dfda4394c6, type: 2}
-    position: 1
-  - robot: {fileID: 11400000, guid: 73aab45eb8bb10940b4170e8a9130db2, type: 2}
-    position: 2
+  - {fileID: 11400000, guid: c5d3c7bf2b4d7a24f88b1d9b45f2961e, type: 2}
+  - {fileID: 11400000, guid: 7876ec073967a774f808878c371e60e2, type: 2}
+  - {fileID: 11400000, guid: 41d28e19a1153834589d424feff10faf, type: 2}
+  - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
+  - {fileID: 11400000, guid: 73aab45eb8bb10940b4170e8a9130db2, type: 2}
+  - {fileID: 11400000, guid: c42d1a7588658c3489f740923306f36e, type: 2}
+  - {fileID: 11400000, guid: 17ec5d13caa88014f9c1e52f7238c6cd, type: 2}
+  - {fileID: 11400000, guid: cd493d55ca450204a92882dfda4394c6, type: 2}
+  - {fileID: 11400000, guid: 518c6c793442f8a47a2306fe3adcd968, type: 2}

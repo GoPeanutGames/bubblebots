@@ -2,8 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using BubbleBots.Data;
-using BubbleBots.Gameplay.Models;
 using BubbleBots.Match3.Data;
 using BubbleBots.Match3.Models;
 using DG.Tweening;
@@ -20,7 +18,6 @@ public class GUIGame : MonoBehaviour
     public float SwapDuration = 0.33f;
     public float SpecialSwapDuration = 0.33f;
     public float DefaultSwapDuration = 0.33f;
-    public RobotEffects[] EnemyRobots;
     public Slider[] EnemyGauges;
     public RobotEffects[] PlayerRobots;
     public Slider[] PlayerGauges;
@@ -31,13 +28,8 @@ public class GUIGame : MonoBehaviour
     public TextMeshProUGUI TxtKilledRobots;
     public Sprite[] RobotSprites;
     public Sprite[] EnemySprites;
-    //public Transform WinDialogImage;
-    //public GUIMenu Menu;
 
-
-    //public TextMeshProUGUI bubblesScore;
     public TextMeshProUGUI unclaimedBubblesScore;
-    //public Image unclaimedBubblesImage;
 
     public GameObject bubblesTextPrefab;
     public GameObject bubblesImagePrefab;
@@ -55,70 +47,6 @@ public class GUIGame : MonoBehaviour
     [DllImport("__Internal")]
     private static extern void DisplayHelp();
 
-    public void KillPlayerRobot(int id)
-    {
-        PlayerGauges[id].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = "0 / " + PlayerGauges[id].maxValue;
-        PlayerGauges[id].DOValue(0, SwapDuration);
-        PlayerRobots[id].Die();
-
-        GameObject bullet = Instantiate(VFXManager.Instance.enemyBullets[currentEnemy], VFXManager.Instance.enemyBullets[currentEnemy].transform.parent);
-        bullet.transform.position = VFXManager.Instance.enemyBullets[currentEnemy].transform.position;
-        bullet.gameObject.SetActive(true);
-        bullet.transform.DOMove(new Vector3(PlayerRobots[id].transform.position.x, PlayerRobots[id].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
-        StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, id));
-    }
-
-    public void DamagePlayerRobot(int id, int damage)
-    {
-        PlayerGauges[id].DOValue(PlayerGauges[id].value - damage, SwapDuration);
-        PlayerGauges[id].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, PlayerGauges[id].value - damage) + " / " + PlayerGauges[id].maxValue;
-
-        GameObject bullet = Instantiate(VFXManager.Instance.enemyBullets[currentEnemy], VFXManager.Instance.enemyBullets[currentEnemy].transform.parent);
-        bullet.transform.position = EnemyRobots[currentEnemy].transform.position;
-        bullet.gameObject.SetActive(true);
-        bullet.transform.DOMove(new Vector3(PlayerRobots[id].transform.position.x, PlayerRobots[id].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
-        StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, id));
-    }
-
-    public void DisplayLose(int score)
-    {
-        //WinDialogImage.gameObject.SetActive(true);
-        //Transform imgWin = WinDialogImage.transform.Find("ImgWin");
-        //Transform imgLose = WinDialogImage.transform.Find("ImgLose");
-        //Transform btnContinue = WinDialogImage.transform.Find("BtnContinue");
-        //btnContinue.gameObject.SetActive(false);
-        //imgWin.gameObject.SetActive(false);
-        //imgLose.gameObject.SetActive(true);
-        //imgLose.transform.Find("TxtMyScore").GetComponent<TextMeshProUGUI>().text = score.ToString();
-
-        //imgLose.transform.localScale = Vector3.zero;
-        //imgLose.transform.DOScale(Vector3.one, 0.5f);
-    }
-
-    IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy, int id)
-    {
-        yield return new WaitForSeconds(timeToHide);
-        PlayerRobots[id].Damage();
-
-        target.SetActive(false);
-
-        yield return new WaitForSeconds(timeToDestroy);
-
-        Destroy(target);
-    }
-
-    public void DamageToEnemyRobot(float enemyHp)
-    {
-        if(currentEnemy >= EnemyGauges.Length)
-        {
-            return;
-        }
-
-        EnemyGauges[currentEnemy].DOValue(Mathf.Max(0, enemyHp), SwapDuration);
-        EnemyRobots[currentEnemy].Damage();
-        EnemyGauges[currentEnemy].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = Mathf.Max(0, enemyHp) + " / " + EnemyGauges[currentEnemy].maxValue;
-    }
-
     public void UpdateScore(int currentScore)
     {
         TxtScore.text = currentScore.ToString().PadLeft(6, '0');
@@ -127,44 +55,6 @@ public class GUIGame : MonoBehaviour
     public void KillEnemy()
     {
         TxtKilledRobots.text = UserManager.RobotsKilled.ToString();
-        EnemyGauges[currentEnemy].DOValue(0, SwapDuration);
-        EnemyRobots[currentEnemy].Die();
-    }
-
-    public void SetPlayerRobots(PlayerRoster roster)
-    {
-        for (int g = 0; g < PlayerGauges.Length; g++)
-        {
-            PlayerGauges[g].maxValue = roster.bots[g].maxHp;
-            PlayerGauges[g].value = roster.bots[g].hp;
-            PlayerGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = PlayerGauges[g].value + " / " + PlayerGauges[g].maxValue;
-            PlayerRobots[g].Initialize();
-        }
-
-        for (int i = 0; i < PlayerRobots.Length; ++i)
-        {
-            PlayerRobots[i].SetRobotImage(roster.bots[i].bubbleBotData.robotSelection);
-        }
-    }
-
-    public void SetEnemyRobotImages(List<EnemyRobot> enemyRobots)
-    {
-        foreach (EnemyRobot enemyRobot in enemyRobots)
-        {
-            Debug.Log(enemyRobot.robot.asEnemySprite.name);
-            EnemyRobots[(int)enemyRobot.position].SetEnemyRobotImage(enemyRobot.robot.asEnemySprite);
-        }
-    }
-
-    public void SetRobotGauges(List<BubbleBot> bots)
-    {
-        for (int g = 0; g < EnemyGauges.Length; g++)
-        {
-            EnemyGauges[g].maxValue = bots[g].hp;
-            EnemyGauges[g].minValue = 0;
-            EnemyGauges[g].value = bots[g].hp;
-            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = bots[g].hp + " / " + bots[g].hp;
-        }
     }
 
     public void TargetEnemy(int currentEnemy)
@@ -178,7 +68,7 @@ public class GUIGame : MonoBehaviour
         {
             return;
         }
-
+        
         if(EnemyGauges[currentEnemy].value <= 0)
         {
             return;
@@ -189,33 +79,25 @@ public class GUIGame : MonoBehaviour
         FindObjectOfType<FreeToPlayGameplayManager>()?.TargetEnemy(currentEnemy);
         FindObjectOfType<NetherModeGameplayManager>()?.TargetEnemy(currentEnemy);
 
-        for (int r = 0; r < EnemyRobots.Length; r++)
-        {
-            if (r == currentEnemy)
-            {
-                EnemyRobots[r].SetTarget();
-            } else
-            {
-                EnemyRobots[r].ClearTarget();
-            }
-        }
-    }
-
-    internal void InitializeEnemyRobots()
-    {
-        for (int i = 0; i < EnemyRobots.Length; i++)
-        {
-            EnemyRobots[i].Initialize();
-        }
+        // for (int r = 0; r < EnemyRobots.Length; r++)
+        // {
+        //     if (r == currentEnemy)
+        //     {
+        //         EnemyRobots[r].SetTarget();
+        //     } else
+        //     {
+        //         EnemyRobots[r].ClearTarget();
+        //     }
+        // }
     }
 
     public void RenderLevelBackground(int levelWidth, int levelHeight)
     {
-        for (int g = 0; g < EnemyGauges.Length; g++)
-        {
-            EnemyGauges[g].value = EnemyGauges[g].maxValue;
-            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue + " / " + EnemyGauges[g].maxValue;
-        }
+        // for (int g = 0; g < EnemyGauges.Length; g++)
+        // {
+        //     EnemyGauges[g].value = EnemyGauges[g].maxValue;
+        //     EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue + " / " + EnemyGauges[g].maxValue;
+        // }
 
         // remove the old ones
         //wtf
@@ -784,41 +666,6 @@ public class GUIGame : MonoBehaviour
         dimage.gameObject.SetActive(false);
     }
 
-    public void StartNextWave()
-    {
-        LockTiles("L0");
-
-        StartCoroutine(SwapWaves());
-    }
-
-    IEnumerator SwapWaves()
-    {
-        for (int i = 0; i < EnemyRobots.Length; i++)
-        {
-            EnemyRobots[i].FadeOut();// GetComponent<Image>().DOFade(0, 0.3f).SetEase(Ease.Linear);
-        }
-
-        yield return new WaitForSeconds(0.67f);
-
-        RenewEnemyRobots();
-        for (int g = 0; g < EnemyGauges.Length; g++)
-        {
-            EnemyGauges[g].value = EnemyGauges[g].maxValue;
-            EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue.ToString("N0") + " / " + EnemyGauges[g].maxValue.ToString("N0");
-        }
-
-        for (int i = 0; i < EnemyRobots.Length; i++)
-        {
-            EnemyRobots[i].FadeIn(); // GetComponent<Image>().DOFade(1, 0.3f).SetEase(Ease.Linear);
-        }
-
-        yield return new WaitForSeconds(0.3f);
-
-        CanSwapTiles = true;
-        currentEnemy = 0;
-        TargetEnemy(currentEnemy);
-    }
-
     public void SetRobots(int robot1, int robot2, int robot3)
     {
         transform.Find("ImgPlayerRobot1").GetComponent<Image>().sprite = RobotSprites[robot1];
@@ -884,23 +731,23 @@ public class GUIGame : MonoBehaviour
 
     public void RenewEnemyRobots()
     {
-        int robot1 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        int robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        int robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
-
-        while (robot2 == robot1)
-        {
-            robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        }
-
-        while (robot3 == robot1 || robot3 == robot2)
-        {
-            robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        }
-
-        EnemyRobots[0].gameObject.GetComponent<Image>().sprite = EnemySprites[robot1];
-        EnemyRobots[1].gameObject.GetComponent<Image>().sprite = EnemySprites[robot2];
-        EnemyRobots[2].gameObject.GetComponent<Image>().sprite = EnemySprites[robot3];
+        // int robot1 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        // int robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        // int robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        //
+        // while (robot2 == robot1)
+        // {
+        //     robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        // }
+        //
+        // while (robot3 == robot1 || robot3 == robot2)
+        // {
+        //     robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
+        // }
+        //
+        // EnemyRobots[0].gameObject.GetComponent<Image>().sprite = EnemySprites[robot1];
+        // EnemyRobots[1].gameObject.GetComponent<Image>().sprite = EnemySprites[robot2];
+        // EnemyRobots[2].gameObject.GetComponent<Image>().sprite = EnemySprites[robot3];
     }
 
     public void DisplayHelpButton()

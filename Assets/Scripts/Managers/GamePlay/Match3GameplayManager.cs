@@ -1,9 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
 using BubbleBots.Data;
 using BubbleBots.Match3.Controllers;
 using BubbleBots.Match3.Data;
 using BubbleBots.Match3.Models;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public interface IMatch3Events
@@ -116,7 +116,6 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
     private void RenderStartLevel()
     {
         GameGUI.RenderLevelBackground(boardController.GetBoardModel().width, boardController.GetBoardModel().height);
-        GameGUI.InitializeEnemyRobots();
         GameGUI.RenderTiles(boardController.GetBoardModel(), levelData);
     }
 
