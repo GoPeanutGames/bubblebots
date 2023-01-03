@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
 using BubbleBots.Match3.Data;
 using BubbleBots.Match3.Models;
@@ -143,6 +144,15 @@ public class GUIGame : MonoBehaviour
         for (int i = 0; i < PlayerRobots.Length; ++i)
         {
             PlayerRobots[i].SetRobotImage(roster.bots[i].bubbleBotData.robotSelection);
+        }
+    }
+
+    public void SetEnemyRobotImages(List<EnemyRobot> enemyRobots)
+    {
+        foreach (EnemyRobot enemyRobot in enemyRobots)
+        {
+            Debug.Log(enemyRobot.robot.asEnemySprite.name);
+            EnemyRobots[(int)enemyRobot.position].SetEnemyRobotImage(enemyRobot.robot.asEnemySprite);
         }
     }
 

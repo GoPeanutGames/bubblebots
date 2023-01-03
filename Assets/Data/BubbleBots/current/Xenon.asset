@@ -16,6 +16,7 @@ MonoBehaviour:
   botName: Xenon
   bgSprite: {fileID: 21300000, guid: 56b6b9fa9f406fd49925c19ab9e42289, type: 3}
   robotSprite: {fileID: 21300000, guid: 2003f7a4791019c4a8115573c4a04c2e, type: 3}
+  asEnemySprite: {fileID: 21300000, guid: 51119cf31d33b7841a86ac719b4baf9b, type: 3}
   frameSprite: {fileID: 21300000, guid: c274edd08c43c17448883e4b529ce470, type: 3}
   badgeSprite: {fileID: 21300000, guid: 8704189ec375d744eab93975ac2c963c, type: 3}
   labelSprite: {fileID: 21300000, guid: ab3a153e23816274db3a1174c92f3440, type: 3}

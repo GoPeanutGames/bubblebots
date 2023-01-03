@@ -169,6 +169,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         currentWaveIndex = 0;
         currentEnemy = 0;
+        //todo: free mode enemies
         currentWave = new Wave()
         {
             bots = new List<BubbleBot>()

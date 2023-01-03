@@ -670,6 +670,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Crossair: {fileID: 4163178043880437857}
   HitEffect: {fileID: 6781989968857219194}
+  EnemyRobot: {fileID: 0}
 --- !u!1 &6781989968026591195
 GameObject:
   m_ObjectHideFlags: 0
@@ -1052,6 +1053,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Crossair: {fileID: 4163178043880437857}
   HitEffect: {fileID: 6781989969443313475}
+  EnemyRobot: {fileID: 0}
 --- !u!1 &6781989968137759588
 GameObject:
   m_ObjectHideFlags: 0
@@ -2339,6 +2341,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Crossair: {fileID: 4163178043880437857}
   HitEffect: {fileID: 6781989968777664082}
+  EnemyRobot: {fileID: 2601682996839862814}
 --- !u!114 &6781989968466881336
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2586,7 +2589,7 @@ RectTransform:
   - {fileID: 6781989968881579566}
   - {fileID: 3295839501072583052}
   m_Father: {fileID: 6781989969909539729}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.66749597, y: 0.6886422}
   m_AnchorMax: {x: 1, y: 0.882638}
@@ -2645,6 +2648,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Crossair: {fileID: 6016874509951814166}
   HitEffect: {fileID: 6781989968551944109}
+  EnemyRobot: {fileID: 7874989202579812425}
 --- !u!114 &6781989968598352054
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4363,6 +4367,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Crossair: {fileID: 4163178043880437857}
   HitEffect: {fileID: 6781989969687347581}
+  EnemyRobot: {fileID: 0}
 --- !u!1 &6781989969440468355
 GameObject:
   m_ObjectHideFlags: 0
@@ -5438,7 +5443,7 @@ RectTransform:
   - {fileID: 6781989968173177144}
   - {fileID: 3295839500429179395}
   m_Father: {fileID: 6781989969909539729}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.33900002, y: 0.74031967}
   m_AnchorMax: {x: 0.66749597, y: 0.94251984}
@@ -5497,6 +5502,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Crossair: {fileID: 6016874509253884313}
   HitEffect: {fileID: 6781989968869940926}
+  EnemyRobot: {fileID: 2847084882810256112}
 --- !u!114 &6781989969805709607
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5715,8 +5721,8 @@ RectTransform:
   - {fileID: 6781989967989943894}
   - {fileID: 6781989968091075746}
   - {fileID: 6781989968466881340}
-  - {fileID: 6781989968598352058}
   - {fileID: 6781989969805709611}
+  - {fileID: 6781989968598352058}
   - {fileID: 2613342217219819997}
   - {fileID: 6763455058889801603}
   - {fileID: 6781989968936682301}
@@ -5803,12 +5809,12 @@ MonoBehaviour:
   DefaultSwapDuration: 0.26
   EnemyRobots:
   - {fileID: 6781989968466881343}
-  - {fileID: 6781989968598352053}
   - {fileID: 6781989969805709606}
+  - {fileID: 6781989968598352053}
   EnemyGauges:
   - {fileID: 6781989968654076891}
-  - {fileID: 6781989968657889342}
   - {fileID: 6781989968669505150}
+  - {fileID: 6781989968657889342}
   PlayerRobots:
   - {fileID: 6781989969430410194}
   - {fileID: 6781989967989943889}

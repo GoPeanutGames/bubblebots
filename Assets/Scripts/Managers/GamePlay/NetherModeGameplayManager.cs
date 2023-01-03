@@ -1,9 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
 using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
 using BubbleBots.Modes;
 using CodeStage.AntiCheat.ObscuredTypes;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NethermodeSessionData
@@ -159,6 +159,7 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         currentWaveIndex = 0;
         currentEnemy = 0;
+        //tODO: ovdje su enemies
         currentWave = new Wave()
         {
             bots = new List<BubbleBot>()
@@ -170,9 +171,6 @@ public class NetherModeGameplayManager : MonoBehaviour
             completed = false
         };
 
-        //GameGUI.gameObject.SetActive(true);
-        //MenuGUI.gameObject.SetActive(false);
-
         AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex + 1);
         serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);
 
@@ -181,8 +179,8 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         FindObjectOfType<GUIGame>().SetRobotGauges(currentWave.bots);
         FindObjectOfType<GUIGame>().SetPlayerRobots(playerRoster);
-        //GameGUI.SetPlayerRobots(playerRoster);
-
+        int startIndex = 3 * currentLevelIndex;
+        FindObjectOfType<GUIGame>().SetEnemyRobotImages(gameplayData.enemyRobots.GetRange(startIndex, 3));
 
         gameplayState = NethermodeGameplayState.ShowingLevelText;
     }
