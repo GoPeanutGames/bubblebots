@@ -11,6 +11,7 @@ public static class GameEvents
     //JSLIB events
     public const string MetamaskSuccess = "matamask.login.success";
     public const string SignatureSuccess = "metamask.signature.success";
+    public const string NickNameChangedForMobile = "nickname.mobile.changed";
 
 
     //gameplay

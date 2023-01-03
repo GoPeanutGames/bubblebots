@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c955b5fd4038bae42ad0c75853757942, type: 3}
   m_Name: Gears
   m_EditorClassIdentifier: 
-  id: 2
+  id: 5
   botName: Gears
-  sprite: {fileID: 21300000, guid: ab9f3689a9d8568448dfd7231ffb6ccb, type: 3}
-  frameSprite: {fileID: 21300000, guid: 58d609aa4b056b742ad01b65d1dcc9cf, type: 3}
-  robotSelection: {fileID: 21300000, guid: b05af4f549b171d46bcc80bcf682ef0e, type: 3}
+  bgSprite: {fileID: 21300000, guid: 0b00e865c6b296844a9cc4fbdf3446f6, type: 3}
+  robotSprite: {fileID: 21300000, guid: ab9f3689a9d8568448dfd7231ffb6ccb, type: 3}
+  frameSprite: {fileID: 21300000, guid: b6fc607832eae134aac982d416512dbb, type: 3}
+  badgeSprite: {fileID: 21300000, guid: f230fd3e4c3fc554fb656c5c69a28f8a, type: 3}
   labelSprite: {fileID: 21300000, guid: 384b3717c8a71de4a8613c036b33eadc, type: 3}
+  robotSelection: {fileID: 21300000, guid: b05af4f549b171d46bcc80bcf682ef0e, type: 3}

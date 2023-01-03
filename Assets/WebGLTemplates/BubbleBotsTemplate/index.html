@@ -4,7 +4,10 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="icon" href="https://peanutgames.com/assets/favicon.ico" />
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
+    <script
+      src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
+      type="application/javascript"
+    ></script>
     <link
       rel="shortcut icon"
       href="https://peanutgames.com/assets/favicon.ico"
@@ -111,6 +114,86 @@
         padding: 10px;
         display: none;
       }
+
+      @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600&display=swap");
+
+      #popup {
+        display: none;
+      }
+      .popup-container {
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        background-color: rgb(96 95 127 / 70%);
+        position: absolute;
+        top: 0;
+        left: 0;
+      }
+      .popup {
+        background-color: #ffffff;
+        padding: 20px 30px;
+        width: 50%;
+        border-radius: 15px;
+      }
+      .close-popup {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .close-popup a {
+        font-size: 1.2rem;
+        background-color: rebeccapurple;
+        color: #fff;
+        padding: 5px 10px;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 10px;
+        display: inline-block;
+      }
+      .popup > h2 {
+        font-size: 1.6rem;
+        margin-bottom: 10px;
+        font-family: "Poppins", sans-serif;
+      }
+      .popup .head {
+        font-size: 1.2rem;
+        font-family: "Poppins", sans-serif;
+        margin-bottom: 10px;
+        display: block;
+        justify-content: space-between;
+        align-items: center;
+        display: flex;
+      }
+
+      .popup input {
+        font-size: 18px;
+        font-family: "Poppins", sans-serif;
+        margin-bottom: 10px;
+        display: flex;
+        border: none;
+        box-shadow: 1px 1px 5px 1px rgb(0 0 0 / 50%);
+        border-radius: 20px;
+        align-self: center;
+        padding: 10px;
+        width: 90%;
+      }
+
+      .popup-btn {
+        display: inline-block;
+        text-decoration: none;
+        border: 2px solid rebeccapurple;
+        padding: 5px 15px;
+        border-radius: 20px;
+        margin: 10px 0px;
+        transition: 0.2s all ease-in;
+        font-family: "Poppins", sans-serif;
+      }
+      .popup-btn:hover {
+        background-color: rebeccapurple;
+        color: #fff;
+      }
     </style>
     <!-- Google tag (gtag.js) -->
     <script
@@ -131,6 +214,7 @@
         </div>
       </div>
     </div>
+    <div id="popup"></div>
 
     <!--<canvas id="bbots-canvas" style="width: 100%; height: 100%; background: #231F20;background-size:100% auto"></canvas>-->
     <script src="Build/WebGL.loader.js"></script>

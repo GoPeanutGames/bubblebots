@@ -3,6 +3,7 @@ using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using UnityEngine;
 using WalletConnectSharp.Core.Models;
+using WalletConnectSharp.Core.Models.Ethereum;
 using WalletConnectSharp.Unity;
 
 public class GameStateLogin : GameState
@@ -17,7 +18,7 @@ public class GameStateLogin : GameState
     }
 
     [DllImport("__Internal")]
-    private static extern void Login();
+    private static extern void Login(bool isDev);
 
     [DllImport("__Internal")]
     private static extern void RequestSignature(string schema, string address);
@@ -39,7 +40,20 @@ public class GameStateLogin : GameState
         string signature = UserManager.Instance.GetPlayerSignature();
         if (string.IsNullOrEmpty(address) == false && string.IsNullOrEmpty(signature) == false)
         {
-            StartLogin(address, signature);
+            PostWeb3Login web3LoginData = new PostWeb3Login()
+            {
+                address = address,
+                signature = signature
+            };
+            string data = JsonUtility.ToJson(web3LoginData);
+            ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Web3LoginCheck, data, (res) =>
+            {
+                ResponseWeb3Login loginResponse = JsonUtility.FromJson<ResponseWeb3Login>(res);
+                if (loginResponse.status)
+                {
+                    StartLogin(address, signature);
+                }
+            });
         }
     }
 
@@ -80,7 +94,6 @@ public class GameStateLogin : GameState
                 //UserManager.PlayerType = PlayerType.LoggedInUser;
                 AnalyticsManager.Instance.InitAnalyticsGuest();
 #else
-        
                 PlayAsGuest();
 #endif
 
@@ -107,7 +120,8 @@ public class GameStateLogin : GameState
     {
         if (Application.isMobilePlatform == false)
         {
-            Login();
+            bool isDev = EnvironmentManager.Instance.IsDevelopment();
+            Login(isDev);
         }
         else
         {
@@ -125,10 +139,18 @@ public class GameStateLogin : GameState
 
     private async void RequestSignatureFromMetamask(string schema)
     {
+        GetLoginSchema loginSchema = JsonUtility.FromJson<GetLoginSchema>(schema);
         if (Application.isMobilePlatform)
         {
-            EIP712Domain domain = new EIP712Domain("BubbleBot Game Access", "1", 1, "0x0000000000000000000000000000000000000000");
-            string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, schema, domain);
+            EthChainData chainData =  EnvironmentManager.Instance.IsDevelopment() ? MetamaskManager.mumbaiChain : MetamaskManager.polygonChain;
+            await WalletConnect.ActiveSession.WalletAddEthChain(chainData);
+            EthChain chainId = new EthChain() { chainId = chainData.chainId };
+            await WalletConnect.ActiveSession.WalletSwitchEthChain(chainId);
+
+            string signature = await MetamaskManager.EthSignForMobile(WalletConnect.ActiveSession, tempAddress, schema);
+
+            //EIP712Domain domain = new EIP712Domain(loginSchema.domain.name, loginSchema.domain.version.ToString(), loginSchema.domain.chainId, loginSchema.domain.verifyingContract);
+            //string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, loginSchema.message, domain);
             SignatureLoginSuccess(signature);
         }
         else

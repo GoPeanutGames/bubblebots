@@ -105,6 +105,7 @@ public class Screens : MonoSingleton<Screens>
         {
             screenLocationParents = screenLocationParentsMobile;
             desktopCanvas.SetActive(false);
+            mobileCanvas.SetActive(true);
             RectTransform rTransformUI = mobileCanvas.GetComponent<RectTransform>();
             rTransformUI.anchorMax = new Vector2(1, 1);
             rTransformUI.anchorMin = new Vector2(0, 0);

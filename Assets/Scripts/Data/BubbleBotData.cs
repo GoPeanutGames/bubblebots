@@ -7,10 +7,12 @@ namespace BubbleBots.Data
     {
         public int id;
         public string botName;
-        public Sprite sprite;
+        public Sprite bgSprite;
+        public Sprite robotSprite;
         public Sprite frameSprite;
+        public Sprite badgeSprite;
+        public Sprite labelSprite;
 
         public Sprite robotSelection;
-        public Sprite labelSprite;
     }
 }
