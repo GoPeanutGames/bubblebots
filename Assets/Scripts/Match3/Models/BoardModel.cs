@@ -271,24 +271,73 @@ namespace BubbleBots.Match3.Models
             return gemMoves;
         }
 
-        public List<Vector2Int> BombBlast(int posX, int posY)
+        public List<Vector2Int> BombBlast(int posX, int posY, int bombRadius = 1)
         {
             List<Vector2Int> toExplode = new List<Vector2Int>();
-            for (int i = -1; i <= 1; ++i)
-                for (int j = -1; j <= 1; ++j)
-                {
-                    if (!BoundaryTest(posX + i, posY + j))
-                    {
-                        continue;
-                    }
-                    if (cells[posX + i][posY + j].empty)
-                    {
-                        continue;
-                    }
-                    toExplode.Add(new Vector2Int(posX + i, posY + j));
-                    cells[posX + i][posY + j].empty = true;
 
+            if (bombRadius == 1)
+            {
+                for (int i = -1; i <= 1; ++i)
+                    for (int j = -1; j <= 1; ++j)
+                    {
+                        if (!BoundaryTest(posX + i, posY + j))
+                        {
+                            continue;
+                        }
+                        if (cells[posX + i][posY + j].empty)
+                        {
+                            continue;
+                        }
+                        toExplode.Add(new Vector2Int(posX + i, posY + j));
+                        cells[posX + i][posY + j].empty = true;
+                    }
+            } 
+            else if (bombRadius == 2)
+            {
+                List<List<Vector2Int>> possible4RadiusExplodes = new List<List<Vector2Int>>();
+                int maxIndex = 0;
+                int maxExplosionCount = -1;
+
+                //test all 4 possible explosion radiuses for max impact
+                
+                List<List<int>> offsets = new List<List<int>>()
+                {
+                    new List<int>() {-2, 1, -2, 1},
+                    new List<int>() {-2, 1, -1, 2},
+                    new List<int>() {-1, 2, -2, 1},
+                    new List<int>() {-1, 2, -1, 2}
+                };
+
+                for (int off = 0; off < offsets.Count; ++off)
+                {
+                    List<Vector2Int> shouldExplode = new List<Vector2Int>();
+                    for (int i = offsets[off][0]; i <= offsets[off][1]; ++i)
+                        for (int j = offsets[off][2]; j <= offsets[off][3]; ++j)
+                        {
+                            if (!BoundaryTest(posX + i, posY + j))
+                            {
+                                continue;
+                            }
+                            if (cells[posX + i][posY + j].empty)
+                            {
+                                continue;
+                            }
+                            shouldExplode.Add(new Vector2Int(posX + i, posY + j));
+                        }
+                    possible4RadiusExplodes.Add(shouldExplode);
+                    if (shouldExplode.Count > maxExplosionCount)
+                    {
+                        maxExplosionCount = shouldExplode.Count;
+                        maxIndex = off;
+                    }
                 }
+
+                for (int i = 0; i < possible4RadiusExplodes[maxIndex].Count; ++i)
+                {
+                    toExplode.Add(possible4RadiusExplodes[maxIndex][i]);
+                    cells[possible4RadiusExplodes[maxIndex][i].x][possible4RadiusExplodes[maxIndex][i].y].empty = true;
+                }
+            }
             return toExplode;
         }
 

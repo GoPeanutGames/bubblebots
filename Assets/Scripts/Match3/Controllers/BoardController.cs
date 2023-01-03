@@ -267,12 +267,13 @@ namespace BubbleBots.Match3.Controllers
             HashSet<ToExplode> toExplode = new HashSet<ToExplode>();
             string specialId = boardModel[explosion.position.x][explosion.position.y].gem.GetId();
             boardModel.DisableSpecialBug();
+
             switch (specialId)
             {
                 case "11": //bomb
                     Vector2Int bombPosition = explosion.position;
 
-                    List<Vector2Int> bombBlast = boardModel.BombBlast(bombPosition.x, bombPosition.y);
+                    List<Vector2Int> bombBlast = boardModel.BombBlast(bombPosition.x, bombPosition.y, explosion.bombRadius);
 
                     BombBlastEvent bombBlastEvent = new BombBlastEvent();
                     bombBlastEvent.toExplode = new List<Vector2Int>();
@@ -285,7 +286,7 @@ namespace BubbleBots.Match3.Controllers
                             toExplode.Add(new ToExplode()
                             {
                                 position = new Vector2Int(bombExplosion.x, bombExplosion.y),
-                                explosionSource = ToExplode.ExplosionSource.BombBlast
+                                explosionSource = ToExplode.ExplosionSource.BombBlast,
                             });
                             bombBlastEvent.toExplode.Add(bombExplosion);
                         }
@@ -326,7 +327,7 @@ namespace BubbleBots.Match3.Controllers
                             toExplode.Add(new ToExplode()
                             {
                                 position = new Vector2Int(outcome.x, outcome.y),
-                                explosionSource = lineBlast ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast
+                                explosionSource = lineBlast ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast,
                             });
                             explodeEvent.toExplode.Add(outcome);
                         }
@@ -354,8 +355,8 @@ namespace BubbleBots.Match3.Controllers
                             toExplode.Add(new ToExplode()
                             {
                                 position = new Vector2Int(hammerExplosion.x, hammerExplosion.y),
-                                explosionSource = ToExplode.ExplosionSource.HammerBlast
-                            });
+                                explosionSource = ToExplode.ExplosionSource.HammerBlast,
+                            }); 
                             hammerBlastEvent.toExplode.Add(hammerExplosion);
                         }
                     }
@@ -396,7 +397,7 @@ namespace BubbleBots.Match3.Controllers
                         toExplode.Add(new ToExplode()
                         {
                             position = new Vector2Int(item.x, item.y),
-                            explosionSource = ToExplode.ExplosionSource.ColorBlast
+                            explosionSource = ToExplode.ExplosionSource.ColorBlast,
                         });
                     }
                     ColorBlastEvent colorBlastEvent = new ColorBlastEvent();
@@ -797,7 +798,30 @@ namespace BubbleBots.Match3.Controllers
                 }
 
                 List<Vector2Int> exclusionList = new List<Vector2Int>();
+                if (specialId1 == "11" || specialId2 == "11") // bomb
+                {
+                    toExplode.UnionWith(ExplodeSpecial(ref swapResult, new ToExplode()
+                    {
+                        explosionSource = startX == releaseX ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast,
+                        position = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
+                        bombRadius = specialId1 == "11" ?  2 : 1
+                    }, exclusionList));
 
+                    Vector2Int bombPosition = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY);
+                    if (!exclusionList.Contains(bombPosition))
+                    {
+                        toExplode.Add(new ToExplode()
+                        {
+                            position = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
+                            explosionSource = ToExplode.ExplosionSource.Swap,
+                            bombRadius = specialId1 == "11" ? 2 : 1
+                        });
+                    }
+                    foreach (ToExplode outcome in toExplode)
+                    {
+                        exclusionList.Add(outcome.position);
+                    }
+                }
                 if (specialId1 == "9" || specialId2 == "9")
                 {
                     toExplode.UnionWith(ExplodeSpecial(ref swapResult, new ToExplode()
@@ -831,28 +855,6 @@ namespace BubbleBots.Match3.Controllers
                         toExplode.Add(new ToExplode()
                         {
                             position = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
-                            explosionSource = ToExplode.ExplosionSource.Swap
-                        });
-                    }
-                    foreach (ToExplode outcome in toExplode)
-                    {
-                        exclusionList.Add(outcome.position);
-                    }
-                }
-                if (specialId1 == "11" || specialId2 == "11")
-                {
-                    toExplode.UnionWith(ExplodeSpecial(ref swapResult, new ToExplode()
-                    {
-                        explosionSource = startX == releaseX ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast,
-                        position = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY)
-                    }, exclusionList));
-
-                    Vector2Int bombPosition = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY);
-                    if (!exclusionList.Contains(bombPosition))
-                    {
-                        toExplode.Add(new ToExplode()
-                        {
-                            position = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
                             explosionSource = ToExplode.ExplosionSource.Swap
                         });
                     }
@@ -970,4 +972,5 @@ public class ToExplode
     }
     public Vector2Int position;
     public ExplosionSource explosionSource;
+    public int bombRadius = 1;
 }
