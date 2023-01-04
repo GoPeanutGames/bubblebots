@@ -530,7 +530,7 @@ public class GUIGame : MonoBehaviour
         Destroy(colorExplosionEffect, 0.5f);
     }
 
-    public void ColorBombEffect(int x, int y, float duration = .2f)
+    public void ColorBombEffect(int x, int y, float duration = .2f, int numShakes = 3)
     {
         Transform tile = transform.Find("Tile_" + x + "_" + y);
 
@@ -544,14 +544,16 @@ public class GUIGame : MonoBehaviour
             }
         }
         Image tileImage = tile.GetComponent<Image>();
-        StartCoroutine(ShakeObject(tileImage, duration));
+        StartCoroutine(ShakeObject(tileImage, duration, numShakes));
     }
 
-    IEnumerator ShakeObject(Image tileImage, float duration)
+    IEnumerator ShakeObject(Image tileImage, float duration, int numShakes)
     {
-        for (int i = 0; i < 5; ++i)
+        for (int i = 0; i < numShakes; ++i)
         {
             tileImage.transform.DOScale(new Vector3(.9f, .9f, .9f), duration);
+            yield return new WaitForSeconds(duration + 0.01f);
+            tileImage.transform.DOScale(Vector3.one, duration);
             yield return new WaitForSeconds(duration + 0.01f);
         }
     }

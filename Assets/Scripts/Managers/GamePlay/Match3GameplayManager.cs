@@ -531,10 +531,10 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
                 //GameGUI.ColorBlastEffect(colorBlastEvent.colorBlastPosition.x, colorBlastEvent.colorBlastPosition.y);
                 for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
                 {
-                    GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, specialSpecialMatch ? 0.4f : 0.2f);
+                    GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, specialSpecialMatch ? 0.4f : 0.2f, 3);
                 }
                 SoundManager.Instance?.PlayColorSfx();
-                yield return new WaitForSeconds(5 * (specialSpecialMatch ? 0.4f : 0.2f) + 0.01f);
+                yield return new WaitForSeconds(6 * (specialSpecialMatch ? 0.4f : 0.2f) + 0.01f); // should fix and implement total duration and remove harcode,  duration  * 2 * numShakes 
             }
             //BoardBlastEvent boardBlastEvent = swapResult.explodeEvents[i] as BoardBlastEvent;
             //if (boardBlastEvent != null)

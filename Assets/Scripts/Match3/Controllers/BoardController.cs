@@ -339,10 +339,10 @@ namespace BubbleBots.Match3.Controllers
                     }
                     break;
                 case "12":
-                    int explosionRange = 1;
+                    
                     Vector2Int hammerPosition = explosion.position;
 
-                    List<Vector2Int> hammerBlast = boardModel.HammerBlast(hammerPosition.x, hammerPosition.y, explosionRange, explosionRange);
+                    List<Vector2Int> hammerBlast = boardModel.HammerBlast(hammerPosition.x, hammerPosition.y, explosion.hammerRadius, explosion.hammerRadius);
 
                     HammerBlastEvent hammerBlastEvent = new HammerBlastEvent();
                     hammerBlastEvent.toExplode = new List<Vector2Int>();
@@ -812,7 +812,7 @@ namespace BubbleBots.Match3.Controllers
                     {
                         toExplode.Add(new ToExplode()
                         {
-                            position = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
+                            position = bombPosition,
                             explosionSource = ToExplode.ExplosionSource.Swap,
                             bombRadius = specialId1 == "11" ? 2 : 1
                         });
@@ -842,10 +842,13 @@ namespace BubbleBots.Match3.Controllers
                 }
                 if (specialId1 == "12" || specialId2 == "12")
                 {
+                    bool lightningHammerMatch = (specialId1 == "12" && specialId2 == "9") || (specialId1 == "9" && specialId2 == "12");
+
                     toExplode.UnionWith(ExplodeSpecial(ref swapResult, new ToExplode()
                     {
                         explosionSource = startX == releaseX ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast,
-                        position = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY)
+                        position = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY), 
+                        hammerRadius = lightningHammerMatch ? 2 : 1 
                     }, exclusionList));
 
                     Vector2Int hammerPosition = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY);
@@ -854,8 +857,9 @@ namespace BubbleBots.Match3.Controllers
                     {
                         toExplode.Add(new ToExplode()
                         {
-                            position = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
-                            explosionSource = ToExplode.ExplosionSource.Swap
+                            position = hammerPosition,
+                            explosionSource = ToExplode.ExplosionSource.Swap,
+                            hammerRadius = lightningHammerMatch ? 2 : 1
                         });
                     }
                     foreach (ToExplode outcome in toExplode)
@@ -973,4 +977,5 @@ public class ToExplode
     public Vector2Int position;
     public ExplosionSource explosionSource;
     public int bombRadius = 1;
+    public int hammerRadius = 1;
 }
