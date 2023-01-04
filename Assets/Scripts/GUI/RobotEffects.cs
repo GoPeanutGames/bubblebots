@@ -1,12 +1,13 @@
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
 public class RobotEffects : MonoBehaviour
 {
     public GameObject Crossair;
     public GameObject HitEffect;
+    public Image EnemyRobot;
 
     private bool damageAnimationIsRunning = false;
 
@@ -56,11 +57,6 @@ public class RobotEffects : MonoBehaviour
         robotImage.DOFade(1f, 0.33f);
     }
 
-    public void YourTurn()
-    {
-        Crossair.SetActive(false);
-    }
-
     public virtual void Die()
     {
         StartCoroutine(DieEffect());
@@ -98,9 +94,13 @@ public class RobotEffects : MonoBehaviour
         }
     }
 
-
     public void SetRobotImage(Sprite sprite)
     {
         robotImage.sprite = sprite;
+    }
+
+    public void SetEnemyRobotImage(Sprite sprite)
+    {
+        EnemyRobot.sprite = sprite;
     }
 }

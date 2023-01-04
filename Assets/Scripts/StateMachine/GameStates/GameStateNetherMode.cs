@@ -12,7 +12,7 @@ public class GameStateNetherMode : GameState
 
     public override string GetGameStateName()
     {
-        return "game state free mode";
+        return "game state nether mode";
     }
 
     public override void Enable()
@@ -34,7 +34,47 @@ public class GameStateNetherMode : GameState
         if (data.eventName == GameEvents.ButtonTap)
         {
             OnButtonTap(data);
-        } 
+        }
+        else if (data.eventName == GameEvents.FreeModeSessionStarted)
+        {
+            gameScreenGame.InitialiseEnemyRobots();
+        }
+        else if (data.eventName == GameEvents.FreeModeLevelStart)
+        {
+            GameEventLevelStart eventLevelStart = data as GameEventLevelStart;
+            gameScreenGame.SetPlayerRobots(eventLevelStart.playerRoster);
+            gameScreenGame.SetEnemyRobots(eventLevelStart.enemies);
+        }
+        else if (data.eventName == GameEvents.FreeModeEnemyRobotDamage)
+        {
+            GameEventEnemyRobotDamage eventEnemyRobotDamage = data as GameEventEnemyRobotDamage;
+            gameScreenGame.DamageEnemyRobotAndSetHp(eventEnemyRobotDamage.index, eventEnemyRobotDamage.enemyRobotNewHp);
+        }
+        else if (data.eventName == GameEvents.FreeModePlayerRobotDamage)
+        {
+            GameEventPlayerRobotDamage eventPlayerRobotDamage = data as GameEventPlayerRobotDamage;
+            gameScreenGame.DamagePlayerRobotAndSetHp(eventPlayerRobotDamage.id, eventPlayerRobotDamage.enemyIndex,eventPlayerRobotDamage.damage);
+        }
+        else if (data.eventName == GameEvents.FreeModePlayerRobotKilled)
+        {
+            GameEventPlayerRobotKilled eventPlayerRobotKilled = data as GameEventPlayerRobotKilled;
+            gameScreenGame.KillPlayerRobot(eventPlayerRobotKilled.id, eventPlayerRobotKilled.enemyIndex);
+        }
+        else if (data.eventName == GameEvents.FreeModeEnemyRobotKilled)
+        {
+            GameEventEnemyRobotKilled eventEnemyRobotKilled = data as GameEventEnemyRobotKilled;
+            gameScreenGame.KillEnemyRobot(eventEnemyRobotKilled.id);
+        }
+        else if (data.eventName == GameEvents.FreeModeEnemyRobotTargeted)
+        {
+            GameEventEnemyRobotTargeted eventEnemyRobotTargeted = data as GameEventEnemyRobotTargeted;
+            gameScreenGame.TargetEnemyRobot(eventEnemyRobotTargeted.id);
+        }
+        else if (data.eventName == GameEvents.FreeModeEnemyChanged)
+        {
+            GameEventInt eventEnemyRobotTargeted = data as GameEventInt;
+            gameScreenGame.TargetEnemyRobot(eventEnemyRobotTargeted.intData);
+        }
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();

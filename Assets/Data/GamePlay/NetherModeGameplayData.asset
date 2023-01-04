@@ -16,6 +16,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 21283ddba34d24f40b2a2473e3c0c87a, type: 2}
   - {fileID: 11400000, guid: c04049a08766c3e4c85a71b3b7cd9a04, type: 2}
   - {fileID: 11400000, guid: f69e38c485285714eac2234c192eadde, type: 2}
+  backgroundSprite: {fileID: 21300000, guid: 37a320c54921f364c89cc7ea114c532b, type: 3}
+  gamebackgroundSprite: {fileID: 0}
   robotsAvailable:
   - {fileID: 11400000, guid: 73aab45eb8bb10940b4170e8a9130db2, type: 2}
   - {fileID: 11400000, guid: 6066b7811f4cc914996c66ced68ce965, type: 2}
@@ -23,5 +25,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03dc974d257658f4aa1115df6b505e9f, type: 2}
   - {fileID: 11400000, guid: e56b7cb2d6b55b6438dee25bd57e2d1c, type: 2}
   - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
-  backgroundSprite: {fileID: 21300000, guid: 37a320c54921f364c89cc7ea114c532b, type: 3}
-  gamebackgroundSprite: {fileID: 0}
+  enemyRobots:
+  - {fileID: 11400000, guid: c5d3c7bf2b4d7a24f88b1d9b45f2961e, type: 2}
+  - {fileID: 11400000, guid: 7876ec073967a774f808878c371e60e2, type: 2}
+  - {fileID: 11400000, guid: 41d28e19a1153834589d424feff10faf, type: 2}
+  - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
+  - {fileID: 11400000, guid: 73aab45eb8bb10940b4170e8a9130db2, type: 2}
+  - {fileID: 11400000, guid: c42d1a7588658c3489f740923306f36e, type: 2}
+  - {fileID: 11400000, guid: 17ec5d13caa88014f9c1e52f7238c6cd, type: 2}
+  - {fileID: 11400000, guid: cd493d55ca450204a92882dfda4394c6, type: 2}
+  - {fileID: 11400000, guid: 518c6c793442f8a47a2306fe3adcd968, type: 2}
