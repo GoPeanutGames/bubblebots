@@ -34,6 +34,8 @@ public class GUIGame : MonoBehaviour
     public GameObject bubblesTextPrefab;
     public GameObject bubblesImagePrefab;
 
+    public Material shineMaterial;
+
     Image[,] backgroundTiles;
     List<GameObject> explosionEffects = new List<GameObject>();
     int currentEnemy = 0;
@@ -792,4 +794,33 @@ public class GUIGame : MonoBehaviour
     {
         //bubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
     }
+
+    private Vector2Int currentSpecialPosition = -Vector2Int.one;
+
+    public void HighlightSpecial(Vector2Int specialPosition)
+    {
+        if (currentSpecialPosition != -Vector2Int.one)
+        {
+            Transform oldTile = transform.Find("TileBackground_" + currentSpecialPosition.x + "_" + currentSpecialPosition.y);
+            oldTile.GetComponent<Image>().material = null;
+        }
+        if (specialPosition != -Vector2Int.one)
+        {
+            Transform tile = transform.Find("TileBackground_" + specialPosition.x + "_" + specialPosition.y);
+            tile.GetComponent<Image>().material = shineMaterial;
+        }
+        currentSpecialPosition = specialPosition;
+    }
+
+    public void DehighlightSpecial()
+    {
+        if (currentSpecialPosition != -Vector2Int.one)
+        {
+            Transform oldTile = transform.Find("TileBackground_" + currentSpecialPosition.x + "_" + currentSpecialPosition.y);
+            oldTile.GetComponent<Image>().material = null;
+        }
+        currentSpecialPosition = -Vector2Int.one;
+
+    }
+
 }

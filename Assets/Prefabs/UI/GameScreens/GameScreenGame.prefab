@@ -1260,7 +1260,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 34.5
+  m_fontSize: 31.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1562,7 +1562,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 34.5
+  m_fontSize: 31.45
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5777,6 +5777,7 @@ MonoBehaviour:
     type: 3}
   bubblesImagePrefab: {fileID: 6178123163369337027, guid: 0cdab032b162568448aad230e764bb46,
     type: 3}
+  shineMaterial: {fileID: 2100000, guid: 0a4a0e8f36481734ea40cffc46f85bbf, type: 2}
 --- !u!223 &-7754781795597982244
 Canvas:
   m_ObjectHideFlags: 0

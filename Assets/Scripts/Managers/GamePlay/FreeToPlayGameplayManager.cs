@@ -376,17 +376,12 @@ public class FreeToPlayGameplayManager : MonoBehaviour
                 match3Manager.UpdateMatch3Logic();
                 break;
         }
-
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            match3Manager.ExplodeAllSpecials();
-        }
     }
 
     IEnumerator EndLevelSequence()
     {
         gameplayState = FreeToPlayGameplayState.EndLevelSequence;
+        match3Manager.GameGUI.DehighlightSpecial();
         yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
         while (match3Manager.HasSpecials())
         {
@@ -394,6 +389,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
             yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
             if (match3Manager.HasSpecials())
             {
+                match3Manager.GameGUI.DehighlightSpecial();
                 yield return new WaitForSeconds(.1f);
             }
         }

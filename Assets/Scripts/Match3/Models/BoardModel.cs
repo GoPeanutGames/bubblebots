@@ -15,7 +15,7 @@ namespace BubbleBots.Match3.Models
         
         
         //special bug
-        private Vector2Int lastCreatedSpecialPosittion;
+        private Vector2Int lastCreatedSpecialPosittion = -Vector2Int.one;
         private string lastCreatedSpecialType;
         private bool canCreateSpecial = false;
 
@@ -74,10 +74,11 @@ namespace BubbleBots.Match3.Models
             canCreateSpecial = false;
         }
 
-        public int GetLastCreatedSpecialRow()
+        public Vector2Int GetLastCreatedSpecialPosition()
         {
-            return lastCreatedSpecialPosittion.y;
+            return lastCreatedSpecialPosittion;
         }
+
 
         public MatchTestResult TestForMatchOnPosition(int posX, int posY, List<MatchShape> matchPrecedenceList, List<Vector2Int> exclusionList = null)
         {
@@ -215,7 +216,6 @@ namespace BubbleBots.Match3.Models
                 cells[toCreate[i].At.x][toCreate[i].At.y].SetGem(new BoardGem(toCreate[i].GemData.gemId, GemType.Special));
                 lastCreatedSpecialPosittion = new Vector2Int(toCreate[i].At.x, toCreate[i].At.y);
                 lastCreatedSpecialType = toCreate[i].GemData.gemId;
-                //Debug.Log("last created special: " + lastCreatedSpecialPosittion.ToString());
             }
         }
 
@@ -268,6 +268,15 @@ namespace BubbleBots.Match3.Models
                     }
                 }
             canCreateSpecial = false;
+
+            for (int i = 0; i < gemMoves.Count; ++i)
+            {
+                if (gemMoves[i].From == lastCreatedSpecialPosittion && lastCreatedSpecialPosittion.y < height - 1)
+                {
+                    lastCreatedSpecialPosittion = gemMoves[i].To;
+                    break;
+                }
+            }
             return gemMoves;
         }
 
@@ -572,8 +581,10 @@ namespace BubbleBots.Match3.Models
         {
             hintPosition = -Vector2Int.one;
         }
+
         public void Shuffle()
         {
+            DisableSpecialBug();
             List<string> gemIds = new List<string>();
 
             for (int i = 0; i < width; ++i)

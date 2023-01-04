@@ -121,6 +121,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     public void ExplodeAllSpecials()
     {
+        GameGUI.DehighlightSpecial();
         inputLocked = true;
         gameplayState = GameplayState.ExplodeAllSpecialsIntro;
         StartTrackedCoroutine(ShakeAllSpecials());
@@ -272,6 +273,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         }
         else if (gameplayState == GameplayState.Swap)
         {
+            GameGUI.DehighlightSpecial();
             StartTrackedCoroutine(SwapTilesOnceOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
             gameplayState = GameplayState.SwapPlaying;
         }
@@ -312,11 +314,13 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
             {
                 onBoardEventsEnded?.Invoke();
                 gameplayState = GameplayState.WaitForInput;
+                GameGUI.HighlightSpecial(boardController.GetBoardModel().GetLastCreatedSpecialPosition());
                 ZeroReleasedTiles();
             }
         } 
         else if (gameplayState == GameplayState.ExplodeAllSpecials)
         {
+            GameGUI.DehighlightSpecial();
             NewSwapResult swapResult = boardController.ExplodeAllSpecials();
             if (swapResult.explodeEvents != null && swapResult.explodeEvents.Count > 0)
             {
@@ -337,8 +341,6 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     private List<string> runningCoroutinesByStringName = new List<string>();
     private List<IEnumerator> runningCoroutinesByEnumerator = new List<IEnumerator>();
-
-   
 
     public Coroutine StartTrackedCoroutine(string methodName)
     {

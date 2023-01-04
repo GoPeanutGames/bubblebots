@@ -433,7 +433,7 @@ namespace BubbleBots.Match3.Controllers
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
 
-                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialRow())
+                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialPosition().y)
                 {
                     boardModel.EnableSpecialBug();
                 }
@@ -454,7 +454,7 @@ namespace BubbleBots.Match3.Controllers
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
 
-                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialRow())
+                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialPosition().y)
                 {
                     boardModel.EnableSpecialBug();
                 }

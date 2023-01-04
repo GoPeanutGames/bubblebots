@@ -506,6 +506,7 @@ MonoBehaviour:
   WinNoMoreMoves: {fileID: 0}
   TxtStatus: {fileID: 5438179329173677552}
   PlayButton: {fileID: 5438179329440115652}
+  shineMaterial: {fileID: 2100000, guid: 0a4a0e8f36481734ea40cffc46f85bbf, type: 2}
   PnlPlayerInfo: {fileID: 5438179330475914418}
   PnlPlayerOffline: {fileID: 5438179329640363322}
   PnlPrompt: {fileID: 0}
