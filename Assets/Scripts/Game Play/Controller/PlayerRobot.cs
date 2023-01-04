@@ -14,6 +14,7 @@ public class PlayerRobot : MonoBehaviour
 
     private Image robotImage;
     private int maxHp;
+    private int currentHp;
 
     void Start()
     {
@@ -77,7 +78,7 @@ public class PlayerRobot : MonoBehaviour
     internal virtual void Initialize()
     {
         robotImage = GetComponent<Image>();
-        if (robotImage != null)
+        if (robotImage != null && currentHp != 0)
         {
             robotImage.DOFade(1f, 0f);
             robotImage.transform.DOScale(1f, 0f);
@@ -89,18 +90,24 @@ public class PlayerRobot : MonoBehaviour
         robotImage.sprite = sprite;
     }
 
-    public void SetMaxHpTo(int hp)
+    public void SetMaxHpTo(int maxHp)
     {
-        this.maxHp = hp;
+        this.maxHp = maxHp;
         hpSlider.minValue = 0;
-        hpSlider.maxValue = hp;
+        hpSlider.maxValue = maxHp;
+    }
+
+    public void SetHpTo(int hp)
+    {
+        currentHp = hp;
         hpSlider.value = hp;
-        SetHpText(hp, hp);
+        SetHpText(hp, maxHp);
     }
 
     public void DecreaseHpBy(int damage)
     {
-        hpSlider.DOValue(maxHp - damage, 0.33f);
-        SetHpText(maxHp - damage, maxHp);
+        currentHp -= damage;
+        hpSlider.DOValue(currentHp, 0.33f);
+        SetHpText(currentHp, maxHp);
     }
 }
