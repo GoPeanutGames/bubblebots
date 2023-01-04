@@ -5799,7 +5799,7 @@ MonoBehaviour:
   Spacing: 0
   TileWidth: 70
   SwapDuration: 0.26
-  SpecialSwapDuration: 2
+  SpecialSwapDuration: 2.4
   DefaultSwapDuration: 0.26
   EnemyRobots:
   - {fileID: 6781989968466881343}

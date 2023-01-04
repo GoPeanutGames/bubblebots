@@ -588,7 +588,7 @@ public class GUIGame : MonoBehaviour
         yield return new WaitForSeconds(duration);
     }
 
-    public void LineDestroyEffect(int x, int y, bool vertical)
+    public void LineDestroyEffect(int x, int y, bool vertical, float duration = 0.33f)
     {
         GameObject explosionEffect1 = Instantiate(VFXManager.Instance.LineExplosionEffect);
         GameObject explosionEffect2 = Instantiate(VFXManager.Instance.LineExplosionEffect);
@@ -607,14 +607,14 @@ public class GUIGame : MonoBehaviour
 
         explosionEffect1.transform.position = tile.position + new Vector3(0, 1, -10);
         explosionEffect1.SetActive(true);
-        explosionEffect1.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * 35 : Vector3.left * 35), 0.33f).SetEase(Ease.Linear);
+        explosionEffect1.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * 35 : Vector3.left * 35), duration).SetEase(Ease.Linear);
 
         explosionEffect2.transform.position = tile.position + new Vector3(0, 1, -10);
         explosionEffect2.SetActive(true);
-        explosionEffect2.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * -35 : Vector3.left * -35), 0.33f).SetEase(Ease.Linear);
+        explosionEffect2.transform.DOMove(explosionEffect1.transform.position + (vertical ? Vector3.up * -35 : Vector3.left * -35), duration).SetEase(Ease.Linear);
 
-        Destroy(explosionEffect1, 0.35f);
-        Destroy(explosionEffect2, 0.35f);
+        Destroy(explosionEffect1, duration + 0.01f);
+        Destroy(explosionEffect2, duration + 0.01f);
     }
 
     public void ColorBlastEffect(int x, int y)
@@ -638,7 +638,7 @@ public class GUIGame : MonoBehaviour
         Destroy(colorExplosionEffect, 0.5f);
     }
 
-    public void ColorBombEffect(int x, int y)
+    public void ColorBombEffect(int x, int y, float duration = .2f)
     {
         Transform tile = transform.Find("Tile_" + x + "_" + y);
 
@@ -652,21 +652,16 @@ public class GUIGame : MonoBehaviour
             }
         }
         Image tileImage = tile.GetComponent<Image>();
-        StartCoroutine(ShakeObject(tileImage));
+        StartCoroutine(ShakeObject(tileImage, duration));
     }
 
-    IEnumerator ShakeObject(Image tileImage)
+    IEnumerator ShakeObject(Image tileImage, float duration)
     {
-        tileImage.transform.DOScale(new Vector3(.9f,.9f,.9f), .2f); 
-        yield return new WaitForSeconds(0.21f);
-        tileImage.transform.DOScale(Vector3.one, .2f);
-        yield return new WaitForSeconds(0.21f);
-        tileImage.transform.DOScale(new Vector3(.9f, .9f, .9f), .2f);
-        yield return new WaitForSeconds(0.21f);
-        tileImage.transform.DOScale(Vector3.one, .2f);
-        yield return new WaitForSeconds(0.21f);
-        tileImage.transform.DOScale(new Vector3(.9f, .9f, .9f), .2f);
-        yield return new WaitForSeconds(0.21f);
+        for (int i = 0; i < 5; ++i)
+        {
+            tileImage.transform.DOScale(new Vector3(.9f, .9f, .9f), duration);
+            yield return new WaitForSeconds(duration + 0.01f);
+        }
     }
 
 

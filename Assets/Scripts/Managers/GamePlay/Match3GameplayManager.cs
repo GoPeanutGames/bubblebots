@@ -179,14 +179,17 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         GameGUI.SwapTiles(x1, y1, x2, y2, true);
         yield return new WaitForSeconds(GameGUI.SwapDuration);
 
-
         if (boardController.GetBoardModel()[x1][y1].gem.IsSpecial() &&
             boardController.GetBoardModel()[x2][y2].gem.IsSpecial())
         {
-            GameGUI.ShakeEffect(x1, y1, 2, 0.2f);
-            GameGUI.ShakeEffect(x2, y2, 2, 0.2f);
             specialSpecialMatch = true;
-            yield return new WaitForSeconds(0.8f);
+
+            if (!(boardController.GetBoardModel()[x1][y1].gem.GetId() == boardController.GetBoardModel()[x2][y2].gem.GetId() &&
+                boardController.GetBoardModel()[x1][y1].gem.GetId() == "11")) {
+                GameGUI.ShakeEffect(x1, y1, 2, 0.2f);
+                GameGUI.ShakeEffect(x2, y2, 2, 0.2f);
+                yield return new WaitForSeconds(0.8f);
+            }
         }
 
         //ReleaseTiles();
@@ -513,15 +516,15 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
             if (lineBlastExplodeEvent != null)
             {
                 SoundManager.Instance?.PlayLightningSfx();
-                GameGUI.LineDestroyEffect(lineBlastExplodeEvent.lineBlastStartPosition.x, lineBlastExplodeEvent.lineBlastStartPosition.y, false);
-                yield return new WaitForSeconds(0.2f);
+                GameGUI.LineDestroyEffect(lineBlastExplodeEvent.lineBlastStartPosition.x, lineBlastExplodeEvent.lineBlastStartPosition.y, false, specialSpecialMatch ? 0.4f : 0.33f);
+                yield return new WaitForSeconds(specialSpecialMatch ? 0.4f : 0.33f);
             }
             ColumnBlastEvent columnBlasEvent = swapResult.explodeEvents[i] as ColumnBlastEvent;
             if (columnBlasEvent != null)
             {
                 SoundManager.Instance?.PlayLightningSfx();
-                GameGUI.LineDestroyEffect(columnBlasEvent.columnBlastStartPosition.x, columnBlasEvent.columnBlastStartPosition.y, true);
-                yield return new WaitForSeconds(0.2f);
+                GameGUI.LineDestroyEffect(columnBlasEvent.columnBlastStartPosition.x, columnBlasEvent.columnBlastStartPosition.y, true, specialSpecialMatch ? 0.4f : 0.33f);
+                yield return new WaitForSeconds(specialSpecialMatch ? 0.4f : 0.33f);
             }
             ColorBlastEvent colorBlastEvent = swapResult.explodeEvents[i] as ColorBlastEvent;
             if (colorBlastEvent != null)
@@ -529,10 +532,10 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
                 //GameGUI.ColorBlastEffect(colorBlastEvent.colorBlastPosition.x, colorBlastEvent.colorBlastPosition.y);
                 for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
                 {
-                    GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y);
+                    GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, specialSpecialMatch ? 0.4f : 0.2f);
                 }
                 SoundManager.Instance?.PlayColorSfx();
-                yield return new WaitForSeconds(1.1f);
+                yield return new WaitForSeconds(5 * (specialSpecialMatch ? 0.4f : 0.2f) + 0.01f);
             }
             //BoardBlastEvent boardBlastEvent = swapResult.explodeEvents[i] as BoardBlastEvent;
             //if (boardBlastEvent != null)
