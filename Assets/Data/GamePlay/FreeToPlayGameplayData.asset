@@ -16,11 +16,36 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a071d739e102572428c31244c15f4257, type: 2}
   - {fileID: 11400000, guid: 2133ded61b09b5646acd635d2a09d5cc, type: 2}
   - {fileID: 11400000, guid: eec9c9c1166f62d4da05206d2b2bf276, type: 2}
+  backgroundSprite: {fileID: 21300000, guid: eb71ccbda002da54899174b2474d5700, type: 3}
+  gamebackgroundSprite: {fileID: 21300000, guid: 073d696e036c5f845a3f33aef695b2a3,
+    type: 3}
   robotsAvailable:
   - {fileID: 11400000, guid: 03dc974d257658f4aa1115df6b505e9f, type: 2}
   - {fileID: 11400000, guid: e56b7cb2d6b55b6438dee25bd57e2d1c, type: 2}
   - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
-  backgroundSprite: {fileID: 21300000, guid: eb71ccbda002da54899174b2474d5700, type: 3}
-  gamebackgroundSprite: {fileID: 21300000, guid: 073d696e036c5f845a3f33aef695b2a3,
-    type: 3}
+  enemyRobots:
+  - {fileID: 11400000, guid: c5d3c7bf2b4d7a24f88b1d9b45f2961e, type: 2}
+  - {fileID: 11400000, guid: 7876ec073967a774f808878c371e60e2, type: 2}
+  - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
+  - {fileID: 11400000, guid: 73aab45eb8bb10940b4170e8a9130db2, type: 2}
+  - {fileID: 11400000, guid: c42d1a7588658c3489f740923306f36e, type: 2}
+  - {fileID: 11400000, guid: 17ec5d13caa88014f9c1e52f7238c6cd, type: 2}
+  - {fileID: 11400000, guid: cd493d55ca450204a92882dfda4394c6, type: 2}
+  - {fileID: 11400000, guid: 518c6c793442f8a47a2306fe3adcd968, type: 2}
+  - {fileID: 11400000, guid: 96c4f98ffba5fe84d960ffb57a8d0481, type: 2}
+  - {fileID: 11400000, guid: 055daa68395666043a61ee26d8668052, type: 2}
+  - {fileID: 11400000, guid: ff428f736f1eda746ae2c26b2948a97b, type: 2}
+  - {fileID: 11400000, guid: 745bbe4b90385b942bf9b4841553af69, type: 2}
+  - {fileID: 11400000, guid: afb3b07ac56037942aa6fbe28e438289, type: 2}
+  - {fileID: 11400000, guid: 9f5bd623619647944b61c94a0d45fe8e, type: 2}
+  - {fileID: 11400000, guid: f65e54fdbc4bc2c4992c861b191f6112, type: 2}
+  - {fileID: 11400000, guid: 666a302a89cc236409669f5c7d5b6cc2, type: 2}
+  - {fileID: 11400000, guid: 2623da5215a65ab4f8370dc5274d2494, type: 2}
+  - {fileID: 11400000, guid: c20e85e844af16d4cb0dfecd7b2e198a, type: 2}
+  - {fileID: 11400000, guid: bd5dac9c2b67c9d48a90fb0cd75b5efa, type: 2}
+  - {fileID: 11400000, guid: 873cfe41c7d0a144a9b49c4d968677b0, type: 2}
+  - {fileID: 11400000, guid: 6c1e08475aee7024cb94872023e5d4d2, type: 2}
+  - {fileID: 11400000, guid: f77a3d07d3564df4984701fe6c9bc169, type: 2}
+  - {fileID: 11400000, guid: 104cefcfb0fea4c43930ac333e65068e, type: 2}
+  - {fileID: 11400000, guid: 107a557cb9d9a194dac3c4c3db068630, type: 2}
   stopHpRefreshAfterLevel: 0

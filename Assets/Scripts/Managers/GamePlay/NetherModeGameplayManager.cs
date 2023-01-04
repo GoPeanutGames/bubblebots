@@ -1,9 +1,9 @@
+using System.Collections;
+using System.Collections.Generic;
 using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
 using BubbleBots.Modes;
 using CodeStage.AntiCheat.ObscuredTypes;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NethermodeSessionData
@@ -159,30 +159,23 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         currentWaveIndex = 0;
         currentEnemy = 0;
+        int startIndex = 3 * currentLevelIndex;
         currentWave = new Wave()
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 60 },
-                new BubbleBot() { hp = 60 },
-                new BubbleBot() { hp = 60 }
+                new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex] },
+                new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex + 1] },
+                new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex + 2] }
             },
             completed = false
         };
-
-        //GameGUI.gameObject.SetActive(true);
-        //MenuGUI.gameObject.SetActive(false);
 
         AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex + 1);
         serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);
 
 
         GameEventsManager.Instance.PostEvent(new GameEventLevelStart() { eventName = GameEvents.FreeModeLevelStart, enemies = currentWave.bots, playerRoster = this.playerRoster });
-
-        FindObjectOfType<GUIGame>().SetRobotGauges(currentWave.bots);
-        FindObjectOfType<GUIGame>().SetPlayerRobots(playerRoster);
-        //GameGUI.SetPlayerRobots(playerRoster);
-
 
         gameplayState = NethermodeGameplayState.ShowingLevelText;
     }
@@ -229,10 +222,7 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         currentWave.bots[currentEnemy].hp -= damage;
 
-        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() { eventName = GameEvents.FreeModeEnemyRobotDamage, enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
-        //GameGUI.DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
-        FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
-
+        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() { eventName = GameEvents.FreeModeEnemyRobotDamage, index = currentEnemy,enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
 
         if (currentWave.bots[currentEnemy].hp <= 0)
         {
@@ -258,20 +248,20 @@ public class NetherModeGameplayManager : MonoBehaviour
             OnPlayerLost();
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
             //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
+            // FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
         }
         else if (playerRoster.IsDead(playerRoster.currentBot))
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
             //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
+            // FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
             playerRoster.currentBot++;
         }
         else
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotDamage() { eventName = GameEvents.FreeModePlayerRobotDamage, id = playerRoster.currentBot, damage = (int)enemyDamage });
             //GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
-            FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
+            // FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
         }
     }
 
@@ -286,8 +276,6 @@ public class NetherModeGameplayManager : MonoBehaviour
             numBubblesWon = sessionData.GetTotalBubbles(),
             lastLevelPotentialBubbles = sessionData.GetPotentialBubbles()
         });
-        //GameGUI.DisplayLose((int)GetScore());
-        FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
     }
 
@@ -325,7 +313,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         if (!allEnemiesKilled)
         {
             GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
-            FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy, false);
+            // FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy, false);
         }
         return allEnemiesKilled;
     }
@@ -435,11 +423,12 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         currentEnemy = 0;
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
-        FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
+        // FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
         //GameGUI.TargetEnemy(currentEnemy);
 
         gameplayState = NethermodeGameplayState.Match3Playing;
     }
+    
     public void TargetEnemy(int index)
     {
         currentEnemy = index;

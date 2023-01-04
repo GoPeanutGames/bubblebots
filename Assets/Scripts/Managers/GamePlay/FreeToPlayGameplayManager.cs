@@ -140,8 +140,8 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         GameEventsManager.Instance.PostEvent( new GameEventData() { eventName = GameEvents.FreeModeSessionStarted });
         UserManager.RobotsKilled = 0;
+        
 
-        //MenuGUI.ResetScores();
         StartLevel();
     }
 
@@ -167,32 +167,32 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         match3Manager.Initialize(gameplayData.levels[Mathf.Min(gameplayData.levels.Count - 1, currentLevelIndex)]);
 
+        List<BubbleBotData> enemiesToChooseFrom = new List<BubbleBotData>(gameplayData.enemyRobots);
+        BubbleBotData first = enemiesToChooseFrom[Random.Range(0, enemiesToChooseFrom.Count)];
+        enemiesToChooseFrom.Remove(first);
+        BubbleBotData second = enemiesToChooseFrom[Random.Range(0, enemiesToChooseFrom.Count)];
+        enemiesToChooseFrom.Remove(second);
+        BubbleBotData third = enemiesToChooseFrom[Random.Range(0, enemiesToChooseFrom.Count)];
+        enemiesToChooseFrom.Remove(third);
+        
         currentWaveIndex = 0;
         currentEnemy = 0;
         currentWave = new Wave()
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 40 },
-                new BubbleBot() { hp = 40 },
-                new BubbleBot() { hp = 40 }
+                new BubbleBot() { hp = 40, maxHp = 40, bubbleBotData = first },
+                new BubbleBot() { hp = 40, maxHp = 40, bubbleBotData = second },
+                new BubbleBot() { hp = 40, maxHp = 40, bubbleBotData = third }
             },
             completed = false
         };
 
-        //GameGUI.gameObject.SetActive(true);
-        //MenuGUI.gameObject.SetActive(false);
-        
         AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex + 1);
         serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);
 
 
         GameEventsManager.Instance.PostEvent(new GameEventLevelStart() { eventName = GameEvents.FreeModeLevelStart, enemies = currentWave.bots, playerRoster = this.playerRoster });
-
-        FindObjectOfType<GUIGame>().SetRobotGauges(currentWave.bots);
-        FindObjectOfType<GUIGame>().SetPlayerRobots(playerRoster);
-        //GameGUI.SetPlayerRobots(playerRoster);
-
 
         gameplayState = FreeToPlayGameplayState.ShowingLevelText;
     }
@@ -234,10 +234,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         currentWave.bots[currentEnemy].hp -= damage;
 
-        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() {eventName = GameEvents.FreeModeEnemyRobotDamage, enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
-        //GameGUI.DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
-        FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
-
+        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() {eventName = GameEvents.FreeModeEnemyRobotDamage, index = currentEnemy, enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
 
         if (currentWave.bots[currentEnemy].hp <= 0)
         {
@@ -261,22 +258,22 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         if (playerRoster.AreAllBotsDead())
         {
             OnPlayerLost();
-            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy});
             //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
+            // FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
         }
         else if (playerRoster.IsDead(playerRoster.currentBot))
         {
-            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy});
             //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
+            // FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
             playerRoster.currentBot++;
         }
         else
         {
-            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotDamage() { eventName = GameEvents.FreeModePlayerRobotDamage, id = playerRoster.currentBot, damage = (int)enemyDamage });
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotDamage() { eventName = GameEvents.FreeModePlayerRobotDamage, enemyIndex = currentEnemy, id = playerRoster.currentBot, damage = (int)enemyDamage });
             //GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
-            FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
+            // FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
         }
     }
 
@@ -285,8 +282,6 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         gameplayState = FreeToPlayGameplayState.GameEndMenu;
         GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore(), numBubblesWon = sessionData.GetTotalBubbles(),
             lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
-        //GameGUI.DisplayLose((int)GetScore());
-        FindObjectOfType<GUIGame>().DisplayLose((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
     }
 
@@ -324,7 +319,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         if (!allEnemiesKilled)
         {
             GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
-            FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy, false);
+            // FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy, false);
         }
         return allEnemiesKilled;
     }
@@ -430,7 +425,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         currentEnemy = 0;
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
-        FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
+        // FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
         //GameGUI.TargetEnemy(currentEnemy);
 
         gameplayState = FreeToPlayGameplayState.Match3Playing;

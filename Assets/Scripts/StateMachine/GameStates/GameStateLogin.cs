@@ -2,7 +2,6 @@ using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using UnityEngine;
-using WalletConnectSharp.Core.Models;
 using WalletConnectSharp.Core.Models.Ethereum;
 using WalletConnectSharp.Unity;
 

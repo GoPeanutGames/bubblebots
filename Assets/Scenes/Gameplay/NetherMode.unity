@@ -598,12 +598,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 33713596}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &33713598 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 119216, guid: e85f4a610ef9e5b4aa9cedce76136489,
-    type: 3}
-  m_PrefabInstance: {fileID: 33713596}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &43969786
 GameObject:
   m_ObjectHideFlags: 0
@@ -5863,12 +5857,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3d9e3e440644d1241849152e3425c62e, type: 3}
---- !u!1 &563918832 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 106036, guid: 3d9e3e440644d1241849152e3425c62e,
-    type: 3}
-  m_PrefabInstance: {fileID: 563918831}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &563918833 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 449474, guid: 3d9e3e440644d1241849152e3425c62e,
@@ -7057,12 +7045,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 711355444}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &711355446 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 191176, guid: eae69d44360b6274ba18e56d229d8fc0,
-    type: 3}
-  m_PrefabInstance: {fileID: 711355444}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &720289513
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7202,8 +7184,8 @@ RectTransform:
   - {fileID: 1495196682}
   - {fileID: 1594334974}
   - {fileID: 1172857184}
-  - {fileID: 2109868774}
   - {fileID: 903568247}
+  - {fileID: 2109868774}
   - {fileID: 1642629473}
   - {fileID: 436773791}
   - {fileID: 67011186}
@@ -7278,25 +7260,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b73e79c07e12c9945a0543ac24d217b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  serverGameplayController: {fileID: 2038123040}
   BackgroundTiles:
   - {fileID: 261203937}
   - {fileID: 1344354373}
   Spacing: 0
   TileWidth: 74
   SwapDuration: 0.26
-  ExplosionEffect: {fileID: 930319515}
-  LineExplosionEffect: {fileID: 1685318017}
-  ColorExplosionEffect: {fileID: 563918832}
-  ColorChangingEffect: {fileID: 33713598}
-  EnemyBullets:
-  - {fileID: 711355446}
-  - {fileID: 1109542204}
-  - {fileID: 807915684}
   EnemyRobots:
   - {fileID: 1172857187}
-  - {fileID: 2109868777}
   - {fileID: 903568250}
+  - {fileID: 2109868777}
   EnemyGauges:
   - {fileID: 2125513095}
   - {fileID: 1900999266}
@@ -7351,11 +7324,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 4a7739060a5511e4b9d2d3f19a3ecf94, type: 3}
   - {fileID: 21300000, guid: 1478f9156303e9c4c955e6c90ad36d22, type: 3}
   - {fileID: 21300000, guid: 8fdba1f9e5d1caf4f97e252ae57762b3, type: 3}
-  WinDialogImage: {fileID: 1824949329}
-  Menu: {fileID: 552920244}
-  bubblesScore: {fileID: 1131920738}
   unclaimedBubblesScore: {fileID: 1430622228}
-  unclaimedBubblesImage: {fileID: 888390582}
   bubblesTextPrefab: {fileID: 2388137148483130200, guid: ab00900e14a6a2643b99c1e4c9cbff76,
     type: 3}
   bubblesImagePrefab: {fileID: 6178123163369337027, guid: 0cdab032b162568448aad230e764bb46,
@@ -7902,12 +7871,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1beb0a8414c49964fa16289d0fb73952, type: 3}
---- !u!1 &807915684 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 149394, guid: 1beb0a8414c49964fa16289d0fb73952,
-    type: 3}
-  m_PrefabInstance: {fileID: 807915683}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &807915685 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 430054, guid: 1beb0a8414c49964fa16289d0fb73952,
@@ -7998,10 +7961,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameplayData: {fileID: 11400000, guid: e4ade18aa4c0c4b498c9cf65560466e6, type: 2}
   serverGameplayController: {fileID: 2038123040}
-  MenuGUI: {fileID: 552920244}
-  GameGUI: {fileID: 736831953}
-  RobotSelectionGUI: {fileID: 89362732}
-  DamageOfRobot2: 2
+  enemyDamage: 0.05
   match3Manager: {fileID: 120526381}
 --- !u!1 &831018383
 GameObject:
@@ -8672,7 +8632,7 @@ RectTransform:
   - {fileID: 1382862447}
   - {fileID: 952160299}
   m_Father: {fileID: 736831949}
-  m_RootOrder: 12
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -8883,12 +8843,6 @@ PrefabInstance:
     - {fileID: 10883060, guid: 5e8a137808d7d374487f34e236c723db, type: 3}
     - {fileID: 11418604, guid: 5e8a137808d7d374487f34e236c723db, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 5e8a137808d7d374487f34e236c723db, type: 3}
---- !u!1 &930319515 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 121496, guid: 5e8a137808d7d374487f34e236c723db,
-    type: 3}
-  m_PrefabInstance: {fileID: 930319514}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &930319516 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 411752, guid: 5e8a137808d7d374487f34e236c723db,
@@ -11011,12 +10965,6 @@ PrefabInstance:
 --- !u!4 &1109542203 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 418400, guid: 08fba7ace305c404da9c77c309850d22,
-    type: 3}
-  m_PrefabInstance: {fileID: 1109542202}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1109542204 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 189946, guid: 08fba7ace305c404da9c77c309850d22,
     type: 3}
   m_PrefabInstance: {fileID: 1109542202}
   m_PrefabAsset: {fileID: 0}
@@ -16756,12 +16704,6 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 10847062, guid: 8a30595d8f5ffe244b5b70512f0dc5fc, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 8a30595d8f5ffe244b5b70512f0dc5fc, type: 3}
---- !u!1 &1685318017 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 109530, guid: 8a30595d8f5ffe244b5b70512f0dc5fc,
-    type: 3}
-  m_PrefabInstance: {fileID: 1685318016}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1685318018 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 463606, guid: 8a30595d8f5ffe244b5b70512f0dc5fc,
@@ -21698,7 +21640,7 @@ RectTransform:
   - {fileID: 1814536569}
   - {fileID: 287908774}
   m_Father: {fileID: 736831949}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
