@@ -90,6 +90,11 @@ public class GameScreenMainMenuTopHUD : GameScreen
         usernameText.text = username;
     }
 
+    public void SwitchObjectActive(GameObject gameObject)
+    {
+        gameObject.SetActive(!gameObject.activeSelf);
+    }
+    
     public bool AreResourcesSet()
     {
         return _resourcesSet;
