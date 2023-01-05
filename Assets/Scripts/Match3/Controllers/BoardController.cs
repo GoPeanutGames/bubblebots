@@ -93,6 +93,7 @@ namespace BubbleBots.Match3.Controllers
         {
             return boardModel.IsSwapAllowed(startX, startY, releaseX, releaseY);
         }
+
         public bool CanSwap(int startX, int startY, int releaseX, int releaseY)
         {
             return boardModel.CanSwap(startX, startY, releaseX, releaseY, matchPrecedence.matches);
@@ -127,7 +128,11 @@ namespace BubbleBots.Match3.Controllers
                 toExplode = new HashSet<ToExplode>(ExplodeSpecialNormal(ref swapResult, startX, startY, releaseX, releaseY));
                 if (toExplode.Count == 0) // no special-normal swap
                 {
-                    toExplode = new HashSet<ToExplode>(ExplodeNormalNormal(ref swapResult, startX, startY, releaseX, releaseY));
+                    toExplode = new HashSet<ToExplode>(ExplodeSpecialBubble(ref swapResult, startX, startY, releaseX, releaseY)); 
+                    if (toExplode.Count == 0) // no special-bubble swap
+                    {
+                        toExplode = new HashSet<ToExplode>(ExplodeNormalNormal(ref swapResult, startX, startY, releaseX, releaseY));
+                    }
                 }
             }
 
@@ -471,6 +476,28 @@ namespace BubbleBots.Match3.Controllers
             return toExplode;
         }
 
+        private HashSet<ToExplode> ExplodeSpecialBubble(ref NewSwapResult swapResult, int startX, int startY, int releaseX, int releaseY)
+        {
+            HashSet<ToExplode> toExplode = new HashSet<ToExplode>();
+            if ((boardModel.cells[startX][startY].gem.IsBubble() && boardModel.cells[releaseX][releaseY].gem.IsSpecial()) ||
+                (boardModel.cells[startX][startY].gem.IsSpecial() && boardModel.cells[releaseX][releaseY].gem.IsBubble())) 
+            { 
+            toExplode.Add(
+                new ToExplode()
+                {
+                    position = new Vector2Int(startX, startY),
+                    explosionSource = ToExplode.ExplosionSource.Swap
+                });
+            toExplode.Add(
+                new ToExplode()
+                {
+                    position = new Vector2Int(releaseX, releaseY),
+                    explosionSource = ToExplode.ExplosionSource.Swap
+                });
+            ///code to handle special-bubble swap
+            }
+            return toExplode;
+        }
         private HashSet<ToExplode> ExplodeSpecialNormal(ref NewSwapResult swapResult, int startX, int startY, int releaseX, int releaseY)
         {
             HashSet<ToExplode> toExplode = new HashSet<ToExplode>();
@@ -879,8 +906,6 @@ namespace BubbleBots.Match3.Controllers
             }
             return toExplode;
         }
-
-
 
         public List<GemMove> RefillBoard(bool canSpawnBubbles)
         {

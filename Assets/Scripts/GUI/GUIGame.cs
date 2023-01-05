@@ -331,6 +331,10 @@ public class GUIGame : MonoBehaviour
 
     private void StopHintShowing()
     {
+        if (showHint == null)
+        {
+            return;
+        }
         StopCoroutine(showHint);
         Transform tile = null;
         if (hintTiles == null)
