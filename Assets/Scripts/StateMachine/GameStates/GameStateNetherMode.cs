@@ -84,8 +84,7 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.FreeModeLose)
         {
             gameScreenGameEnd = Screens.Instance.PushScreen<GameScreenGameEnd>();
-            gameScreenGameEnd.SetMessage("You earned " + (data as GameEventFreeModeLose).numBubblesWon.ToString() + " Bubbles and lost "
-                + (data as GameEventFreeModeLose).lastLevelPotentialBubbles + " Bubbles for failing to complete the last level!");
+            gameScreenGameEnd.SetMessage("You earned a total of <color=#FD78BE>" + (data as GameEventFreeModeLose).numBubblesWon.ToString() + "</color> Bubbles from previous levels!");
         }
         else if (data.eventName == GameEvents.UpdateSessionResponse)
         {
