@@ -103,6 +103,15 @@ namespace BubbleBots.Match3.Controllers
             return boardModel.HasPossibleMove(matchPrecedence.matches);
         }
 
+        public Hint GetHint(bool invalidateExistingOne = false)
+        {
+            if (invalidateExistingOne)
+            {
+                boardModel.UpdateHint(matchPrecedence.matches);
+            }
+            return boardModel.GetHint();
+        }
+
         public NewSwapResult NewSwapGems(int startX, int startY, int releaseX, int releaseY)
         {
             boardModel.SwapGems(startX, startY, releaseX, releaseY);

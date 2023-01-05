@@ -45,6 +45,9 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     private GameplayState gameplayState = GameplayState.RobotSelection;
 
+    private float hintTimer = 0f;
+    private const float hintShowTime = 5f;
+
     private LevelData levelData;
 
     private Vector2Int swapStart;
@@ -56,8 +59,8 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     public bool inputLocked = true;
 
-    int releaseTileX = -1;
-    int releaseTileY = -1;
+    private int releaseTileX = -1;
+    private int releaseTileY = -1;
 
     int combo = 0;
 
@@ -84,6 +87,11 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         return runningCoroutinesByStringName.Count > 0 || runningCoroutinesByEnumerator.Count > 0 || gameplayState != GameplayState.WaitForInput;
     }
 
+    public void ResetHintTimer()
+    {
+        hintTimer = 0f;
+    }
+
     public void Initialize(LevelData _levelData, bool _canSpawnBubbles)
     {
         //todo fix this 
@@ -97,6 +105,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         gameplayState = GameplayState.WaitForInput;
         inputLocked = false;
         canSpawnBubbles = _canSpawnBubbles;
+        ResetHintTimer();
     }
 
     public void Initialize(LevelData _levelData)
@@ -111,6 +120,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         RenderStartLevel();
         gameplayState = GameplayState.WaitForInput;
         inputLocked = false;
+        ResetHintTimer();
     }
 
     private void RenderStartLevel()
@@ -166,7 +176,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     IEnumerator SwapTilesNotAllowedOnGUI(int x1, int y1, int x2, int y2)
     {
-        GameGUI.SwapTilesFail(x1, y1, x2, y2, false);
+        GameGUI.SwapTilesFail(x1, y1, x2, y2);
         yield return new WaitForSeconds(GameGUI.SwapDuration);
         yield return new WaitForSeconds(GameGUI.SwapDuration);
         GameGUI.CanSwapTiles = true;
@@ -247,6 +257,19 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         gameplayState = GameplayState.CheckForMatches;
     }
 
+
+    private void UpdateHintTimer()
+    {
+        hintTimer += Time.deltaTime;
+
+        if (hintTimer >= hintShowTime)
+        {
+            Hint hint = boardController.GetHint();
+            GameGUI.ShowHintNow(hint);
+            hintTimer = 0f;
+        }
+    }
+
     public void UpdateMatch3Logic()
     {
         if (gameplayState == GameplayState.WaitForInput)
@@ -255,34 +278,44 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
             {
                 boardController.GetBoardModel().Shuffle();
                 StartTrackedCoroutine(ShuffleBoard());
+            } 
+            else
+            {
+                UpdateHintTimer();
             }
         }
         else if (gameplayState == GameplayState.SwapFailed)
         {
+            ResetHintTimer();
             StartTrackedCoroutine(SwapTilesBackAndForthOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
             gameplayState = GameplayState.SwapFailedPlaying;
         }
         else if (gameplayState == GameplayState.SwapFailedNotAllowed)
         {
+            ResetHintTimer();
             StartTrackedCoroutine(SwapTilesNotAllowedOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
             gameplayState = GameplayState.SwapFailedPlaying;
         }
         else if (gameplayState == GameplayState.SwapFailedPlaying)
         {
+            ResetHintTimer();
             //wait for animation to end and go to GameplayState.WaitForInput
         }
         else if (gameplayState == GameplayState.Swap)
         {
+            ResetHintTimer();
             GameGUI.DehighlightSpecial();
             StartTrackedCoroutine(SwapTilesOnceOnGUI(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y));
             gameplayState = GameplayState.SwapPlaying;
         }
         else if (gameplayState == GameplayState.SwapPlaying)
         {
+            ResetHintTimer();
             //wait for animation to end  and go to GameplayState.CheckExplosionsAfterSwap
         }
         else if (gameplayState == GameplayState.CheckExplosionsAfterSwap)
         {
+            ResetHintTimer();
             gameplayState = GameplayState.ExplosionsInProgress;
 
             NewSwapResult swapResult = boardController.NewSwapGems(swapStart.x, swapStart.y, swapEnd.x, swapEnd.y);
@@ -290,20 +323,24 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         }
         else if (gameplayState == GameplayState.ExplosionsInProgress)
         {
+            ResetHintTimer();
             //wait for animations to end and go to GameplayState.RefillBoard
         }
         else if (gameplayState == GameplayState.RefillBoard)
         {
+            ResetHintTimer();
             List<GemMove> gemMoves = boardController.RefillBoard(canSpawnBubbles);
             StartTrackedCoroutine(RefillBoard(gemMoves));
             gameplayState = GameplayState.RefillBoardInProgress;
         }
         else if (gameplayState == GameplayState.RefillBoardInProgress)
         {
+            ResetHintTimer();
             //wait for animations to end and go to GameplayState.CheckForMatches
         }
         else if (gameplayState == GameplayState.CheckForMatches)
         {
+            ResetHintTimer();
             NewSwapResult swapResult = boardController.CheckForMatches();
             if (swapResult.explodeEvents != null && swapResult.explodeEvents.Count > 0)
             {
@@ -320,6 +357,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         } 
         else if (gameplayState == GameplayState.ExplodeAllSpecials)
         {
+            ResetHintTimer();
             GameGUI.DehighlightSpecial();
             NewSwapResult swapResult = boardController.ExplodeAllSpecials();
             if (swapResult.explodeEvents != null && swapResult.explodeEvents.Count > 0)

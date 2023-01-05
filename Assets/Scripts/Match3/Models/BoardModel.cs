@@ -12,8 +12,9 @@ namespace BubbleBots.Match3.Models
         public List<List<BoardCell>> cells;
 
         private Vector2Int hintPosition;
-        
-        
+
+        private Hint hint;
+
         //special bug
         private Vector2Int lastCreatedSpecialPosittion = -Vector2Int.one;
         private string lastCreatedSpecialType;
@@ -33,6 +34,7 @@ namespace BubbleBots.Match3.Models
                 }
             }
             hintPosition = -Vector2Int.one;
+            hint = new Hint();
         }
 
         public List<BoardCell> this[int i]
@@ -44,7 +46,7 @@ namespace BubbleBots.Match3.Models
         public void RandomizeGem(int posX, int posY, List<GemData> gemSet, bool excludeCurrent = true)
         {
             List<string> possibleValues = new List<string>();
-            foreach(GemData gemData in gemSet)
+            foreach (GemData gemData in gemSet)
             {
                 possibleValues.Add(gemData.gemId);
             }
@@ -300,7 +302,7 @@ namespace BubbleBots.Match3.Models
                         toExplode.Add(new Vector2Int(posX + i, posY + j));
                         cells[posX + i][posY + j].empty = true;
                     }
-            } 
+            }
             else if (bombRadius == 2)
             {
                 List<List<Vector2Int>> possible4RadiusExplodes = new List<List<Vector2Int>>();
@@ -308,7 +310,7 @@ namespace BubbleBots.Match3.Models
                 int maxExplosionCount = -1;
 
                 //test all 4 possible explosion radiuses for max impact
-                
+
                 List<List<int>> offsets = new List<List<int>>()
                 {
                     new List<int>() {-2, 1, -2, 1},
@@ -508,6 +510,18 @@ namespace BubbleBots.Match3.Models
             return hint != -Vector2Int.one;
         }
 
+        public void UpdateHint(List<MatchShape> matchPrecedenceList)
+        {
+            InvalidateHint();
+            GetHint(matchPrecedenceList);
+        }
+
+        public Hint GetHint()
+        {
+            return hint;
+        }
+
+
         public bool HasSpecials()
         {
             for (int i = 0; i < width; ++i)
@@ -534,45 +548,78 @@ namespace BubbleBots.Match3.Models
                 new Vector2Int(1, 0),
             };
 
+            List<Vector2Int> possiblePositions = new List<Vector2Int>();
             for (int i = 0; i < width; ++i)
                 for (int j = 0; j < height; ++j)
                 {
-                    if (cells[i][j].gem.IsSpecial()) {
-                        hintPosition = new Vector2Int(i, j);
+                    possiblePositions.Add(new Vector2Int(i, j));
+                }
+
+            while (possiblePositions.Count > 0)
+            {
+                int randomIndex = Random.Range(0, possiblePositions.Count);
+                int i = possiblePositions[randomIndex].x;
+                int j = possiblePositions[randomIndex].y;
+                possiblePositions.RemoveAt(randomIndex);
+
+                foreach (Vector2Int offset in swapOffsets)
+                {
+                    if (!BoundaryTest(i + offset.x, j + offset.y))
+                    {
+                        continue;
+                    }
+
+                    SwapGems(i, j, i + offset.x, j + offset.y);
+
+                    MatchTestResult match = TestForMatchOnPosition(i, j, matchPrecedenceList, null);
+                    if (match != null)
+                    {
+                        hintPosition = new Vector2Int(i + offset.x, j + offset.y);
+                        SwapGems(i, j, i + offset.x, j + offset.y);
+
+                        hint.pos1 = new Vector2Int(i, j);
+                        hint.pos2 = new Vector2Int(i + offset.x, j + offset.y);
+                        List<Vector2Int> tilesToMatch = new List<Vector2Int>(match.match);
+                        tilesToMatch.Remove(hint.pos1);
+                        tilesToMatch.Add(hint.pos2);
+                        hint.match = tilesToMatch;
+                        hint.isSpecial = false;
+
                         return hintPosition;
                     }
-
-                    foreach (Vector2Int offset in swapOffsets)
+                    else
                     {
-                        
-                        if (!BoundaryTest(i + offset.x, j + offset.y))
-                        {
-                            continue;
-                        }
-
-                        SwapGems(i, j, i + offset.x, j + offset.y);
-
-                        MatchTestResult match = TestForMatchOnPosition(i, j, matchPrecedenceList, null);
+                        match = TestForMatchOnPosition(i + offset.x, j + offset.y, matchPrecedenceList, null);
                         if (match != null)
                         {
-                            hintPosition = new Vector2Int(i + offset.x, j + offset.y);
+                            hintPosition = new Vector2Int(i, j);
                             SwapGems(i, j, i + offset.x, j + offset.y);
+                            hint.pos1 = new Vector2Int(i, j);
+                            hint.pos2 = new Vector2Int(i + offset.x, j + offset.y);
+                            List<Vector2Int> tilesToMatch = new List<Vector2Int>(match.match);
+                            tilesToMatch.Remove(hint.pos2);
+                            tilesToMatch.Add(hint.pos1);
+                            hint.match = tilesToMatch;
+                            hint.isSpecial = false;
                             return hintPosition;
                         }
-                        else
-                        {
-                            match = TestForMatchOnPosition(i + offset.x, j + offset.y, matchPrecedenceList, null);
-                            if (match != null)
-                            {
-                                hintPosition = new Vector2Int(i, j);
-                                SwapGems(i, j, i + offset.x, j + offset.y);
-                                return hintPosition;
-                            }
-                        }
+                    }
+                    SwapGems(i, j, i + offset.x, j + offset.y);
+                }
+            }
 
-                        SwapGems(i, j, i + offset.x, j + offset.y);
+            for (int i = 0; i < width; ++i)
+                for (int j = 0; j < height; ++j)
+                {
+                    if (cells[i][j].gem.IsSpecial())
+                    {
+                        hintPosition = new Vector2Int(i, j);
+                        hint.pos1 = hintPosition;
+                        hint.isSpecial = true;
+                        return hintPosition;
                     }
                 }
+
 
             return hintPosition;
         }
@@ -613,5 +660,15 @@ namespace BubbleBots.Match3.Models
                 }
         }
     }
+
+    public class Hint
+    {
+        public Vector2Int pos1;
+        public Vector2Int pos2;
+        public bool isSpecial;
+
+        public List<Vector2Int> match;
+    }
 }
+
 

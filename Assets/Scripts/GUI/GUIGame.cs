@@ -38,8 +38,9 @@ public class GUIGame : MonoBehaviour
 
     Image[,] backgroundTiles;
     List<GameObject> explosionEffects = new List<GameObject>();
-    int currentEnemy = 0;
-    string lastLockedBy = "";
+
+    private List<Vector2Int> hintTiles;
+    private Coroutine showHint;
 
     public delegate void OnGUIEvent(object param);
 
@@ -70,13 +71,12 @@ public class GUIGame : MonoBehaviour
         {
             return;
         }
-        
-        if(EnemyGauges[currentEnemy].value <= 0)
+
+        if (EnemyGauges[currentEnemy].value <= 0)
         {
             return;
         }
 
-        this.currentEnemy = currentEnemy;
         GameEventsManager.Instance.PostEvent(new GameEventInt() { eventName = GameEvents.FreeModeEnemyChanged, intData = currentEnemy });
         FindObjectOfType<FreeToPlayGameplayManager>()?.TargetEnemy(currentEnemy);
         FindObjectOfType<NetherModeGameplayManager>()?.TargetEnemy(currentEnemy);
@@ -191,6 +191,7 @@ public class GUIGame : MonoBehaviour
 
     public void SwapTiles(int x1, int y1, int x2, int y2, bool changeInfo)
     {
+        StopHintShowing();
         if (!(x1 == x2 || y1 == y2))
         {
             return;
@@ -199,15 +200,27 @@ public class GUIGame : MonoBehaviour
         StartCoroutine(SwapTilesNow(x1, y1, x2, y2, changeInfo));
     }
 
-
-    public void SwapTilesFail(int x1, int y1, int x2, int y2, bool changeInfo)
+    public void ShowHintNow(Hint hint)
     {
+        if (hint.isSpecial)
+        {
+            showHint = StartCoroutine(ShowHint(new List<Vector2Int>() { hint.pos1 }));
+        }
+        else
+        {
+            showHint = StartCoroutine(ShowHint(hint.match));
+        }
+    }
+
+    public void SwapTilesFail(int x1, int y1, int x2, int y2)
+    {
+        StopHintShowing();
         if (!(x1 == x2 || y1 == y2))
         {
             return;
         }
 
-        StartCoroutine(SwapTilesFailNow(x1, y1, x2, y2, changeInfo));
+        StartCoroutine(SwapTilesFailNow(x1, y1, x2, y2));
     }
 
     IEnumerator SwapTilesNow(int x1, int y1, int x2, int y2, bool changeInfo)
@@ -260,7 +273,7 @@ public class GUIGame : MonoBehaviour
         }
     }
 
-    IEnumerator SwapTilesFailNow(int x1, int y1, int x2, int y2, bool changeInfo)
+    IEnumerator SwapTilesFailNow(int x1, int y1, int x2, int y2)
     {
         Transform tile1 = null;
         Transform tile2 = null;
@@ -285,12 +298,58 @@ public class GUIGame : MonoBehaviour
             yield break;
         }
         yield return new WaitForSeconds(SwapDuration);
+    }
 
+    
+    IEnumerator ShowHint(List<Vector2Int> tiles)
+    {
+        Transform tile = null;
+        hintTiles = tiles;
+        int numBlinks = 2;
+        while (numBlinks-- > 0)
+        {
+            for (int i = 0; i < tiles.Count; ++i)
+            {
+                tile = transform.Find("Tile_" + tiles[i].x + "_" + tiles[i].y);
+                if (tile != null && tile.GetComponent<Image>() != null)
+                {
+                    tile.GetComponent<Image>().DOColor(new Color(1, 1, 1, 0.5f), SwapDuration);
+                }
+            }
+            yield return new WaitForSeconds(SwapDuration);
+            for (int i = 0; i < tiles.Count; ++i)
+            {
+                tile = transform.Find("Tile_" + tiles[i].x + "_" + tiles[i].y);
+                if (tile != null && tile.GetComponent<Image>() != null)
+                {
+                    tile.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1), SwapDuration);
+                }
+            }
+            yield return new WaitForSeconds(SwapDuration);
+        }
+    }
+
+    private void StopHintShowing()
+    {
+        StopCoroutine(showHint);
+        Transform tile = null;
+        if (hintTiles == null)
+        {
+            return;
+        }
+        for (int i = 0; i < hintTiles.Count; ++i)
+        {
+            tile = transform.Find("Tile_" + hintTiles[i].x + "_" + hintTiles[i].y);
+            if (tile != null && tile.GetComponent<Image>() != null)
+            {
+                tile.GetComponent<Image>().DOComplete();
+                tile.GetComponent<Image>().color = new Color(1, 1, 1, 1);
+            }
+        }
     }
 
     public void LockTiles(string lockSource)
     {
-        lastLockedBy = lockSource;
         CanSwapTiles = false;
     }
 
@@ -343,9 +402,9 @@ public class GUIGame : MonoBehaviour
     {
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = transform.Find("Tile_" + x + "_" + y);
-        
+
         // TODO: Remove in the future versions
-        if(tile == null)
+        if (tile == null)
         {
             //Debug.Log("EXP1");
             return;
@@ -403,7 +462,7 @@ public class GUIGame : MonoBehaviour
         Transform tile = transform.Find("Tile_" + x + "_" + y);
 
         // TODO: Remove in future versions
-        if(tile == null)
+        if (tile == null)
         {
             yield break;
         }
@@ -429,10 +488,11 @@ public class GUIGame : MonoBehaviour
         Transform trans = transform.Find("Tile_" + x + "_" + y + "_deleted");
         GameObject tile;
 
-        if(trans == null)
+        if (trans == null)
         {
             tile = new GameObject();
-        } else
+        }
+        else
         {
             tile = trans.gameObject;
         }
@@ -455,7 +515,7 @@ public class GUIGame : MonoBehaviour
         rect.DOScale(Vector3.one, duration);
 
         Image tileImage = tile.GetComponent<Image>();
-        if(tileImage == null)
+        if (tileImage == null)
         {
             tileImage = tile.AddComponent<Image>();
         }
@@ -614,7 +674,7 @@ public class GUIGame : MonoBehaviour
             {
                 tileImage = tile.AddComponent<Image>();
             }
-            
+
             var duplicate = Instantiate(tile, tile.transform.parent);
             duplicate.transform.SetAsLastSibling();
             var dimage = duplicate.GetComponent<Image>();
@@ -629,7 +689,7 @@ public class GUIGame : MonoBehaviour
         StartCoroutine(ScaleDownAndChangeColorAndScaleUp(posX, posY, key, levelData));
     }
 
-    IEnumerator ScaleDownAndChangeColorAndScaleUp(int posX, int posY, string key, LevelData levelData)  
+    IEnumerator ScaleDownAndChangeColorAndScaleUp(int posX, int posY, string key, LevelData levelData)
     {
         Transform tile = transform.Find("Tile_" + posX + "_" + posY);
 
@@ -648,7 +708,7 @@ public class GUIGame : MonoBehaviour
         }
 
         tileImage.transform.DOScale(0, 0.2f);
-        
+
         yield return new WaitForSeconds(0.2f);
         tileImage.sprite = levelData.GetGemData(key).gemSprite;
         tileImage.transform.DOScale(1, 0.2f);
@@ -706,26 +766,26 @@ public class GUIGame : MonoBehaviour
 
     public void PremintButton()
     {
-//        //WinDialogImage.gameObject.SetActive(false);
-//#if !UNITY_EDITOR
-//        Premint();
-//#endif
+        //        //WinDialogImage.gameObject.SetActive(false);
+        //#if !UNITY_EDITOR
+        //        Premint();
+        //#endif
 
-//        Menu.gameObject.SetActive(true);
-//        Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
-//        if (UserManager.PlayerType == PlayerType.Guest)
-//        {
-//            //Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
-//            SceneManager.LoadScene("Login");
-//        }
-//        else
-//        {
-//            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
-//            Menu.DisplayHighScores();
-//            Menu.ReverseHighScoreButtons();
-//        }
+        //        Menu.gameObject.SetActive(true);
+        //        Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
+        //        if (UserManager.PlayerType == PlayerType.Guest)
+        //        {
+        //            //Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
+        //            SceneManager.LoadScene("Login");
+        //        }
+        //        else
+        //        {
+        //            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
+        //            Menu.DisplayHighScores();
+        //            Menu.ReverseHighScoreButtons();
+        //        }
 
-//        gameObject.SetActive(false);
+        //        gameObject.SetActive(false);
     }
 
     public void RenewEnemyRobots()
