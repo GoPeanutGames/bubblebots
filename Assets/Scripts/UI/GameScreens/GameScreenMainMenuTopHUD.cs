@@ -21,9 +21,6 @@ public class GameScreenMainMenuTopHUD : GameScreen
     public TextMeshProUGUI gemsText;
     public TextMeshProUGUI energyText;
     public TextMeshProUGUI usernameText;
-    public GameObject bubblesTooltip;
-    public GameObject gemsTooltip;
-    public GameObject energyTooltip;
 
     const int MAX_ENERGY = 10;
 
@@ -93,39 +90,9 @@ public class GameScreenMainMenuTopHUD : GameScreen
         usernameText.text = username;
     }
 
-    private void DeactivateGameObject(GameObject gameObject)
+    public void SwitchGameObjectActive(GameObject gameObject)
     {
-        gameObject.SetActive(false);
-    }
-    
-    public void SwitchBubblesTooltipActive()
-    {
-        bubblesTooltip.SetActive(!bubblesTooltip.activeSelf);
-        if (bubblesTooltip.activeSelf)
-        {
-            DeactivateGameObject(energyTooltip);
-            DeactivateGameObject(gemsTooltip);
-        }
-    }
-    
-    public void SwitchGemsTooltipActive()
-    {
-        gemsTooltip.SetActive(!gemsTooltip.activeSelf);
-        if (gemsTooltip.activeSelf)
-        {
-            DeactivateGameObject(bubblesTooltip);
-            DeactivateGameObject(energyTooltip);
-        }
-    }
-    
-    public void SwitchEnergyTooltipActive()
-    {
-        energyTooltip.SetActive(!energyTooltip.activeSelf);
-        if (energyTooltip.activeSelf)
-        {
-            DeactivateGameObject(bubblesTooltip);
-            DeactivateGameObject(gemsTooltip);
-        }
+        gameObject.SetActive(!gameObject.activeSelf);
     }
     
     public bool AreResourcesSet()

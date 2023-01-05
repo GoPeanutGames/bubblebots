@@ -103,6 +103,82 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -83.55115}
   m_SizeDelta: {x: 0, y: 95.62305}
   m_Pivot: {x: 0.5, y: 1}
+--- !u!1 &905499620210952229
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4421433573278789973}
+  - component: {fileID: 3929335446805055184}
+  - component: {fileID: 7716980820280275716}
+  m_Layer: 5
+  m_Name: TooltipImage
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &4421433573278789973
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905499620210952229}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6590320458389975828}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.05, y: -5}
+  m_AnchorMax: {x: 0.95, y: 0.1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &3929335446805055184
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905499620210952229}
+  m_CullTransparentMesh: 1
+--- !u!114 &7716980820280275716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 905499620210952229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 6bc0faa4dc15ad24fac283d33f1a4cb9, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 1
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &1501000893294798085
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,6 +1132,7 @@ RectTransform:
   - {fileID: 6838554149332723788}
   - {fileID: 7712246747448097552}
   - {fileID: 6001583368886935058}
+  - {fileID: 4421433573278789973}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1108,9 +1185,6 @@ MonoBehaviour:
   gemsText: {fileID: 9158779583906392502}
   energyText: {fileID: 9158779584845779363}
   usernameText: {fileID: 377042734079655038}
-  bubblesTooltip: {fileID: 2024849146847591050}
-  gemsTooltip: {fileID: 4068638985820678055}
-  energyTooltip: {fileID: 4068638984612847538}
 --- !u!1 &7157341303082221162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1692,12 +1766,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a28c5ae8845fa645abaccee566f6ee6, type: 3}
---- !u!1 &4068638985820678055 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7134599096853690438, guid: 8a28c5ae8845fa645abaccee566f6ee6,
-    type: 3}
-  m_PrefabInstance: {fileID: 6590320458349731809}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &9158779583817850295 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2625317157818122838, guid: 8a28c5ae8845fa645abaccee566f6ee6,
@@ -1806,11 +1874,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchGemsTooltipActive
-        m_Mode: 1
+        m_MethodName: SwitchGameObjectActive
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 905499620210952229}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1918,11 +1986,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchGemsTooltipActive
-        m_Mode: 1
+        m_MethodName: SwitchGameObjectActive
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 905499620210952229}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2187,12 +2255,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a28c5ae8845fa645abaccee566f6ee6, type: 3}
---- !u!1 &4068638984612847538 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7134599096853690438, guid: 8a28c5ae8845fa645abaccee566f6ee6,
-    type: 3}
-  m_PrefabInstance: {fileID: 6590320459557824500}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &9158779583856427977 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2625317158987637821, guid: 8a28c5ae8845fa645abaccee566f6ee6,
@@ -2283,11 +2345,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchEnergyTooltipActive
-        m_Mode: 1
+        m_MethodName: SwitchGameObjectActive
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 905499620210952229}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2395,11 +2457,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchEnergyTooltipActive
-        m_Mode: 1
+        m_MethodName: SwitchGameObjectActive
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 905499620210952229}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2446,7 +2508,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 0ae78cd97c1ae1344a1d1f451c5608e8,
+      objectReference: {fileID: 21300000, guid: 0b469e39dff21d04e9b36967d64b62bb,
         type: 3}
     - target: {fileID: 1316918950940912385, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
@@ -2588,6 +2650,16 @@ PrefabInstance:
       propertyPath: m_fontColor32.rgba
       value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: 2625317158425648457, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -2639,6 +2711,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8570929014841580892, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -2676,12 +2753,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a28c5ae8845fa645abaccee566f6ee6, type: 3}
---- !u!1 &2024849146847591050 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7134599096853690438, guid: 8a28c5ae8845fa645abaccee566f6ee6,
-    type: 3}
-  m_PrefabInstance: {fileID: 9158779584652706508}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6590320457711476612 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2625317158425648456, guid: 8a28c5ae8845fa645abaccee566f6ee6,
@@ -2755,11 +2826,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchBubblesTooltipActive
-        m_Mode: 1
+        m_MethodName: SwitchGameObjectActive
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 905499620210952229}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2884,11 +2955,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchBubblesTooltipActive
-        m_Mode: 1
+        m_MethodName: SwitchGameObjectActive
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 905499620210952229}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
