@@ -359,38 +359,38 @@ public class GUIGame : MonoBehaviour
 
     public void ExplodeBubble(int x, int y, long value)
     {
-        //GameObject bubbleImage = Instantiate(bubblesImagePrefab, this.transform);
-        Transform tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+        ////GameObject bubbleImage = Instantiate(bubblesImagePrefab, this.transform);
+        //Transform tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
 
-        // TODO: Remove in the future versions
-        if (tile == null)
-        {
-            //Debug.Log("EXP1");
-            return;
-        }
-
-        //RectTransform rect = bubbleImage.GetComponent<RectTransform>();
-        //if (rect == null)
+        //// TODO: Remove in the future versions
+        //if (tile == null)
         //{
-        //    rect = bubbleImage.AddComponent<RectTransform>();
+        //    //Debug.Log("EXP1");
+        //    return;
         //}
 
-        //bubbleImage.transform.position = tile.position;
-        //rect.SetAsLastSibling();
-        ////DOTween.To(() => bubbleImage.transform.position, x =>
+        ////RectTransform rect = bubbleImage.GetComponent<RectTransform>();
+        ////if (rect == null)
         ////{
-        ////    bubbleImage.transform.position = x;
-        ////}, unclaimedBubblesImage.transform.position, 3 * SwapDuration);
+        ////    rect = bubbleImage.AddComponent<RectTransform>();
+        ////}
 
-        //StartCoroutine(DespawnObject(bubbleImage, 3 * SwapDuration));
+        ////bubbleImage.transform.position = tile.position;
+        ////rect.SetAsLastSibling();
+        //////DOTween.To(() => bubbleImage.transform.position, x =>
+        //////{
+        //////    bubbleImage.transform.position = x;
+        //////}, unclaimedBubblesImage.transform.position, 3 * SwapDuration);
+
+        ////StartCoroutine(DespawnObject(bubbleImage, 3 * SwapDuration));
 
 
-        GameObject bubbleText = Instantiate(bubblesTextPrefab, this.transform);
-        bubbleText.transform.position = tile.position;
-        bubblesTextPrefab.transform.SetAsLastSibling();
-        bubbleText.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "+" + value.ToString();
-        bubbleText.GetComponentInChildren<TMPro.TextMeshProUGUI>().DOFade(0, 2f);
-        StartCoroutine(DespawnObject(bubbleText, 2f));
+        //GameObject bubbleText = Instantiate(bubblesTextPrefab, this.transform);
+        //bubbleText.transform.position = tile.position;
+        //bubblesTextPrefab.transform.SetAsLastSibling();
+        //bubbleText.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = "+" + value.ToString();
+        //bubbleText.GetComponentInChildren<TMPro.TextMeshProUGUI>().DOFade(0, 2f);
+        //StartCoroutine(DespawnObject(bubbleText, 2f));
     }
 
     IEnumerator DespawnObject(GameObject bubbleImage, float duration)
