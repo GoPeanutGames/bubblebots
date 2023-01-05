@@ -3445,6 +3445,7 @@ MonoBehaviour:
   - {fileID: 1896057103663101010, guid: 63d43a9946b9a5e4fba7334f14bfb05e, type: 3}
   - {fileID: -2363525908864316044, guid: 67704ef825b1d5640bd290fddd254892, type: 3}
   - {fileID: -7879914156153614160, guid: b729debc04d8fca47a4b8a87c030e3e4, type: 3}
+  - {fileID: 6091854784100912889, guid: d3d3d566a296ba14aa01e2901b3e6066, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0

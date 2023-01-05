@@ -26,6 +26,11 @@ public static class ButtonId
     public const string MainMenuTopHUDPremint = "mainmenu.topHUD.premint";
     public const string MainMenuTopHUDLeaderboard = "mainmenu.topHUD.leaderboard";
 
+    //leaderboard
+    public const string LeaderboardFree = "leaderboard.free";
+    public const string LeaderboardNether = "leaderboard.nether";
+    public const string LeaderboardClose = "leaderboard.close";
+    
     //coming soon
     public const string ComingSoonGenericClose = "comingsoon.generic.close";
     public const string ComingSoonNetherpassClose = "comingsoon.netherpass.close";

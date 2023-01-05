@@ -1,12 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+using System.Runtime.InteropServices;
 using DG.Tweening;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 using static GUIGame;
-using System.Runtime.InteropServices;
-using Newtonsoft.Json.Linq;
 
 public class GUIMenu : MonoBehaviour
 {
@@ -342,49 +340,49 @@ public class GUIMenu : MonoBehaviour
             Destroy(lineRoot.GetChild(i).gameObject);
         }
 
-        UserManager.Instance.GetTop100Scores((data) =>
-        {
-
-            List<ScoreInfo> result = new List<ScoreInfo>();
-            JArray scoreData = JArray.Parse(data.ToString());
-            for (int i = 0; i < scoreData.Count; i++)
-            {
-                string playerName;
-                if (scoreData[i]["nickname"] != null)
-                {
-                    playerName = scoreData[i]["nickname"].ToString();
-                }
-                else
-                {
-                    playerName = "Player " + Random.Range(1000, 10000);
-                }
-
-                result.Add(new ScoreInfo(int.Parse(scoreData[i]["score"].ToString()), playerName, "", i + 1, scoreData[i]["address"].ToString() == UserManager.Instance.GetPlayerWalletAddress()));
-            }
-
-            scoreList.SetActive(true);
-            loading.SetActive(false);
-            RectTransform rect;
-            var root = lineRoot.GetComponent<RectTransform>();
-            root.sizeDelta = new Vector2(root.sizeDelta.x, 42 * result.Count + 20);
-            for (int i = 0; i < result.Count; i++)
-            {
-                lineItem = Instantiate(templateItem, lineRoot);
-                lineItem.GetComponent<TextMeshProUGUI>().text = result[i].Rank + ".";
-                lineItem.GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
-
-                lineItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().text = result[i].UserFullName;
-                lineItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
-
-                lineItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().text = result[i].Score.ToString();
-                lineItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
-
-                rect = lineItem.GetComponent<RectTransform>();
-                rect.anchoredPosition = new Vector2(-225, 10 + (i + 1) * -42);
-            }
-
-            DisplayPlayerRank();
-        });
+        // UserManager.Instance.GetTop100Scores((data) =>
+        // {
+        //
+        //     List<ScoreInfo> result = new List<ScoreInfo>();
+        //     JArray scoreData = JArray.Parse(data.ToString());
+        //     for (int i = 0; i < scoreData.Count; i++)
+        //     {
+        //         string playerName;
+        //         if (scoreData[i]["nickname"] != null)
+        //         {
+        //             playerName = scoreData[i]["nickname"].ToString();
+        //         }
+        //         else
+        //         {
+        //             playerName = "Player " + Random.Range(1000, 10000);
+        //         }
+        //
+        //         result.Add(new ScoreInfo(int.Parse(scoreData[i]["score"].ToString()), playerName, "", i + 1, scoreData[i]["address"].ToString() == UserManager.Instance.GetPlayerWalletAddress()));
+        //     }
+        //
+        //     scoreList.SetActive(true);
+        //     loading.SetActive(false);
+        //     RectTransform rect;
+        //     var root = lineRoot.GetComponent<RectTransform>();
+        //     root.sizeDelta = new Vector2(root.sizeDelta.x, 42 * result.Count + 20);
+        //     for (int i = 0; i < result.Count; i++)
+        //     {
+        //         lineItem = Instantiate(templateItem, lineRoot);
+        //         lineItem.GetComponent<TextMeshProUGUI>().text = result[i].Rank + ".";
+        //         lineItem.GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
+        //
+        //         lineItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().text = result[i].UserFullName;
+        //         lineItem.transform.Find("TxtTitleNickName").GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
+        //
+        //         lineItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().text = result[i].Score.ToString();
+        //         lineItem.transform.Find("TxtTitleScore").GetComponent<TextMeshProUGUI>().color = result[i].Us ? Color.yellow : Color.white;
+        //
+        //         rect = lineItem.GetComponent<RectTransform>();
+        //         rect.anchoredPosition = new Vector2(-225, 10 + (i + 1) * -42);
+        //     }
+        //
+        //     DisplayPlayerRank();
+        // });
     }
 
     public void BackFromHightScores()

@@ -1,14 +1,30 @@
 using System;
+using System.Collections.Generic;
 
 namespace BubbleBots.Server.Player
 {
-    public enum PlayerAPI { Create, Get, UpdateNickname, Top100, Wallet };
+    public enum PlayerAPI { Create, Get, UpdateNickname, Top100Pro, Top100Free, Wallet };
 
     [Serializable]
     public class CreatePlayerData
     {
         public string address;
         public string signature;
+    }
+
+    [Serializable]
+    public class ResponseLeaderboardDataEntry
+    {
+        public int score;
+        public string nickname;
+        public int rank;
+        public string address;
+    }
+    
+    [Serializable]
+    public class GetLeaderboardData
+    {
+        public List<ResponseLeaderboardDataEntry> activities;
     }
 
     [Serializable]

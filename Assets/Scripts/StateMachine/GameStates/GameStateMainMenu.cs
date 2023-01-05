@@ -1,6 +1,6 @@
+using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using UnityEngine;
-using System.Runtime.InteropServices;
 
 public class GameStateMainMenu : GameState
 {
@@ -113,7 +113,7 @@ public class GameStateMainMenu : GameState
                 OpenPremintPopup();
                 break;
             case ButtonId.MainMenuTopHUDLeaderboard:
-                ShowComingSoonGeneric();
+                ShowLeaderboard();
                 break;
             case ButtonId.ComingSoonGenericClose:
                 HideComingSoonGeneric();
@@ -158,6 +158,11 @@ public class GameStateMainMenu : GameState
         }
     }
 
+    private void ShowLeaderboard()
+    {
+        stateMachine.PushState(new GameStateLeaderboard());
+    }
+    
     private void ShowComingSoonGeneric()
     {
         _gameScreenComingSoonGeneric = Screens.Instance.PushScreen<GameScreenComingSoonGeneric>();

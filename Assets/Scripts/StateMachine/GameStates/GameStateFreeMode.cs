@@ -18,7 +18,6 @@ public class GameStateFreeMode : GameState
 
     public override void Enable()
     {
-        //SceneManager.LoadScene("FreeToPlayMode");
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
         Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
