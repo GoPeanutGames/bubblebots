@@ -1108,6 +1108,9 @@ MonoBehaviour:
   gemsText: {fileID: 9158779583906392502}
   energyText: {fileID: 9158779584845779363}
   usernameText: {fileID: 377042734079655038}
+  bubblesTooltip: {fileID: 2024849146847591050}
+  gemsTooltip: {fileID: 4068638985820678055}
+  energyTooltip: {fileID: 4068638984612847538}
 --- !u!1 &7157341303082221162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1649,12 +1652,37 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
       propertyPath: m_AnchorMax.y
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
+      propertyPath: m_AnchorMin.x
+      value: -0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: -1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
@@ -1778,11 +1806,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchObjectActive
-        m_Mode: 2
+        m_MethodName: SwitchGemsTooltipActive
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 4068638985820678055}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1890,11 +1918,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchObjectActive
-        m_Mode: 2
+        m_MethodName: SwitchGemsTooltipActive
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 4068638985820678055}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2129,7 +2157,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
+      propertyPath: m_AnchorMin.x
+      value: -0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: -1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
@@ -2235,11 +2283,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchObjectActive
-        m_Mode: 2
+        m_MethodName: SwitchEnergyTooltipActive
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 4068638984612847538}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2347,11 +2395,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchObjectActive
-        m_Mode: 2
+        m_MethodName: SwitchEnergyTooltipActive
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 4068638984612847538}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2543,7 +2591,12 @@ PrefabInstance:
     - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.32
+      value: 0.34
+      objectReference: {fileID: 0}
+    - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_AnchorMin.x
+      value: -0.03
       objectReference: {fileID: 0}
     - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
@@ -2553,12 +2606,17 @@ PrefabInstance:
     - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 70
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2625317158987637822, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2625317158987637823, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
@@ -2583,12 +2641,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
       propertyPath: m_AnchorMax.y
       value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
         type: 3}
+      propertyPath: m_AnchorMin.y
+      value: -1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8973607520763597684, guid: 8a28c5ae8845fa645abaccee566f6ee6,
@@ -2677,11 +2755,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchObjectActive
-        m_Mode: 2
+        m_MethodName: SwitchBubblesTooltipActive
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 2024849146847591050}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2806,11 +2884,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: -3374904953948213828}
         m_TargetAssemblyTypeName: GameScreenMainMenuTopHUD, Assembly-CSharp
-        m_MethodName: SwitchObjectActive
-        m_Mode: 2
+        m_MethodName: SwitchBubblesTooltipActive
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 2024849146847591050}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
