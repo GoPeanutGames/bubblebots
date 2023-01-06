@@ -25,6 +25,7 @@ public class GameStateFreeMode : GameState
         if (UserManager.PlayerType != PlayerType.Guest)
         {
             _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
+            _gameScreenMainMenuTopHUD.DisablePlusButton();
             _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
         }
         Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);

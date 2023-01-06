@@ -21,6 +21,7 @@ public class GameScreenMainMenuTopHUD : GameScreen
     public TextMeshProUGUI gemsText;
     public TextMeshProUGUI energyText;
     public TextMeshProUGUI usernameText;
+    public GameObject plusButton;
 
     const int MAX_ENERGY = 10;
 
@@ -98,5 +99,15 @@ public class GameScreenMainMenuTopHUD : GameScreen
     public bool AreResourcesSet()
     {
         return _resourcesSet;
+    }
+
+    public void EnablePlusButton()
+    {
+        plusButton.SetActive(true);
+    }
+
+    public void DisablePlusButton()
+    {
+        plusButton.SetActive(false);
     }
 }

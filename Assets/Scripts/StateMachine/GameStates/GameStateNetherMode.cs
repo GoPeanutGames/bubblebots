@@ -23,6 +23,7 @@ public class GameStateNetherMode : GameState
         Screens.Instance.SetBackground(GameSettingsManager.Instance.netherModeGameplayData.backgroundSprite);
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
         _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
+        _gameScreenMainMenuTopHUD.DisablePlusButton();
         _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.netherModeGameplayData.robotsAvailable);
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);

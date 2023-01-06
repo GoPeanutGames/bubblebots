@@ -1185,6 +1185,7 @@ MonoBehaviour:
   gemsText: {fileID: 9158779583906392502}
   energyText: {fileID: 9158779584845779363}
   usernameText: {fileID: 377042734079655038}
+  plusButton: {fileID: 1190534562348229987}
 --- !u!1 &7157341303082221162
 GameObject:
   m_ObjectHideFlags: 0
@@ -1766,6 +1767,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8a28c5ae8845fa645abaccee566f6ee6, type: 3}
+--- !u!1 &1190534562348229987 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5471914685567318658, guid: 8a28c5ae8845fa645abaccee566f6ee6,
+    type: 3}
+  m_PrefabInstance: {fileID: 6590320458349731809}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &9158779583817850295 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2625317157818122838, guid: 8a28c5ae8845fa645abaccee566f6ee6,
