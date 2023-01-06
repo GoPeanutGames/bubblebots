@@ -48,6 +48,8 @@ public static class ButtonId
     //robot selection
     public const string RobotSelectionBackButton = "robotSelection.back";
     public const string RobotSelectionStartButton = "robotSelection.start";
+    public const string RobotSelectionQuestionMark = "robotSelection.questionMark";
+    public const string RobotSelectionSkinPopupClose = "robotSelection.skinPopup.close";
     
     //store
     public const string StoreTabGems = "store.tabs.gems";

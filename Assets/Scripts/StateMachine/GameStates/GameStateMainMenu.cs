@@ -227,7 +227,6 @@ public class GameStateMainMenu : GameState
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);
         Screens.Instance.PopScreen(gameScreenMainMenuBottomHUD);
-        Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
         Screens.Instance.PopScreen(gameScreenModeSelect);
         stateMachine.PushState(new GameStateFreeMode());
     }
@@ -260,7 +259,6 @@ public class GameStateMainMenu : GameState
     {
         Screens.Instance.PopScreen(gameScreenMainMenu);
         Screens.Instance.PopScreen(gameScreenMainMenuBottomHUD);
-        Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
         Screens.Instance.PopScreen(gameScreenModeSelect);
         stateMachine.PushState(new GameStateNetherMode());
     }

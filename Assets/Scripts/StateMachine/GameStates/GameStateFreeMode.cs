@@ -8,7 +8,10 @@ public class GameStateFreeMode : GameState
     private GameScreenLevelComplete gameScreenLevelComplete;
     private GameScreenGameEnd gameScreenGameEnd;
     private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
-
+    private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
+    private GameScreenSkinsInfoPopup _gameScreenSkinsInfoPopup;
+    private GameScreenRobotSelectQuit _gameScreenRobotSelectQuit;
+    
     private FreeToPlayGameplayManager freeToPlayGameplayManager;
 
     public override string GetGameStateName()
@@ -19,6 +22,11 @@ public class GameStateFreeMode : GameState
     public override void Enable()
     {
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
+        if (UserManager.PlayerType != PlayerType.Guest)
+        {
+            _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
+            _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+        }
         Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
         Screens.Instance.HideGameBackground();
@@ -102,7 +110,6 @@ public class GameStateFreeMode : GameState
         GameEventString customButtonData = data as GameEventString;
         switch (customButtonData.stringData)
         {
-
             case ButtonId.RobotSelectionStartButton:
                 StartPlay();
                 break;
@@ -116,7 +123,15 @@ public class GameStateFreeMode : GameState
             case ButtonId.QuitGameMenuPlay:
                 ContinuePlaying();
                 break;
+            case ButtonId.RobotSelectionQuestionMark:
+                OpenSkinPopup();
+                break;
+            case ButtonId.RobotSelectionSkinPopupClose:
+                CloseSkinPopup();
+                break;
             case ButtonId.RobotSelectionBackButton:
+                ShowQuitRobotSelect();
+                break;
             case ButtonId.GameEndGoToMainMenu:
             case ButtonId.QuitGameMenuQuit:
                 GoToMainMenu();
@@ -126,11 +141,38 @@ public class GameStateFreeMode : GameState
         }
     }
 
+    private void OpenSkinPopup()
+    {
+        _gameScreenSkinsInfoPopup = Screens.Instance.PushScreen<GameScreenSkinsInfoPopup>();
+    }
+
+    private void CloseSkinPopup()
+    {
+        Screens.Instance.PopScreen(_gameScreenSkinsInfoPopup);
+    }
+
     private void ContinuePlaying()
     {
         Screens.Instance.PopScreen(gameScreenQuitToMainMenu);
+        if (_gameScreenRobotSelectQuit != null)
+        {
+            Screens.Instance.PopScreen(_gameScreenRobotSelectQuit);
+        }
     }
 
+    private void ShowQuitRobotSelect()
+    {
+        if (UserManager.PlayerType == PlayerType.Guest)
+        {
+            GoToMainMenu();
+        }
+        else
+        {
+            _gameScreenRobotSelectQuit = Screens.Instance.PushScreen<GameScreenRobotSelectQuit>();
+            _gameScreenRobotSelectQuit.SetWarningText("You will not get your Energy back\nif you go back to the previous menu.\nAre you sure you want to go back?");
+        }
+    }
+    
     private void ShowQuitGameMenu()
     {
         if (freeToPlayGameplayManager.CanShowQuitPopup())
@@ -173,6 +215,19 @@ public class GameStateFreeMode : GameState
         if (gameScreenGame != null)
         {
             gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
+        }
+        
+        if (_gameScreenRobotSelectQuit != null)
+        {
+            Screens.Instance.PopScreen(_gameScreenRobotSelectQuit);
+        }
+        
+        if (UserManager.PlayerType == PlayerType.Guest)
+        {
+            Screens.Instance.PopScreen(gameScreenRobotSelection);
+            Screens.Instance.ResetBackground();
+            stateMachine.PushState(new GameStateLogin());
+            return;
         }
 
         stateMachine.PushState(new GameStateMainMenu());
