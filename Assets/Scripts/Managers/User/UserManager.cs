@@ -146,11 +146,6 @@ public class UserManager : MonoSingleton<UserManager>
         PlayerPrefs.SetInt("playerBubblesKey", currentBubbles);
     }
 
-    public void GetTop100Scores(Action<string> onComplete)
-    {
-        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Top100, onComplete);
-    }
-
     public void GetPlayerResources()
     {
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>

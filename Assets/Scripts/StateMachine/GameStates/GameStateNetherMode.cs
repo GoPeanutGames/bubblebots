@@ -7,7 +7,10 @@ public class GameStateNetherMode : GameState
     private GameScreenLevelComplete gameScreenLevelComplete;
     private GameScreenGameEnd gameScreenGameEnd;
     private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
-
+    private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
+    private GameScreenSkinsInfoPopup _gameScreenSkinsInfoPopup;
+    private GameScreenRobotSelectQuit _gameScreenRobotSelectQuit;
+    
     private NetherModeGameplayManager netherModeGameplayManager;
 
     public override string GetGameStateName()
@@ -19,6 +22,9 @@ public class GameStateNetherMode : GameState
     {
         Screens.Instance.SetBackground(GameSettingsManager.Instance.netherModeGameplayData.backgroundSprite);
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
+        _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
+        _gameScreenMainMenuTopHUD.DisablePlusButton();
+        _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.netherModeGameplayData.robotsAvailable);
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         SoundManager.Instance?.FadeOutMusic(() =>
@@ -104,7 +110,13 @@ public class GameStateNetherMode : GameState
         switch (customButtonData.stringData)
         {
             case ButtonId.RobotSelectionBackButton:
-                GoToMainMenu();
+                ShowQuitRobotSelect();
+                break;
+            case ButtonId.RobotSelectionQuestionMark:
+                OpenSkinPopup();
+                break;
+            case ButtonId.RobotSelectionSkinPopupClose:
+                CloseSkinPopup();
                 break;
             case ButtonId.RobotSelectionStartButton:
                 StartPlay();
@@ -138,9 +150,29 @@ public class GameStateNetherMode : GameState
         }
     }
 
+    private void OpenSkinPopup()
+    {
+        _gameScreenSkinsInfoPopup = Screens.Instance.PushScreen<GameScreenSkinsInfoPopup>();
+    }
+
+    private void CloseSkinPopup()
+    {
+        Screens.Instance.PopScreen(_gameScreenSkinsInfoPopup);
+    }
+    
+    private void ShowQuitRobotSelect()
+    {
+        _gameScreenRobotSelectQuit = Screens.Instance.PushScreen<GameScreenRobotSelectQuit>();
+        _gameScreenRobotSelectQuit.SetWarningText("You will not get your Gem back\nif you go back to the previous menu.\nAre you sure you want to go back?");
+    }
+    
     private void ContinuePlaying()
     {
         Screens.Instance.PopScreen(gameScreenQuitToMainMenu);
+        if (_gameScreenRobotSelectQuit != null)
+        {
+            Screens.Instance.PopScreen(_gameScreenRobotSelectQuit);
+        }
     }
 
     private void ShowQuitGameMenu()
@@ -185,6 +217,11 @@ public class GameStateNetherMode : GameState
         if (gameScreenGame != null)
         {
             gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
+        }
+
+        if (_gameScreenRobotSelectQuit != null)
+        {
+            Screens.Instance.PopScreen(_gameScreenRobotSelectQuit);
         }
 
         stateMachine.PushState(new GameStateMainMenu());

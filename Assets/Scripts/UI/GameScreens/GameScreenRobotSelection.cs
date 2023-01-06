@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class GameScreenRobotSelection : GameScreen
 {
 
+    public GameObject questionMarkItemPrefab;
+    
     [SerializeField] private GameObject selectionListRoot;
     [SerializeField] private GameObject selectionRobotPrefab;
     [SerializeField] private Button startButton;
@@ -16,8 +18,6 @@ public class GameScreenRobotSelection : GameScreen
 
     private List<int> selectedRobots;
     
-
-
     public List<BubbleBotData> GetSelectedBots()
     {
         List<BubbleBotData> selectedBots = new List<BubbleBotData>();
@@ -39,6 +39,11 @@ public class GameScreenRobotSelection : GameScreen
             selectionObject.SetActive(true);
             selectionObject.GetComponent<RobotSelectionUIElement>().Setup(availableBots[i], OnRobotPressed);
             selectableRobots.Add(selectionObject.GetComponent<RobotSelectionUIElement>());
+        }
+
+        for (int i = availableBots.Count; i < 9; ++i)
+        {
+            Instantiate(questionMarkItemPrefab, selectionListRoot.transform);
         }
     }
 

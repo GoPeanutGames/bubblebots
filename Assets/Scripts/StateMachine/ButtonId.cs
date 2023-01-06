@@ -26,6 +26,11 @@ public static class ButtonId
     public const string MainMenuTopHUDPremint = "mainmenu.topHUD.premint";
     public const string MainMenuTopHUDLeaderboard = "mainmenu.topHUD.leaderboard";
 
+    //leaderboard
+    public const string LeaderboardFree = "leaderboard.free";
+    public const string LeaderboardNether = "leaderboard.nether";
+    public const string LeaderboardClose = "leaderboard.close";
+    
     //coming soon
     public const string ComingSoonGenericClose = "comingsoon.generic.close";
     public const string ComingSoonNetherpassClose = "comingsoon.netherpass.close";
@@ -43,6 +48,8 @@ public static class ButtonId
     //robot selection
     public const string RobotSelectionBackButton = "robotSelection.back";
     public const string RobotSelectionStartButton = "robotSelection.start";
+    public const string RobotSelectionQuestionMark = "robotSelection.questionMark";
+    public const string RobotSelectionSkinPopupClose = "robotSelection.skinPopup.close";
     
     //store
     public const string StoreTabGems = "store.tabs.gems";

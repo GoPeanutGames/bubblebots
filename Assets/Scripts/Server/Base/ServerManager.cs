@@ -28,7 +28,8 @@ public class ServerManager : MonoSingleton<ServerManager>
         { PlayerAPI.Create, "/player" },
         { PlayerAPI.UpdateNickname, "/player/nickname" },
         { PlayerAPI.Get, "/player/me/" },
-        { PlayerAPI.Top100, "/player/score" },
+        { PlayerAPI.Top100Pro, "/player/topActivities?mode=PRO" },
+        { PlayerAPI.Top100Free, "/player/topActivities?mode=FREE" },
         { PlayerAPI.Wallet , "/player/wallet/"}
     };
 
@@ -60,9 +61,7 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     private UnityWebRequest SetupPostWebRequest(string api, string formData)
     {
-
         string encryptedFormData = UseRSA ? Encrypt(formData) : formData;
-
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
         UnityWebRequest webRequest = UnityWebRequest.Post(serverUrl + api, encryptedFormData);
         UploadHandler customUploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(encryptedFormData));
@@ -92,9 +91,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         operation.completed += (result) =>
         {
             string data = webRequest.downloadHandler.text;
-
             string decryptedData = UseRSA ? Decrypt(data) : data;
-
             if (webRequest.result == UnityWebRequest.Result.Success)
             {
                 onComplete?.Invoke(decryptedData);
