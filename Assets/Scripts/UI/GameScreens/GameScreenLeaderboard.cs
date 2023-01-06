@@ -24,9 +24,9 @@ public class GameScreenLeaderboard : GameScreen
 
     public void ClearEntries()
     {
-        while (LeaderboardEntriesParent.transform.childCount > 0)
+        foreach (Transform child in LeaderboardEntriesParent.transform)
         {
-            Destroy(LeaderboardEntriesParent.transform.GetChild(0).gameObject);
+            Destroy(child.gameObject);
         }
     }
 

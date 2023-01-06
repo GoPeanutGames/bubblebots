@@ -160,6 +160,7 @@ public class GameStateMainMenu : GameState
 
     private void ShowLeaderboard()
     {
+        Screens.Instance.PopScreen(gameScreenMainMenuTopHUD);
         stateMachine.PushState(new GameStateLeaderboard());
     }
     
