@@ -41,9 +41,8 @@ public class EnemyRobot : MonoBehaviour
     IEnumerator DamageEffect()
     {
         damageAnimationIsRunning = true;
-        GameObject hitObject = Instantiate(HitEffect, HitEffect.transform.position, HitEffect.transform.rotation, transform.parent);
-        hitObject.SetActive(true);
-        Destroy(hitObject, 2);
+        HitEffect.SetActive(true);
+        HitEffect.GetComponent<ParticleSystem>().Play();
 
         yield return new WaitForSeconds(0.35f);
         damageAnimationIsRunning = false;

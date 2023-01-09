@@ -66,7 +66,6 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
 
     public LevelDesign testLevel;
 
-    public GUIMenu MenuGUI;
     public GUIGame GameGUI;
 
 

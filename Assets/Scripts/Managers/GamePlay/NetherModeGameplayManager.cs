@@ -247,21 +247,15 @@ public class NetherModeGameplayManager : MonoBehaviour
         {
             OnPlayerLost();
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
-            //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            // FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
         }
         else if (playerRoster.IsDead(playerRoster.currentBot))
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot });
-            //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            // FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
             playerRoster.currentBot++;
         }
         else
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotDamage() { eventName = GameEvents.FreeModePlayerRobotDamage, id = playerRoster.currentBot, damage = (int)enemyDamage });
-            //GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
-            // FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
         }
     }
 
@@ -313,7 +307,6 @@ public class NetherModeGameplayManager : MonoBehaviour
         if (!allEnemiesKilled)
         {
             GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
-            // FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy, false);
         }
         return allEnemiesKilled;
     }
@@ -425,8 +418,6 @@ public class NetherModeGameplayManager : MonoBehaviour
 
         currentEnemy = 0;
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
-        // FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
-        //GameGUI.TargetEnemy(currentEnemy);
 
         gameplayState = NethermodeGameplayState.Match3Playing;
     }

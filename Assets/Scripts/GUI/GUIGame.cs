@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using BubbleBots.Match3.Data;
 using BubbleBots.Match3.Models;
 using DG.Tweening;
@@ -9,46 +8,39 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class GUIGame : MonoBehaviour
 {
-    public Image[] BackgroundTiles;
+    public GameObject BackgroundTile;
     public int Spacing = 4;
-    public int TileWidth = 150;
+    // public int TileWidth = 150;
     public float SwapDuration = 0.33f;
     public float SpecialSwapDuration = 0.33f;
     public float DefaultSwapDuration = 0.33f;
     public Slider[] EnemyGauges;
-    public RobotEffects[] PlayerRobots;
-    public Slider[] PlayerGauges;
     public int TopBias = 100;
     [HideInInspector]
     public bool CanSwapTiles = true;
     public TextMeshProUGUI TxtScore;
     public TextMeshProUGUI TxtKilledRobots;
     public Sprite[] RobotSprites;
-    public Sprite[] EnemySprites;
+    public GameObject BoardParent;
+    public Material ShineMaterial;
 
     public TextMeshProUGUI unclaimedBubblesScore;
 
     public GameObject bubblesTextPrefab;
     public GameObject bubblesImagePrefab;
 
-    public Material shineMaterial;
-
     Image[,] backgroundTiles;
     List<GameObject> explosionEffects = new List<GameObject>();
 
     private List<Vector2Int> hintTiles;
     private Coroutine showHint;
+    private float TileSize;
 
     public delegate void OnGUIEvent(object param);
-
-    [DllImport("__Internal")]
-    private static extern void Reload();
-
-    [DllImport("__Internal")]
-    private static extern void DisplayHelp();
 
     public void UpdateScore(int currentScore)
     {
@@ -80,96 +72,54 @@ public class GUIGame : MonoBehaviour
         GameEventsManager.Instance.PostEvent(new GameEventInt() { eventName = GameEvents.FreeModeEnemyChanged, intData = currentEnemy });
         FindObjectOfType<FreeToPlayGameplayManager>()?.TargetEnemy(currentEnemy);
         FindObjectOfType<NetherModeGameplayManager>()?.TargetEnemy(currentEnemy);
-
-        // for (int r = 0; r < EnemyRobots.Length; r++)
-        // {
-        //     if (r == currentEnemy)
-        //     {
-        //         EnemyRobots[r].SetTarget();
-        //     } else
-        //     {
-        //         EnemyRobots[r].ClearTarget();
-        //     }
-        // }
     }
 
     public void RenderLevelBackground(int levelWidth, int levelHeight)
     {
-        // for (int g = 0; g < EnemyGauges.Length; g++)
-        // {
-        //     EnemyGauges[g].value = EnemyGauges[g].maxValue;
-        //     EnemyGauges[g].transform.Find("TxtHP").GetComponent<TextMeshProUGUI>().text = EnemyGauges[g].maxValue + " / " + EnemyGauges[g].maxValue;
-        // }
-
-        // remove the old ones
-        //wtf
-        Transform child;
-        for (int i = 1; i < gameObject.transform.childCount; i++)
+        //still wtf
+        foreach (Transform childTransform in BoardParent.transform)
         {
-            child = gameObject.transform.GetChild(i);
-            if (!child.gameObject.name.StartsWith("Sld") && child.gameObject.name != "ImgBottom" &&
-                !child.gameObject.name.StartsWith("ImgPlayerRobot") && !child.gameObject.name.StartsWith("BackgroundTile") &&
-                !child.gameObject.name.StartsWith("Robot") && !child.gameObject.name.StartsWith("UI") &&
-                !child.gameObject.name.StartsWith("Txt") && !child.gameObject.name.StartsWith("Img") &&
-                child.gameObject.name != "TxtScore" &&
-                child.gameObject.name != "quitButton" &&
-                child.gameObject.name != "TxtBubbles" &&
-                child.gameObject.name != "ImgBubbles" &&
-                child.gameObject.name != "TxtStatus" &&
-                !child.gameObject.name.StartsWith("Music") &&
-                child.gameObject.name != "BtnHelp")
-            {
-                Destroy(gameObject.transform.GetChild(i).gameObject);
-            }
+            Destroy(childTransform.gameObject);
         }
-
         // add new tiles
+        RectTransform bParentRectTransform = BoardParent.GetComponent<RectTransform>();
+        TileSize = Mathf.Min(bParentRectTransform.rect.width / levelWidth, bParentRectTransform.rect.height / levelHeight);
+        BackgroundTile.GetComponent<RectTransform>().sizeDelta = new Vector2(TileSize, TileSize);
         backgroundTiles = new Image[levelWidth, levelHeight];
-        Image backgroundTile;
-        for (int i = 0; i < BackgroundTiles.Length; i++)
-        {
-            BackgroundTiles[i].GetComponent<RectTransform>().sizeDelta = new Vector2(TileWidth, TileWidth);
-        }
+        GameObject backgroundTile;
 
-        int tileWidth = TileWidth;
-        int tileHeight = TileWidth;
-        int itemNumber = 0;
+        float tileWidth = TileSize;
+        float tileHeight = TileSize;
 
         for (int x = 0; x < levelWidth; x++)
         {
             for (int y = 0; y < levelHeight; y++)
             {
-                backgroundTile = Instantiate(BackgroundTiles[itemNumber++ % BackgroundTiles.Length], gameObject.transform);
+                backgroundTile = Instantiate(BackgroundTile, BoardParent.transform);
                 backgroundTile.gameObject.SetActive(true);
                 backgroundTile.GetComponent<Image>().enabled = true;
-                backgroundTile.gameObject.name = "TileBackground_" + x + "_" + y;
                 backgroundTile.GetComponent<RectTransform>().anchoredPosition = new Vector2(tileWidth / 2f - levelWidth / 2f * tileWidth + x * tileWidth + x * Spacing, -levelHeight / 2f * tileHeight + y * tileHeight + y * Spacing - TopBias);
                 backgroundTile.GetComponent<RectTransform>().localScale = new Vector3(.97f, .97f, .97f);
                 backgroundTile.AddComponent<Canvas>();
-                backgroundTiles[x, y] = backgroundTile;
+                backgroundTiles[x, y] = backgroundTile.GetComponent<Image>();
             }
-
-            itemNumber += 1;
         }
     }
+    
     void RenderTileOnObject(int i, int j, string id, int levelWidth, int levelHeight, LevelData levelData)
     {
         GameObject tile;
         Image tileImage;
         GUITile guiTile;
 
-        ClearSubElements(backgroundTiles[i, j].transform);
         tile = new GameObject();
-        //tile.transform.SetParent(backgroundTiles[i, j].transform);
-        tile.transform.SetParent(transform);
+        tile.transform.SetParent(BoardParent.transform);
         tile.name = "Tile_" + i + "_" + j;
 
-        //yield return new WaitForEndOfFrame();
-
         RectTransform rect = tile.AddComponent<RectTransform>();
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelWidth / 2f * TileWidth + i * TileWidth + i * Spacing, -levelHeight / 2f * TileWidth + j * TileWidth + j * Spacing - TopBias, 0);
-        rect.sizeDelta = new Vector2(TileWidth, TileWidth);
-        rect.localScale = new Vector3(1, 1, 1);
+        rect.anchoredPosition3D = new Vector3(TileSize / 2f - levelWidth / 2f * TileSize + i * TileSize + i * Spacing, -levelHeight / 2f * TileSize + j * TileSize + j * Spacing - TopBias, 0);
+        rect.localScale = new Vector3(.9f, .9f, .9f);
+        rect.sizeDelta = new Vector2(TileSize, TileSize);
 
         tileImage = tile.AddComponent<Image>();
         tileImage.sprite = levelData.GetGemData(id).gemSprite;
@@ -179,14 +129,6 @@ public class GUIGame : MonoBehaviour
         guiTile.X = i;
         guiTile.Y = j;
         guiTile.Key = id;
-    }
-
-    private void ClearSubElements(Transform transform)
-    {
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            Destroy(transform.GetChild(i).gameObject);
-        }
     }
 
     public void SwapTiles(int x1, int y1, int x2, int y2, bool changeInfo)
@@ -233,8 +175,8 @@ public class GUIGame : MonoBehaviour
         try
         {
             LockTiles("L1");
-            tile1 = transform.Find("Tile_" + x1 + "_" + y1);
-            tile2 = transform.Find("Tile_" + x2 + "_" + y2);
+            tile1 = BoardParent.transform.Find("Tile_" + x1 + "_" + y1);
+            tile2 = BoardParent.transform.Find("Tile_" + x2 + "_" + y2);
 
             tile1Pos = tile1.GetComponent<RectTransform>().anchoredPosition;
             tile2Pos = tile2.GetComponent<RectTransform>().anchoredPosition;
@@ -277,17 +219,13 @@ public class GUIGame : MonoBehaviour
     {
         Transform tile1 = null;
         Transform tile2 = null;
-        Vector2 tile1Pos = Vector2.zero;
-        Vector2 tile2Pos = Vector2.zero;
 
         try
         {
             LockTiles("L1");
-            tile1 = transform.Find("Tile_" + x1 + "_" + y1);
-            tile2 = transform.Find("Tile_" + x2 + "_" + y2);
-
-            tile1Pos = tile1.GetComponent<RectTransform>().anchoredPosition;
-            tile2Pos = tile2.GetComponent<RectTransform>().anchoredPosition;
+            tile1 = BoardParent.transform.Find("Tile_" + x1 + "_" + y1);
+            tile2 = BoardParent.transform.Find("Tile_" + x2 + "_" + y2);
+            
             tile1.GetComponent<RectTransform>().DOPunchAnchorPos(10 * new Vector2(x1 - x2, y1 - y2), SwapDuration, 50, 10);
             tile2.GetComponent<RectTransform>().DOPunchAnchorPos(10 * new Vector2(x2 - x1, y2 - y1), SwapDuration, 50, 10);
         }
@@ -310,7 +248,7 @@ public class GUIGame : MonoBehaviour
         {
             for (int i = 0; i < tiles.Count; ++i)
             {
-                tile = transform.Find("Tile_" + tiles[i].x + "_" + tiles[i].y);
+                tile = BoardParent.transform.Find("Tile_" + tiles[i].x + "_" + tiles[i].y);
                 if (tile != null && tile.GetComponent<Image>() != null)
                 {
                     tile.GetComponent<Image>().DOColor(new Color(1, 1, 1, 0.5f), SwapDuration);
@@ -319,7 +257,7 @@ public class GUIGame : MonoBehaviour
             yield return new WaitForSeconds(SwapDuration);
             for (int i = 0; i < tiles.Count; ++i)
             {
-                tile = transform.Find("Tile_" + tiles[i].x + "_" + tiles[i].y);
+                tile = BoardParent.transform.Find("Tile_" + tiles[i].x + "_" + tiles[i].y);
                 if (tile != null && tile.GetComponent<Image>() != null)
                 {
                     tile.GetComponent<Image>().DOColor(new Color(1, 1, 1, 1), SwapDuration);
@@ -343,7 +281,7 @@ public class GUIGame : MonoBehaviour
         }
         for (int i = 0; i < hintTiles.Count; ++i)
         {
-            tile = transform.Find("Tile_" + hintTiles[i].x + "_" + hintTiles[i].y);
+            tile = BoardParent.transform.Find("Tile_" + hintTiles[i].x + "_" + hintTiles[i].y);
             if (tile != null && tile.GetComponent<Image>() != null)
             {
                 tile.GetComponent<Image>().DOComplete();
@@ -405,7 +343,7 @@ public class GUIGame : MonoBehaviour
     public void ExplodeTile(int x, int y, bool destroyTile)
     {
         GameObject explosionEffect = InstantiateOrReuseExplosion();
-        Transform tile = transform.Find("Tile_" + x + "_" + y);
+        Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
         // TODO: Remove in the future versions
         if (tile == null)
@@ -419,7 +357,7 @@ public class GUIGame : MonoBehaviour
 
         StartCoroutine(DespawnExplosion(explosionEffect));
 
-        Transform tileToDisactivate = transform.Find("Tile_" + x + "_" + y);
+        Transform tileToDisactivate = BoardParent.transform.Find("Tile_" + x + "_" + y);
         tileToDisactivate.gameObject.SetActive(false); //transform.localScale = Vector3.zero;
         tileToDisactivate.name += "_deleted";
 
@@ -463,7 +401,7 @@ public class GUIGame : MonoBehaviour
 
     IEnumerator ScrollTileDownNow(int x, int y, int howMany, float duration)
     {
-        Transform tile = transform.Find("Tile_" + x + "_" + y);
+        Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
         // TODO: Remove in future versions
         if (tile == null)
@@ -472,7 +410,7 @@ public class GUIGame : MonoBehaviour
         }
 
         Vector2 tilePos = tile.GetComponent<RectTransform>().anchoredPosition;
-        tile.GetComponent<RectTransform>().DOAnchorPos(tilePos + Vector2.down * TileWidth * howMany + Vector2.down * howMany * Spacing, duration);
+        tile.GetComponent<RectTransform>().DOAnchorPos(tilePos + Vector2.down * TileSize * howMany + Vector2.down * howMany * Spacing, duration);
 
         yield return new WaitForSeconds(duration);
 
@@ -489,7 +427,7 @@ public class GUIGame : MonoBehaviour
 
     IEnumerator AppearDelayed(int x, int y, string key, int levelWidth, int levelHeight, float duration, LevelData levelData)
     {
-        Transform trans = transform.Find("Tile_" + x + "_" + y + "_deleted");
+        Transform trans = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
         GameObject tile;
 
         if (trans == null)
@@ -501,8 +439,7 @@ public class GUIGame : MonoBehaviour
             tile = trans.gameObject;
         }
 
-        //tile.transform.SetParent(backgroundTiles[i, j].transform);
-        tile.transform.SetParent(transform);
+        tile.transform.SetParent(BoardParent.transform);
         tile.name = "Tile_" + x + "_" + y;
         tile.SetActive(true);
 
@@ -512,8 +449,8 @@ public class GUIGame : MonoBehaviour
             rect = tile.AddComponent<RectTransform>();
         }
 
-        rect.anchoredPosition3D = new Vector3(TileWidth / 2f - levelWidth / 2f * TileWidth + x * TileWidth + x * Spacing, -levelHeight / 2f * TileWidth + y * TileWidth + y * Spacing - TopBias, 0);
-        rect.sizeDelta = new Vector2(TileWidth, TileWidth);
+        rect.anchoredPosition3D = new Vector3(TileSize / 2f - levelWidth / 2f * TileSize + x * TileSize + x * Spacing, -levelHeight / 2f * TileSize + y * TileSize + y * Spacing - TopBias, 0);
+        rect.sizeDelta = new Vector2(TileSize, TileSize);
         rect.localScale = new Vector3(1, 1, 1);
         rect.localScale = Vector3.zero;
         rect.DOScale(Vector3.one, duration);
@@ -550,12 +487,12 @@ public class GUIGame : MonoBehaviour
     {
         GameObject explosionEffect1 = Instantiate(VFXManager.Instance.LineExplosionEffect);
         GameObject explosionEffect2 = Instantiate(VFXManager.Instance.LineExplosionEffect);
-        Transform tile = transform.Find("TileBackground_" + x + "_" + y);
+        Transform tile = backgroundTiles[x, y].transform;
 
         // TODO: Remove in the future versions
         if (tile == null)
         {
-            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            tile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
             if (tile == null)
             {
                 Debug.LogWarning("Line destroy effect failed to find the tile Tile_" + x + "_" + y);
@@ -578,11 +515,11 @@ public class GUIGame : MonoBehaviour
     public void ColorBlastEffect(int x, int y)
     {
         GameObject colorExplosionEffect = Instantiate(VFXManager.Instance.ColorExplosionEffect);
-        Transform tile = transform.Find("Tile_" + x + "_" + y);
+        Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
         if (tile == null)
         {
-            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            tile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
             if (tile == null)
             {
                 Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x + "_" + y);
@@ -598,11 +535,11 @@ public class GUIGame : MonoBehaviour
 
     public void ColorBombEffect(int x, int y, float duration = .2f, int numShakes = 3)
     {
-        Transform tile = transform.Find("Tile_" + x + "_" + y);
+        Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
         if (tile == null)
         {
-            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            tile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
             if (tile == null)
             {
                 Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x + "_" + y);
@@ -627,11 +564,11 @@ public class GUIGame : MonoBehaviour
 
     public void ShakeEffect(int x, int y, int numShakes, float shakeDuration)
     {
-        Transform tile = transform.Find("Tile_" + x + "_" + y);
+        Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
         if (tile == null)
         {
-            tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+            tile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
             if (tile == null)
             {
                 Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x + "_" + y);
@@ -661,11 +598,11 @@ public class GUIGame : MonoBehaviour
         {
             x = (int)changedTiles[i].x;
             y = (int)changedTiles[i].y;
-            Transform tile = transform.Find("Tile_" + x + "_" + y);
+            Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
             if (tile == null)
             {
-                tile = transform.Find("Tile_" + x + "_" + y + "_deleted");
+                tile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
                 if (tile == null)
                 {
                     Debug.LogWarning("Color change effect failed to find the tile Tile_" + x + "_" + y);
@@ -695,11 +632,11 @@ public class GUIGame : MonoBehaviour
 
     IEnumerator ScaleDownAndChangeColorAndScaleUp(int posX, int posY, string key, LevelData levelData)
     {
-        Transform tile = transform.Find("Tile_" + posX + "_" + posY);
+        Transform tile = BoardParent.transform.Find("Tile_" + posX + "_" + posY);
 
         if (tile == null)
         {
-            tile = transform.Find("Tile_" + posX + "_" + posY + "_deleted");
+            tile = BoardParent.transform.Find("Tile_" + posX + "_" + posY + "_deleted");
             if (tile == null)
             {
                 Debug.LogWarning("Color change effect failed to find the tile Tile_" + posX + "_" + posY);
@@ -738,11 +675,11 @@ public class GUIGame : MonoBehaviour
 
     IEnumerator DisplayHintAtNow(int x1, int y1)
     {
-        Transform tile1 = transform.Find("Tile_" + x1 + "_" + y1);
+        Transform tile1 = BoardParent.transform.Find("Tile_" + x1 + "_" + y1);
 
         if (tile1 == null)
         {
-            tile1 = transform.Find("Tile_" + x1 + "_" + y1 + "_deleted");
+            tile1 = BoardParent.transform.Find("Tile_" + x1 + "_" + y1 + "_deleted");
             if (tile1 == null)
             {
                 Debug.LogWarning("Color blast effect failed to find the tile Tile_" + x1 + "_" + y1);
@@ -761,7 +698,7 @@ public class GUIGame : MonoBehaviour
                 yield break;
             }
 
-            tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1 + (i % 2 == 0 ? 1 : -1) * UnityEngine.Random.Range(0f, 10f), _y1 + (i % 2 == 0 ? 1 : -1) * UnityEngine.Random.Range(0f, 10f)), 0.15f).SetEase(Ease.Linear);
+            tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1 + (i % 2 == 0 ? 1 : -1) * Random.Range(0f, 10f), _y1 + (i % 2 == 0 ? 1 : -1) * Random.Range(0f, 10f)), 0.15f).SetEase(Ease.Linear);
             yield return new WaitForSeconds(0.15f);
         }
 
@@ -815,7 +752,7 @@ public class GUIGame : MonoBehaviour
 
     public void DisplayHelpButton()
     {
-        DisplayHelp();
+        Application.OpenURL("https://www.youtube.com/watch?v=w10rwbbQVr8");
     }
 
 
@@ -851,7 +788,7 @@ public class GUIGame : MonoBehaviour
 
     public void SetUnclaimedBubblesText(int val)
     {
-        unclaimedBubblesScore.GetComponent<TMPro.TextMeshProUGUI>().text = val.ToString();
+        unclaimedBubblesScore.GetComponent<TextMeshProUGUI>().text = val.ToString();
     }
 
     public void SetBubblesText(int val)
@@ -865,13 +802,11 @@ public class GUIGame : MonoBehaviour
     {
         if (currentSpecialPosition != -Vector2Int.one)
         {
-            Transform oldTile = transform.Find("TileBackground_" + currentSpecialPosition.x + "_" + currentSpecialPosition.y);
-            oldTile.GetComponent<Image>().material = null;
+            backgroundTiles[currentSpecialPosition.x, currentSpecialPosition.y].material = null;
         }
         if (specialPosition != -Vector2Int.one)
         {
-            Transform tile = transform.Find("TileBackground_" + specialPosition.x + "_" + specialPosition.y);
-            tile.GetComponent<Image>().material = shineMaterial;
+            backgroundTiles[specialPosition.x, specialPosition.y].material = ShineMaterial;
         }
         currentSpecialPosition = specialPosition;
     }
@@ -880,8 +815,7 @@ public class GUIGame : MonoBehaviour
     {
         if (currentSpecialPosition != -Vector2Int.one)
         {
-            Transform oldTile = transform.Find("TileBackground_" + currentSpecialPosition.x + "_" + currentSpecialPosition.y);
-            oldTile.GetComponent<Image>().material = null;
+            backgroundTiles[currentSpecialPosition.x, currentSpecialPosition.y].material = null;
         }
         currentSpecialPosition = -Vector2Int.one;
 
