@@ -259,21 +259,15 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         {
             OnPlayerLost();
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy});
-            //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            // FindObjectOfType<GUIGame>().DamageToEnemyRobot(currentWave.bots[currentEnemy].hp);
         }
         else if (playerRoster.IsDead(playerRoster.currentBot))
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy});
-            //GameGUI.KillPlayerRobot(playerRoster.currentBot);
-            // FindObjectOfType<GUIGame>().KillPlayerRobot(playerRoster.currentBot);
             playerRoster.currentBot++;
         }
         else
         {
             GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotDamage() { eventName = GameEvents.FreeModePlayerRobotDamage, enemyIndex = currentEnemy, id = playerRoster.currentBot, damage = (int)enemyDamage });
-            //GameGUI.DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
-            // FindObjectOfType<GUIGame>().DamagePlayerRobot(playerRoster.currentBot, (int)enemyDamage);
         }
     }
 

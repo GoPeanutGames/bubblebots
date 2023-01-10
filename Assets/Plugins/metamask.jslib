@@ -55,26 +55,6 @@ mergeInto(LibraryManager.library, {
     }
   },
 
-  DisplayDebug: function () {
-    myGameInstance.SendMessage("Canvas/PnlGame", "DisplayDebug");
-  },
-
-  DisplayTiles: function () {
-    myGameInstance.SendMessage("Canvas/PnlGame", "DebugTileList");
-  },
-
-  Airdrop: function () {
-    window.open("https://peanutgames.com/airdrop");
-  },
-
-  Reload: function () {
-    window.location.reload();
-  },
-
-  DisplayHelp: function () {
-    window.open("https://www.youtube.com/watch?v=w10rwbbQVr8");
-  },
-
   OpenChangeNickNameMobile: function (nickname) {
     nickname = UTF8ToString(nickname);
 
