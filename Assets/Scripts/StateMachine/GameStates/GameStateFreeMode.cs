@@ -179,6 +179,10 @@ public class GameStateFreeMode : GameState
         if (freeToPlayGameplayManager.CanShowQuitPopup())
         {
             gameScreenQuitToMainMenu = Screens.Instance.PushScreen<GameScreenQuitToMainMenu>();
+            if (UserManager.PlayerType == PlayerType.Guest)
+            {
+                gameScreenQuitToMainMenu.SetQuitText("You will lose your formation if you go back. Are you sure you want to go back?");
+            }
         }
     }
 
