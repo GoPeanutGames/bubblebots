@@ -70,13 +70,6 @@ public class GameStateMainMenu : GameState
         {
             OnButtonTap(data);
         }
-
-        if( data.eventName == GameEvents.NickNameChangedForMobile )
-        {
-            GameEventString nickNameData = data as GameEventString;
-
-            ChangeNickNameWithJs(nickNameData.stringData);
-        }
     }
 
     private void OnButtonTap(GameEventData data)
@@ -286,13 +279,6 @@ public class GameStateMainMenu : GameState
     private void CloseChangeNickname()
     {
         Screens.Instance.PopScreen(_gameScreenChangeNickname);
-    }
-
-    private void ChangeNickNameWithJs(string nickname)
-    {
-        UserManager.Instance.SetPlayerUserName(nickname, true);
-        gameScreenMainMenuTopHUD.SetUsername(nickname);
-    
     }
 
     private void ChangeNickname()

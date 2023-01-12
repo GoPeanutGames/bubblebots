@@ -1,6 +1,4 @@
 using System;
-using Newtonsoft.Json;
-using WalletConnectSharp.Core.Models;
 
 namespace BubbleBots.Server.Signature
 {
@@ -45,18 +43,5 @@ namespace BubbleBots.Server.Signature
     public class ResponseWeb3Login
     {
         public bool status;
-    }
-    
-    public sealed class EthSignTypeDataV4: JsonRpcRequest
-    {
-        [JsonProperty("params")]
-        private string[] _parameters;
-
-        public EthSignTypeDataV4(string address, string schema) : base()
-        {
-            this.Method = "eth_signTypedData";
-
-            this._parameters = new string[] { address, schema };
-        }
     }
 }

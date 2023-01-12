@@ -2,8 +2,6 @@ using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using UnityEngine;
-using WalletConnectSharp.Core.Models.Ethereum;
-using WalletConnectSharp.Unity;
 
 public class GameStateLogin : GameState
 {
@@ -29,7 +27,6 @@ public class GameStateLogin : GameState
         gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
-        WalletConnect.Instance.NewSessionConnected.AddListener(OnNewWalletSessionConnectedEventFromPlugin);
         TryLoginFromSave();
     }
 
@@ -117,15 +114,8 @@ public class GameStateLogin : GameState
 
     private void LoginWithMetamask()
     {
-        if (Application.isMobilePlatform == false)
-        {
-            bool isDev = EnvironmentManager.Instance.IsDevelopment();
-            Login(isDev);
-        }
-        else
-        {
-            WalletConnect.Instance.OpenDeepLink();
-        }
+        bool isDev = EnvironmentManager.Instance.IsDevelopment();
+        Login(isDev);
     }
 
     public void MetamaskLoginSuccess(string address)
@@ -136,26 +126,9 @@ public class GameStateLogin : GameState
         gameScreenLogin.HideLoginScreen();
     }
 
-    private async void RequestSignatureFromMetamask(string schema)
+    private void RequestSignatureFromMetamask(string schema)
     {
-        GetLoginSchema loginSchema = JsonUtility.FromJson<GetLoginSchema>(schema);
-        if (Application.isMobilePlatform)
-        {
-            EthChainData chainData =  EnvironmentManager.Instance.IsDevelopment() ? MetamaskManager.mumbaiChain : MetamaskManager.polygonChain;
-            await WalletConnect.ActiveSession.WalletAddEthChain(chainData);
-            EthChain chainId = new EthChain() { chainId = chainData.chainId };
-            await WalletConnect.ActiveSession.WalletSwitchEthChain(chainId);
-
-            string signature = await MetamaskManager.EthSignForMobile(WalletConnect.ActiveSession, tempAddress, schema);
-
-            //EIP712Domain domain = new EIP712Domain(loginSchema.domain.name, loginSchema.domain.version.ToString(), loginSchema.domain.chainId, loginSchema.domain.verifyingContract);
-            //string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, loginSchema.message, domain);
-            SignatureLoginSuccess(signature);
-        }
-        else
-        {
-            RequestSignature(schema, tempAddress);
-        }
+        RequestSignature(schema, tempAddress);
     }
 
     public void SignatureLoginSuccess(string signature)
@@ -170,12 +143,6 @@ public class GameStateLogin : GameState
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
         GetOrCreatePlayer(address, signature);
         UserManager.PlayerType = PlayerType.LoggedInUser;
-    }
-
-    public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
-    {
-        string account = session.Accounts[0];
-        MetamaskLoginSuccess(account);
     }
 
     private void SetDataToUser(GetPlayerDataResult res)
@@ -220,7 +187,6 @@ public class GameStateLogin : GameState
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
         GameEventsManager.Instance.RemoveGlobalListener(OnMetamaskEvent);
         Screens.Instance.PopScreen(gameScreenLogin);
-        WalletConnect.Instance.NewSessionConnected.RemoveListener(OnNewWalletSessionConnectedEventFromPlugin);
         base.Disable();
     }
 }
