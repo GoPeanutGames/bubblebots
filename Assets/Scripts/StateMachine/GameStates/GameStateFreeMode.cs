@@ -112,6 +112,7 @@ public class GameStateFreeMode : GameState
         switch (customButtonData.stringData)
         {
             case ButtonId.RobotSelectionStartButton:
+                Screens.Instance.PopScreen(_gameScreenMainMenuTopHUD);
                 StartPlay();
                 break;
             case ButtonId.LevelCompleteContinue:

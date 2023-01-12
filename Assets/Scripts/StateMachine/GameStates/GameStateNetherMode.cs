@@ -120,6 +120,7 @@ public class GameStateNetherMode : GameState
                 CloseSkinPopup();
                 break;
             case ButtonId.RobotSelectionStartButton:
+                Screens.Instance.PopScreen(_gameScreenMainMenuTopHUD);
                 StartPlay();
                 break;
             case ButtonId.LevelCompleteContinue:
