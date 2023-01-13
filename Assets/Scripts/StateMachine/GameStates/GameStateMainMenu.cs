@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using UnityEngine;
 
@@ -18,9 +17,6 @@ public class GameStateMainMenu : GameState
 
     private bool canPlayNetherMode = false;
     private bool canPlayFreeMode = false;
-
-    [DllImport("__Internal")]
-    private static extern void OpenChangeNickNameMobile(string nickname);
 
     public override string GetGameStateName()
     {
@@ -265,15 +261,8 @@ public class GameStateMainMenu : GameState
 
     private void OpenChangeNickname()
     {
-        if (Application.isMobilePlatform == true)
-        {
-            OpenChangeNickNameMobile(UserManager.Instance.GetPlayerUserName());
-        }
-        else
-        {
-            _gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
-            _gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
-        }        
+        _gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
+        _gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
     }
 
     private void CloseChangeNickname()
