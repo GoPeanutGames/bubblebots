@@ -53,17 +53,5 @@ mergeInto(LibraryManager.library, {
         "BundleBuyFail"
       );
     }
-  },
-
-  OpenChangeNickNameMobile: function (nickname) {
-    nickname = UTF8ToString(nickname);
-
-    openChangeNickNamePopup(nickname, (changedNickname) => {
-      myGameInstance.SendMessage(
-        "Managers/JSLibConnectionManager",
-        "NickNameChangeForMobile",
-        changedNickname
-      );
-    });
-  },
+  }
 });

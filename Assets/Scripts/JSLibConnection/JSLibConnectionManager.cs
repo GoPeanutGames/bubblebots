@@ -26,17 +26,6 @@ public class JSLibConnectionManager : MonoBehaviour
     }
 
     [SkipRename]
-    public void NickNameChangeForMobile(string nickName)
-    {
-        GameEventString nickNameChangedForMobile = new()
-        {
-            eventName = GameEvents.NickNameChangedForMobile,
-            stringData = nickName
-        };
-        GameEventsManager.Instance.PostEvent(nickNameChangedForMobile);
-    }
-
-    [SkipRename]
     public void BundleBuySuccess()
     {
         MetamaskManager.Instance.StoreBundleBuySuccess();
