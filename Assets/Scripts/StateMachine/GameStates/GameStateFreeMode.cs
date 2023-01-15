@@ -89,7 +89,7 @@ public class GameStateFreeMode : GameState
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
-            gameScreenLevelComplete.SetMessage("You earned <color=#FF7ABC>" + (data as GameEventLevelComplete).numBubblesWon.ToString() + "</color> bubbles!");
+            gameScreenLevelComplete.SetMessage("You earned <color=#FF7ABC>" + (data as GameEventLevelComplete).numBubblesWon.ToString() + "</color> Bubbles!");
             gameScreenLevelComplete.SetButtonText("Continue");
         }
         else if (data.eventName == GameEvents.FreeModeLose)

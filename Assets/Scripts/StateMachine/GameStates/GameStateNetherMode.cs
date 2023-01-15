@@ -85,7 +85,7 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
-            gameScreenLevelComplete.SetMessage("You earned <color=#FF7ABC>" + (data as GameEventLevelComplete).lastLevelPotentialBubbles.ToString() + "</color> bubbles!");
+            gameScreenLevelComplete.SetMessage("You earned <color=#FF7ABC>" + (data as GameEventLevelComplete).lastLevelPotentialBubbles.ToString() + "</color> Bubbles!");
             gameScreenLevelComplete.SetButtonText("Continue");
         }
         else if (data.eventName == GameEvents.FreeModeLose)
@@ -100,7 +100,7 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.NetherModeComplete)
         {
             gameScreenLevelComplete = Screens.Instance.PushScreen<GameScreenLevelComplete>();
-            gameScreenLevelComplete.SetMessage("You earned <color=#FF7ABC>" + (data as GameEventNetherModeComplete).numBubblesWon.ToString() + "</color> bubbles and extra <color=#FD78BE>10,000</color> Bubbles for completing all levels!");
+            gameScreenLevelComplete.SetMessage("You earned <color=#FF7ABC>" + (data as GameEventNetherModeComplete).numBubblesWon.ToString() + "</color> Bubbles and extra <color=#FD78BE>10,000</color> Bubbles for completing all levels!");
             gameScreenLevelComplete.SetButtonText("GO TO HOME");
         }
     }
