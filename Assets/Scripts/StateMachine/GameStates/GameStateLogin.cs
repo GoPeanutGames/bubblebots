@@ -6,6 +6,7 @@ using UnityEngine;
 public class GameStateLogin : GameState
 {
     private GameScreenLogin gameScreenLogin;
+    private GameScreenBlockingMobile _gameScreenBlockingMobile;
     private string tempAddress;
     private string tempSignature;
 
@@ -27,7 +28,16 @@ public class GameStateLogin : GameState
         gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
-        TryLoginFromSave();
+        #if UNITY_WEBGL
+        if (Application.isMobilePlatform)
+        {
+            _gameScreenBlockingMobile = Screens.Instance.PushScreen<GameScreenBlockingMobile>();
+        }
+        else
+        {
+            TryLoginFromSave();
+        }
+        #endif
     }
 
     private void TryLoginFromSave()
