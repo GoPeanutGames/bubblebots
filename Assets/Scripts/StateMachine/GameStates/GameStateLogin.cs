@@ -92,6 +92,9 @@ public class GameStateLogin : GameState
             case ButtonId.LoginGuest:
                 gameScreenLogin.OnPlayAsGuestPressed();
                 break;
+            case ButtonId.LoginMobileDownload:
+                Application.OpenURL("https://peanutgames.com/");
+                break;
             case ButtonId.LoginGuestPlay:
 #if UNITY_EDITOR
                 // PlayAsGuest();
