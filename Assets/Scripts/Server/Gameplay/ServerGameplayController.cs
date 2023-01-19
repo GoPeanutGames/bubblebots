@@ -44,7 +44,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
         ServerManager.Instance.SendGameplayDataToServer(GameplaySessionAPI.Start, jsonFormData, OnGameplaySessionStart);
     }
 
-    public void UpdateGameplaySession(int score, bool bubbleBurst = false, System.Action<int> callback = null)
+    public void UpdateGameplaySession(int score, bool bubbleBurst = false, System.Action<int, int> callback = null)
     {
         if (UserManager.PlayerType == PlayerType.Guest)
         {
@@ -67,7 +67,7 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
             GameplaySessionUpdateDataResponse r = JsonUtility.FromJson<GameplaySessionUpdateDataResponse>(response);
             if (callback != null)
             {
-                callback(r.bubbles);
+                callback(r.bubbles, r.specialBurst);
             }
             GameEventsManager.Instance.PostEvent(new GameEventUpdateSession() { eventName = GameEvents.UpdateSessionResponse, bubbles = r.bubbles });
         });

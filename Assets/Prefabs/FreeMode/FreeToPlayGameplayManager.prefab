@@ -47,9 +47,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameplayData: {fileID: 11400000, guid: 4d1c9df41976a0040aca7ff09efdb606, type: 2}
   serverGameplayController: {fileID: 0}
-  MenuGUI: {fileID: 0}
-  GameGUI: {fileID: 0}
-  RobotSelectionGUI: {fileID: 0}
   enemyDamage: 0.05
   match3Manager: {fileID: 1545353200782405067}
 --- !u!1 &1545353200782405069
@@ -99,6 +96,5 @@ MonoBehaviour:
   gameplayData: {fileID: 0}
   matchPrecedence: {fileID: 11400000, guid: 0ac6873222e870643a1e280dc80e388b, type: 2}
   inputLocked: 1
-  testLevel: {fileID: 0}
-  MenuGUI: {fileID: 0}
+  testLevel: {fileID: 11400000, guid: e5b88ddb960659040873c56203a22da5, type: 2}
   GameGUI: {fileID: 0}

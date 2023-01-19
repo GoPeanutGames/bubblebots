@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace BubbleBots.Match3.Data
@@ -7,6 +8,17 @@ namespace BubbleBots.Match3.Data
     public class LevelDesign : ScriptableObject
     {
         public List<LevelRow> rows;
+
+        public void LoadFromJson(string path)
+        {
+            //Debug.Log(JsonUtility.ToJson(this));
+
+            StreamReader reader = new StreamReader(path);
+            string json = reader.ReadToEnd();
+            LevelDesign loaded = new LevelDesign();
+            JsonUtility.FromJsonOverwrite(json, loaded);
+            rows = loaded.rows;
+        }
     }
 
     [System.Serializable]

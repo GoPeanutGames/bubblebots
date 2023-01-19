@@ -6,62 +6,7 @@ using BubbleBots.Modes;
 using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
-public class NethermodeSessionData
-{
-    ObscuredLong score = 0;
 
-    private int scoreMultiplier = 10;// hardcoded score multiplier
-
-    private int robotsKilled = 0;
-
-    private int potentialBubbles = 0;
-
-    private int totalBubbles = 0;
-
-    public void AddTotalBubbles(int val)
-    {
-        totalBubbles += val;
-    }
-
-    public int GetTotalBubbles()
-    {
-        return totalBubbles;
-    }
-
-    public void IncrementScore(int toAdd)
-    {
-        score += toAdd * scoreMultiplier;
-    }
-
-    public long GetScore()
-    {
-        return score;
-    }
-
-    public void IncrementRobotsKilled(int killed)
-    {
-        robotsKilled += killed;
-    }
-
-    public int GetRobotsKilled()
-    {
-        return robotsKilled;
-    }
-
-    public void AddPotentialBubbles(int value)
-    {
-        potentialBubbles += value;
-    }
-
-    public int GetPotentialBubbles()
-    {
-        return potentialBubbles;
-    }
-    public void ResetPotentialBubbles()
-    {
-        potentialBubbles = 0;
-    }
-}
 
 public class NetherModeGameplayManager : MonoBehaviour
 {
@@ -426,21 +371,20 @@ public class NetherModeGameplayManager : MonoBehaviour
     {
         currentEnemy = index;
     }
-
     private void OnBubbleExploded(int _posX, int _posY)
     {
-        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true, (val) => { FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, val - sessionData.GetPotentialBubbles()); });
+        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true, (bubbles, numGained) =>
+        {
+            FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, numGained);
+        });
+
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
-        //FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, 0);
-        //GameEventsManager.Instance.PostEvent(new GameEventUpdateUnclaimedBubbles() { eventName = GameEvents.BubblesUnclaimedUpdate, balance = sessionData.GetPotentialBubbles() });
-        //FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
-        //GameGUI.SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
     }
 
     public void OnNewBubblesCount(int newValue)
     {
-        int diff = newValue - sessionData.GetPotentialBubbles();
-        sessionData.AddPotentialBubbles(diff);
-        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+        sessionData.SetPotentialBubbles(Mathf.Max(sessionData.GetPotentialBubbles(), newValue));
+        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(newValue);
     }
+
 }

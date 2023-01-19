@@ -99,6 +99,8 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         levelData = _levelData;
         boardController = new BoardController();
         boardController.Initialize(levelData, matchPrecedence);
+
+        //boardController.PopulateBoardWithPredefinedGems(testLevel);
         boardController.PopulateBoardWithSeed(Random.Range(0, 1337));
         RenderStartLevel();
         gameplayState = GameplayState.WaitForInput;
@@ -115,6 +117,8 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         levelData = _levelData;
         boardController = new BoardController();
         boardController.Initialize(levelData, matchPrecedence);
+
+        //boardController.PopulateBoardWithPredefinedGems(testLevel);
         boardController.PopulateBoardWithSeed(Random.Range(0, 1337));
         RenderStartLevel();
         gameplayState = GameplayState.WaitForInput;
