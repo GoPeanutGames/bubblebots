@@ -11,6 +11,7 @@ public static class ButtonId
     public const string LoginGuest = "login.guest";
     public const string LoginGuestPlay = "login.guest.play";
     public const string LoginMetamask = "login.metamask";
+    public const string LoginMobileDownload = "login.mobile.download";
 
     //main menu bottom hud
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";
