@@ -104,7 +104,8 @@ public class GameStateLogin : GameState
     {
         UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
-        stateMachine.PushState(new GameStateFreeMode());
+        GoToMainMenu();
+        //stateMachine.PushState(new GameStateFreeMode());
     }
 
     private void GoToMainMenu()
