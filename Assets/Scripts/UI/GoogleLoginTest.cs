@@ -35,6 +35,9 @@ public class GoogleLoginTest : MonoBehaviour
             output.text += "\n" + "AuthCode: " + PlayGamesPlatform.Instance.GetServerAuthCode();
             googleLoginButton.enabled = false;
             serverLoginButton.enabled = true;
+            PlayGamesPlatform.Instance.GetAnotherServerAuthCode(true, (code) => {
+                output.text += "\n" + "AuthCode 2: " + code;
+            });
         }
         else
         {
@@ -47,6 +50,7 @@ public class GoogleLoginTest : MonoBehaviour
     public void LoginGoogle()
     {
         var config = new PlayGamesClientConfiguration.Builder()
+        .AddOauthScope("profile")
         .AddOauthScope("profile")
         .RequestEmail()
         .RequestIdToken()
