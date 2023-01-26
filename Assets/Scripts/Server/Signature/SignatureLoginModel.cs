@@ -51,4 +51,22 @@ namespace BubbleBots.Server.Signature
     {
         public string accessToken;
     }
+
+
+    [Serializable]
+    public class GoogleLoginResult
+    {
+        public string jwt;
+        public User user;
+        public PostWeb3Login web3Info;
+    }
+
+    [Serializable]
+    public class User
+    {
+        public string _id;
+        public string email;
+        public string firstName;
+        public string lastName;
+    }
 }

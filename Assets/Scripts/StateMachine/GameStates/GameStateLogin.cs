@@ -1,6 +1,8 @@
 using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
 using UnityEngine;
 
 public class GameStateLogin : GameState
@@ -92,7 +94,9 @@ public class GameStateLogin : GameState
 #else
                 PlayAsGuest();
 #endif
-
+                break;
+            case ButtonId.LoginGoogle:
+                LoginWithGoogle();
                 break;
             case ButtonId.LoginMetamask:
                 LoginWithMetamask();
@@ -104,6 +108,7 @@ public class GameStateLogin : GameState
     {
         UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
+        gameScreenLogin.HideLoadingScreen();
         GoToMainMenu();
         //stateMachine.PushState(new GameStateFreeMode());
     }
@@ -117,6 +122,58 @@ public class GameStateLogin : GameState
     {
         bool isDev = EnvironmentManager.Instance.IsDevelopment();
         Login(isDev);
+    }
+
+    private void LoginWithGoogle()
+    {
+        //LoginOnServerWithGoogleToken("");
+        //return;
+
+        gameScreenLogin.ShowLoadingScreen();
+        var config = new PlayGamesClientConfiguration.Builder()
+                    .AddOauthScope("profile")
+                    .RequestEmail()
+                    .RequestIdToken()
+                    .RequestServerAuthCode(false)
+                    .Build();
+
+        PlayGamesPlatform.InitializeInstance(config);
+        PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.Activate();
+
+        Social.localUser.Authenticate(ProcessAuthentication);
+    }
+
+    internal void LoginOnServerWithGoogleToken(string token)
+    {
+        GoogleLogin loginData = new GoogleLogin()
+        {
+            accessToken = token
+        };
+        string formData = JsonUtility.ToJson(loginData);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.GoogleLogin, formData,
+            (success) =>
+            {
+                GoogleLoginResult result = JsonUtility.FromJson<GoogleLoginResult>(success);
+                StartLogin(result.web3Info.address, result.web3Info.signature);
+            },
+            (fail) =>
+            {
+                gameScreenLogin.HideLoadingScreen();
+            }
+        );
+    } 
+
+    internal void ProcessAuthentication(bool success, string code)
+    {
+        if (success)
+        {
+            LoginOnServerWithGoogleToken(PlayGamesPlatform.Instance.GetIdToken());
+        } 
+        else
+        {
+            gameScreenLogin.HideLoadingScreen();
+        }
     }
 
     public void MetamaskLoginSuccess(string address)
@@ -156,6 +213,8 @@ public class GameStateLogin : GameState
 
     private void GetOrCreatePlayer(string address, string signature)
     {
+        //Debug.Log("ADDRESS " + address);
+        //Debug.Log("SIGNATURE " + signature);
         tempAddress = address;
         tempSignature = signature;
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get,

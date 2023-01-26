@@ -101,7 +101,7 @@ public class Screens : MonoSingleton<Screens>
     }
     private void Start()
     {
-        if (Application.isMobilePlatform)
+        if (true || Application.isMobilePlatform)
         {
             screenLocationParents = screenLocationParentsMobile;
             desktopCanvas.SetActive(false);

@@ -13,8 +13,6 @@ public class GoogleLoginTest : MonoBehaviour
     [SerializaField] public Button serverLoginButton;
     [SerializaField] public Button googleLoginButton;
     [SerializaField] public TMPro.TextMeshProUGUI output;
-    // Start is called before the first frame update
-
 
     private void Awake()
     {
@@ -51,7 +49,7 @@ public class GoogleLoginTest : MonoBehaviour
     {
         var config = new PlayGamesClientConfiguration.Builder()
         .AddOauthScope("profile")
-        .AddOauthScope("profile")
+        .AddOauthScope("email")
         .RequestEmail()
         .RequestIdToken()
         .RequestServerAuthCode(false)
