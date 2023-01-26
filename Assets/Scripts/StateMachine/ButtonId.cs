@@ -12,6 +12,7 @@ public static class ButtonId
     public const string LoginGuestPlay = "login.guest.play";
     public const string LoginMetamask = "login.metamask";
     public const string LoginMobileDownload = "login.mobile.download";
+    public const string LoginGoogle = "login.google";
 
     //main menu bottom hud
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";
@@ -103,3 +104,4 @@ public static class TypeUtilities
             .ToList();
     }
 }
+
