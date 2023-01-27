@@ -17,11 +17,13 @@ public class GameStateLogin : GameState
         return "game state login";
     }
 
+#if UNITY_WEBGL
     [DllImport("__Internal")]
     private static extern void Login(bool isDev);
 
     [DllImport("__Internal")]
     private static extern void RequestSignature(string schema, string address);
+#endif
 
     public override void Enable()
     {
@@ -30,7 +32,7 @@ public class GameStateLogin : GameState
         gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
-        #if UNITY_WEBGL
+#if UNITY_WEBGL
         if (Application.isMobilePlatform)
         {
             _gameScreenBlockingMobile = Screens.Instance.PushScreen<GameScreenBlockingMobile>();
@@ -39,7 +41,9 @@ public class GameStateLogin : GameState
         {
             TryLoginFromSave();
         }
-        #endif
+#else
+        gameScreenLogin.HideMetamaskButtons();
+#endif
     }
 
     private void TryLoginFromSave()
@@ -134,7 +138,9 @@ public class GameStateLogin : GameState
     private void LoginWithMetamask()
     {
         bool isDev = EnvironmentManager.Instance.IsDevelopment();
+#if UNITY_WEBGL
         Login(isDev);
+#endif
     }
 
     private void LoginWithGoogle()
@@ -153,6 +159,7 @@ public class GameStateLogin : GameState
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.DebugLogEnabled = true;
         PlayGamesPlatform.Activate();
+
 
         Social.localUser.Authenticate(ProcessAuthentication);
     }
@@ -199,7 +206,9 @@ public class GameStateLogin : GameState
 
     private void RequestSignatureFromMetamask(string schema)
     {
+#if UNITY_WEBGL
         RequestSignature(schema, tempAddress);
+#endif
     }
 
     public void SignatureLoginSuccess(string signature)

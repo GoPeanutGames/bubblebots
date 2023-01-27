@@ -3,8 +3,11 @@ using System.Runtime.InteropServices;
 
 public class MetamaskManager : MonoSingleton<MetamaskManager>
 {
+
+#if UNITY_WEBGL
     [DllImport("__Internal")]
     private static extern void BuyBundle(int bundleId, bool isDev);
+#endif
 
     private Action _onCompleteCallback;
     private Action<string> _onFailCallback;
@@ -13,7 +16,7 @@ public class MetamaskManager : MonoSingleton<MetamaskManager>
     {
         _onCompleteCallback = onComplete;
         _onFailCallback = onFail;
-#if !UNITY_EDITOR
+#if UNITY_WEBGL
         BuyBundle(bundleId, isDev);
 #else
         StoreBundleBuySuccess();
