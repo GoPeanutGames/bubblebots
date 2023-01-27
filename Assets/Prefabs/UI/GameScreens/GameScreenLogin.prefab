@@ -2602,6 +2602,8 @@ MonoBehaviour:
   LoginScreen: {fileID: 3272953200822561050}
   GuestScreen: {fileID: 3272953199839367061}
   LoadingScreen: {fileID: 3272953199811043056}
+  metamaskButton1: {fileID: 3272953200346344433}
+  metamaskButton2: {fileID: 3272953199801060091}
 --- !u!1 &5233415050797283872
 GameObject:
   m_ObjectHideFlags: 0

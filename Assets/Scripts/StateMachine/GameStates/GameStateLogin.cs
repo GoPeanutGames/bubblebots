@@ -116,7 +116,7 @@ public class GameStateLogin : GameState
                 LoginWithGoogle();
                 break;
             case ButtonId.LoginMetamask:
-                LoginWithMetamask();
+                //LoginWithMetamask();
                 break;
         }
     }
@@ -151,6 +151,7 @@ public class GameStateLogin : GameState
         gameScreenLogin.ShowLoadingScreen();
         var config = new PlayGamesClientConfiguration.Builder()
                     .AddOauthScope("profile")
+                    .AddOauthScope("email")
                     .RequestEmail()
                     .RequestIdToken()
                     .RequestServerAuthCode(false)
@@ -179,6 +180,7 @@ public class GameStateLogin : GameState
             },
             (fail) =>
             {
+                Debug.Log("login server failed");
                 gameScreenLogin.HideLoadingScreen();
             }
         );
@@ -188,10 +190,12 @@ public class GameStateLogin : GameState
     {
         if (success)
         {
+            Debug.Log("google token " + PlayGamesPlatform.Instance.GetIdToken());
             LoginOnServerWithGoogleToken(PlayGamesPlatform.Instance.GetIdToken());
         } 
         else
         {
+            Debug.Log("google failed");
             gameScreenLogin.HideLoadingScreen();
         }
     }
@@ -235,8 +239,8 @@ public class GameStateLogin : GameState
 
     private void GetOrCreatePlayer(string address, string signature)
     {
-        //Debug.Log("ADDRESS " + address);
-        //Debug.Log("SIGNATURE " + signature);
+        Debug.Log("ADDRESS " + address);
+        Debug.Log("SIGNATURE " + signature);
         tempAddress = address;
         tempSignature = signature;
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get,
