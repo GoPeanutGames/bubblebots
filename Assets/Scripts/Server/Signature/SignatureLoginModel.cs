@@ -1,13 +1,12 @@
 using System;
-using Newtonsoft.Json;
-using WalletConnectSharp.Core.Models;
 
 namespace BubbleBots.Server.Signature
 {
     public enum SignatureLoginAPI
     {
         Get,
-        Web3LoginCheck
+        Web3LoginCheck,
+        GoogleLogin
     }
 
     [Serializable]
@@ -46,17 +45,28 @@ namespace BubbleBots.Server.Signature
     {
         public bool status;
     }
-    
-    public sealed class EthSignTypeDataV4: JsonRpcRequest
+
+    [Serializable]
+    public class GoogleLogin
     {
-        [JsonProperty("params")]
-        private string[] _parameters;
+        public string accessToken;
+    }
 
-        public EthSignTypeDataV4(string address, string schema) : base()
-        {
-            this.Method = "eth_signTypedData";
 
-            this._parameters = new string[] { address, schema };
-        }
+    [Serializable]
+    public class GoogleLoginResult
+    {
+        public string jwt;
+        public User user;
+        public PostWeb3Login web3Info;
+    }
+
+    [Serializable]
+    public class User
+    {
+        public string _id;
+        public string email;
+        public string firstName;
+        public string lastName;
     }
 }

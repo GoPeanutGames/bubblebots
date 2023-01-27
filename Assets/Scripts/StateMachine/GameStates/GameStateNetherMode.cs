@@ -20,7 +20,6 @@ public class GameStateNetherMode : GameState
 
     public override void Enable()
     {
-        Screens.Instance.SetBackground(GameSettingsManager.Instance.netherModeGameplayData.backgroundSprite);
         Screens.Instance.SetGameBackground(GameSettingsManager.Instance.netherModeGameplayData.gamebackgroundSprite);
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
         _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);

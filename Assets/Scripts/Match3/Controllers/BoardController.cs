@@ -37,11 +37,14 @@ namespace BubbleBots.Match3.Controllers
 
         public void PopulateBoardWithPredefinedGems(LevelDesign levelDesign)
         {
-            for (int i = 0; i < boardModel.height; i++)
-                for (int j = 0; j < boardModel.width; ++j)
+            //levelDesign.LoadFromJson("Assets/Data/Levels/LevelDesign/level.json");
+            
+            for (int i = 0; i < boardModel.width; i++)
+                for (int j = 0; j < boardModel.height; ++j)
                 {
-                    boardModel[j][i].SetGem(new BoardGem(levelDesign.rows[i][j], GemType.Normal));
+                    boardModel[i][j].SetGem(new BoardGem(levelDesign.rows[j][i], GemType.Normal));
                 }
+
         }
 
 

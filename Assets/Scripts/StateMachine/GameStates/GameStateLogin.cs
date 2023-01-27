@@ -1,9 +1,8 @@
-using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
+using GooglePlayGames;
+using GooglePlayGames.BasicApi;
 using UnityEngine;
-using WalletConnectSharp.Core.Models.Ethereum;
-using WalletConnectSharp.Unity;
 
 public class GameStateLogin : GameState
 {
@@ -16,21 +15,17 @@ public class GameStateLogin : GameState
         return "game state login";
     }
 
-    [DllImport("__Internal")]
-    private static extern void Login(bool isDev);
-
-    [DllImport("__Internal")]
-    private static extern void RequestSignature(string schema, string address);
-
     public override void Enable()
     {
         SoundManager.Instance.FadeInMusic();
         SoundManager.Instance.PlayStartMusicNew();
         gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
-        GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
-        WalletConnect.Instance.NewSessionConnected.AddListener(OnNewWalletSessionConnectedEventFromPlugin);
-        TryLoginFromSave();
+        //todo: figure stuff out for login
+        if (false)
+        {
+            TryLoginFromSave();
+        }
     }
 
     private void TryLoginFromSave()
@@ -64,19 +59,6 @@ public class GameStateLogin : GameState
         }
     }
 
-    private void OnMetamaskEvent(GameEventData data)
-    {
-        GameEventString metamaskEvent = data as GameEventString;
-        if (data.eventName == GameEvents.MetamaskSuccess)
-        {
-            MetamaskLoginSuccess(metamaskEvent.stringData);
-        }
-        else if (data.eventName == GameEvents.SignatureSuccess)
-        {
-            SignatureLoginSuccess(metamaskEvent.stringData);
-        }
-    }
-
     private void OnButtonTap(GameEventData data)
     {
         GameEventString buttonTapData = data as GameEventString;
@@ -84,6 +66,9 @@ public class GameStateLogin : GameState
         {
             case ButtonId.LoginGuest:
                 gameScreenLogin.OnPlayAsGuestPressed();
+                break;
+            case ButtonId.LoginMobileDownload:
+                Application.OpenURL("https://peanutgames.com/");
                 break;
             case ButtonId.LoginGuestPlay:
 #if UNITY_EDITOR
@@ -95,10 +80,9 @@ public class GameStateLogin : GameState
 #else
                 PlayAsGuest();
 #endif
-
                 break;
-            case ButtonId.LoginMetamask:
-                LoginWithMetamask();
+            case ButtonId.LoginGoogle:
+                LoginWithGoogle();
                 break;
         }
     }
@@ -107,7 +91,9 @@ public class GameStateLogin : GameState
     {
         UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
-        stateMachine.PushState(new GameStateFreeMode());
+        gameScreenLogin.HideLoadingScreen();
+        GoToMainMenu();
+        //stateMachine.PushState(new GameStateFreeMode());
     }
 
     private void GoToMainMenu()
@@ -115,53 +101,61 @@ public class GameStateLogin : GameState
         stateMachine.PushState(new GameStateMainMenu());
     }
 
-    private void LoginWithMetamask()
+    private void LoginWithGoogle()
     {
-        if (Application.isMobilePlatform == false)
-        {
-            bool isDev = EnvironmentManager.Instance.IsDevelopment();
-            Login(isDev);
-        }
-        else
-        {
-            WalletConnect.Instance.OpenDeepLink();
-        }
-    }
+        //LoginOnServerWithGoogleToken("");
+        //return;
 
-    public void MetamaskLoginSuccess(string address)
-    {
-        tempAddress = address;
-        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Get, (schema) => { RequestSignatureFromMetamask(schema.ToString()); }, address);
         gameScreenLogin.ShowLoadingScreen();
-        gameScreenLogin.HideLoginScreen();
+        var config = new PlayGamesClientConfiguration.Builder()
+            .AddOauthScope("profile")
+            .AddOauthScope("email")
+            .RequestEmail()
+            .RequestIdToken()
+            .RequestServerAuthCode(false)
+            .Build();
+
+        PlayGamesPlatform.InitializeInstance(config);
+        PlayGamesPlatform.DebugLogEnabled = true;
+        PlayGamesPlatform.Activate();
+
+
+        Social.localUser.Authenticate(ProcessAuthentication);
     }
 
-    private async void RequestSignatureFromMetamask(string schema)
+    internal void LoginOnServerWithGoogleToken(string token)
     {
-        GetLoginSchema loginSchema = JsonUtility.FromJson<GetLoginSchema>(schema);
-        if (Application.isMobilePlatform)
+        GoogleLogin loginData = new GoogleLogin()
         {
-            EthChainData chainData =  EnvironmentManager.Instance.IsDevelopment() ? MetamaskManager.mumbaiChain : MetamaskManager.polygonChain;
-            await WalletConnect.ActiveSession.WalletAddEthChain(chainData);
-            EthChain chainId = new EthChain() { chainId = chainData.chainId };
-            await WalletConnect.ActiveSession.WalletSwitchEthChain(chainId);
+            accessToken = token
+        };
+        string formData = JsonUtility.ToJson(loginData);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.GoogleLogin, formData,
+            (success) =>
+            {
+                GoogleLoginResult result = JsonUtility.FromJson<GoogleLoginResult>(success);
+                StartLogin(result.web3Info.address, result.web3Info.signature);
+            },
+            (fail) =>
+            {
+                Debug.Log("login server failed");
+                gameScreenLogin.HideLoadingScreen();
+            }
+        );
+    }
 
-            string signature = await MetamaskManager.EthSignForMobile(WalletConnect.ActiveSession, tempAddress, schema);
-
-            //EIP712Domain domain = new EIP712Domain(loginSchema.domain.name, loginSchema.domain.version.ToString(), loginSchema.domain.chainId, loginSchema.domain.verifyingContract);
-            //string signature = await WalletConnect.ActiveSession.EthSignTypedData(tempAddress, loginSchema.message, domain);
-            SignatureLoginSuccess(signature);
+    internal void ProcessAuthentication(bool success, string code)
+    {
+        if (success)
+        {
+            Debug.Log("google token " + PlayGamesPlatform.Instance.GetIdToken());
+            LoginOnServerWithGoogleToken(PlayGamesPlatform.Instance.GetIdToken());
         }
         else
         {
-            RequestSignature(schema, tempAddress);
+            Debug.Log("google failed");
+            gameScreenLogin.HideLoadingScreen();
         }
-    }
-
-    public void SignatureLoginSuccess(string signature)
-    {
-        SoundManager.Instance.PlayMetamaskSfx();
-        StartLogin(tempAddress, signature);
     }
 
     private void StartLogin(string address, string signature)
@@ -170,12 +164,6 @@ public class GameStateLogin : GameState
         AnalyticsManager.Instance.InitAnalyticsWithWallet(address);
         GetOrCreatePlayer(address, signature);
         UserManager.PlayerType = PlayerType.LoggedInUser;
-    }
-
-    public void OnNewWalletSessionConnectedEventFromPlugin(WalletConnectUnitySession session)
-    {
-        string account = session.Accounts[0];
-        MetamaskLoginSuccess(account);
     }
 
     private void SetDataToUser(GetPlayerDataResult res)
@@ -188,6 +176,8 @@ public class GameStateLogin : GameState
 
     private void GetOrCreatePlayer(string address, string signature)
     {
+        Debug.Log("ADDRESS " + address);
+        Debug.Log("SIGNATURE " + signature);
         tempAddress = address;
         tempSignature = signature;
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get,
@@ -218,9 +208,7 @@ public class GameStateLogin : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        GameEventsManager.Instance.RemoveGlobalListener(OnMetamaskEvent);
         Screens.Instance.PopScreen(gameScreenLogin);
-        WalletConnect.Instance.NewSessionConnected.RemoveListener(OnNewWalletSessionConnectedEventFromPlugin);
         base.Disable();
     }
 }

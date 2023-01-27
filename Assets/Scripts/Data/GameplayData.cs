@@ -9,7 +9,6 @@ namespace BubbleBots.Data
     {
         [Header("Mode settings")]
         public List<LevelData> levels;
-        public Sprite backgroundSprite;
         public Sprite gamebackgroundSprite;
         [Header("Player robot settings")]
         public List<BubbleBotData> robotsAvailable;

@@ -40,11 +40,13 @@ namespace BubbleBots.Match3.Models
 
         public bool IsSwappable()
         {
-            return !IsBubble();
+            return true;
+            //return !IsBubble();
         }
         public bool IsMatchable()
         {
-            return !IsBubble();
+            return true;
+            //return !IsBubble();
         }
         public bool IsBubble()
         {

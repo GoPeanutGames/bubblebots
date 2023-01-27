@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Screens : MonoSingleton<Screens>
 {
-    [System.Serializable]
+    [Serializable]
     public class ScreenLocationParent
     {
         public GameScreen.ScreenLocation location;
@@ -17,47 +17,20 @@ public class Screens : MonoSingleton<Screens>
     private List<GameScreen> screensStack = new List<GameScreen>();
 
     public List<ScreenLocationParent> screenLocationParentsMobile;
-    public List<ScreenLocationParent> screenLocationParentsDesktop;
-
-    public GameObject desktopCanvas;
-    public GameObject mobileCanvas;
-    private List<ScreenLocationParent> screenLocationParents;
-
-
-    public Sprite defaultBackground;
-
-    public Image backgroundMobile;
-    public Image backgroundDesktop;
-
-    private Image backgroundObject;
 
     public Image gameBackgroundMobile;
-    public Image gameBackgroundDesktop;
-
-    private Image gameBackgroundObject;
 
     #region Screens
 
-
-    public void ResetBackground()
-    {
-        backgroundObject.sprite = defaultBackground;
-    }
-
-    public void SetBackground(Sprite sprite)
-    {
-        backgroundObject.sprite = sprite;
-    }
-
     public void HideGameBackground()
     {
-        gameBackgroundObject.enabled = false;
+        gameBackgroundMobile.enabled = false;
     }
 
     public void SetGameBackground(Sprite sprite)
     {
-        gameBackgroundObject.enabled = true;
-        gameBackgroundObject.sprite = sprite;
+        gameBackgroundMobile.enabled = true;
+        gameBackgroundMobile.sprite = sprite;
     }
 
     public T PushScreen<T>(bool unique = false) where T : GameScreen
@@ -99,34 +72,10 @@ public class Screens : MonoSingleton<Screens>
         SetCamera(screen);
         return screen;
     }
-    private void Start()
-    {
-        if (Application.isMobilePlatform)
-        {
-            screenLocationParents = screenLocationParentsMobile;
-            desktopCanvas.SetActive(false);
-            mobileCanvas.SetActive(true);
-            RectTransform rTransformUI = mobileCanvas.GetComponent<RectTransform>();
-            rTransformUI.anchorMax = new Vector2(1, 1);
-            rTransformUI.anchorMin = new Vector2(0, 0);
-            rTransformUI.offsetMax = new Vector2(0, 0);
-            rTransformUI.offsetMin = new Vector2(0, 0);
-            rTransformUI.localScale = new Vector3(1, 1, 1);
-            backgroundObject = backgroundMobile;
-            gameBackgroundObject = gameBackgroundMobile;
-        } 
-        else
-        {
-            backgroundObject = backgroundDesktop;
-            gameBackgroundObject = gameBackgroundDesktop;
-            screenLocationParents = screenLocationParentsDesktop;
-            mobileCanvas.SetActive(false);
-        }
-    }
 
     public Transform GetParent(GameScreen.ScreenLocation location)
     {
-        return screenLocationParents.Find(x => x.location == location)?.parent;
+        return screenLocationParentsMobile.Find(x => x.location == location)?.parent;
     }
 
     private static void RefreshScreensSortingOrder()
@@ -140,14 +89,16 @@ public class Screens : MonoSingleton<Screens>
             //}
         }
     }
+
     public void BringToFront<T>() where T : GameScreen
     {
         T screen = FindScreen<T>(Instance.screensStack);
         if (screen != null)
         {
             screen.SetSortingOrder(Instance.screensStack.Count * 50 + 1);
-       } 
-}
+        }
+    }
+
     public static T FindScreen<T>(IEnumerable<GameScreen> arrScreens) where T : GameScreen
     {
         GameScreen screen = null;
@@ -217,6 +168,7 @@ public class Screens : MonoSingleton<Screens>
                 }
             }
         }
+
         return null;
     }
 

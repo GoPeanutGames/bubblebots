@@ -1,4 +1,0 @@
-Cartoon Bloods
-
-you can rotation / scaling or add more particles by just set Particle System of unity
-component, and you can also adjust a sprite texture to make it looks more brutality

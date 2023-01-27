@@ -6,63 +6,6 @@ using BubbleBots.Modes;
 using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
 
-public class FreeToPlaySessionData
-{
-    ObscuredLong score = 0;
-
-    private int scoreMultiplier = 10;// hardcoded score multiplier
-
-    private int robotsKilled = 0;
-
-    private int potentialBubbles = 0;
-
-    private int totalBubbles = 0;
-
-    public void IncrementScore(int toAdd)
-    {
-        score += toAdd * scoreMultiplier;
-    }
-
-    public long GetScore()
-    {
-        return score;
-    }
-
-    public void IncrementRobotsKilled(int killed)
-    {
-        robotsKilled += killed;
-    }
-
-    public int GetRobotsKilled()
-    {
-        return robotsKilled;
-    }
-
-    public void AddPotentialBubbles(int value)
-    {
-        potentialBubbles += value;
-    }
-
-    public int GetPotentialBubbles()
-    {
-        return potentialBubbles;
-    }
-
-    public void AddTotalBubbles(int val)
-    {
-        totalBubbles += val;
-    }
-
-    public int GetTotalBubbles()
-    {
-        return totalBubbles;
-    }
-
-    public void ResetPotentialBubbles()
-    {
-        potentialBubbles = 0;
-    }
-}
 
 public class FreeToPlayGameplayManager : MonoBehaviour
 {
@@ -127,6 +70,8 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         match3Manager.Initialize(gameplayData.levels[currentLevelIndex], false);
 
+
+
         match3Manager.onGemsExploded -= OnGemsExploded;
         match3Manager.onGemsExploded += OnGemsExploded;
 
@@ -138,9 +83,9 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 
-        GameEventsManager.Instance.PostEvent( new GameEventData() { eventName = GameEvents.FreeModeSessionStarted });
+        GameEventsManager.Instance.PostEvent(new GameEventData() { eventName = GameEvents.FreeModeSessionStarted });
         UserManager.RobotsKilled = 0;
-        
+
 
         StartLevel();
     }
@@ -174,7 +119,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         enemiesToChooseFrom.Remove(second);
         BubbleBotData third = enemiesToChooseFrom[Random.Range(0, enemiesToChooseFrom.Count)];
         enemiesToChooseFrom.Remove(third);
-        
+
         currentWaveIndex = 0;
         currentEnemy = 0;
         currentWave = new Wave()
@@ -234,7 +179,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
         currentWave.bots[currentEnemy].hp -= damage;
 
-        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() {eventName = GameEvents.FreeModeEnemyRobotDamage, index = currentEnemy, enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
+        GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotDamage() { eventName = GameEvents.FreeModeEnemyRobotDamage, index = currentEnemy, enemyRobotNewHp = currentWave.bots[currentEnemy].hp });
 
         if (currentWave.bots[currentEnemy].hp <= 0)
         {
@@ -258,11 +203,11 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         if (playerRoster.AreAllBotsDead())
         {
             OnPlayerLost();
-            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy});
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy });
         }
         else if (playerRoster.IsDead(playerRoster.currentBot))
         {
-            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy});
+            GameEventsManager.Instance.PostEvent(new GameEventPlayerRobotKilled() { eventName = GameEvents.FreeModePlayerRobotKilled, id = playerRoster.currentBot, enemyIndex = currentEnemy });
             playerRoster.currentBot++;
         }
         else
@@ -274,8 +219,13 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     private void OnPlayerLost()
     {
         gameplayState = FreeToPlayGameplayState.GameEndMenu;
-        GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose() { eventName = GameEvents.FreeModeLose, score = (int)GetScore(), numBubblesWon = sessionData.GetTotalBubbles(),
-            lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
+        GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose()
+        {
+            eventName = GameEvents.FreeModeLose,
+            score = (int)GetScore(),
+            numBubblesWon = sessionData.GetTotalBubbles(),
+            lastLevelPotentialBubbles = sessionData.GetPotentialBubbles()
+        });
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
     }
 
@@ -401,7 +351,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         sessionData.ResetPotentialBubbles();
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
 
-        
+
 
         //MenuGUI.DisplayWin();
     }
@@ -423,14 +373,17 @@ public class FreeToPlayGameplayManager : MonoBehaviour
 
     private void OnBubbleExploded(int _posX, int _posY)
     {
-        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true, (val) => { FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, val - sessionData.GetPotentialBubbles());});
+        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true, (bubbles, numGained) =>
+        {
+            FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, numGained);
+        });
+
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
     }
 
     public void OnNewBubblesCount(int newValue)
     {
-        int diff = newValue - sessionData.GetPotentialBubbles();
-        sessionData.AddPotentialBubbles(diff);
+        sessionData.SetPotentialBubbles(Mathf.Max(sessionData.GetPotentialBubbles(), newValue));
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(newValue);
     }
 

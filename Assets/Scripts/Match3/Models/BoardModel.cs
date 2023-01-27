@@ -151,17 +151,17 @@ namespace BubbleBots.Match3.Models
 
         public bool IsSwapAllowed(int startX, int startY, int releaseX, int releaseY)
         {
-            if ((cells[startX][startY].gem.IsBubble() && cells[releaseX][releaseY].gem.IsSpecial()) ||
-                (cells[startX][startY].gem.IsSpecial() && cells[releaseX][releaseY].gem.IsBubble()))
-            { 
-                return true;
-            }
+            //if ((cells[startX][startY].gem.IsBubble() && cells[releaseX][releaseY].gem.IsSpecial()) ||
+            //    (cells[startX][startY].gem.IsSpecial() && cells[releaseX][releaseY].gem.IsBubble()))
+            //{ 
+            //    return true;
+            //}
 
-            if (!cells[startX][startY].gem.IsSwappable() ||
-                !cells[releaseX][releaseY].gem.IsSwappable())
-            {
-                return false;
-            }
+            //if (!cells[startX][startY].gem.IsSwappable() ||
+            //    !cells[releaseX][releaseY].gem.IsSwappable())
+            //{
+            //    return false;
+            //}
 
             return true;
         }

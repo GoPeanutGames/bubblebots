@@ -17,8 +17,14 @@ public class GameScreenLogin : GameScreen
         LoadingScreen.SetActive(true);
     }
 
+    public void HideLoadingScreen()
+    {
+        LoadingScreen.SetActive(false);
+    }
+
     public void HideLoginScreen()
     {
         LoginScreen.SetActive(false);
     }
 }
+
