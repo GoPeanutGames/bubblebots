@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using GooglePlayGames;
@@ -8,7 +7,6 @@ using UnityEngine;
 public class GameStateLogin : GameState
 {
     private GameScreenLogin gameScreenLogin;
-    private GameScreenBlockingMobile _gameScreenBlockingMobile;
     private string tempAddress;
     private string tempSignature;
 
@@ -17,33 +15,17 @@ public class GameStateLogin : GameState
         return "game state login";
     }
 
-#if UNITY_WEBGL
-    [DllImport("__Internal")]
-    private static extern void Login(bool isDev);
-
-    [DllImport("__Internal")]
-    private static extern void RequestSignature(string schema, string address);
-#endif
-
     public override void Enable()
     {
         SoundManager.Instance.FadeInMusic();
         SoundManager.Instance.PlayStartMusicNew();
         gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
-        GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
-#if UNITY_WEBGL
-        if (Application.isMobilePlatform)
-        {
-            _gameScreenBlockingMobile = Screens.Instance.PushScreen<GameScreenBlockingMobile>();
-        }
-        else
+        //todo: figure stuff out for login
+        if (false)
         {
             TryLoginFromSave();
         }
-#else
-        gameScreenLogin.HideMetamaskButtons();
-#endif
     }
 
     private void TryLoginFromSave()
@@ -77,19 +59,6 @@ public class GameStateLogin : GameState
         }
     }
 
-    private void OnMetamaskEvent(GameEventData data)
-    {
-        GameEventString metamaskEvent = data as GameEventString;
-        if (data.eventName == GameEvents.MetamaskSuccess)
-        {
-            MetamaskLoginSuccess(metamaskEvent.stringData);
-        }
-        else if (data.eventName == GameEvents.SignatureSuccess)
-        {
-            SignatureLoginSuccess(metamaskEvent.stringData);
-        }
-    }
-
     private void OnButtonTap(GameEventData data)
     {
         GameEventString buttonTapData = data as GameEventString;
@@ -115,9 +84,6 @@ public class GameStateLogin : GameState
             case ButtonId.LoginGoogle:
                 LoginWithGoogle();
                 break;
-            case ButtonId.LoginMetamask:
-                //LoginWithMetamask();
-                break;
         }
     }
 
@@ -135,14 +101,6 @@ public class GameStateLogin : GameState
         stateMachine.PushState(new GameStateMainMenu());
     }
 
-    private void LoginWithMetamask()
-    {
-        bool isDev = EnvironmentManager.Instance.IsDevelopment();
-#if UNITY_WEBGL
-        Login(isDev);
-#endif
-    }
-
     private void LoginWithGoogle()
     {
         //LoginOnServerWithGoogleToken("");
@@ -150,12 +108,12 @@ public class GameStateLogin : GameState
 
         gameScreenLogin.ShowLoadingScreen();
         var config = new PlayGamesClientConfiguration.Builder()
-                    .AddOauthScope("profile")
-                    .AddOauthScope("email")
-                    .RequestEmail()
-                    .RequestIdToken()
-                    .RequestServerAuthCode(false)
-                    .Build();
+            .AddOauthScope("profile")
+            .AddOauthScope("email")
+            .RequestEmail()
+            .RequestIdToken()
+            .RequestServerAuthCode(false)
+            .Build();
 
         PlayGamesPlatform.InitializeInstance(config);
         PlayGamesPlatform.DebugLogEnabled = true;
@@ -184,7 +142,7 @@ public class GameStateLogin : GameState
                 gameScreenLogin.HideLoadingScreen();
             }
         );
-    } 
+    }
 
     internal void ProcessAuthentication(bool success, string code)
     {
@@ -192,33 +150,12 @@ public class GameStateLogin : GameState
         {
             Debug.Log("google token " + PlayGamesPlatform.Instance.GetIdToken());
             LoginOnServerWithGoogleToken(PlayGamesPlatform.Instance.GetIdToken());
-        } 
+        }
         else
         {
             Debug.Log("google failed");
             gameScreenLogin.HideLoadingScreen();
         }
-    }
-
-    public void MetamaskLoginSuccess(string address)
-    {
-        tempAddress = address;
-        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Get, (schema) => { RequestSignatureFromMetamask(schema.ToString()); }, address);
-        gameScreenLogin.ShowLoadingScreen();
-        gameScreenLogin.HideLoginScreen();
-    }
-
-    private void RequestSignatureFromMetamask(string schema)
-    {
-#if UNITY_WEBGL
-        RequestSignature(schema, tempAddress);
-#endif
-    }
-
-    public void SignatureLoginSuccess(string signature)
-    {
-        SoundManager.Instance.PlayMetamaskSfx();
-        StartLogin(tempAddress, signature);
     }
 
     private void StartLogin(string address, string signature)
@@ -271,7 +208,6 @@ public class GameStateLogin : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        GameEventsManager.Instance.RemoveGlobalListener(OnMetamaskEvent);
         Screens.Instance.PopScreen(gameScreenLogin);
         base.Disable();
     }
