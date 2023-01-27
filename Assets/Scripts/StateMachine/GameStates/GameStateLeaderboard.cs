@@ -19,7 +19,6 @@ public class GameStateLeaderboard : GameState
     public override void Enable()
     {
         _gameScreenLeaderboard = Screens.Instance.PushScreen<GameScreenLeaderboard>();
-        Screens.Instance.SetBackground(_gameScreenLeaderboard.BackgroundImage);
         Screens.Instance.HideGameBackground();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         currentTab = SelectedTab.Nether;

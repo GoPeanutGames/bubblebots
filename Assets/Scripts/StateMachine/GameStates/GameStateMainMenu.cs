@@ -39,7 +39,6 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenu = Screens.Instance.PushScreen<GameScreenMainMenu>(true);
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
         gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
-        Screens.Instance.ResetBackground();
         ResetMainMenuLook();
 #if !UNITY_EDITOR
         if (gameScreenMainMenuTopHUD.AreResourcesSet() == false)

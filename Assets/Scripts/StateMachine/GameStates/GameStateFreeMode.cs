@@ -28,7 +28,6 @@ public class GameStateFreeMode : GameState
             _gameScreenMainMenuTopHUD.DisablePlusButton();
             _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
         }
-        Screens.Instance.SetBackground(GameSettingsManager.Instance.freeModeGameplayData.backgroundSprite);
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
         Screens.Instance.HideGameBackground();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
@@ -231,7 +230,6 @@ public class GameStateFreeMode : GameState
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             Screens.Instance.PopScreen(gameScreenRobotSelection);
-            Screens.Instance.ResetBackground();
             stateMachine.PushState(new GameStateLogin());
             return;
         }
