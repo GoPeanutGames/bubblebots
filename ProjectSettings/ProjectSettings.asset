@@ -250,7 +250,7 @@ PlayerSettings:
   AndroidTargetDevices: 0
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: P:/projects/upwork/bubbleBotsKeystore/debug.keystore
+  AndroidKeystoreName: '{inproject}: Assets/Keystores/debug.keystore'
   AndroidKeyaliasName: debug
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
