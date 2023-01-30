@@ -145,9 +145,7 @@ public class GameStateLogin : GameState
 
     private void LoginWithGoogle()
     {
-        //LoginOnServerWithGoogleToken("");
-        //return;
-
+#if UNITY_ANDROID
         gameScreenLogin.ShowLoadingScreen();
         var config = new PlayGamesClientConfiguration.Builder()
                     .AddOauthScope("profile")
@@ -163,6 +161,7 @@ public class GameStateLogin : GameState
 
 
         Social.localUser.Authenticate(ProcessAuthentication);
+#endif
     }
 
     internal void LoginOnServerWithGoogleToken(string token)
@@ -188,6 +187,7 @@ public class GameStateLogin : GameState
 
     internal void ProcessAuthentication(bool success, string code)
     {
+#if UNITY_ANDROID
         if (success)
         {
             Debug.Log("google token " + PlayGamesPlatform.Instance.GetIdToken());
@@ -198,6 +198,7 @@ public class GameStateLogin : GameState
             Debug.Log("google failed");
             gameScreenLogin.HideLoadingScreen();
         }
+#endif
     }
 
     public void MetamaskLoginSuccess(string address)

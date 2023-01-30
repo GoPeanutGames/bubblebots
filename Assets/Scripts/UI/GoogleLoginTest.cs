@@ -1,6 +1,8 @@
 using BubbleBots.Server.Signature;
+#if UNITY_ANDROID
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -20,7 +22,7 @@ public class GoogleLoginTest : MonoBehaviour
         googleLoginButton.enabled = true;
     }
 
-
+    #if UNITY_ANDROID
     internal void ProcessAuthentication(bool success, string code)
     {
         if (success)
@@ -82,7 +84,5 @@ public class GoogleLoginTest : MonoBehaviour
         }
         );
     }
-
+#endif
 }
-
-

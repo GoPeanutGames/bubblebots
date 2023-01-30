@@ -337,7 +337,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         }
         gameplayState = NethermodeGameplayState.LevelCompleteMenu;
         UserManager.Instance.SetPlayerScore((int)GetScore());
-        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
+        OnNetherModeComplete();
         AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
