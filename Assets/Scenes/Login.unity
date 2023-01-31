@@ -1176,6 +1176,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1073275977}
   - component: {fileID: 1073275978}
+  - component: {fileID: 1073275979}
   m_Layer: 0
   m_Name: StoreManager
   m_TagString: Untagged
@@ -1210,6 +1211,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87cb5b6e37d51074abe825421e58bfa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1073275979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073275976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 98e401cc5a2ed4a7ba02f2e6ef35c6f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useRuntimeSetup: 0
+  revenueCatAPIKeyApple: 
+  revenueCatAPIKeyGoogle: goog_jPpsekNkdZvSzPwJcWLkSvLRFof
+  revenueCatAPIKeyAmazon: 
+  useAmazon: 0
+  autoSyncPurchases: 1
+  appUserID: 
+  productIdentifiers:
+  - store_gems_1
+  - store_gems_6
+  - store_gems_25
+  - store_gems_70
+  listener: {fileID: 0}
+  observerMode: 0
+  usesStoreKit2IfAvailable: 0
+  userDefaultsSuiteName: 
+  proxyURL: 
 --- !u!1001 &1076055696
 PrefabInstance:
   m_ObjectHideFlags: 0
