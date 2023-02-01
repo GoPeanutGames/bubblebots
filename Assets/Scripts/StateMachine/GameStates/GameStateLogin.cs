@@ -186,6 +186,7 @@ public class GameStateLogin : GameState
             {
                 GetPlayerDataResult result = JsonUtility.FromJson<GetPlayerDataResult>(data);
                 SetDataToUser(result);
+                StoreManager.Instance.InitialiseStore(address);
                 GoToMainMenu();
             }
             , address,

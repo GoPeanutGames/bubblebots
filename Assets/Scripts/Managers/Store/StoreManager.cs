@@ -8,6 +8,7 @@ public class StoreManager : MonoSingleton<StoreManager>
 {
     private Dictionary<StoreTabs, StoreTab> _storeTabItemsMap;
     private List<SpecialOffer> _specialOffers;
+    private bool purchasesLoggedIn = false;
 
     private void CreateTabIfNotExists(StoreTabs tab)
     {
@@ -35,7 +36,7 @@ public class StoreManager : MonoSingleton<StoreManager>
             Bundle = data,
             TopLine = GetGemText(data.gems),
             Image = "Store/Gems/Gem Chest Small",
-            BottomLine = "USDC " + data.price.ToString("##.##")
+            BottomLine = "USD " + data.price.ToString("##.##")
         };
         _storeTabItemsMap[tab].Items.Add(storeItem);
     }
@@ -47,7 +48,7 @@ public class StoreManager : MonoSingleton<StoreManager>
         SpecialOffer specialOffer = new()
         {
             Bundle = data,
-            ButtonText = "USDC " + data.price,
+            ButtonText = "USD " + data.price,
             Image = "Store/Gems/Special Offer Save 40 on Gems"
         };
         _specialOffers.Add(specialOffer);
@@ -80,6 +81,16 @@ public class StoreManager : MonoSingleton<StoreManager>
         });
     }
 
+    public void InitialiseStore(string address)
+    {
+        this.GetComponent<Purchases>().LogIn(address, PurchasesLoginCompleted);
+    }
+
+    private void PurchasesLoginCompleted(Purchases.CustomerInfo info, bool success, Purchases.Error error)
+    {
+        purchasesLoggedIn = success;
+    }
+
     public StoreTab GetStoreTabContent(StoreTabs tab)
     {
         return _storeTabItemsMap[tab];
@@ -97,5 +108,10 @@ public class StoreManager : MonoSingleton<StoreManager>
             BundleData data = bundles.Find((a) => a.bundleId == bundleId);
             bundleCallback(data);
         });
+    }
+
+    public void BuyBundle(string bundleId)
+    {
+        
     }
 }

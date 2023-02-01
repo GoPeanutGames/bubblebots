@@ -1177,6 +1177,7 @@ GameObject:
   - component: {fileID: 1073275977}
   - component: {fileID: 1073275978}
   - component: {fileID: 1073275979}
+  - component: {fileID: 1073275980}
   m_Layer: 0
   m_Name: StoreManager
   m_TagString: Untagged
@@ -1235,11 +1236,23 @@ MonoBehaviour:
   - store_gems_6
   - store_gems_25
   - store_gems_70
-  listener: {fileID: 0}
+  listener: {fileID: 1073275980}
   observerMode: 0
   usesStoreKit2IfAvailable: 0
   userDefaultsSuiteName: 
   proxyURL: 
+--- !u!114 &1073275980
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073275976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c02ad2293747d3429811b9ac11c5e3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1076055696
 PrefabInstance:
   m_ObjectHideFlags: 0

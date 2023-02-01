@@ -10,6 +10,7 @@ public class GameStateMetamaskTransaction : GameState
         StoreManager.Instance.GetBundleFromId(bundleId, (data) =>
         {
             bool isDev = EnvironmentManager.Instance.IsDevelopment();
+            // StoreManager.Instance.BuyBundle();
             // MetamaskManager.Instance.BuyStoreBundle(bundleId, isDev, TransactionSuccess, TransactionFail);
         });
     }
