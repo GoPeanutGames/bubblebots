@@ -6,7 +6,8 @@ namespace BubbleBots.Server.Signature
     {
         Get,
         Web3LoginCheck,
-        GoogleLogin
+        GoogleLogin,
+        EmailPassSignUp
     }
 
     [Serializable]
@@ -50,6 +51,13 @@ namespace BubbleBots.Server.Signature
     public class GoogleLogin
     {
         public string accessToken;
+    }
+
+    [Serializable]
+    public class EmailPassSignUp
+    {
+        public string email;
+        public string password;
     }
 
 

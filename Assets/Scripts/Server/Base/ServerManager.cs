@@ -37,7 +37,8 @@ public class ServerManager : MonoSingleton<ServerManager>
     {
         { SignatureLoginAPI.Get, "/auth/login-schema/" },
         { SignatureLoginAPI.Web3LoginCheck, "/auth/web3-login" },
-        { SignatureLoginAPI.GoogleLogin, "/user/auth/google" }
+        { SignatureLoginAPI.GoogleLogin, "/user/auth/google" },
+        { SignatureLoginAPI.EmailPassSignUp, "/user"}
     };
 
     private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()

@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using GooglePlayGames;
@@ -70,6 +72,15 @@ public class GameStateLogin : GameState
             case ButtonId.LoginMobileDownload:
                 Application.OpenURL("https://peanutgames.com/");
                 break;
+            case ButtonId.LoginEmailPassSignUpSubmit:
+                SignUpEmailPass();
+                break;
+            case ButtonId.LoginEmailPassSignUp:
+                gameScreenLogin.ShowEmailPassSignupScreen();
+                break;
+            case ButtonId.LoginEmailPass:
+                gameScreenLogin.ShowEmailPassLoginSignupScreen();
+                break;
             case ButtonId.LoginGuestPlay:
 #if UNITY_EDITOR
                 // PlayAsGuest();
@@ -85,6 +96,36 @@ public class GameStateLogin : GameState
                 LoginWithGoogle();
                 break;
         }
+    }
+
+    private void SignUpEmailPass()
+    {
+        string email = gameScreenLogin.GetSignUpInputFieldEmail();
+        string pass = gameScreenLogin.GetSignUpInputFieldPass();
+        var provider = new System.Security.Cryptography.SHA256Managed();
+        var hash = provider.ComputeHash(Encoding.UTF8.GetBytes(pass));
+        string hashString = string.Empty;
+        foreach (byte x in hash)
+        {
+            hashString += $"{x:x2}";
+        }
+        EmailPassSignUp data = new EmailPassSignUp()
+        {
+            email = email,
+            password = hashString
+        };
+        string formData = JsonUtility.ToJson(data);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.EmailPassSignUp, formData, EmailPassSignUpSuccess, EmailPassSignUpFail);
+    }
+
+    private void EmailPassSignUpSuccess(string success)
+    {
+        Debug.Log("success: " + success);
+    }
+
+    private void EmailPassSignUpFail(string error)
+    {
+        Debug.Log("error: " + error);
     }
 
     private void PlayAsGuest()

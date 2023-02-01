@@ -12,6 +12,10 @@ public static class ButtonId
     public const string LoginGuestPlay = "login.guest.play";
     public const string LoginMobileDownload = "login.mobile.download";
     public const string LoginGoogle = "login.google";
+    public const string LoginEmailPass = "login.emailpass";
+    public const string LoginEmailPassSignUp = "login.emailpass.signup";
+    public const string LoginEmailPassLogin = "login.emailpass.login";
+    public const string LoginEmailPassSignUpSubmit = "login.emailpass.signup.submit";
 
     //main menu bottom hud
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";
