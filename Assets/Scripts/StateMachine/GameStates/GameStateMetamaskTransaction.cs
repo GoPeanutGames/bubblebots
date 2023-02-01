@@ -7,12 +7,13 @@ public class GameStateMetamaskTransaction : GameState
     
     public GameStateMetamaskTransaction(int bundleId)
     {
-        StoreManager.Instance.GetBundleFromId(bundleId, (data) =>
-        {
-            bool isDev = EnvironmentManager.Instance.IsDevelopment();
-            // StoreManager.Instance.BuyBundle();
-            // MetamaskManager.Instance.BuyStoreBundle(bundleId, isDev, TransactionSuccess, TransactionFail);
-        });
+        StoreManager.Instance.BuyBundle(bundleId, TransactionSuccess, TransactionFail);
+        // StoreManager.Instance.GetBundleFromId(bundleId, (data) =>
+        // {
+        //     bool isDev = EnvironmentManager.Instance.IsDevelopment();
+        //     // StoreManager.Instance.BuyBundle();
+        //     // MetamaskManager.Instance.BuyStoreBundle(bundleId, isDev, TransactionSuccess, TransactionFail);
+        // });
     }
 
     private void TransactionSuccess()

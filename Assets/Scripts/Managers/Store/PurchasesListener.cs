@@ -15,6 +15,13 @@ public class PurchasesListener : Purchases.UpdatedCustomerInfoListener
         purchases.GetOfferings((offerings, error) =>
         {
             Debug.Log(offerings.All[offerings.All.Keys.ToList()[0]]);
+            foreach (Purchases.Offering offering in offerings.All.Values)
+            {
+                foreach (Purchases.Package package in offering.AvailablePackages)
+                {
+                    // package.StoreProduct.Identifier
+                }
+            }
             if (error != null)
             {
                 // show error

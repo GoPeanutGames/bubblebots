@@ -138,6 +138,7 @@ public class GameStateLogin : GameState
             (fail) =>
             {
                 Debug.Log("login server failed");
+                Debug.Log(fail);
                 gameScreenLogin.HideLoadingScreen();
             }
         );
