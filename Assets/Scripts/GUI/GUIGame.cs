@@ -105,7 +105,7 @@ public class GUIGame : MonoBehaviour
             }
         }
     }
-    
+
     void RenderTileOnObject(int i, int j, string id, int levelWidth, int levelHeight, LevelData levelData)
     {
         GameObject tile;
@@ -225,7 +225,7 @@ public class GUIGame : MonoBehaviour
             LockTiles("L1");
             tile1 = BoardParent.transform.Find("Tile_" + x1 + "_" + y1);
             tile2 = BoardParent.transform.Find("Tile_" + x2 + "_" + y2);
-            
+
             tile1.GetComponent<RectTransform>().DOPunchAnchorPos(10 * new Vector2(x1 - x2, y1 - y2), SwapDuration, 50, 10);
             tile2.GetComponent<RectTransform>().DOPunchAnchorPos(10 * new Vector2(x2 - x1, y2 - y1), SwapDuration, 50, 10);
         }
@@ -238,7 +238,7 @@ public class GUIGame : MonoBehaviour
         yield return new WaitForSeconds(SwapDuration);
     }
 
-    
+
     IEnumerator ShowHint(List<Vector2Int> tiles)
     {
         Transform tile = null;
@@ -297,13 +297,13 @@ public class GUIGame : MonoBehaviour
 
     public void ExplodeBubble(int x, int y, long value)
     {
-        
+
         Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
         if (tile == null)
         {
             tile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
         }
-        
+
         if (tile == null)
         {
             return;
@@ -346,6 +346,47 @@ public class GUIGame : MonoBehaviour
 
     public void ExplodeTile(int x, int y, bool destroyTile)
     {
+        if (true)
+        {
+            EnemyRobot targetedRobot = GetComponent<GameScreenGame>().GetTargetedRobot();
+            Transform explodedTile = BoardParent.transform.Find("Tile_" + x + "_" + y);
+            if (explodedTile == null)
+            {
+                explodedTile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
+            }
+
+            if (targetedRobot != null && explodedTile != null)
+            {
+                GameObject animObject = new GameObject();
+                animObject.transform.SetParent(BoardParent.transform);
+                animObject.name = "moveToTopTile_" + x + "_" + y;
+                animObject.SetActive(true);
+
+                RectTransform rect = animObject.GetComponent<RectTransform>();
+                if (rect == null)
+                {
+                    rect = animObject.AddComponent<RectTransform>();
+                }
+
+                Vector3 position = backgroundTiles[x, y].transform.GetComponent<RectTransform>().anchoredPosition3D;
+
+
+                rect.anchoredPosition3D = position;// BoardParent.transform.Find("Tile_" + x + "_" + y).GetComponent<RectTransform>().anchoredPosition3D;
+                rect.sizeDelta = new Vector2(TileSize, TileSize);
+                rect.localScale = new Vector3(1, 1, 1);
+
+                Image tileImage = animObject.GetComponent<Image>();
+                if (tileImage == null)
+                {
+                    tileImage = animObject.AddComponent<Image>();
+                }
+
+                tileImage.sprite = explodedTile.GetComponent<Image>().sprite;
+                animObject.transform.DOMove(targetedRobot.transform.position, .4f).OnComplete(() => { Destroy(animObject); });
+            }
+        }
+
+
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
@@ -709,51 +750,6 @@ public class GUIGame : MonoBehaviour
         tile1.GetComponent<RectTransform>().DOAnchorPos(new Vector2(_x1, _y1), 0.15f).SetEase(Ease.Linear);
     }
 
-    public void PremintButton()
-    {
-        //        //WinDialogImage.gameObject.SetActive(false);
-        //#if !UNITY_EDITOR
-        //        Premint();
-        //#endif
-
-        //        Menu.gameObject.SetActive(true);
-        //        Menu.GetComponent<CanvasGroup>().DOFade(1, 0.35f);
-        //        if (UserManager.PlayerType == PlayerType.Guest)
-        //        {
-        //            //Menu.transform.Find("PlayerLogin").gameObject.SetActive(true);
-        //            SceneManager.LoadScene("Login");
-        //        }
-        //        else
-        //        {
-        //            Menu.transform.Find("PlayerInfo").gameObject.SetActive(true);
-        //            Menu.DisplayHighScores();
-        //            Menu.ReverseHighScoreButtons();
-        //        }
-
-        //        gameObject.SetActive(false);
-    }
-
-    public void RenewEnemyRobots()
-    {
-        // int robot1 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        // int robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        // int robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        //
-        // while (robot2 == robot1)
-        // {
-        //     robot2 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        // }
-        //
-        // while (robot3 == robot1 || robot3 == robot2)
-        // {
-        //     robot3 = UnityEngine.Random.Range(0, EnemySprites.Length);
-        // }
-        //
-        // EnemyRobots[0].gameObject.GetComponent<Image>().sprite = EnemySprites[robot1];
-        // EnemyRobots[1].gameObject.GetComponent<Image>().sprite = EnemySprites[robot2];
-        // EnemyRobots[2].gameObject.GetComponent<Image>().sprite = EnemySprites[robot3];
-    }
-
     public void DisplayHelpButton()
     {
         Application.OpenURL("https://www.youtube.com/watch?v=w10rwbbQVr8");
@@ -822,7 +818,5 @@ public class GUIGame : MonoBehaviour
             backgroundTiles[currentSpecialPosition.x, currentSpecialPosition.y].material = null;
         }
         currentSpecialPosition = -Vector2Int.one;
-
     }
-
 }

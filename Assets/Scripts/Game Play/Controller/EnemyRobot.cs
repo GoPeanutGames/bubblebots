@@ -30,6 +30,11 @@ public class EnemyRobot : MonoBehaviour
         hpText.text = value + " / " + max;
     }
 
+    public bool IsTargeted()
+    {
+        return Crossair.activeInHierarchy;
+    }
+
     public virtual void Damage()
     {
         if (!damageAnimationIsRunning)

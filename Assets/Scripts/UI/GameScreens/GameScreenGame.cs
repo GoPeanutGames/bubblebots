@@ -77,6 +77,19 @@ public class GameScreenGame : GameScreen
         }
         enemyRobotVisuals[index].SetTarget();
     }
+
+    public EnemyRobot GetTargetedRobot()
+    {
+        foreach (EnemyRobot enemyRobot in enemyRobotVisuals)
+        {
+            if (enemyRobot.IsTargeted())
+            {
+                return enemyRobot;
+            }
+        }
+        return null;
+
+    }
     
     IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy, int id)
     {
