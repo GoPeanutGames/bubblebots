@@ -15,7 +15,9 @@ public static class ButtonId
     public const string LoginEmailPass = "login.emailpass";
     public const string LoginEmailPassSignUp = "login.emailpass.signup";
     public const string LoginEmailPassLogin = "login.emailpass.login";
+    public const string LoginEmailPassLoginSubmit = "login.emailpass.login.submit";
     public const string LoginEmailPassSignUpSubmit = "login.emailpass.signup.submit";
+    public const string LoginEmailPassSignUpLogin2ndStep = "login.emailpass.signuplogin.2nd.submit";
 
     //main menu bottom hud
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";

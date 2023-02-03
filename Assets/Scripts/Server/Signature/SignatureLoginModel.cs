@@ -7,7 +7,9 @@ namespace BubbleBots.Server.Signature
         Get,
         Web3LoginCheck,
         GoogleLogin,
-        EmailPassSignUp
+        EmailPassSignUp,
+        Login1stStep,
+        Login2ndStep
     }
 
     [Serializable]
@@ -59,10 +61,18 @@ namespace BubbleBots.Server.Signature
         public string email;
         public string password;
     }
+    
+    [Serializable]
+    public class Login2ndStep
+    {
+        public string email;
+        public string password;
+        public string twoFaCode;
+    }
 
 
     [Serializable]
-    public class GoogleLoginResult
+    public class LoginResult
     {
         public string jwt;
         public User user;

@@ -11,6 +11,8 @@ public class GameStateLogin : GameState
     private GameScreenLogin gameScreenLogin;
     private string tempAddress;
     private string tempSignature;
+    private string tempEmail;
+    private string tempHashedPass;
 
     public override string GetGameStateName()
     {
@@ -75,11 +77,20 @@ public class GameStateLogin : GameState
             case ButtonId.LoginEmailPassSignUpSubmit:
                 SignUpEmailPass();
                 break;
+            case ButtonId.LoginEmailPassLoginSubmit:
+                LoginEmailPass();
+                break;
+            case ButtonId.LoginEmailPassLogin:
+                gameScreenLogin.ShowLoginScreen1stStep();
+                break;
             case ButtonId.LoginEmailPassSignUp:
                 gameScreenLogin.ShowEmailPassSignupScreen();
                 break;
             case ButtonId.LoginEmailPass:
                 gameScreenLogin.ShowEmailPassLoginSignupScreen();
+                break;
+            case ButtonId.LoginEmailPassSignUpLogin2ndStep:
+                Login2ndStep();
                 break;
             case ButtonId.LoginGuestPlay:
 #if UNITY_EDITOR
@@ -109,6 +120,8 @@ public class GameStateLogin : GameState
         {
             hashString += $"{x:x2}";
         }
+        tempEmail = email;
+        tempHashedPass = hashString;
         EmailPassSignUp data = new EmailPassSignUp()
         {
             email = email,
@@ -120,10 +133,57 @@ public class GameStateLogin : GameState
 
     private void EmailPassSignUpSuccess(string success)
     {
-        Debug.Log("success: " + success);
+        gameScreenLogin.ShowSignUpLogin2ndStep();
     }
 
     private void EmailPassSignUpFail(string error)
+    {
+        Debug.Log("error: " + error);
+    }
+
+    private void LoginEmailPass()
+    {
+        string email = gameScreenLogin.GetLoginInputFieldEmail();
+        string pass = gameScreenLogin.GetLoginInputFieldPass();
+        var provider = new System.Security.Cryptography.SHA256Managed();
+        var hash = provider.ComputeHash(Encoding.UTF8.GetBytes(pass));
+        string hashString = string.Empty;
+        foreach (byte x in hash)
+        {
+            hashString += $"{x:x2}";
+        }
+        tempEmail = email;
+        tempHashedPass = hashString;
+        EmailPassSignUp data = new EmailPassSignUp()
+        {
+            email = email,
+            password = hashString
+        };
+        string formData = JsonUtility.ToJson(data);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login1stStep, formData, EmailPassSignUpSuccess, EmailPassSignUpFail);
+    }
+    
+    private void Login2ndStep()
+    {
+        string code = gameScreenLogin.GetLoginInputFieldCode();
+        Login2ndStep data = new Login2ndStep()
+        {
+            email = tempEmail,
+            password = tempHashedPass,
+            twoFaCode = code
+        };
+        string formData = JsonUtility.ToJson(data);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login2ndStep, formData, Login2ndStepSuccess, Login2ndStepFail);
+    }
+
+    private void Login2ndStepSuccess(string success)
+    {
+        Debug.Log("success: " + success);
+        LoginResult result = JsonUtility.FromJson<LoginResult>(success);
+        StartLogin(result.web3Info.address, result.web3Info.signature);
+    }
+
+    private void Login2ndStepFail(string error)
     {
         Debug.Log("error: " + error);
     }
@@ -173,7 +233,7 @@ public class GameStateLogin : GameState
         ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.GoogleLogin, formData,
             (success) =>
             {
-                GoogleLoginResult result = JsonUtility.FromJson<GoogleLoginResult>(success);
+                LoginResult result = JsonUtility.FromJson<LoginResult>(success);
                 StartLogin(result.web3Info.address, result.web3Info.signature);
             },
             (fail) =>
