@@ -1,8 +1,8 @@
 using UnityEngine;
+using System.Linq;
 using System.Collections.Generic;
 using BubbleBots.Match3.Models;
 using BubbleBots.Match3.Data;
-using BubbleBots.Data;
 
 namespace BubbleBots.Match3.Controllers
 {
@@ -928,7 +928,17 @@ namespace BubbleBots.Match3.Controllers
                 {
                     if (boardModel[i][j].gem.IsSpecial())
                     {
-                        toExplode.Add(new ToExplode() { position = new Vector2Int(i, j), explosionSource = ToExplode.ExplosionSource.Chain });
+                        if (boardModel[i][j].gem.GetId() == "10")
+                        {
+                            ToExplode alreadyAdded = toExplode.ToList().Find(x => (boardModel[x.position.x][x.position.y].gem.GetId() == "10"));
+                            if (alreadyAdded == null) {
+                                toExplode.Add(new ToExplode() { position = new Vector2Int(i, j), explosionSource = ToExplode.ExplosionSource.Chain });
+                            }
+                        }
+                        else
+                        {
+                            toExplode.Add(new ToExplode() { position = new Vector2Int(i, j), explosionSource = ToExplode.ExplosionSource.Chain });
+                        }
                     }
                 }
 
@@ -995,8 +1005,6 @@ namespace BubbleBots.Match3.Controllers
             return swapResult;
         }
     }
-
-
 }
 
 public class ToExplode
