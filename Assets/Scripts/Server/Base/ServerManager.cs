@@ -12,9 +12,6 @@ using UnityEngine.Networking;
 public class ServerManager : MonoSingleton<ServerManager>
 {
     public bool UseRSA;
-    
-    private string sessionToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
 
     private readonly Dictionary<GameplaySessionAPI, string> SessionAPIMap = new()
     {
@@ -37,7 +34,11 @@ public class ServerManager : MonoSingleton<ServerManager>
     {
         { SignatureLoginAPI.Get, "/auth/login-schema/" },
         { SignatureLoginAPI.Web3LoginCheck, "/auth/web3-login" },
-        { SignatureLoginAPI.GoogleLogin, "/user/auth/google" }
+        { SignatureLoginAPI.GoogleLogin, "/user/auth/google" },
+        { SignatureLoginAPI.EmailPassSignUp, "/user"},
+        { SignatureLoginAPI.Login1StStep, "/user/ask-login"},
+        { SignatureLoginAPI.Login2NdStep, "/user/login"},
+        { SignatureLoginAPI.AutoLoginGet, "/user/me"}
     };
 
     private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()
@@ -68,7 +69,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         UploadHandler customUploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(encryptedFormData));
         customUploadHandler.contentType = "application/json";
         webRequest.uploadHandler = customUploadHandler;
-        webRequest.SetRequestHeader("Authorization", "Bearer " + sessionToken);
+        webRequest.SetRequestHeader("Authorization", "Bearer " + UserManager.Instance.GetPlayerJwtToken());
         webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
         webRequest.SetRequestHeader("Content-Type", "application/json");
         webRequest.SetRequestHeader("Accept", "*/*");
@@ -80,6 +81,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
         UnityWebRequest webRequest = UnityWebRequest.Get(serverUrl + api);
 
+        webRequest.SetRequestHeader("Authorization", "Bearer " + UserManager.Instance.GetPlayerJwtToken());
         webRequest.SetRequestHeader("Content-Type", "application/json");
         webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");
         webRequest.SetRequestHeader("Accept", "*/*");

@@ -21,6 +21,7 @@ namespace BubbleBots.Server.Store
         public float price;
         public int gems;
         public int bundleId;
+        public string googleId;
     }
     
     [Serializable]

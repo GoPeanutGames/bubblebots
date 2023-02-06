@@ -8,6 +8,8 @@ public class StoreManager : MonoSingleton<StoreManager>
 {
     private Dictionary<StoreTabs, StoreTab> _storeTabItemsMap;
     private List<SpecialOffer> _specialOffers;
+    private bool purchasesLoggedIn = false;
+    private Purchases purchases;
 
     private void CreateTabIfNotExists(StoreTabs tab)
     {
@@ -35,7 +37,7 @@ public class StoreManager : MonoSingleton<StoreManager>
             Bundle = data,
             TopLine = GetGemText(data.gems),
             Image = "Store/Gems/Gem Chest Small",
-            BottomLine = "USDC " + data.price.ToString("##.##")
+            BottomLine = "USD " + data.price.ToString("##.##")
         };
         _storeTabItemsMap[tab].Items.Add(storeItem);
     }
@@ -47,7 +49,7 @@ public class StoreManager : MonoSingleton<StoreManager>
         SpecialOffer specialOffer = new()
         {
             Bundle = data,
-            ButtonText = "USDC " + data.price,
+            ButtonText = "USD " + data.price,
             Image = "Store/Gems/Special Offer Save 40 on Gems"
         };
         _specialOffers.Add(specialOffer);
@@ -55,6 +57,7 @@ public class StoreManager : MonoSingleton<StoreManager>
 
     private void Start()
     {
+        purchases = this.GetComponent<Purchases>();
         GetBundlesData((bundles) =>
         {
             foreach (BundleData bundleData in bundles)
@@ -80,6 +83,25 @@ public class StoreManager : MonoSingleton<StoreManager>
         });
     }
 
+    public void InitialiseStore(string address)
+    {
+        this.GetComponent<Purchases>().LogIn(address, PurchasesLoginCompleted);
+    }
+
+    private void PurchasesLoginCompleted(Purchases.CustomerInfo info, bool created, Purchases.Error error)
+    {
+        if (error != null)
+        {
+            Debug.Log("Purchases log in error: " + error);
+            purchasesLoggedIn = false;
+        }
+        else
+        {
+            Debug.Log("Purchases log in success");
+            purchasesLoggedIn = true;
+        }
+    }
+
     public StoreTab GetStoreTabContent(StoreTabs tab)
     {
         return _storeTabItemsMap[tab];
@@ -92,10 +114,63 @@ public class StoreManager : MonoSingleton<StoreManager>
 
     public void GetBundleFromId(int bundleId, Action<BundleData> bundleCallback)
     {
+        Debug.Log("GEt Bundle: " + bundleId);
         GetBundlesData((bundles) =>
         {
             BundleData data = bundles.Find((a) => a.bundleId == bundleId);
             bundleCallback(data);
+            Debug.Log("Get Bundle success");
+        });
+    }
+
+    public void BuyBundle(int bundleId, Action transactionSuccess, Action<string> transactionFail)
+    {
+        Debug.Log("buy bundle: " + bundleId);
+        if (!purchasesLoggedIn)
+            return;
+        GetBundlesData((bundles) =>
+        {
+            BundleData data = bundles.Find((a) => a.bundleId == bundleId);
+            Debug.Log("get offerings");
+            purchases.GetOfferings((offerings, error) =>
+            {
+                foreach (Purchases.Offering offering in offerings.All.Values)
+                {
+                    foreach (Purchases.Package package in offering.AvailablePackages)
+                    {
+                        if (package.Identifier == data.googleId)
+                        {
+                            Debug.Log("found package");
+                            purchases.PurchasePackage(package,
+                                (productIdentifier, customerInfo, userCancelled, error) =>
+                                {
+                                    if (!userCancelled)
+                                    {
+                                        if (error != null)
+                                        {
+                                            // show error
+                                            transactionFail?.Invoke(error.ReadableErrorCode + ":" +
+                                                                    error.UnderlyingErrorMessage);
+                                            
+                                            Debug.Log("fail");
+                                        }
+                                        else
+                                        {
+                                            // show updated Customer Info
+                                            transactionSuccess?.Invoke();
+                                            
+                                            Debug.Log("success");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // user cancelled, don't show an error
+                                    }
+                                });
+                        }
+                    }
+                }
+            });
         });
     }
 }

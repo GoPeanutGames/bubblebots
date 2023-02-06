@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Serialization;
 
 namespace BubbleBots.Server.Signature
 {
@@ -6,7 +7,11 @@ namespace BubbleBots.Server.Signature
     {
         Get,
         Web3LoginCheck,
-        GoogleLogin
+        GoogleLogin,
+        EmailPassSignUp,
+        Login1StStep,
+        Login2NdStep,
+        AutoLoginGet
     }
 
     [Serializable]
@@ -36,7 +41,6 @@ namespace BubbleBots.Server.Signature
     public class PostWeb3Login
     {
         public string address;
-
         public string signature;
     }
 
@@ -47,16 +51,31 @@ namespace BubbleBots.Server.Signature
     }
 
     [Serializable]
-    public class GoogleLogin
+    public class GoogleLoginData
     {
         public string accessToken;
     }
 
+    [Serializable]
+    public class EmailPassSignUp
+    {
+        public string email;
+        public string password;
+    }
+    
+    [Serializable]
+    public class Login2ndStep
+    {
+        public string email;
+        public string password;
+        public string twoFaCode;
+    }
+
 
     [Serializable]
-    public class GoogleLoginResult
+    public class LoginResult
     {
-        public string jwt;
+        public string token;
         public User user;
         public PostWeb3Login web3Info;
     }
@@ -66,7 +85,5 @@ namespace BubbleBots.Server.Signature
     {
         public string _id;
         public string email;
-        public string firstName;
-        public string lastName;
     }
 }

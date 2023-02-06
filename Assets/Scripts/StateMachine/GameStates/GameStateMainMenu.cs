@@ -40,7 +40,6 @@ public class GameStateMainMenu : GameState
         gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
         gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
         ResetMainMenuLook();
-#if !UNITY_EDITOR
         if (gameScreenMainMenuTopHUD.AreResourcesSet() == false)
         {
             _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
@@ -48,8 +47,6 @@ public class GameStateMainMenu : GameState
         Screens.Instance.BringToFront<GameScreenLoading>();
         GameScreenMainMenuTopHUD.ResourcesSet += ResourcesSet;
         gameScreenMainMenuTopHUD.SetUsername(UserManager.Instance.GetPlayerUserName());
-#endif
-
         UserManager.CallbackWithResources += ResourcesReceived;
         UserManager.Instance.GetPlayerResources();
     }

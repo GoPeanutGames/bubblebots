@@ -64,9 +64,9 @@ public class GameStateStore : GameState
 
     public void GenerateSpecialOffer()
     {
-        List<SpecialOffer> specialOffers = StoreManager.Instance.GetSpecialOffers();
-        SpecialOffer offer = specialOffers[currentlyShowingOfferIndex];
-        _gameScreenStore.GenerateSpecialOffer(offer);
+        // List<SpecialOffer> specialOffers = StoreManager.Instance.GetSpecialOffers();
+        // SpecialOffer offer = specialOffers[currentlyShowingOfferIndex];
+        // _gameScreenStore.GenerateSpecialOffer(offer);
     }
 
     private void ActivateTab(StoreTabs tab)
