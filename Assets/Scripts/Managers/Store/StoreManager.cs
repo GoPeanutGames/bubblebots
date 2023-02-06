@@ -76,7 +76,6 @@ public class StoreManager : MonoSingleton<StoreManager>
 
     private void GetBundlesData(Action<List<BundleData>> bundleCallback)
     {
-        Debug.Log("GEt Bundles");
         ServerManager.Instance.GetStoreDataFromServer(StoreAPI.Bundles, (jsonData) =>
         {
             GetBundlesData bundlesData = JsonUtility.FromJson<GetBundlesData>(jsonData);

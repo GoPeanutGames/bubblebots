@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using BubbleBots.User;
-using CodeStage.AntiCheat.ObscuredTypes;
 using CodeStage.AntiCheat.Storage;
 using UnityEditor;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public enum PlayerType
 {
@@ -23,9 +21,6 @@ public class UserManager : MonoSingleton<UserManager>
 
     private User CurrentUser;
 
-    private ObscuredString sessionToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdXRoIjoiYWYtdXNlciIsImFnZW50IjoiIiwidG9rZW4iOiJmcmV5LXBhcmstc3RhdmUtaHVydGxlLXNvcGhpc20tbW9uYWNvLW1ha2VyLW1pbm9yaXR5LXRoYW5rZnVsLWdyb2Nlci11bmNpYWwtcG9uZ2VlIiwiaWF0IjoxNjYzNjk4NDkzfQ.wEOeF3Up1aJOtFUOLWB4AGKf-NBS609UoL4kIgrSGms";
-
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
     {
         { PrefsKey.Nickname, "full_name" },
@@ -39,11 +34,9 @@ public class UserManager : MonoSingleton<UserManager>
     {
         CurrentUser = new()
         {
-            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname],
-                "Player" + Random.Range(1000, 10000)),
+            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], ""),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
-            SessionToken =
-                ObscuredPrefs.Get<string>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], sessionToken)),
+            SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
             Score = 0,
             Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], "")
@@ -73,6 +66,12 @@ public class UserManager : MonoSingleton<UserManager>
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
     }
 
+    public void SetJwtToken(string token)
+    {
+        CurrentUser.SessionToken = token;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.SessionToken], token);
+    }
+
     public void SetPlayerUserName(string userName, bool sendToServer)
     {
         if (string.IsNullOrEmpty(userName))
@@ -87,7 +86,7 @@ public class UserManager : MonoSingleton<UserManager>
             string sanitizedUsername = userName.Replace("\"", "'").Trim();
             ChangeUserNameData formData = new()
             {
-                signature = UserManager.Instance.GetPlayerSignature(),
+                signature = Instance.GetPlayerSignature(),
                 address = CurrentUser.WalletAddress,
                 nickname = sanitizedUsername
             };
@@ -110,7 +109,12 @@ public class UserManager : MonoSingleton<UserManager>
     {
         return CurrentUser.Signature;
     }
-    
+
+    public string GetPlayerJwtToken()
+    {
+        return CurrentUser.SessionToken;
+    }
+
     public void SetPlayerRank(int rank)
     {
         CurrentUser.Rank = rank;
@@ -134,6 +138,7 @@ public class UserManager : MonoSingleton<UserManager>
 
     //stub
     private const string playerBubblesKey = "playerBubbles";
+
     public int GetBubbles()
     {
         return PlayerPrefs.GetInt("playerBubblesKey");
@@ -160,7 +165,7 @@ public class UserManager : MonoSingleton<UserManager>
         yield return new WaitForSeconds(seconds);
         GetPlayerResources();
     }
-    
+
     public void GetPlayerResourcesAfter(float seconds)
     {
         StartCoroutine(CallGetPlayerResourcesAfter(seconds));
