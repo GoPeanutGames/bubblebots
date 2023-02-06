@@ -76,6 +76,7 @@ public class StoreManager : MonoSingleton<StoreManager>
 
     private void GetBundlesData(Action<List<BundleData>> bundleCallback)
     {
+        Debug.Log("GEt Bundles");
         ServerManager.Instance.GetStoreDataFromServer(StoreAPI.Bundles, (jsonData) =>
         {
             GetBundlesData bundlesData = JsonUtility.FromJson<GetBundlesData>(jsonData);
@@ -88,9 +89,18 @@ public class StoreManager : MonoSingleton<StoreManager>
         this.GetComponent<Purchases>().LogIn(address, PurchasesLoginCompleted);
     }
 
-    private void PurchasesLoginCompleted(Purchases.CustomerInfo info, bool success, Purchases.Error error)
+    private void PurchasesLoginCompleted(Purchases.CustomerInfo info, bool created, Purchases.Error error)
     {
-        purchasesLoggedIn = success;
+        if (error != null)
+        {
+            Debug.Log("Purchases log in error: " + error);
+            purchasesLoggedIn = false;
+        }
+        else
+        {
+            Debug.Log("Purchases log in success");
+            purchasesLoggedIn = true;
+        }
     }
 
     public StoreTab GetStoreTabContent(StoreTabs tab)
@@ -105,21 +115,24 @@ public class StoreManager : MonoSingleton<StoreManager>
 
     public void GetBundleFromId(int bundleId, Action<BundleData> bundleCallback)
     {
+        Debug.Log("GEt Bundle: " + bundleId);
         GetBundlesData((bundles) =>
         {
             BundleData data = bundles.Find((a) => a.bundleId == bundleId);
             bundleCallback(data);
+            Debug.Log("Get Bundle success");
         });
     }
 
     public void BuyBundle(int bundleId, Action transactionSuccess, Action<string> transactionFail)
     {
+        Debug.Log("buy bundle: " + bundleId);
         if (!purchasesLoggedIn)
             return;
-        Debug.Log("buy");
         GetBundlesData((bundles) =>
         {
             BundleData data = bundles.Find((a) => a.bundleId == bundleId);
+            Debug.Log("get offerings");
             purchases.GetOfferings((offerings, error) =>
             {
                 foreach (Purchases.Offering offering in offerings.All.Values)
