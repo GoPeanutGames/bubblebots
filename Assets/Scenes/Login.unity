@@ -1225,12 +1225,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   useRuntimeSetup: 0
-  revenueCatAPIKeyApple: 
+  revenueCatAPIKeyApple: appl_sHJjOuUTDbFSdiXJMPAPiAiMnTY
   revenueCatAPIKeyGoogle: goog_jPpsekNkdZvSzPwJcWLkSvLRFof
   revenueCatAPIKeyAmazon: 
   useAmazon: 0
   autoSyncPurchases: 1
-  appUserID: 
+  appUserID: 1670620983
   productIdentifiers:
   - store_gems_1
   - store_gems_6
