@@ -9,15 +9,14 @@ public static class ButtonId
 
     //login
     public const string LoginGuest = "login.guest";
-    public const string LoginGuestPlay = "login.guest.play";
-    public const string LoginMobileDownload = "login.mobile.download";
-    public const string LoginGoogle = "login.google";
-    public const string LoginEmailPass = "login.emailpass";
-    public const string LoginEmailPassSignUp = "login.emailpass.signup";
-    public const string LoginEmailPassLogin = "login.emailpass.login";
-    public const string LoginEmailPassLoginSubmit = "login.emailpass.login.submit";
-    public const string LoginEmailPassSignUpSubmit = "login.emailpass.signup.submit";
-    public const string LoginEmailPassSignUpLogin2ndStep = "login.emailpass.signuplogin.2nd.submit";
+    public const string LoginSignInGoogle = "login.signin.google";
+    public const string LoginSignInSubmit = "login.signin.submit";
+    public const string LoginSignUpSubmit = "login.signup.submit";
+    public const string LoginCodeSubmit = "login.code.submit";
+    public const string LoginCodeDidntReceive = "login.code.didntreceive";
+    public const string LoginResetPassSubmit = "login.resetpass.submit";
+    public const string LoginSetNewPassSubmit = "login.setnewpass.submit";
+    public const string LoginSetNewPassDidntReceiveCode = "login.setnewpass.didntreceivecode";
 
     //main menu bottom hud
     public const string MainMenuBottomHUDPlay = "mainmenu.bottomHUD.play";

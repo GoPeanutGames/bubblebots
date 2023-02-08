@@ -38,7 +38,9 @@ public class ServerManager : MonoSingleton<ServerManager>
         { SignatureLoginAPI.EmailPassSignUp, "/user"},
         { SignatureLoginAPI.Login1StStep, "/user/ask-login"},
         { SignatureLoginAPI.Login2NdStep, "/user/login"},
-        { SignatureLoginAPI.AutoLoginGet, "/user/me"}
+        { SignatureLoginAPI.AutoLoginGet, "/user/me"},
+        { SignatureLoginAPI.ResetPassword, "/user/ask-reset-password"},
+        { SignatureLoginAPI.SetNewPass, "/user/reset-password"}
     };
 
     private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()

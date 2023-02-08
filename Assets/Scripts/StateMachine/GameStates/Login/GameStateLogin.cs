@@ -25,6 +25,7 @@ public class GameStateLogin : GameState
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         _googleLogin = new GoogleLogin();
         _autoLogin = new AutoLogin();
+        _gameScreenLogin.ShowLoading();
         _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
     }
 
@@ -45,6 +46,7 @@ public class GameStateLogin : GameState
 
     private void AutoLoginFail(string error)
     {
+        _gameScreenLogin.HideLoading();
         Debug.LogError("Auto Login failed with: " + error);
     }
 
@@ -62,43 +64,108 @@ public class GameStateLogin : GameState
         switch (buttonTapData.stringData)
         {
             case ButtonId.LoginGuest:
-                _gameScreenLogin.OnPlayAsGuestPressed();
-                break;
-            case ButtonId.LoginMobileDownload:
-                Application.OpenURL("https://peanutgames.com/");
-                break;
-            case ButtonId.LoginEmailPassSignUpSubmit:
-                SignUpEmailPass();
-                break;
-            case ButtonId.LoginEmailPassLoginSubmit:
-                LoginEmailPass();
-                break;
-            case ButtonId.LoginEmailPassLogin:
-                _gameScreenLogin.ShowLoginScreen1stStep();
-                break;
-            case ButtonId.LoginEmailPassSignUp:
-                _gameScreenLogin.ShowEmailPassSignupScreen();
-                break;
-            case ButtonId.LoginEmailPass:
-                _gameScreenLogin.ShowEmailPassLoginSignupScreen();
-                break;
-            case ButtonId.LoginEmailPassSignUpLogin2ndStep:
-                Login2ndStep();
-                break;
-            case ButtonId.LoginGuestPlay:
                 PlayAsGuest();
                 UserManager.PlayerType = PlayerType.Guest;
                 AnalyticsManager.Instance.InitAnalyticsGuest();
                 break;
-            case ButtonId.LoginGoogle:
-                _gameScreenLogin.ShowLoadingScreen();
+            case ButtonId.LoginSignInGoogle:
+                _gameScreenLogin.ShowLoading();
                 _googleLogin.StartLogin(LoginSuccessSetData, GoogleLoginFail);
+                break;
+            case ButtonId.LoginSignInSubmit:
+                if (_gameScreenLogin.SignInValidation())
+                {
+                    SignIn();
+                }
+                break;
+            case ButtonId.LoginSignUpSubmit:
+                if (_gameScreenLogin.SignUpValidation())
+                {
+                    SignUp();
+                }
+                break;
+            case ButtonId.LoginCodeSubmit:
+                if (_gameScreenLogin.CodeValidation())
+                {
+                    Submit2FACode();
+                }
+                break;
+            case ButtonId.LoginCodeDidntReceive:
+                SignIn();
+                break;
+            case ButtonId.LoginResetPassSubmit:
+                if (_gameScreenLogin.ResetPassValidation())
+                {
+                    ResetPassword();
+                }
+                break;
+            case ButtonId.LoginSetNewPassSubmit:
+                if (_gameScreenLogin.SetNewPassValidation())
+                {
+                    SetNewPassword();
+                }
+                break;
+            case ButtonId.LoginSetNewPassDidntReceiveCode:
+                ResetPassword();
                 break;
         }
     }
 
-    private void SignUpEmailPass()
+    private void ResetPassword()
     {
+        _gameScreenLogin.ShowLoading();
+        string email = _gameScreenLogin.GetResetPassInputFieldEmail();
+        ResetPassData data = new ResetPassData()
+        {
+            email = email
+        };
+        string formData = JsonUtility.ToJson(data);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.ResetPassword, formData, ResetPassSuccess);
+    }
+
+    private void ResetPassSuccess(string _)
+    {
+        _gameScreenLogin.HideLoading();
+        _gameScreenLogin.ShowSetNewPassword();
+    }
+
+    private void SetNewPassSuccess(string data)
+    {
+        _gameScreenLogin.HideLoading();
+        _gameScreenLogin.ShowSignIn();
+    }
+
+    private void SetNewPassFail(string error)
+    {
+        Debug.LogError("Set new pass fail: " + error);
+        _gameScreenLogin.HideLoading();
+        _gameScreenLogin.SetNewPassError();
+    }
+    
+    private void SetNewPassword()
+    {
+        _gameScreenLogin.ShowLoading();
+        string authCode = _gameScreenLogin.GetSetNewPassInputFieldAuthCode();
+        string newPass = _gameScreenLogin.GetSetNewPassInputFieldPass();
+        var provider = new SHA256Managed();
+        var hash = provider.ComputeHash(Encoding.UTF8.GetBytes(newPass));
+        string hashString = string.Empty;
+        foreach (byte x in hash)
+        {
+            hashString += $"{x:x2}";
+        }
+        SetNewPassData data = new SetNewPassData()
+        {
+            newPassword = hashString,
+            token = authCode
+        };
+        string formData = JsonUtility.ToJson(data);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.SetNewPass, formData, SetNewPassSuccess, SetNewPassFail);
+    }
+
+    private void SignUp()
+    {
+        _gameScreenLogin.ShowLoading();
         string email = _gameScreenLogin.GetSignUpInputFieldEmail();
         string pass = _gameScreenLogin.GetSignUpInputFieldPass();
         var provider = new SHA256Managed();
@@ -108,7 +175,6 @@ public class GameStateLogin : GameState
         {
             hashString += $"{x:x2}";
         }
-
         _tempEmail = email;
         _tempHashedPass = hashString;
         EmailPassSignUp data = new EmailPassSignUp()
@@ -122,16 +188,27 @@ public class GameStateLogin : GameState
 
     private void EmailPassSignUpSuccess(string success)
     {
-        _gameScreenLogin.ShowSignUpLogin2ndStep();
+        _gameScreenLogin.HideLoading();
+        _gameScreenLogin.Show2FAuth();
     }
 
     private void EmailPassSignUpFail(string error)
     {
+        _gameScreenLogin.HideLoading();
+        _gameScreenLogin.SetSignUpWrongError();
         Debug.Log("error: " + error);
     }
 
-    private void LoginEmailPass()
+    private void SignInFail(string error)
     {
+        _gameScreenLogin.HideLoading();
+        _gameScreenLogin.SetSignInWrongError();
+        Debug.Log("error: " + error);
+    }
+    
+    private void SignIn()
+    {
+        _gameScreenLogin.ShowLoading();
         string email = _gameScreenLogin.GetLoginInputFieldEmail();
         string pass = _gameScreenLogin.GetLoginInputFieldPass();
         var provider = new SHA256Managed();
@@ -141,7 +218,6 @@ public class GameStateLogin : GameState
         {
             hashString += $"{x:x2}";
         }
-
         _tempEmail = email;
         _tempHashedPass = hashString;
         EmailPassSignUp data = new EmailPassSignUp()
@@ -150,10 +226,10 @@ public class GameStateLogin : GameState
             password = hashString
         };
         string formData = JsonUtility.ToJson(data);
-        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login1StStep, formData, EmailPassSignUpSuccess, EmailPassSignUpFail);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login1StStep, formData, EmailPassSignUpSuccess, SignInFail);
     }
 
-    private void Login2ndStep()
+    private void Submit2FACode()
     {
         string code = _gameScreenLogin.GetLoginInputFieldCode();
         Login2ndStep data = new Login2ndStep()
@@ -163,26 +239,26 @@ public class GameStateLogin : GameState
             twoFaCode = code
         };
         string formData = JsonUtility.ToJson(data);
-        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login2NdStep, formData, Login2ndStepSuccess, Login2ndStepFail);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login2NdStep, formData, TwoFACodeSuccess, TwoFACodeFail);
     }
 
-    private void Login2ndStepSuccess(string success)
+    private void TwoFACodeSuccess(string success)
     {
         Debug.Log("success: " + success);
         LoginResult result = JsonUtility.FromJson<LoginResult>(success);
         LoginSuccessSetData(result);
     }
 
-    private void Login2ndStepFail(string error)
+    private void TwoFACodeFail(string error)
     {
         Debug.Log("error: " + error);
+        _gameScreenLogin.Set2FAError();
     }
 
     private void PlayAsGuest()
     {
         UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
-        _gameScreenLogin.HideLoadingScreen();
         stateMachine.PushState(new GameStateFreeMode());
     }
 
@@ -194,7 +270,8 @@ public class GameStateLogin : GameState
     private void GoogleLoginFail(string reason)
     {
         Debug.LogError("Google login fail: " + reason);
-        _gameScreenLogin.HideLoadingScreen();
+        _gameScreenLogin.SetSignInGoogleError();
+        _gameScreenLogin.HideLoading();
     }
 
     private void LoginSuccessSetData(LoginResult result)
