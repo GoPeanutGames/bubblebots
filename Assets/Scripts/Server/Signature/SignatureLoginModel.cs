@@ -11,7 +11,9 @@ namespace BubbleBots.Server.Signature
         EmailPassSignUp,
         Login1StStep,
         Login2NdStep,
-        AutoLoginGet
+        AutoLoginGet,
+        ResetPassword,
+        SetNewPass
     }
 
     [Serializable]
@@ -61,6 +63,19 @@ namespace BubbleBots.Server.Signature
     {
         public string email;
         public string password;
+    }
+
+    [Serializable]
+    public class ResetPassData
+    {
+        public string email;
+    }
+    
+    [Serializable]
+    public class SetNewPassData
+    {
+        public string newPassword;
+        public string token;
     }
     
     [Serializable]
