@@ -10,6 +10,7 @@ public static class ButtonId
     //login
     public const string LoginGuest = "login.guest";
     public const string LoginSignInGoogle = "login.signin.google";
+    public const string LoginSignInApple = "login.signin.apple";
     public const string LoginSignInSubmit = "login.signin.submit";
     public const string LoginSignUpSubmit = "login.signup.submit";
     public const string LoginCodeSubmit = "login.code.submit";

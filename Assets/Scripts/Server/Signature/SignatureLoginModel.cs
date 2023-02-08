@@ -8,6 +8,7 @@ namespace BubbleBots.Server.Signature
         Get,
         Web3LoginCheck,
         GoogleLogin,
+        AppleLogin,
         EmailPassSignUp,
         Login1StStep,
         Login2NdStep,
@@ -56,6 +57,12 @@ namespace BubbleBots.Server.Signature
     public class GoogleLoginData
     {
         public string accessToken;
+    }
+    
+    [Serializable]
+    public class AppleLoginData
+    {
+        public string appleToken;
     }
 
     [Serializable]

@@ -35,6 +35,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         { SignatureLoginAPI.Get, "/auth/login-schema/" },
         { SignatureLoginAPI.Web3LoginCheck, "/auth/web3-login" },
         { SignatureLoginAPI.GoogleLogin, "/user/auth/google" },
+        { SignatureLoginAPI.AppleLogin, "/auth/apple" },
         { SignatureLoginAPI.EmailPassSignUp, "/user"},
         { SignatureLoginAPI.Login1StStep, "/user/ask-login"},
         { SignatureLoginAPI.Login2NdStep, "/user/login"},

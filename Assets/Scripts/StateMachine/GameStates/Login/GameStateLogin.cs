@@ -9,6 +9,7 @@ public class GameStateLogin : GameState
     private GameScreenLogin _gameScreenLogin;
     private GoogleLogin _googleLogin;
     private AutoLogin _autoLogin;
+    private AppleLogin _appleLogin;
     private string _tempEmail;
     private string _tempHashedPass;
 
@@ -24,9 +25,19 @@ public class GameStateLogin : GameState
         _gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         _googleLogin = new GoogleLogin();
+        _appleLogin = new AppleLogin();
         _autoLogin = new AutoLogin();
         _gameScreenLogin.ShowLoading();
         _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
+    }
+
+    public override void Update(float delta)
+    {
+        base.Update(delta);
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            _appleLogin.Update();
+        }
     }
 
     private void AutoLoginSuccess(User user)
@@ -71,6 +82,10 @@ public class GameStateLogin : GameState
             case ButtonId.LoginSignInGoogle:
                 _gameScreenLogin.ShowLoading();
                 _googleLogin.StartLogin(LoginSuccessSetData, GoogleLoginFail);
+                break;
+            case ButtonId.LoginSignInApple:
+                _gameScreenLogin.ShowLoading();
+                _appleLogin.StartLogin(LoginSuccessSetData, AppleLoginFail);
                 break;
             case ButtonId.LoginSignInSubmit:
                 if (_gameScreenLogin.SignInValidation())
@@ -270,7 +285,14 @@ public class GameStateLogin : GameState
     private void GoogleLoginFail(string reason)
     {
         Debug.LogError("Google login fail: " + reason);
-        _gameScreenLogin.SetSignInGoogleError();
+        _gameScreenLogin.SetSignInPlatformError("Google");
+        _gameScreenLogin.HideLoading();
+    }
+    
+    private void AppleLoginFail(string reason)
+    {
+        Debug.LogError("Apple login fail: " + reason);
+        _gameScreenLogin.SetSignInPlatformError("Apple");
         _gameScreenLogin.HideLoading();
     }
 

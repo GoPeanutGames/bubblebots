@@ -118,9 +118,9 @@ public class GameScreenLogin : GameScreen
         signInErrorText.text = "You've entered the wrong password or email address!";
     }
 
-    public void SetSignInGoogleError()
+    public void SetSignInPlatformError(string platform)
     {
-        signInErrorText.text = "Google sign in failed!";
+        signInErrorText.text = platform + " sign in failed!";
     }
 
     public bool SignUpValidation()
