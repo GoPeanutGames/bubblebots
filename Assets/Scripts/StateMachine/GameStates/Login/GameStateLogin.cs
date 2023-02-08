@@ -25,8 +25,8 @@ public class GameStateLogin : GameState
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         _googleLogin = new GoogleLogin();
         _autoLogin = new AutoLogin();
-        // _gameScreenLogin.ShowLoading();
-        // _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
+        _gameScreenLogin.ShowLoading();
+        _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
     }
 
     private void AutoLoginSuccess(User user)
