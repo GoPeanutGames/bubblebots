@@ -4,17 +4,15 @@ public class HideOnIPhone : MonoBehaviour
 {
     void Start()
     {
-        if (Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            this.gameObject.SetActive(false);
-        }
+#if UNITY_IOS
+        this.gameObject.SetActive(false);
+#endif
     }
 
     private void OnEnable()
     {
-        if (Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            this.gameObject.SetActive(false);
-        }
+#if UNITY_IOS
+        this.gameObject.SetActive(false);
+#endif
     }
 }

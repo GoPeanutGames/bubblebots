@@ -30,7 +30,7 @@ public class GameStateLogin : GameState
         _gameScreenLogin.ShowLoading();
         _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
     }
-
+#if UNITY_IOS
     public override void Update(float delta)
     {
         base.Update(delta);
@@ -39,6 +39,7 @@ public class GameStateLogin : GameState
             _appleLogin.Update();
         }
     }
+#endif
 
     private void AutoLoginSuccess(User user)
     {

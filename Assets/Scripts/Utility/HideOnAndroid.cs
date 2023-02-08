@@ -4,17 +4,15 @@ public class HideOnAndroid : MonoBehaviour
 {
     void Start()
     {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            this.gameObject.SetActive(false);
-        }
+#if UNITY_ANDROID
+        this.gameObject.SetActive(false);
+#endif
     }
 
     private void OnEnable()
     {
-        if (Application.platform == RuntimePlatform.Android)
-        {
-            this.gameObject.SetActive(false);
-        }
+#if UNITY_ANDROID
+        this.gameObject.SetActive(false);
+#endif
     }
 }
