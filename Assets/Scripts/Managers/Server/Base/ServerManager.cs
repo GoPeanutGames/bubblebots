@@ -105,6 +105,7 @@ public class ServerManager : MonoSingleton<ServerManager>
             }
             else
             {
+                Debug.Log(decryptedData);
                 ServerError error = JsonUtility.FromJson<ServerError>(decryptedData);
                 switch (error.code)
                 {

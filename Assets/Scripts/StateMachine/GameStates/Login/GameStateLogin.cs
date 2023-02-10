@@ -84,10 +84,9 @@ public class GameStateLogin : GameState
         {
             case ButtonId.LoginGuest:
                 
-                GameObject.FindObjectsOfType<MonoBehaviour>().OfType<IErrorManager>().First().DisabledAccountError();
-                // PlayAsGuest();
-                // UserManager.PlayerType = PlayerType.Guest;
-                // AnalyticsManager.Instance.InitAnalyticsGuest();
+                PlayAsGuest();
+                UserManager.PlayerType = PlayerType.Guest;
+                AnalyticsManager.Instance.InitAnalyticsGuest();
                 break;
             case ButtonId.LoginSignInGoogle:
                 _gameScreenLogin.ShowLoading();
@@ -145,9 +144,14 @@ public class GameStateLogin : GameState
             email = email
         };
         string formData = JsonUtility.ToJson(data);
-        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.ResetPassword, formData, ResetPassSuccess);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.ResetPassword, formData, ResetPassSuccess, ResetPassFail);
     }
 
+    private void ResetPassFail(string reason)
+    {
+        _gameScreenLogin.HideLoading();
+    }
+    
     private void ResetPassSuccess(string _)
     {
         _gameScreenLogin.HideLoading();
