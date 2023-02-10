@@ -1230,7 +1230,7 @@ MonoBehaviour:
   revenueCatAPIKeyAmazon: 
   useAmazon: 0
   autoSyncPurchases: 1
-  appUserID: 1670620983
+  appUserID: 
   productIdentifiers:
   - store_gems_1
   - store_gems_6
@@ -2711,6 +2711,8 @@ MonoBehaviour:
   - {fileID: 6091854784100912889, guid: d3d3d566a296ba14aa01e2901b3e6066, type: 3}
   - {fileID: 2339176349287735683, guid: 8f46fd94d1fe8df4e8e824a20f49414b, type: 3}
   - {fileID: 3623136457902481260, guid: c785dede661acf44ca6d29b6753db5e4, type: 3}
+  - {fileID: 6913216930101042160, guid: 0fb164c51b5ffd840a5b258ca1833db6, type: 3}
+  - {fileID: -4421711895176522895, guid: 1f861f2c807cd434697accbc1ae73f71, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0

@@ -7,6 +7,13 @@ public static class ButtonId
 {
     public const string DefaultId = "default";
 
+    //access denied
+    public const string AccessDeniedGoBack = "accessdenied.goback";
+    
+    //account disabled
+    public const string AccountDisabledContactSupport = "accountdisabled.contactsupport";
+    public const string AccountDisabledClose = "accountdisabled.close";
+    
     //login
     public const string LoginGuest = "login.guest";
     public const string LoginSignInGoogle = "login.signin.google";

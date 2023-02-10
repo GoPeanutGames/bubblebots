@@ -1,8 +1,6 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Canvas))]
-[System.Serializable]
 [ExecuteInEditMode]
 public class GameScreen : MonoBehaviour
 {
@@ -14,13 +12,19 @@ public class GameScreen : MonoBehaviour
     }
 
     public delegate void ButtonClickedHandler(string buttonName);
+
     public event ButtonClickedHandler ButtonClicked = delegate { };
     protected Canvas canvas;
     public ScreenLocation location;
-    public Canvas GetCanvas { get => canvas; }
+
+    public Canvas GetCanvas
+    {
+        get => canvas;
+    }
 
 
-    public AnimationSetting animationSettings;
+    public Animator AnimatorComponent;
+
     protected virtual void Awake()
     {
         canvas = GetComponent<Canvas>();
@@ -56,36 +60,4 @@ public class GameScreen : MonoBehaviour
             Debug.LogError("GameScreen should have a Canvas component " + gameObject.name);
         }
     }
-
-    #region Animations
-    public void PlayOpenAnimation()
-    {
-        gameObject.SetActive(true);
-
-        if (animationSettings.AnimatorComponent != null)
-        {
-            animationSettings.AnimatorComponent.Play(animationSettings.OpenStateId);
-        }
-    }
-
-    public void PlayCloseAnimation()
-    {
-        gameObject.SetActive(true);
-
-        if (animationSettings.AnimatorComponent != null)
-        {
-             animationSettings.AnimatorComponent.Play(animationSettings.CloseStateId);
-        }
-
-    }
-
-    #endregion
-}
-
-[Serializable]
-public class AnimationSetting
-{
-    public Animator AnimatorComponent;
-    public string OpenStateId;
-    public string CloseStateId;
 }
