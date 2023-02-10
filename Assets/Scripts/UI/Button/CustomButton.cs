@@ -25,6 +25,7 @@ public class CustomButton : Button
             stringData = buttonId
         };
         GameEventsManager.Instance.PostEvent(buttonTapEventData);
+        CrashManager.Instance.SetCustomCrashKey(CrashTypes.Action, buttonId);
         //GameEventsManager.Instance.PostEvent(isAvailable ? soundId : unavailableSoundId);
     }
 

@@ -38,7 +38,7 @@ public class GameStateAccountDisabled : GameState
                 stateMachine.PopState();
                 break;
             case ButtonId.AccountDisabledContactSupport:
-                //TODO:
+                Application.OpenURL("mailto:info@peanutgames.com");
                 break;
         }
     }
