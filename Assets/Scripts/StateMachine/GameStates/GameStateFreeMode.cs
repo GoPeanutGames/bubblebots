@@ -8,7 +8,7 @@ public class GameStateFreeMode : GameState
     private GameScreenLevelComplete gameScreenLevelComplete;
     private GameScreenGameEnd gameScreenGameEnd;
     private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
-    private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
+    private GameScreenHomeTopHUD _gameScreenHomeTopHUD;
     private GameScreenSkinsInfoPopup _gameScreenSkinsInfoPopup;
     private GameScreenRobotSelectQuit _gameScreenRobotSelectQuit;
     
@@ -24,9 +24,9 @@ public class GameStateFreeMode : GameState
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
         if (UserManager.PlayerType != PlayerType.Guest)
         {
-            _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
-            _gameScreenMainMenuTopHUD.DisablePlusButton();
-            _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+            _gameScreenHomeTopHUD = Screens.Instance.PushScreen<GameScreenHomeTopHUD>(true);
+            _gameScreenHomeTopHUD.DisablePlusButton();
+            _gameScreenHomeTopHUD.HidePlayerInfoGroup();
         }
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
         Screens.Instance.HideGameBackground();
@@ -111,7 +111,7 @@ public class GameStateFreeMode : GameState
         switch (customButtonData.stringData)
         {
             case ButtonId.RobotSelectionStartButton:
-                Screens.Instance.PopScreen(_gameScreenMainMenuTopHUD);
+                Screens.Instance.PopScreen(_gameScreenHomeTopHUD);
                 StartPlay();
                 break;
             case ButtonId.LevelCompleteContinue:
@@ -234,7 +234,7 @@ public class GameStateFreeMode : GameState
             return;
         }
 
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
         SoundManager.Instance.FadeOutMusic(() =>
         {
             SoundManager.Instance.PlayStartMusicNew();

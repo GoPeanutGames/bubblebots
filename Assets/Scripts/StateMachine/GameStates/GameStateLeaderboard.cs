@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameStateLeaderboard : GameState
 {
     private GameScreenLeaderboard _gameScreenLeaderboard;
-    private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
+    private GameScreenHomeTopHUD _gameScreenHomeTopHUD;
     private enum SelectedTab {Free, Nether}
 
     private SelectedTab currentTab;
@@ -97,7 +97,7 @@ public class GameStateLeaderboard : GameState
                 ShowNetherData();
                 break;
             case ButtonId.LeaderboardClose:
-                stateMachine.PushState(new GameStateMainMenu());
+                stateMachine.PushState(new GameStateHome());
                 break;
         }
     }

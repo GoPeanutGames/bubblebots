@@ -293,7 +293,7 @@ public class GameStateLogin : GameState
 
     private void GoToMainMenu()
     {
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
     }
 
     private void GoogleLoginFail(string reason)

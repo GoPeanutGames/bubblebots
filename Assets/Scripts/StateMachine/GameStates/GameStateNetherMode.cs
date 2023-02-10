@@ -7,7 +7,7 @@ public class GameStateNetherMode : GameState
     private GameScreenLevelComplete gameScreenLevelComplete;
     private GameScreenGameEnd gameScreenGameEnd;
     private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
-    private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
+    private GameScreenHomeTopHUD _gameScreenHomeTopHUD;
     private GameScreenSkinsInfoPopup _gameScreenSkinsInfoPopup;
     private GameScreenRobotSelectQuit _gameScreenRobotSelectQuit;
     
@@ -22,9 +22,9 @@ public class GameStateNetherMode : GameState
     {
         Screens.Instance.SetGameBackground(GameSettingsManager.Instance.netherModeGameplayData.gamebackgroundSprite);
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
-        _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
-        _gameScreenMainMenuTopHUD.DisablePlusButton();
-        _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+        _gameScreenHomeTopHUD = Screens.Instance.PushScreen<GameScreenHomeTopHUD>(true);
+        _gameScreenHomeTopHUD.DisablePlusButton();
+        _gameScreenHomeTopHUD.HidePlayerInfoGroup();
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.netherModeGameplayData.robotsAvailable);
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         SoundManager.Instance?.FadeOutMusic(() =>
@@ -119,7 +119,7 @@ public class GameStateNetherMode : GameState
                 CloseSkinPopup();
                 break;
             case ButtonId.RobotSelectionStartButton:
-                Screens.Instance.PopScreen(_gameScreenMainMenuTopHUD);
+                Screens.Instance.PopScreen(_gameScreenHomeTopHUD);
                 StartPlay();
                 break;
             case ButtonId.LevelCompleteContinue:
@@ -225,7 +225,7 @@ public class GameStateNetherMode : GameState
             Screens.Instance.PopScreen(_gameScreenRobotSelectQuit);
         }
 
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
         SoundManager.Instance.FadeOutMusic(() =>
         {
             SoundManager.Instance.PlayStartMusicNew();
@@ -246,7 +246,7 @@ public class GameStateNetherMode : GameState
         netherModeGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
 
         Screens.Instance.PopScreen(gameScreenRobotSelection);
-        Screens.Instance.PopScreen<GameScreenMainMenuTopHUD>();
+        Screens.Instance.PopScreen<GameScreenHomeTopHUD>();
         Screens.Instance.HideGameBackground();
     }
 

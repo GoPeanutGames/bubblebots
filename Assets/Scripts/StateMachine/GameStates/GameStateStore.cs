@@ -4,8 +4,8 @@ using BubbleBots.Store;
 public class GameStateStore : GameState
 {
     private GameScreenStore _gameScreenStore;
-    private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
-    private GameScreenMainMenuBottomHUD _gameScreenMainMenuBottomHUD;
+    private GameScreenHomeTopHUD _gameScreenHomeTopHUD;
+    private GameScreenHomeFooter _gameScreenHomeFooter;
     private StoreTabs _activeTab = StoreTabs.Gems;
     private int currentlyShowingOfferIndex = 0;
 
@@ -18,14 +18,13 @@ public class GameStateStore : GameState
     {
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         _gameScreenStore = Screens.Instance.PushScreen<GameScreenStore>(true);
-        _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
-        _gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
-        Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
-        Screens.Instance.BringToFront<GameScreenMainMenuBottomHUD>();
-        _gameScreenMainMenuBottomHUD.ActivateStoreButtonGlow();
-        _gameScreenMainMenuBottomHUD.ShowHomeButton();
-        _gameScreenMainMenuTopHUD.HideSettingsGroup();
-        _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+        _gameScreenHomeTopHUD = Screens.Instance.PushScreen<GameScreenHomeTopHUD>(true);
+        _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
+        Screens.Instance.BringToFront<GameScreenHomeTopHUD>();
+        Screens.Instance.BringToFront<GameScreenHomeFooter>();
+        _gameScreenHomeFooter.ShowHomeButton();
+        _gameScreenHomeTopHUD.HideSettingsGroup();
+        _gameScreenHomeTopHUD.HidePlayerInfoGroup();
         ActivateTab(_activeTab);
     }
 
@@ -129,12 +128,11 @@ public class GameStateStore : GameState
     
     private void HideStore()
     {
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
         Screens.Instance.PopScreen(_gameScreenStore);
-        _gameScreenMainMenuBottomHUD.DeactivateStoreButtonGlow();
-        _gameScreenMainMenuBottomHUD.HideHomeButton();
-        _gameScreenMainMenuTopHUD.ShowSettingsGroup();
-        _gameScreenMainMenuTopHUD.ShowPlayerInfoGroup();
+        _gameScreenHomeFooter.HideHomeButton();
+        _gameScreenHomeTopHUD.ShowSettingsGroup();
+        _gameScreenHomeTopHUD.ShowPlayerInfoGroup();
     }
 
     public override void Disable()
