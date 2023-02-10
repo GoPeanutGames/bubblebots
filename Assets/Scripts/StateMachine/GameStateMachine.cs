@@ -56,6 +56,7 @@ public class GameStateMachine
         currentState.Load();
         currentState.Enter();
         currentState.Enable();
+        CrashManager.Instance.SetCustomCrashKey(CrashTypes.State, currentState.GetGameStateName());
         StateChanged(currentState);
     }
 
@@ -81,6 +82,7 @@ public class GameStateMachine
                 int index = stateStack.Count - 1;
                 stateStack[index].Enable();
                 currentState = stateStack[index];
+                CrashManager.Instance.SetCustomCrashKey(CrashTypes.State, currentState.GetGameStateName());
             }
         }
     }

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using BubbleBots.Server.Player;
@@ -18,18 +19,24 @@ public class GameStateLogin : GameState
         return "game state login";
     }
 
-    public override void Enable()
+    public override void Enter()
     {
+        base.Enter();
         SoundManager.Instance.FadeInMusic();
         SoundManager.Instance.PlayStartMusicNew();
-        _gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
-        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+        _gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>(true);
         _googleLogin = new GoogleLogin();
         _appleLogin = new AppleLogin();
         _autoLogin = new AutoLogin();
         _gameScreenLogin.ShowLoading();
         _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
     }
+
+    public override void Enable()
+    {
+        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+    }
+    
 #if UNITY_IOS
     public override void Update(float delta)
     {
@@ -76,9 +83,11 @@ public class GameStateLogin : GameState
         switch (buttonTapData.stringData)
         {
             case ButtonId.LoginGuest:
-                PlayAsGuest();
-                UserManager.PlayerType = PlayerType.Guest;
-                AnalyticsManager.Instance.InitAnalyticsGuest();
+                
+                GameObject.FindObjectsOfType<MonoBehaviour>().OfType<IErrorManager>().First().DisabledAccountError();
+                // PlayAsGuest();
+                // UserManager.PlayerType = PlayerType.Guest;
+                // AnalyticsManager.Instance.InitAnalyticsGuest();
                 break;
             case ButtonId.LoginSignInGoogle:
                 _gameScreenLogin.ShowLoading();
@@ -323,7 +332,12 @@ public class GameStateLogin : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        Screens.Instance.PopScreen(_gameScreenLogin);
         base.Disable();
+    }
+
+    public override void Exit()
+    {
+        Screens.Instance.PopScreen(_gameScreenLogin);
+        base.Exit();
     }
 }

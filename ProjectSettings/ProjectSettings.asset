@@ -274,7 +274,7 @@ PlayerSettings:
   - m_BuildTarget: 
     m_Icons:
     - serializedVersion: 2
-      m_Icon: {fileID: 2800000, guid: 5f1ffd0fc68ea3e4e8fc11547cfc46ab, type: 3}
+      m_Icon: {fileID: 2800000, guid: 8378e143e35702745bdcb64c25237c3d, type: 3}
       m_Width: 128
       m_Height: 128
       m_Kind: 0
@@ -682,6 +682,7 @@ PlayerSettings:
   switchNetworkInterfaceManagerInitializeEnabled: 1
   switchPlayerConnectionEnabled: 1
   switchUseNewStyleFilepaths: 0
+  switchUseLegacyFmodPriorities: 1
   switchUseMicroSleepForYield: 1
   switchEnableRamDiskSupport: 0
   switchMicroSleepForYieldTime: 25

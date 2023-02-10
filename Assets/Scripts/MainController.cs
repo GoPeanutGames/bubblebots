@@ -1,16 +1,32 @@
 using UnityEngine;
 
-public class MainController : MonoBehaviour
+public class MainController : MonoBehaviour, IErrorManager
 {
-    private GameStateMachine stateMachine = new GameStateMachine();
+    private readonly GameStateMachine _stateMachine = new();
 
     void Start()
     {
-        stateMachine.PopAll();
-        stateMachine.PushState(new GameStateLogin());
+        _stateMachine.PopAll();
+        _stateMachine.PushState(new GameStateLogin());
     }
     public void Update()
     {
-        stateMachine.Update(Time.deltaTime);
+        _stateMachine.Update(Time.deltaTime);
+    }
+
+    public void DisabledAccountError()
+    {
+        if (_stateMachine.GetCurrentState().GetType() != typeof(GameStateAccountDisabled))
+        {
+            _stateMachine.PushState(new GameStateAccountDisabled());
+        }
+    }
+
+    public void AccessDeniedError()
+    {
+        if (_stateMachine.GetCurrentState().GetType() != typeof(GameStateLogin))
+        {
+            _stateMachine.PushState(new GameStateAccessDenied());
+        }
     }
 }

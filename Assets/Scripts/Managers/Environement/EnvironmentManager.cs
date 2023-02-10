@@ -3,6 +3,28 @@ using UnityEngine;
 
 public class EnvironmentManager : MonoSingleton<EnvironmentManager>
 {
+    /*TODO: config for:
+     ========DEV
+     BundleId: com.peanutgames.minibotsdevnew
+     GOOGLE PLAY GAMES:
+     GPG Client ID: 916173128763-tqei703s3fab014kl49defmbnl73k88n.apps.googleusercontent.com
+     GPG Client secret: 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
+     APPLE:
+     APP ID: 1670620983
+     REVENUE CAT:
+     Api key Google: goog_jPpsekNkdZvSzPwJcWLkSvLRFof
+     Api key Apple: appl_sHJjOuUTDbFSdiXJMPAPiAiMnTY
+     =========PROD
+     GOOGLE PLAY GAMES:
+     GPG Client ID:
+     GPG Client secret:
+     APPLE:
+     APP ID:
+     REVENUE CAT:
+     Api key Google:
+     Api key Apple:
+     */
+    
     [SerializeField] private bool Development;
     [SerializeField] private bool Production;
     [SerializeField] private bool Rhym;
