@@ -6,7 +6,7 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     /*TODO: config for:
      ========DEV
      BundleId: com.peanutgames.minibotsdevnew
-     LastBundleVersion: 16
+     LastBundleVersion: 17
      GOOGLE PLAY GAMES:
      GPG Client ID: 916173128763-tqei703s3fab014kl49defmbnl73k88n.apps.googleusercontent.com
      GPG Client secret: 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

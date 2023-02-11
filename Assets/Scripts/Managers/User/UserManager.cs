@@ -60,6 +60,11 @@ public class UserManager : MonoSingleton<UserManager>
 
     public void SetWalletAddress(string address)
     {
+        if (string.IsNullOrEmpty(address))
+        {
+            Debug.LogWarning("Address empty: " + address);
+            return;
+        }
         CurrentUser.WalletAddress = address;
         CrashManager.Instance.SetCustomCrashKey(CrashTypes.WalletAddress, CurrentUser.WalletAddress);
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.WalletAddress], address);
@@ -67,12 +72,22 @@ public class UserManager : MonoSingleton<UserManager>
 
     public void SetSignature(string signature)
     {
+        if (string.IsNullOrEmpty(signature))
+        {
+            Debug.LogWarning("Signature empty: " + signature);
+            return;
+        }
         CurrentUser.Signature = signature;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
     }
 
     public void SetJwtToken(string token)
     {
+        if (string.IsNullOrEmpty(token))
+        {
+            Debug.LogWarning("Token empty: " + token);
+            return;
+        }
         CurrentUser.SessionToken = token;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.SessionToken], token);
     }
@@ -81,9 +96,9 @@ public class UserManager : MonoSingleton<UserManager>
     {
         if (string.IsNullOrEmpty(userName))
         {
+            Debug.LogWarning("Username empty: " + userName);
             return;
         }
-
         CurrentUser.UserName = userName;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Nickname], userName);
         if (sendToServer)
