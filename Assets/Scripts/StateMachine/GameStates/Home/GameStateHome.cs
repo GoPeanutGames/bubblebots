@@ -4,12 +4,12 @@ using UnityEngine;
 public class GameStateHome : GameState
 {
     private GameScreenHomeFooter _gameScreenHomeFooter;
-    private GameScreenHomeTopHUD _gameScreenHomeTopHUD;
+    private GameScreenHomeHeader _gameScreenHomeHeader;
     private GameScreenHome _gameScreenHome;
-    private GameScreenModeSelect gameScreenModeSelect;
+    private GameScreenModeSelect _gameScreenModeSelect;
     private GameScreenLoading _gameScreenLoading;
     private GameScreenChangeNickname _gameScreenChangeNickname;
-    private GameScreenNotEnoughGems gameScreenNotEnoughGems;
+    private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
     private GameScreenPremint _gameScreenPremint;
     private GameScreenComingSoonGeneric _gameScreenComingSoonGeneric;
     private GameScreenComingSoonNether _gameScreenComingSoonNether;
@@ -26,26 +26,35 @@ public class GameStateHome : GameState
     private void ResetMainMenuLook()
     {
         _gameScreenHomeFooter.HideHomeButton();
-        _gameScreenHomeTopHUD.ShowSettingsGroup();
-        _gameScreenHomeTopHUD.ShowPlayerInfoGroup();
+        _gameScreenHomeHeader.ShowSettingsGroup();
+        _gameScreenHomeHeader.ShowPlayerInfoGroup();
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
+        _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
+        _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
     }
 
     public override void Enable()
     {
         canPlayNetherMode = false;
         canPlayFreeMode = false;
-        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+        //todo: hide these with animation instead of pop, so on enable won't need to have these
         _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
-        _gameScreenHomeTopHUD = Screens.Instance.PushScreen<GameScreenHomeTopHUD>(true);
+        _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
         _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
+        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         ResetMainMenuLook();
-        if (_gameScreenHomeTopHUD.AreResourcesSet() == false)
+        if (_gameScreenHomeHeader.AreResourcesSet() == false)
         {
             _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
         }
         Screens.Instance.BringToFront<GameScreenLoading>();
-        GameScreenHomeTopHUD.ResourcesSet += ResourcesSet;
-        _gameScreenHomeTopHUD.SetUsername(UserManager.Instance.GetPlayerUserName());
+        GameScreenHomeHeader.ResourcesSet += ResourcesSet;
+        _gameScreenHomeHeader.SetUsername(UserManager.Instance.GetPlayerUserName());
         UserManager.CallbackWithResources += ResourcesReceived;
         UserManager.Instance.GetPlayerResources();
     }
@@ -96,7 +105,7 @@ public class GameStateHome : GameState
             case ButtonId.MainMenuTopHUDPremint:
                 OpenPremintPopup();
                 break;
-            case ButtonId.MainMenuTopHUDLeaderboard:
+            case ButtonId.MainMenuSideBarLeaderboard:
                 ShowLeaderboard();
                 break;
             case ButtonId.ComingSoonGenericClose:
@@ -144,7 +153,7 @@ public class GameStateHome : GameState
 
     private void ShowLeaderboard()
     {
-        Screens.Instance.PopScreen(_gameScreenHomeTopHUD);
+        Screens.Instance.PopScreen(_gameScreenHomeHeader);
         Screens.Instance.PopScreen(_gameScreenHomeFooter);
         stateMachine.PushState(new GameStateLeaderboard());
     }
@@ -181,45 +190,40 @@ public class GameStateHome : GameState
 
     private void ShowFreeModeTooltip()
     {
-        gameScreenModeSelect.ShowToolTipFreeMode();
+        _gameScreenModeSelect.ShowToolTipFreeMode();
     }
 
     private void ShowNetherModeTooltip()
     {
-        gameScreenModeSelect.ShowToolTipNetherMode();
+        _gameScreenModeSelect.ShowToolTipNetherMode();
     }
 
     private void HideFreeModeTooltip()
     {
-        gameScreenModeSelect.HideToolTips();
+        _gameScreenModeSelect.HideToolTips();
     }
 
     private void HideModeSelect()
     {
-        Screens.Instance.PopScreen(gameScreenModeSelect);
-        _gameScreenHomeTopHUD.ShowPlayerInfoGroup();
-        _gameScreenHomeTopHUD.ShowSettingsGroup();
+        Screens.Instance.PopScreen(_gameScreenModeSelect);
+        _gameScreenHomeHeader.ShowPlayerInfoGroup();
+        _gameScreenHomeHeader.ShowSettingsGroup();
     }
 
     private void ShowModeSelect()
     {
-        gameScreenModeSelect = Screens.Instance.PushScreen<GameScreenModeSelect>();
-        Screens.Instance.BringToFront<GameScreenHomeTopHUD>();
-        _gameScreenHomeTopHUD.HidePlayerInfoGroup();
-        _gameScreenHomeTopHUD.HideSettingsGroup();
+        _gameScreenModeSelect = Screens.Instance.PushScreen<GameScreenModeSelect>();
+        Screens.Instance.BringToFront<GameScreenHomeHeader>();
+        _gameScreenHomeHeader.HidePlayerInfoGroup();
+        _gameScreenHomeHeader.HideSettingsGroup();
     }
 
     private void PlayFreeMode()
     {
         Screens.Instance.PopScreen(_gameScreenHome);
         Screens.Instance.PopScreen(_gameScreenHomeFooter);
-        Screens.Instance.PopScreen(gameScreenModeSelect);
+        Screens.Instance.PopScreen(_gameScreenModeSelect);
         stateMachine.PushState(new GameStateFreeMode());
-    }
-
-    private void TryPlayFreeMode()
-    {
-
     }
 
     private void TryPlayNetherMode()
@@ -230,22 +234,22 @@ public class GameStateHome : GameState
         } 
         else
         {
-            gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+            _gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
         }
         UserManager.Instance.GetPlayerResources();
     }
 
     private void CloseNotEnoughGems()
     {
-        Screens.Instance.PopScreen(gameScreenNotEnoughGems);
-        Screens.Instance.BringToFront<GameScreenHomeTopHUD>();
+        Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
+        Screens.Instance.BringToFront<GameScreenHomeHeader>();
     }
 
     private void PlayNetherMode()
     {
         Screens.Instance.PopScreen(_gameScreenHome);
         Screens.Instance.PopScreen(_gameScreenHomeFooter);
-        Screens.Instance.PopScreen(gameScreenModeSelect);
+        Screens.Instance.PopScreen(_gameScreenModeSelect);
         stateMachine.PushState(new GameStateNetherMode());
     }
 
@@ -269,7 +273,7 @@ public class GameStateHome : GameState
     {
 
         UserManager.Instance.SetPlayerUserName(_gameScreenChangeNickname.GetNicknameText(), true);
-        _gameScreenHomeTopHUD.SetUsername(_gameScreenChangeNickname.GetNicknameText());
+        _gameScreenHomeHeader.SetUsername(_gameScreenChangeNickname.GetNicknameText());
         CloseChangeNickname();
     }
 

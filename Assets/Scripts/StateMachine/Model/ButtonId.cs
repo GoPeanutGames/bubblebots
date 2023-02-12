@@ -34,11 +34,15 @@ public static class ButtonId
     public const string MainMenuBottomHUDNetherpass = "mainmenu.bottomHUD.netherpass";
     public const string MainMenuBottomHUDItems = "mainmenu.bottomHUD.items";
     
+    //main menu side bar
+    public const string MainMenuSideBarLeaderboard = "mainmenu.sidebar.leaderboard";
+    public const string MainMenuSideBarSettings = "mainmenu.sidebar.settings";
+    public const string MainMenuSideBarMissions = "mainmenu.sidebar.missions";
+    
     //main menu top hud
     public const string MainMenuTopHUDChangeNickname = "mainmenu.topHUD.changenickname";
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
     public const string MainMenuTopHUDPremint = "mainmenu.topHUD.premint";
-    public const string MainMenuTopHUDLeaderboard = "mainmenu.topHUD.leaderboard";
 
     //leaderboard
     public const string LeaderboardFree = "leaderboard.free";

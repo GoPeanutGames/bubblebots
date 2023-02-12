@@ -4,7 +4,7 @@ using BubbleBots.Server.Player;
 using TMPro;
 using UnityEngine;
 
-public class GameScreenHomeTopHUD : GameScreen
+public class GameScreenHomeHeader : GameScreen
 {
     public enum PlayerResource
     {

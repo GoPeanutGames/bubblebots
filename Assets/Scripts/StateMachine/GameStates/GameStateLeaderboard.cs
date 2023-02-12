@@ -5,7 +5,7 @@ using UnityEngine;
 public class GameStateLeaderboard : GameState
 {
     private GameScreenLeaderboard _gameScreenLeaderboard;
-    private GameScreenHomeTopHUD _gameScreenHomeTopHUD;
+    private GameScreenHomeHeader _gameScreenHomeHeader;
     private enum SelectedTab {Free, Nether}
 
     private SelectedTab currentTab;
