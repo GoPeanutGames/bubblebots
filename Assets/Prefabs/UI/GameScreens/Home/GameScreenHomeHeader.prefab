@@ -671,7 +671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AspectMode: 0
-  m_AspectRatio: 0.81343704
+  m_AspectRatio: 1.0409994
 --- !u!1 &5162838844477296031
 GameObject:
   m_ObjectHideFlags: 0
@@ -1009,6 +1009,7 @@ GameObject:
   - component: {fileID: 6590320458389975828}
   - component: {fileID: -8862160627566797429}
   - component: {fileID: -3374904953948213828}
+  - component: {fileID: 8695602106633638439}
   m_Layer: 5
   m_Name: GameScreenHomeHeader
   m_TagString: Untagged
@@ -1073,13 +1074,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   location: 1
-  AnimatorComponent: {fileID: 0}
+  AnimatorComponent: {fileID: 8695602106633638439}
   playerInfoGroup: {fileID: 406194987807253304}
   bubblesText: {fileID: 6590320459330942107}
   gemsText: {fileID: 9158779583906392502}
   energyText: {fileID: 9158779584845779363}
   usernameText: {fileID: 377042734079655038}
   plusButton: {fileID: 1190534562348229987}
+--- !u!95 &8695602106633638439
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6590320458389975835}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6d53e4381e37b6e4f971205edf8d34ea, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &6590320459109089433
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,3 @@
-public class GameScreenHomeSideBar : GameScreen
+public class GameScreenHomeSideBar : GameScreenAnimatedShowHide
 {
 }

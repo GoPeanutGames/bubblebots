@@ -4,7 +4,7 @@ using BubbleBots.Server.Player;
 using TMPro;
 using UnityEngine;
 
-public class GameScreenHomeHeader : GameScreen
+public class GameScreenHomeHeader : GameScreenAnimatedShowHide
 {
     public enum PlayerResource
     {

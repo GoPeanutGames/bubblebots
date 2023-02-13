@@ -1,6 +1,6 @@
 using System;
 
-public class GameScreenPopup : GameScreen
+public class GameScreenAnimatedEntryExit : GameScreen
 {
     private Action _closeCallback;
 

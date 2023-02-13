@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class GameScreenHomeFooter : GameScreen
+public class GameScreenHomeFooter : GameScreenAnimatedShowHide
 {
     public GameObject PlayButton;
     public GameObject HomeButton;

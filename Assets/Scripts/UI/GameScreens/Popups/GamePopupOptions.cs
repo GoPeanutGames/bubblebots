@@ -1,3 +1,3 @@
-public class GamePopupOptions : GameScreenPopup
+public class GamePopupOptions : GameScreenAnimatedEntryExit
 {
 }

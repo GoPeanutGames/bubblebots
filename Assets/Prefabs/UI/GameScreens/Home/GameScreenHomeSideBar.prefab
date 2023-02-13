@@ -976,6 +976,7 @@ GameObject:
   - component: {fileID: 6590320458389975828}
   - component: {fileID: -8862160627566797429}
   - component: {fileID: 469175161133347662}
+  - component: {fileID: 5502253699454023162}
   m_Layer: 5
   m_Name: GameScreenHomeSideBar
   m_TagString: Untagged
@@ -1038,7 +1039,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   location: 1
-  AnimatorComponent: {fileID: 0}
+  AnimatorComponent: {fileID: 5502253699454023162}
+--- !u!95 &5502253699454023162
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6590320458389975835}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 69668f64892aa4147b12c3eaf9088f8d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &8291454679294570163
 GameObject:
   m_ObjectHideFlags: 0

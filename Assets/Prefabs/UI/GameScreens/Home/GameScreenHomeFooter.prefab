@@ -452,6 +452,7 @@ GameObject:
   - component: {fileID: 6703909132266154472}
   - component: {fileID: 3722054147250943902}
   - component: {fileID: -1283444981703196507}
+  - component: {fileID: 7326388497182287090}
   m_Layer: 5
   m_Name: GameScreenHomeFooter
   m_TagString: Untagged
@@ -523,9 +524,29 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   location: 1
-  AnimatorComponent: {fileID: 0}
+  AnimatorComponent: {fileID: 7326388497182287090}
   PlayButton: {fileID: 6703909132393433383}
   HomeButton: {fileID: 6703909132428308195}
+--- !u!95 &7326388497182287090
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6703909132266154476}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 150ae34f6ea9f1544a5ba35dcb10a908, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!1 &6703909132393433383
 GameObject:
   m_ObjectHideFlags: 0

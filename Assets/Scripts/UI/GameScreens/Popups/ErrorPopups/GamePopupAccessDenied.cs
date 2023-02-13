@@ -1,3 +1,3 @@
-public class GamePopupAccessDenied : GameScreenPopup
+public class GamePopupAccessDenied : GameScreenAnimatedEntryExit
 {
 }

@@ -44,10 +44,13 @@ public class GameStateHome : GameState
         canPlayNetherMode = false;
         canPlayFreeMode = false;
         //todo: hide these with animation instead of pop, so on enable won't need to have these
-        _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
-        _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
-        _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
-        _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
+        // _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
+        // _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
+        // _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
+        // _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
+        _gameScreenHomeFooter.Show();
+        _gameScreenHomeSideBar.Show();
+        _gameScreenHomeHeader.Show();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         ResetMainMenuLook();
         if (_gameScreenHomeHeader.AreResourcesSet() == false)
