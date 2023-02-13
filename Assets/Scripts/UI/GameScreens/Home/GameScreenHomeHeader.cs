@@ -15,7 +15,6 @@ public class GameScreenHomeHeader : GameScreen
 
     public static Action ResourcesSet;
 
-    public GameObject settingsGroup;
     public GameObject playerInfoGroup;
     public TextMeshProUGUI bubblesText;
     public TextMeshProUGUI gemsText;
@@ -51,16 +50,6 @@ public class GameScreenHomeHeader : GameScreen
         SetTopInfo(PlayerResource.Energy, wallet.energy);
         SetTopInfo(PlayerResource.Gems, wallet.gems);
         ResourcesSet?.Invoke();
-    }
-
-    public void ShowSettingsGroup()
-    {
-        settingsGroup.SetActive(true);
-    }
-
-    public void HideSettingsGroup()
-    {
-        settingsGroup.SetActive(false);
     }
 
     public void ShowPlayerInfoGroup()

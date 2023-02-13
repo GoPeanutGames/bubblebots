@@ -23,7 +23,6 @@ public class GameStateStore : GameState
         Screens.Instance.BringToFront<GameScreenHomeHeader>();
         Screens.Instance.BringToFront<GameScreenHomeFooter>();
         _gameScreenHomeFooter.ShowHomeButton();
-        _gameScreenHomeHeader.HideSettingsGroup();
         _gameScreenHomeHeader.HidePlayerInfoGroup();
         ActivateTab(_activeTab);
     }
@@ -131,7 +130,6 @@ public class GameStateStore : GameState
         stateMachine.PushState(new GameStateHome());
         Screens.Instance.PopScreen(_gameScreenStore);
         _gameScreenHomeFooter.HideHomeButton();
-        _gameScreenHomeHeader.ShowSettingsGroup();
         _gameScreenHomeHeader.ShowPlayerInfoGroup();
     }
 

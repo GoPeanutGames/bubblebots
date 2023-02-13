@@ -8,6 +8,7 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
      BundleId: com.peanutgames.minibotsdevnew
      LastBundleVersion: 17
      GOOGLE PLAY GAMES:
+     GPG Setup ID: 916173128763-tqei703s3fab014kl49defmbnl73k88n.apps.googleusercontent.com
      GPG Client ID: 916173128763-tqei703s3fab014kl49defmbnl73k88n.apps.googleusercontent.com
      GPG Client secret: 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
      APPLE:
@@ -18,11 +19,12 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
      =========PROD
      BundleId: com.peanutgames.minibots.prod
      LastBundleversio: 1
-     GOOGLE PLAY GAMES:
-     GPG Client ID:
-     GPG Client secret:
+     GOOGLE PLAY GAMES: 
+     GPG Setup ID: 
+     GPG Client ID: 289220171644-gqbpa74u8g63hs3fh5cuj20c9qf0rjtp.apps.googleusercontent.com  TODO: ASK AGAIN
+     GPG Client secret: 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
      APPLE:
-     APP ID:
+     APP ID: 289220171644
      REVENUE CAT:
      Api key Google:
      Api key Apple:

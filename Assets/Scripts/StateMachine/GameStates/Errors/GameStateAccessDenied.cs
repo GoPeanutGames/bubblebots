@@ -1,6 +1,6 @@
 public class GameStateAccessDenied : GameState
 {
-    private GameScreenAccessDenied _gameScreenAccessDenied;
+    private GamePopupAccessDenied _gamePopupAccessDenied;
 
     public override string GetGameStateName()
     {
@@ -10,9 +10,9 @@ public class GameStateAccessDenied : GameState
     public override void Enter()
     {
         base.Enter();
-        _gameScreenAccessDenied = Screens.Instance.PushScreen<GameScreenAccessDenied>();
-        _gameScreenAccessDenied.StartOpen();
-        Screens.Instance.BringToFront<GameScreenAccessDenied>();
+        _gamePopupAccessDenied = Screens.Instance.PushScreen<GamePopupAccessDenied>();
+        _gamePopupAccessDenied.StartOpen();
+        Screens.Instance.BringToFront<GamePopupAccessDenied>();
     }
 
     public override void Enable()
@@ -43,12 +43,7 @@ public class GameStateAccessDenied : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        _gameScreenAccessDenied.StartClose(ExitDone);
+        _gamePopupAccessDenied.StartClose();
         base.Disable();
-    }
-
-    private void ExitDone()
-    {
-        Screens.Instance.PopScreen(_gameScreenAccessDenied);
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-public class GameScreenAccessDenied : GameScreen
+public class GameScreenPopup : GameScreen
 {
     private Action _closeCallback;
 
@@ -9,7 +9,7 @@ public class GameScreenAccessDenied : GameScreen
         AnimatorComponent.SetTrigger("Enter");
     }
 
-    public void StartClose(Action closeSuccess)
+    public void StartClose(Action closeSuccess = null)
     {
         _closeCallback = closeSuccess;
         AnimatorComponent.SetTrigger("Exit");
@@ -18,5 +18,6 @@ public class GameScreenAccessDenied : GameScreen
     public void OnCloseDone()
     {
         _closeCallback?.Invoke();
+        Screens.Instance.PopScreen(this);
     }
 }

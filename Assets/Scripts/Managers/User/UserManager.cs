@@ -41,10 +41,6 @@ public class UserManager : MonoSingleton<UserManager>
             Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], "")
         };
-        if (!string.IsNullOrEmpty(CurrentUser.WalletAddress))
-        {
-            CrashManager.Instance.SetCustomCrashKey(CrashTypes.WalletAddress, CurrentUser.WalletAddress);
-        }
     }
 
     private void OnNicknameSet(string data)
@@ -56,6 +52,14 @@ public class UserManager : MonoSingleton<UserManager>
     {
         base.Awake();
         GetUserOrSetDefault();
+    }
+
+    private void Start()
+    {
+        if (!string.IsNullOrEmpty(CurrentUser.WalletAddress))
+        {
+            CrashManager.Instance.SetCustomCrashKey(CrashTypes.WalletAddress, CurrentUser.WalletAddress);
+        }
     }
 
     public void SetWalletAddress(string address)

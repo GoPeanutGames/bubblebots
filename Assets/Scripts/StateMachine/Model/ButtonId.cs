@@ -40,9 +40,15 @@ public static class ButtonId
     public const string MainMenuSideBarMissions = "mainmenu.sidebar.missions";
     
     //main menu top hud
-    public const string MainMenuTopHUDChangeNickname = "mainmenu.topHUD.changenickname";
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
     public const string MainMenuTopHUDPremint = "mainmenu.topHUD.premint";
+    
+    //options popup
+    public const string OptionsChangePicture = "options.changepicture";
+    public const string OptionsChangeName = "options.changename";
+    public const string OptionsSignOut = "options.signout";
+    public const string OptionsSave = "options.save";
+    public const string OptionsClose = "options.close";
 
     //leaderboard
     public const string LeaderboardFree = "leaderboard.free";
