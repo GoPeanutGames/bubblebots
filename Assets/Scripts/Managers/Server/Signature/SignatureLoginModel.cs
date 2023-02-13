@@ -14,7 +14,8 @@ namespace BubbleBots.Server.Signature
         Login2NdStep,
         AutoLoginGet,
         ResetPassword,
-        SetNewPass
+        SetNewPass,
+        Logout
     }
 
     [Serializable]

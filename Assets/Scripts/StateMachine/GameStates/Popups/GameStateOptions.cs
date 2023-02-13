@@ -1,3 +1,5 @@
+using BubbleBots.Server.Signature;
+
 public class GameStateOptions : GameState
 {
     private GamePopupOptions _gamePopupOptions;
@@ -35,7 +37,33 @@ public class GameStateOptions : GameState
             case ButtonId.OptionsClose:
                 stateMachine.PopState();
                 break;
+            case ButtonId.OptionsSignOut:
+                Logout();
+                break;
         }
+    }
+
+    private void Logout()
+    {
+        UserManager.ClearPrefs();
+        Screens.Instance.PushScreen<GameScreenLogin>();
+        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutFail);
+    }
+
+    private void LogoutSuccess(string result)
+    {
+        for (int i = 0; i < 50; i++)
+        {
+            Screens.Instance.PopScreen();
+        }
+        
+        stateMachine.ForceClean();
+        stateMachine.PushState(new GameStateLogin());
+    }
+
+    private void LogoutFail(string result)
+    {
+        
     }
 
     public override void Disable()

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using BubbleBots.User;
 using CodeStage.AntiCheat.Storage;
-using UnityEditor;
 using UnityEngine;
 
 public enum PlayerType
@@ -69,6 +68,7 @@ public class UserManager : MonoSingleton<UserManager>
             Debug.LogWarning("Address empty: " + address);
             return;
         }
+
         CurrentUser.WalletAddress = address;
         CrashManager.Instance.SetCustomCrashKey(CrashTypes.WalletAddress, CurrentUser.WalletAddress);
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.WalletAddress], address);
@@ -81,6 +81,7 @@ public class UserManager : MonoSingleton<UserManager>
             Debug.LogWarning("Signature empty: " + signature);
             return;
         }
+
         CurrentUser.Signature = signature;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
     }
@@ -92,6 +93,7 @@ public class UserManager : MonoSingleton<UserManager>
             Debug.LogWarning("Token empty: " + token);
             return;
         }
+
         CurrentUser.SessionToken = token;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.SessionToken], token);
     }
@@ -103,6 +105,7 @@ public class UserManager : MonoSingleton<UserManager>
             Debug.LogWarning("Username empty: " + userName);
             return;
         }
+
         CurrentUser.UserName = userName;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Nickname], userName);
         if (sendToServer)
@@ -137,17 +140,6 @@ public class UserManager : MonoSingleton<UserManager>
     public string GetPlayerJwtToken()
     {
         return CurrentUser.SessionToken;
-    }
-
-    public void SetPlayerRank(int rank)
-    {
-        CurrentUser.Rank = rank;
-        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Rank], rank);
-    }
-
-    public int GetPlayerRank()
-    {
-        return CurrentUser.Rank;
     }
 
     public void SetPlayerScore(int score)
@@ -195,11 +187,8 @@ public class UserManager : MonoSingleton<UserManager>
         StartCoroutine(CallGetPlayerResourcesAfter(seconds));
     }
 
-#if UNITY_EDITOR
-    [MenuItem("Peanut Games/Clear Prefs")]
     public static void ClearPrefs()
     {
         ObscuredPrefs.DeleteAll();
     }
-#endif
 }
