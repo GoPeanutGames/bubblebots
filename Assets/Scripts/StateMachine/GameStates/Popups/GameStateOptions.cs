@@ -40,14 +40,33 @@ public class GameStateOptions : GameState
             case ButtonId.OptionsSignOut:
                 Logout();
                 break;
+            case ButtonId.OptionsSave:
+                SaveSettings();
+                stateMachine.PopState();
+                break;
         }
     }
 
+    private void SaveSettings()
+    {
+        bool musicOn = _gamePopupOptions.GetFinalMusicValue();
+        bool hintsOn = _gamePopupOptions.GetFinalHintsValue();
+        if (musicOn)
+        {
+            SoundManager.Instance.UnMute();
+        }
+        else
+        {
+            SoundManager.Instance.Mute();
+        }
+        UserManager.Instance.SetPlayerHints(hintsOn);
+    }
+    
     private void Logout()
     {
         UserManager.ClearPrefs();
         Screens.Instance.PushScreen<GameScreenLogin>();
-        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutFail);
+        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess);
     }
 
     private void LogoutSuccess(string result)
@@ -59,11 +78,6 @@ public class GameStateOptions : GameState
         
         stateMachine.ForceClean();
         stateMachine.PushState(new GameStateLogin());
-    }
-
-    private void LogoutFail(string result)
-    {
-        
     }
 
     public override void Disable()

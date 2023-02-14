@@ -259,10 +259,11 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
         yield return new WaitForSeconds(0.5f);
         gameplayState = GameplayState.CheckForMatches;
     }
-
-
+    
     private void UpdateHintTimer()
     {
+        if (!UserManager.Instance.GetPlayerHints()) return;
+        
         hintTimer += Time.deltaTime;
 
         if (hintTimer >= hintShowTime)

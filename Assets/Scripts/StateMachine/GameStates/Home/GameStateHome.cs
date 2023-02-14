@@ -1,318 +1,293 @@
 using BubbleBots.Server.Player;
-using UnityEngine;
 
 public class GameStateHome : GameState
 {
-    private GameScreenHomeFooter _gameScreenHomeFooter;
-    private GameScreenHomeHeader _gameScreenHomeHeader;
-    private GameScreenHomeSideBar _gameScreenHomeSideBar;
-    private GameScreenHome _gameScreenHome;
-    private GameScreenModeSelect _gameScreenModeSelect;
-    private GameScreenLoading _gameScreenLoading;
-    private GameScreenChangeNickname _gameScreenChangeNickname;
-    private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
-    private GameScreenPremint _gameScreenPremint;
-    private GameScreenComingSoonGeneric _gameScreenComingSoonGeneric;
-    private GameScreenComingSoonNether _gameScreenComingSoonNether;
-    private GameScreenComingSoonItems _gameScreenComingSoonItems;
+	private GameScreenHomeFooter _gameScreenHomeFooter;
+	private GameScreenHomeHeader _gameScreenHomeHeader;
+	private GameScreenHomeSideBar _gameScreenHomeSideBar;
+	private GameScreenHome _gameScreenHome;
+	private GameScreenModeSelect _gameScreenModeSelect;
+	private GameScreenLoading _gameScreenLoading;
+	private GameScreenChangeNickname _gameScreenChangeNickname;
+	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
+	private GameScreenComingSoonGeneric _gameScreenComingSoonGeneric;
+	private GameScreenComingSoonNether _gameScreenComingSoonNether;
+	private GameScreenComingSoonItems _gameScreenComingSoonItems;
 
-    private bool canPlayNetherMode = false;
-    private bool canPlayFreeMode = false;
+	private bool canPlayNetherMode = false;
+	private bool canPlayFreeMode = false;
 
-    public override string GetGameStateName()
-    {
-        return "game state main menu";
-    }
+	public override string GetGameStateName()
+	{
+		return "game state main menu";
+	}
 
-    private void ResetMainMenuLook()
-    {
-        _gameScreenHomeFooter.HideHomeButton();
-        _gameScreenHomeHeader.ShowPlayerInfoGroup();
-    }
+	private void ResetMainMenuLook()
+	{
+		_gameScreenHomeFooter.HideHomeButton();
+		_gameScreenHomeHeader.ShowPlayerInfoGroup();
+	}
 
-    public override void Enter()
-    {
-        base.Enter();
-        _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
-        _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
-        _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
-        _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
-    }
+	public override void Enter()
+	{
+		base.Enter();
+		_gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
+		_gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
+		_gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
+		_gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
+	}
 
-    public override void Enable()
-    {
-        canPlayNetherMode = false;
-        canPlayFreeMode = false;
-        //todo: hide these with animation instead of pop, so on enable won't need to have these
-        // _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
-        // _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
-        // _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
-        // _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
-        _gameScreenHomeFooter.Show();
-        _gameScreenHomeSideBar.Show();
-        _gameScreenHomeHeader.Show();
-        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
-        ResetMainMenuLook();
-        if (_gameScreenHomeHeader.AreResourcesSet() == false)
-        {
-            _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-        }
-        Screens.Instance.BringToFront<GameScreenLoading>();
-        GameScreenHomeHeader.ResourcesSet += ResourcesSet;
-        _gameScreenHomeHeader.SetUsername(UserManager.Instance.GetPlayerUserName());
-        UserManager.CallbackWithResources += ResourcesReceived;
-        UserManager.Instance.GetPlayerResources();
-    }
+	public override void Enable()
+	{
+		canPlayNetherMode = false;
+		canPlayFreeMode = false;
+		//todo: hide these with animation instead of pop, so on enable won't need to have these
+		// _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
+		// _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
+		// _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
+		// _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
+		_gameScreenHomeFooter.Show();
+		_gameScreenHomeSideBar.Show();
+		_gameScreenHomeHeader.Show();
+		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+		ResetMainMenuLook();
+		if (_gameScreenHomeHeader.AreResourcesSet() == false)
+		{
+			_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+		}
 
-    private void ResourcesSet()
-    {
-        Screens.Instance.PopScreen(_gameScreenLoading);
-    }
+		Screens.Instance.BringToFront<GameScreenLoading>();
+		GameScreenHomeHeader.ResourcesSet += ResourcesSet;
+		_gameScreenHomeHeader.SetUsername(UserManager.Instance.GetPlayerUserName());
+		UserManager.CallbackWithResources += ResourcesReceived;
+		UserManager.Instance.GetPlayerResources();
+	}
 
-    private void OnGameEvent(GameEventData data)
-    {
-        if (data.eventName == GameEvents.ButtonTap)
-        {
-            OnButtonTap(data);
-        }
-    }
+	private void ResourcesSet()
+	{
+		Screens.Instance.PopScreen(_gameScreenLoading);
+	}
 
-    private void OnButtonTap(GameEventData data)
-    {
-        GameEventString customButtonData = data as GameEventString;
-        switch (customButtonData.stringData)
-        {
-            case ButtonId.MainMenuBottomHUDPlay:
-                ShowModeSelect();
-                break;
-            case ButtonId.MainMenuBottomHUDFriends:
-                ShowComingSoonGeneric();
-                break;
-            case ButtonId.MainMenuBottomHUDNetherpass:
-                ShowComingSoonNether();
-                break;
-            case ButtonId.ComingSoonNetherpassClose:
-                HideComingSoonNether();
-                break;
-            case ButtonId.MainMenuBottomHUDItems:
-                ShowComingSoonItems();
-                break;
-            case ButtonId.ComingSoonItemsClose:
-                HideComingSoonItems();
-                break;
-            case ButtonId.ModeSelectBackButton:
-                HideModeSelect();
-                break;
-            case ButtonId.MainMenuTopHUDGemPlus:
-            case ButtonId.MainMenuBottomHUDStore:
-                ShowStore();
-                break;
-            case ButtonId.MainMenuTopHUDPremint:
-                OpenPremintPopup();
-                break;
-            case ButtonId.MainMenuSideBarLeaderboard:
-                ShowLeaderboard();
-                break;
-            case ButtonId.ComingSoonGenericClose:
-                HideComingSoonGeneric();
-                break;
-            case ButtonId.PremintOk:
-                PremintClick();
-                break;
-            case ButtonId.PremintClose:
-                ClosePremintPopup();
-                break;
-            case ButtonId.ModeSelectFreeModeTooltip:
-                ShowFreeModeTooltip();
-                break;
-            case ButtonId.ModeSelectNetherModeTooltip:
-                ShowNetherModeTooltip();
-                break;
-            case ButtonId.ModeSelectFreeModeTooltipBack:
-            case ButtonId.ModeSelectNetherModeTooltipBack:
-                HideFreeModeTooltip();
-                break;
-            case ButtonId.ModeSelectFreeMode:
-                PlayFreeMode();
-                break;
-            case ButtonId.ModeSelectNethermode:
-                TryPlayNetherMode();
-                break;
-            case ButtonId.MainMenuSideBarSettings:
-                stateMachine.PushState(new GameStateOptions());
-                break;
-            case ButtonId.ChangeNicknameClose:
-                CloseChangeNickname();
-                break;
-            case ButtonId.ChangeNicknameOk:
-                ChangeNickname();
-                CloseChangeNickname();
-                break;
-            case ButtonId.NotEnoughGemsBack:
-                CloseNotEnoughGems();
-                break;
-            default:
-                break;
-        }
-    }
+	private void OnGameEvent(GameEventData data)
+	{
+		if (data.eventName == GameEvents.ButtonTap)
+		{
+			OnButtonTap(data);
+		}
+	}
 
-    private void ShowLeaderboard()
-    {
-        Screens.Instance.PopScreen(_gameScreenHomeHeader);
-        Screens.Instance.PopScreen(_gameScreenHomeFooter);
-        stateMachine.PushState(new GameStateLeaderboard());
-    }
-    
-    private void ShowComingSoonGeneric()
-    {
-        _gameScreenComingSoonGeneric = Screens.Instance.PushScreen<GameScreenComingSoonGeneric>();
-    }
+	private void OnButtonTap(GameEventData data)
+	{
+		GameEventString customButtonData = data as GameEventString;
+		switch (customButtonData.stringData)
+		{
+			case ButtonId.MainMenuBottomHUDPlay:
+				ShowModeSelect();
+				break;
+			case ButtonId.MainMenuBottomHUDFriends:
+				ShowComingSoonGeneric();
+				break;
+			case ButtonId.MainMenuBottomHUDNetherpass:
+				ShowComingSoonNether();
+				break;
+			case ButtonId.ComingSoonNetherpassClose:
+				HideComingSoonNether();
+				break;
+			case ButtonId.MainMenuBottomHUDItems:
+				ShowComingSoonItems();
+				break;
+			case ButtonId.ComingSoonItemsClose:
+				HideComingSoonItems();
+				break;
+			case ButtonId.ModeSelectBackButton:
+				HideModeSelect();
+				break;
+			case ButtonId.MainMenuTopHUDGemPlus:
+			case ButtonId.MainMenuBottomHUDStore:
+				ShowStore();
+				break;
+			case ButtonId.MainMenuSideBarLeaderboard:
+				ShowLeaderboard();
+				break;
+			case ButtonId.ComingSoonGenericClose:
+				HideComingSoonGeneric();
+				break;
+			case ButtonId.ModeSelectFreeModeTooltip:
+				ShowFreeModeTooltip();
+				break;
+			case ButtonId.ModeSelectNetherModeTooltip:
+				ShowNetherModeTooltip();
+				break;
+			case ButtonId.ModeSelectFreeModeTooltipBack:
+			case ButtonId.ModeSelectNetherModeTooltipBack:
+				HideFreeModeTooltip();
+				break;
+			case ButtonId.ModeSelectFreeMode:
+				PlayFreeMode();
+				break;
+			case ButtonId.ModeSelectNethermode:
+				TryPlayNetherMode();
+				break;
+			case ButtonId.MainMenuSideBarSettings:
+				stateMachine.PushState(new GameStateOptions());
+				break;
+			case ButtonId.ChangeNicknameClose:
+				CloseChangeNickname();
+				break;
+			case ButtonId.ChangeNicknameOk:
+				ChangeNickname();
+				CloseChangeNickname();
+				break;
+			case ButtonId.NotEnoughGemsBack:
+				CloseNotEnoughGems();
+				break;
+			default:
+				break;
+		}
+	}
 
-    private void HideComingSoonGeneric()
-    {
-        Screens.Instance.PopScreen(_gameScreenComingSoonGeneric);
-    }
+	private void ShowLeaderboard()
+	{
+		Screens.Instance.PopScreen(_gameScreenHomeHeader);
+		Screens.Instance.PopScreen(_gameScreenHomeFooter);
+		stateMachine.PushState(new GameStateLeaderboard());
+	}
 
-    private void ShowComingSoonNether()
-    {
-        _gameScreenComingSoonNether = Screens.Instance.PushScreen<GameScreenComingSoonNether>();
-    }
+	private void ShowComingSoonGeneric()
+	{
+		_gameScreenComingSoonGeneric = Screens.Instance.PushScreen<GameScreenComingSoonGeneric>();
+	}
 
-    private void HideComingSoonNether()
-    {
-        Screens.Instance.PopScreen(_gameScreenComingSoonNether);
-    }
+	private void HideComingSoonGeneric()
+	{
+		Screens.Instance.PopScreen(_gameScreenComingSoonGeneric);
+	}
 
-    private void ShowComingSoonItems()
-    {
-        _gameScreenComingSoonItems = Screens.Instance.PushScreen<GameScreenComingSoonItems>();
-    }
+	private void ShowComingSoonNether()
+	{
+		_gameScreenComingSoonNether = Screens.Instance.PushScreen<GameScreenComingSoonNether>();
+	}
 
-    private void HideComingSoonItems()
-    {
-        Screens.Instance.PopScreen(_gameScreenComingSoonItems);
-    }
+	private void HideComingSoonNether()
+	{
+		Screens.Instance.PopScreen(_gameScreenComingSoonNether);
+	}
 
-    private void ShowFreeModeTooltip()
-    {
-        _gameScreenModeSelect.ShowToolTipFreeMode();
-    }
+	private void ShowComingSoonItems()
+	{
+		_gameScreenComingSoonItems = Screens.Instance.PushScreen<GameScreenComingSoonItems>();
+	}
 
-    private void ShowNetherModeTooltip()
-    {
-        _gameScreenModeSelect.ShowToolTipNetherMode();
-    }
+	private void HideComingSoonItems()
+	{
+		Screens.Instance.PopScreen(_gameScreenComingSoonItems);
+	}
 
-    private void HideFreeModeTooltip()
-    {
-        _gameScreenModeSelect.HideToolTips();
-    }
+	private void ShowFreeModeTooltip()
+	{
+		_gameScreenModeSelect.ShowToolTipFreeMode();
+	}
 
-    private void HideModeSelect()
-    {
-        Screens.Instance.PopScreen(_gameScreenModeSelect);
-        _gameScreenHomeHeader.ShowPlayerInfoGroup();
-    }
+	private void ShowNetherModeTooltip()
+	{
+		_gameScreenModeSelect.ShowToolTipNetherMode();
+	}
 
-    private void ShowModeSelect()
-    {
-        _gameScreenModeSelect = Screens.Instance.PushScreen<GameScreenModeSelect>();
-        Screens.Instance.BringToFront<GameScreenHomeHeader>();
-        _gameScreenHomeHeader.HidePlayerInfoGroup();
-    }
+	private void HideFreeModeTooltip()
+	{
+		_gameScreenModeSelect.HideToolTips();
+	}
 
-    private void PlayFreeMode()
-    {
-        Screens.Instance.PopScreen(_gameScreenHome);
-        Screens.Instance.PopScreen(_gameScreenHomeFooter);
-        Screens.Instance.PopScreen(_gameScreenModeSelect);
-        stateMachine.PushState(new GameStateFreeMode());
-    }
+	private void HideModeSelect()
+	{
+		Screens.Instance.PopScreen(_gameScreenModeSelect);
+		_gameScreenHomeHeader.ShowPlayerInfoGroup();
+	}
 
-    private void TryPlayNetherMode()
-    {
-        if (canPlayNetherMode)
-        {
-            PlayNetherMode();
-        } 
-        else
-        {
-            _gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
-        }
-        UserManager.Instance.GetPlayerResources();
-    }
+	private void ShowModeSelect()
+	{
+		_gameScreenModeSelect = Screens.Instance.PushScreen<GameScreenModeSelect>();
+		Screens.Instance.BringToFront<GameScreenHomeHeader>();
+		_gameScreenHomeHeader.HidePlayerInfoGroup();
+	}
 
-    private void CloseNotEnoughGems()
-    {
-        Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
-        Screens.Instance.BringToFront<GameScreenHomeHeader>();
-    }
+	private void PlayFreeMode()
+	{
+		Screens.Instance.PopScreen(_gameScreenHome);
+		Screens.Instance.PopScreen(_gameScreenHomeFooter);
+		Screens.Instance.PopScreen(_gameScreenModeSelect);
+		stateMachine.PushState(new GameStateFreeMode());
+	}
 
-    private void PlayNetherMode()
-    {
-        Screens.Instance.PopScreen(_gameScreenHome);
-        Screens.Instance.PopScreen(_gameScreenHomeFooter);
-        Screens.Instance.PopScreen(_gameScreenModeSelect);
-        Screens.Instance.PopScreen(_gameScreenHomeSideBar);
-        stateMachine.PushState(new GameStateNetherMode());
-    }
+	private void TryPlayNetherMode()
+	{
+		if (canPlayNetherMode)
+		{
+			PlayNetherMode();
+		}
+		else
+		{
+			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+		}
 
-    private void ShowStore()
-    {
-        stateMachine.PushState(new GameStateStore());
-    }
+		UserManager.Instance.GetPlayerResources();
+	}
 
-    private void OpenChangeNickname()
-    {
-        _gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
-        _gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
-    }
+	private void CloseNotEnoughGems()
+	{
+		Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
+		Screens.Instance.BringToFront<GameScreenHomeHeader>();
+	}
 
-    private void CloseChangeNickname()
-    {
-        Screens.Instance.PopScreen(_gameScreenChangeNickname);
-    }
+	private void PlayNetherMode()
+	{
+		Screens.Instance.PopScreen(_gameScreenHome);
+		Screens.Instance.PopScreen(_gameScreenHomeFooter);
+		Screens.Instance.PopScreen(_gameScreenModeSelect);
+		Screens.Instance.PopScreen(_gameScreenHomeSideBar);
+		stateMachine.PushState(new GameStateNetherMode());
+	}
 
-    private void ChangeNickname()
-    {
+	private void ShowStore()
+	{
+		stateMachine.PushState(new GameStateStore());
+	}
 
-        UserManager.Instance.SetPlayerUserName(_gameScreenChangeNickname.GetNicknameText(), true);
-        _gameScreenHomeHeader.SetUsername(_gameScreenChangeNickname.GetNicknameText());
-        CloseChangeNickname();
-    }
+	private void OpenChangeNickname()
+	{
+		_gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
+		_gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
+	}
 
-    private void OpenPremintPopup()
-    {
-        _gameScreenPremint = Screens.Instance.PushScreen<GameScreenPremint>();
-    }
+	private void CloseChangeNickname()
+	{
+		Screens.Instance.PopScreen(_gameScreenChangeNickname);
+	}
 
-    private void PremintClick()
-    {
-        Application.OpenURL("https://www.premint.xyz/peanutgames-bubble-bots-mini-game/");
-    }
-    
-    private void ClosePremintPopup()
-    {
-        Screens.Instance.PopScreen(_gameScreenPremint);
-    }
-    
-    public override void Disable()
-    {
-        GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        UserManager.CallbackWithResources -= ResourcesReceived;
-    }
+	private void ChangeNickname()
+	{
+		UserManager.Instance.SetPlayerUserName(_gameScreenChangeNickname.GetNicknameText(), true);
+		_gameScreenHomeHeader.SetUsername(_gameScreenChangeNickname.GetNicknameText());
+		CloseChangeNickname();
+	}
 
-    private void ResourcesReceived(GetPlayerWallet wallet)
-    {
-        canPlayNetherMode = wallet.gems > 0;
-        canPlayFreeMode = wallet.energy > 0;
-    }
+	public override void Disable()
+	{
+		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
+		UserManager.CallbackWithResources -= ResourcesReceived;
+	}
 
-    public override void Exit()
-    {
-        Screens.Instance.PopScreen(_gameScreenHome);
-        Screens.Instance.PopScreen(_gameScreenHomeFooter);
-        Screens.Instance.PopScreen(_gameScreenHomeHeader);
-        Screens.Instance.PopScreen(_gameScreenHomeSideBar);
-    }
+	private void ResourcesReceived(GetPlayerWallet wallet)
+	{
+		canPlayNetherMode = wallet.gems > 0;
+		canPlayFreeMode = wallet.energy > 0;
+	}
+
+	public override void Exit()
+	{
+		Screens.Instance.PopScreen(_gameScreenHome);
+		Screens.Instance.PopScreen(_gameScreenHomeFooter);
+		Screens.Instance.PopScreen(_gameScreenHomeHeader);
+		Screens.Instance.PopScreen(_gameScreenHomeSideBar);
+	}
 }

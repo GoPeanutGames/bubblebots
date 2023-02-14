@@ -26,7 +26,8 @@ public class UserManager : MonoSingleton<UserManager>
         { PrefsKey.WalletAddress, "wallet_address" },
         { PrefsKey.SessionToken, "session_token" },
         { PrefsKey.Rank, "rank" },
-        { PrefsKey.Signature, "signature" }
+        { PrefsKey.Signature, "signature" },
+        { PrefsKey.Hints, "hints"}
     };
 
     private void GetUserOrSetDefault()
@@ -38,7 +39,8 @@ public class UserManager : MonoSingleton<UserManager>
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
             Score = 0,
             Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
-            Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], "")
+            Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),
+            Hints = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Hints], true) 
         };
     }
 
@@ -147,9 +149,15 @@ public class UserManager : MonoSingleton<UserManager>
         CurrentUser.Score = score;
     }
 
-    public int GetPlayerScore()
+    public void SetPlayerHints(bool hints)
     {
-        return CurrentUser.Score;
+        CurrentUser.Hints = true;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Hints], hints);
+    }
+    
+    public bool GetPlayerHints()
+    {
+        return CurrentUser.Hints;
     }
 
     //stub

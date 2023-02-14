@@ -3,7 +3,7 @@ using System;
 
 namespace BubbleBots.User
 {
-    public enum PrefsKey { Nickname, WalletAddress, SessionToken, Rank, Signature }
+    public enum PrefsKey { Nickname, WalletAddress, SessionToken, Rank, Signature, Hints }
 
     [Serializable]
     public class User
@@ -14,5 +14,6 @@ namespace BubbleBots.User
         public ObscuredInt Rank;
         public string SessionToken;
         public string Signature;
+        public bool Hints;
     }
 }

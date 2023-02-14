@@ -41,7 +41,6 @@ public static class ButtonId
     
     //main menu top hud
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
-    public const string MainMenuTopHUDPremint = "mainmenu.topHUD.premint";
     
     //options popup
     public const string OptionsChangePicture = "options.changepicture";
@@ -109,10 +108,6 @@ public static class ButtonId
     //change nickname popup
     public const string ChangeNicknameClose = "changenickname.close";
     public const string ChangeNicknameOk = "changenickname.ok";
-    
-    //premint popup
-    public const string PremintOk = "premint.ok";
-    public const string PremintClose = "premint.close";
 }
 
 public static class TypeUtilities
