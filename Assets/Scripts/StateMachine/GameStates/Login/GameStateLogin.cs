@@ -9,6 +9,7 @@ public class GameStateLogin : GameState
     private GameScreenLogin _gameScreenLogin;
     private GoogleLogin _googleLogin;
     private AutoLogin _autoLogin;
+    private AppleLogin _appleLogin;
     private string _tempEmail;
     private string _tempHashedPass;
 
@@ -17,17 +18,34 @@ public class GameStateLogin : GameState
         return "game state login";
     }
 
-    public override void Enable()
+    public override void Enter()
     {
+        base.Enter();
         SoundManager.Instance.FadeInMusic();
         SoundManager.Instance.PlayStartMusicNew();
-        _gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>();
-        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+        _gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>(true);
         _googleLogin = new GoogleLogin();
+        _appleLogin = new AppleLogin();
         _autoLogin = new AutoLogin();
         _gameScreenLogin.ShowLoading();
         _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
     }
+
+    public override void Enable()
+    {
+        GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
+    }
+    
+#if UNITY_IOS
+    public override void Update(float delta)
+    {
+        base.Update(delta);
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            _appleLogin.Update();
+        }
+    }
+#endif
 
     private void AutoLoginSuccess(User user)
     {
@@ -64,6 +82,7 @@ public class GameStateLogin : GameState
         switch (buttonTapData.stringData)
         {
             case ButtonId.LoginGuest:
+                
                 PlayAsGuest();
                 UserManager.PlayerType = PlayerType.Guest;
                 AnalyticsManager.Instance.InitAnalyticsGuest();
@@ -71,6 +90,10 @@ public class GameStateLogin : GameState
             case ButtonId.LoginSignInGoogle:
                 _gameScreenLogin.ShowLoading();
                 _googleLogin.StartLogin(LoginSuccessSetData, GoogleLoginFail);
+                break;
+            case ButtonId.LoginSignInApple:
+                _gameScreenLogin.ShowLoading();
+                _appleLogin.StartLogin(LoginSuccessSetData, AppleLoginFail);
                 break;
             case ButtonId.LoginSignInSubmit:
                 if (_gameScreenLogin.SignInValidation())
@@ -120,9 +143,14 @@ public class GameStateLogin : GameState
             email = email
         };
         string formData = JsonUtility.ToJson(data);
-        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.ResetPassword, formData, ResetPassSuccess);
+        ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.ResetPassword, formData, ResetPassSuccess, ResetPassFail);
     }
 
+    private void ResetPassFail(string reason)
+    {
+        _gameScreenLogin.HideLoading();
+    }
+    
     private void ResetPassSuccess(string _)
     {
         _gameScreenLogin.HideLoading();
@@ -231,6 +259,7 @@ public class GameStateLogin : GameState
 
     private void Submit2FACode()
     {
+        _gameScreenLogin.ShowLoading();
         string code = _gameScreenLogin.GetLoginInputFieldCode();
         Login2ndStep data = new Login2ndStep()
         {
@@ -244,6 +273,7 @@ public class GameStateLogin : GameState
 
     private void TwoFACodeSuccess(string success)
     {
+        _gameScreenLogin.HideLoading();
         Debug.Log("success: " + success);
         LoginResult result = JsonUtility.FromJson<LoginResult>(success);
         LoginSuccessSetData(result);
@@ -251,6 +281,7 @@ public class GameStateLogin : GameState
 
     private void TwoFACodeFail(string error)
     {
+        _gameScreenLogin.HideLoading();
         Debug.Log("error: " + error);
         _gameScreenLogin.Set2FAError();
     }
@@ -264,13 +295,20 @@ public class GameStateLogin : GameState
 
     private void GoToMainMenu()
     {
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
     }
 
     private void GoogleLoginFail(string reason)
     {
         Debug.LogError("Google login fail: " + reason);
-        _gameScreenLogin.SetSignInGoogleError();
+        _gameScreenLogin.SetSignInPlatformError("Google");
+        _gameScreenLogin.HideLoading();
+    }
+    
+    private void AppleLoginFail(string reason)
+    {
+        Debug.LogError("Apple login fail: " + reason);
+        _gameScreenLogin.SetSignInPlatformError("Apple");
         _gameScreenLogin.HideLoading();
     }
 
@@ -300,7 +338,12 @@ public class GameStateLogin : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        Screens.Instance.PopScreen(_gameScreenLogin);
         base.Disable();
+    }
+
+    public override void Exit()
+    {
+        Screens.Instance.PopScreen(_gameScreenLogin);
+        base.Exit();
     }
 }
