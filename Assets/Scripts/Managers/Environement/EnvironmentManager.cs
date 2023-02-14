@@ -18,7 +18,7 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
      Api key Apple: appl_sHJjOuUTDbFSdiXJMPAPiAiMnTY
      =========PROD
      BundleId: com.peanutgames.minibots.prod
-     LastBundleversio: 1
+     LastBundleversio: 2
      GOOGLE PLAY GAMES: 
      GPG Setup ID (android): 289220171644-gqbpa74u8g63hs3fh5cuj20c9qf0rjtp.apps.googleusercontent.com 
      GPG Client ID: 289220171644-b5e3j0mdhhc6ov1beb46nh8qjel9ils1.apps.googleusercontent.com
