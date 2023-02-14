@@ -66,11 +66,11 @@ public class GoogleLoginTest : MonoBehaviour
 
     public void LoginServer()
     {
-        GoogleLogin loginData = new GoogleLogin()
+        GoogleLoginData googleLoginData = new GoogleLoginData()
         {
             accessToken = PlayGamesPlatform.Instance.GetIdToken()
         };
-        string formData = JsonUtility.ToJson(loginData);
+        string formData = JsonUtility.ToJson(googleLoginData);
         ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.GoogleLogin, formData,
             (success) =>
         {

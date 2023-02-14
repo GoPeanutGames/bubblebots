@@ -4,8 +4,8 @@ using BubbleBots.Store;
 public class GameStateStore : GameState
 {
     private GameScreenStore _gameScreenStore;
-    private GameScreenMainMenuTopHUD _gameScreenMainMenuTopHUD;
-    private GameScreenMainMenuBottomHUD _gameScreenMainMenuBottomHUD;
+    private GameScreenHomeHeader _gameScreenHomeHeader;
+    private GameScreenHomeFooter _gameScreenHomeFooter;
     private StoreTabs _activeTab = StoreTabs.Gems;
     private int currentlyShowingOfferIndex = 0;
 
@@ -18,14 +18,12 @@ public class GameStateStore : GameState
     {
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         _gameScreenStore = Screens.Instance.PushScreen<GameScreenStore>(true);
-        _gameScreenMainMenuTopHUD = Screens.Instance.PushScreen<GameScreenMainMenuTopHUD>(true);
-        _gameScreenMainMenuBottomHUD = Screens.Instance.PushScreen<GameScreenMainMenuBottomHUD>(true);
-        Screens.Instance.BringToFront<GameScreenMainMenuTopHUD>();
-        Screens.Instance.BringToFront<GameScreenMainMenuBottomHUD>();
-        _gameScreenMainMenuBottomHUD.ActivateStoreButtonGlow();
-        _gameScreenMainMenuBottomHUD.ShowHomeButton();
-        _gameScreenMainMenuTopHUD.HideSettingsGroup();
-        _gameScreenMainMenuTopHUD.HidePlayerInfoGroup();
+        _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
+        _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
+        Screens.Instance.BringToFront<GameScreenHomeHeader>();
+        Screens.Instance.BringToFront<GameScreenHomeFooter>();
+        _gameScreenHomeFooter.ShowHomeButton();
+        _gameScreenHomeHeader.HidePlayerInfoGroup();
         ActivateTab(_activeTab);
     }
 
@@ -64,9 +62,9 @@ public class GameStateStore : GameState
 
     public void GenerateSpecialOffer()
     {
-        List<SpecialOffer> specialOffers = StoreManager.Instance.GetSpecialOffers();
-        SpecialOffer offer = specialOffers[currentlyShowingOfferIndex];
-        _gameScreenStore.GenerateSpecialOffer(offer);
+        // List<SpecialOffer> specialOffers = StoreManager.Instance.GetSpecialOffers();
+        // SpecialOffer offer = specialOffers[currentlyShowingOfferIndex];
+        // _gameScreenStore.GenerateSpecialOffer(offer);
     }
 
     private void ActivateTab(StoreTabs tab)
@@ -129,12 +127,10 @@ public class GameStateStore : GameState
     
     private void HideStore()
     {
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
         Screens.Instance.PopScreen(_gameScreenStore);
-        _gameScreenMainMenuBottomHUD.DeactivateStoreButtonGlow();
-        _gameScreenMainMenuBottomHUD.HideHomeButton();
-        _gameScreenMainMenuTopHUD.ShowSettingsGroup();
-        _gameScreenMainMenuTopHUD.ShowPlayerInfoGroup();
+        _gameScreenHomeFooter.HideHomeButton();
+        _gameScreenHomeHeader.ShowPlayerInfoGroup();
     }
 
     public override void Disable()

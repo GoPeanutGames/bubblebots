@@ -7,11 +7,7 @@ public class GameStateMetamaskTransaction : GameState
     
     public GameStateMetamaskTransaction(int bundleId)
     {
-        StoreManager.Instance.GetBundleFromId(bundleId, (data) =>
-        {
-            bool isDev = EnvironmentManager.Instance.IsDevelopment();
-            // MetamaskManager.Instance.BuyStoreBundle(bundleId, isDev, TransactionSuccess, TransactionFail);
-        });
+        StoreManager.Instance.BuyBundle(bundleId, TransactionSuccess, TransactionFail);
     }
 
     private void TransactionSuccess()
@@ -32,7 +28,7 @@ public class GameStateMetamaskTransaction : GameState
         UserManager.Instance.GetPlayerResourcesAfter(3);
         UserManager.Instance.GetPlayerResourcesAfter(8);
         UserManager.Instance.GetPlayerResourcesAfter(12);
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
     }
     
     public override void Enable()
