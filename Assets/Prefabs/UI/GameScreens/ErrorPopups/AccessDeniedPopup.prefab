@@ -454,11 +454,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 5233415050355170895}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b007c4abb15ea864b99ca5b9bb9e5aab, type: 3}
+  m_Script: {fileID: 11500000, guid: ada24605852a86b49a684334e79d4e62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  location: 2
-  AnimatorComponent: {fileID: 8483915101667185969}
+  location: 0
+  AnimatorComponent: {fileID: 0}
 --- !u!95 &8483915101667185969
 Animator:
   serializedVersion: 5

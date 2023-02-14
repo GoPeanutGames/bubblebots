@@ -8,7 +8,6 @@ public class GameStateHome : GameState
 	private GameScreenHome _gameScreenHome;
 	private GameScreenModeSelect _gameScreenModeSelect;
 	private GameScreenLoading _gameScreenLoading;
-	private GameScreenChangeNickname _gameScreenChangeNickname;
 	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
 	private GameScreenComingSoonGeneric _gameScreenComingSoonGeneric;
 	private GameScreenComingSoonNether _gameScreenComingSoonNether;
@@ -41,24 +40,18 @@ public class GameStateHome : GameState
 	{
 		canPlayNetherMode = false;
 		canPlayFreeMode = false;
-		//todo: hide these with animation instead of pop, so on enable won't need to have these
-		// _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
-		// _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
-		// _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
-		// _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
 		_gameScreenHomeFooter.Show();
 		_gameScreenHomeSideBar.Show();
 		_gameScreenHomeHeader.Show();
+		_gameScreenHomeHeader.RefreshData();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 		ResetMainMenuLook();
 		if (_gameScreenHomeHeader.AreResourcesSet() == false)
 		{
 			_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
 		}
-
 		Screens.Instance.BringToFront<GameScreenLoading>();
 		GameScreenHomeHeader.ResourcesSet += ResourcesSet;
-		_gameScreenHomeHeader.SetUsername(UserManager.Instance.GetPlayerUserName());
 		UserManager.CallbackWithResources += ResourcesReceived;
 		UserManager.Instance.GetPlayerResources();
 	}
@@ -130,13 +123,6 @@ public class GameStateHome : GameState
 				break;
 			case ButtonId.MainMenuSideBarSettings:
 				stateMachine.PushState(new GameStateOptions());
-				break;
-			case ButtonId.ChangeNicknameClose:
-				CloseChangeNickname();
-				break;
-			case ButtonId.ChangeNicknameOk:
-				ChangeNickname();
-				CloseChangeNickname();
 				break;
 			case ButtonId.NotEnoughGemsBack:
 				CloseNotEnoughGems();
@@ -252,25 +238,7 @@ public class GameStateHome : GameState
 	{
 		stateMachine.PushState(new GameStateStore());
 	}
-
-	private void OpenChangeNickname()
-	{
-		_gameScreenChangeNickname = Screens.Instance.PushScreen<GameScreenChangeNickname>();
-		_gameScreenChangeNickname.SetNicknameText(UserManager.Instance.GetPlayerUserName());
-	}
-
-	private void CloseChangeNickname()
-	{
-		Screens.Instance.PopScreen(_gameScreenChangeNickname);
-	}
-
-	private void ChangeNickname()
-	{
-		UserManager.Instance.SetPlayerUserName(_gameScreenChangeNickname.GetNicknameText(), true);
-		_gameScreenHomeHeader.SetUsername(_gameScreenChangeNickname.GetNicknameText());
-		CloseChangeNickname();
-	}
-
+	
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);

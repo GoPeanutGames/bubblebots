@@ -3,6 +3,8 @@ using BubbleBots.Server.Signature;
 public class GameStateOptions : GameState
 {
     private GamePopupOptions _gamePopupOptions;
+
+    private int _finalAvatar;
     
     public override string GetGameStateName()
     {
@@ -18,6 +20,7 @@ public class GameStateOptions : GameState
 
     public override void Enable()
     {
+        _gamePopupOptions.RefreshPlayerUsername();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
     }
 
@@ -40,6 +43,12 @@ public class GameStateOptions : GameState
             case ButtonId.OptionsSignOut:
                 Logout();
                 break;
+            case ButtonId.OptionsChangePicture:
+                ChangePicture();
+                break;
+            case ButtonId.OptionsChangeName:
+                stateMachine.PushState(new GameStateChangeNickname());
+                break;
             case ButtonId.OptionsSave:
                 SaveSettings();
                 stateMachine.PopState();
@@ -47,8 +56,17 @@ public class GameStateOptions : GameState
         }
     }
 
+    private void ChangePicture()
+    {
+        int avatar = UserManager.Instance.GetPlayerAvatar() + 1;
+        if (avatar == 3) avatar = 0;
+        _finalAvatar = avatar;
+        _gamePopupOptions.SetPlayerAvatar(avatar);
+    }
+
     private void SaveSettings()
     {
+        UserManager.Instance.ChangePlayerAvatar(_finalAvatar);
         bool musicOn = _gamePopupOptions.GetFinalMusicValue();
         bool hintsOn = _gamePopupOptions.GetFinalHintsValue();
         if (musicOn)

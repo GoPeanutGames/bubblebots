@@ -1081,6 +1081,7 @@ MonoBehaviour:
   energyText: {fileID: 9158779584845779363}
   usernameText: {fileID: 377042734079655038}
   plusButton: {fileID: 1190534562348229987}
+  avatarImage: {fileID: 4605924286930858784}
 --- !u!95 &8695602106633638439
 Animator:
   serializedVersion: 5

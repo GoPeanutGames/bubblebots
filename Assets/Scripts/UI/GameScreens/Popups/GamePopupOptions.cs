@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,13 +14,16 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     public GameObject HintsToggleOff;
     public GameObject HintsToggleOn;
 
-    private bool finalMusicValue;
-    private bool finalHintValue;
+    [Header("Other")]
+    public Image playerAvatar;
+    public TextMeshProUGUI playerUsername;
 
     private void Start()
     {
         InitialiseMusicToggle();
         InitialiseHintsToggle();
+        SetPlayerAvatar(UserManager.Instance.GetPlayerAvatar());
+        RefreshPlayerUsername();
     }
 
     private void InitialiseMusicToggle()
@@ -42,14 +46,12 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     {
         MusicToggleOff.SetActive(!value);
         MusicToggleOn.SetActive(value);
-        finalMusicValue = value;
     }
 
     public void HintsToggleValueChanged(bool value)
     {
         HintsToggleOff.SetActive(!value);
         HintsToggleOn.SetActive(value);
-        finalHintValue = value;
     }
 
     public bool GetFinalMusicValue()
@@ -60,5 +62,15 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     public bool GetFinalHintsValue()
     {
         return HintsToggle.isOn;
+    }
+
+    public void SetPlayerAvatar(int avatar)
+    {
+        playerAvatar.sprite = UserManager.Instance.PlayerAvatars[avatar];
+    }
+
+    public void RefreshPlayerUsername()
+    {
+        playerUsername.text = UserManager.Instance.GetPlayerUserName();
     }
 }

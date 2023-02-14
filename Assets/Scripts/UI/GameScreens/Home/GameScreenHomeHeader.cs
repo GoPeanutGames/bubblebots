@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameScreenHomeHeader : GameScreenAnimatedShowHide
 {
@@ -21,6 +22,7 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
     public TextMeshProUGUI energyText;
     public TextMeshProUGUI usernameText;
     public GameObject plusButton;
+    public Image avatarImage;
 
     const int MAX_ENERGY = 10;
 
@@ -75,11 +77,6 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
         }
     }
 
-    public void SetUsername(string username)
-    {
-        usernameText.text = username;
-    }
-
     public void SwitchGameObjectActive(GameObject gameObject)
     {
         gameObject.SetActive(!gameObject.activeSelf);
@@ -98,5 +95,11 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
     public void DisablePlusButton()
     {
         plusButton.SetActive(false);
+    }
+
+    public void RefreshData()
+    {
+        avatarImage.sprite = UserManager.Instance.PlayerAvatars[UserManager.Instance.GetPlayerAvatar()];
+        usernameText.text = UserManager.Instance.GetPlayerUserName();
     }
 }

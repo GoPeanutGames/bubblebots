@@ -18,6 +18,8 @@ public class UserManager : MonoSingleton<UserManager>
     public static int RobotsKilled = 0;
     public static Action<GetPlayerWallet> CallbackWithResources;
 
+    public List<Sprite> PlayerAvatars;
+    
     private User CurrentUser;
 
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
@@ -25,28 +27,33 @@ public class UserManager : MonoSingleton<UserManager>
         { PrefsKey.Nickname, "full_name" },
         { PrefsKey.WalletAddress, "wallet_address" },
         { PrefsKey.SessionToken, "session_token" },
-        { PrefsKey.Rank, "rank" },
         { PrefsKey.Signature, "signature" },
-        { PrefsKey.Hints, "hints"}
+        { PrefsKey.Hints, "hints"},
+        { PrefsKey.Avatar, "avatar"}
+    };
+    
+    private readonly Dictionary<PrefsKeyToDelete, string> prefsKeysToDeleteMap = new()
+    {
+        { PrefsKeyToDelete.Rank, "rank" }
     };
 
+    private void DeleteOldKeys()
+    {
+        ObscuredPrefs.DeleteKey(prefsKeysToDeleteMap[PrefsKeyToDelete.Rank]);
+    }
+    
     private void GetUserOrSetDefault()
     {
+        DeleteOldKeys();
         CurrentUser = new()
         {
             UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], ""),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
-            Score = 0,
-            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),
-            Hints = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Hints], true) 
+            Hints = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Hints], true), 
+            Avatar = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], 0) 
         };
-    }
-
-    private void OnNicknameSet(string data)
-    {
-        Debug.Log("Nickname set");
     }
 
     protected override void Awake()
@@ -100,7 +107,7 @@ public class UserManager : MonoSingleton<UserManager>
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.SessionToken], token);
     }
 
-    public void SetPlayerUserName(string userName, bool sendToServer)
+    public void SetPlayerUserName(string userName, bool sendToServer, Action<string> onSuccess = null, Action<string> onFail = null)
     {
         if (string.IsNullOrEmpty(userName))
         {
@@ -120,8 +127,14 @@ public class UserManager : MonoSingleton<UserManager>
                 nickname = sanitizedUsername
             };
             string jsonFormData = JsonUtility.ToJson(formData);
-            ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.UpdateNickname, jsonFormData, OnNicknameSet);
+            ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.UpdateNickname, jsonFormData, onSuccess, onFail);
         }
+    }
+
+    public void ChangePlayerAvatar(int avatar)
+    {
+        CurrentUser.Avatar = avatar;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], avatar);
     }
 
     public string GetPlayerWalletAddress()
@@ -144,11 +157,11 @@ public class UserManager : MonoSingleton<UserManager>
         return CurrentUser.SessionToken;
     }
 
-    public void SetPlayerScore(int score)
+    public int GetPlayerAvatar()
     {
-        CurrentUser.Score = score;
+        return CurrentUser.Avatar;
     }
-
+    
     public void SetPlayerHints(bool hints)
     {
         CurrentUser.Hints = true;

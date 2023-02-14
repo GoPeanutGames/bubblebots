@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
 using BubbleBots.Modes;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
-
-
 
 public class NetherModeGameplayManager : MonoBehaviour
 {
@@ -336,7 +333,6 @@ public class NetherModeGameplayManager : MonoBehaviour
             }
         }
         gameplayState = NethermodeGameplayState.LevelCompleteMenu;
-        UserManager.Instance.SetPlayerScore((int)GetScore());
         OnNetherModeComplete();
         AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 

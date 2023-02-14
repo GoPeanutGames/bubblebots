@@ -276,7 +276,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &216519493695809245
 RectTransform:
   m_ObjectHideFlags: 0
@@ -822,7 +822,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4143951028400372330
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1765,6 +1765,8 @@ MonoBehaviour:
   HintsToggle: {fileID: 5012918903678911692}
   HintsToggleOff: {fileID: 389789060323282368}
   HintsToggleOn: {fileID: 8139479016055625345}
+  playerAvatar: {fileID: 1009116659005442664}
+  playerUsername: {fileID: 5942292948046876139}
 --- !u!95 &1060319812783063179
 Animator:
   serializedVersion: 5
