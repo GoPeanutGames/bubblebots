@@ -37,7 +37,6 @@ public class GameScreenGame : GameScreen
             enemyRobotVisuals[bot].SetEnemyRobotImage(enemyBots[bot].bubbleBotData.asEnemySprite);
         }
     }
-
     public void DamageEnemyRobotAndSetHp(int index, int hp)
     {
         enemyRobotVisuals[index].Damage();
@@ -53,7 +52,6 @@ public class GameScreenGame : GameScreen
         bullet.transform.DOMove(new Vector3(playerRobotVisuals[index].transform.position.x, playerRobotVisuals[index].transform.position.y, bullet.transform.position.z), 0.25f).SetEase(Ease.Linear);
         StartCoroutine(HideAndDestroyAfter(bullet, 0.21f, 1, index));
     }
-
     public void KillPlayerRobot(int index, int currentEnemy)
     {
         playerRobotVisuals[index].Die();
@@ -88,9 +86,8 @@ public class GameScreenGame : GameScreen
             }
         }
         return null;
-
     }
-    
+
     IEnumerator HideAndDestroyAfter(GameObject target, float timeToHide, float timeToDestroy, int id)
     {
         yield return new WaitForSeconds(timeToHide);

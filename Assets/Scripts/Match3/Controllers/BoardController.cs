@@ -436,6 +436,8 @@ namespace BubbleBots.Match3.Controllers
             //test on swap position as they are guaranteed to be different
             MatchTestResult matchTestResult = boardModel.TestForMatchOnPosition(startX, startY, matchPrecedence.matches, null);
 
+            bool enableSpecialBug = false;
+
             if (matchTestResult != null)
             {
                 for (int i = 0; i < matchTestResult.match.Count; ++i)
@@ -450,9 +452,10 @@ namespace BubbleBots.Match3.Controllers
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
 
-                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialPosition().y)
+                if (matchTestResult.outcome == null && matchTestResult.match[0].y > boardModel.GetLastCreatedSpecialPosition().y)
                 {
-                    boardModel.EnableSpecialBug();
+                    enableSpecialBug = true;
+                    //boardModel.EnableSpecialBug();
                 }
             }
 
@@ -471,10 +474,16 @@ namespace BubbleBots.Match3.Controllers
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
 
-                if (matchTestResult.outcome == null && matchTestResult.match[0].y < boardModel.GetLastCreatedSpecialPosition().y)
+                if (matchTestResult.outcome == null && matchTestResult.match[0].y > boardModel.GetLastCreatedSpecialPosition().y)
                 {
-                    boardModel.EnableSpecialBug();
+                    enableSpecialBug = true;
+                    // boardModel.EnableSpecialBug();
                 }
+            }
+
+            if (enableSpecialBug)
+            {
+                boardModel.EnableSpecialBug();
             }
             return toExplode;
         }

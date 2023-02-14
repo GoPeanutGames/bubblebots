@@ -9,4 +9,6 @@ public class VFXManager : MonoSingleton<VFXManager>
     public GameObject ColorChangingEffect;
 
     public List<GameObject> enemyBullets;
+
+    public GameObject bullet;
 }

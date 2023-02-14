@@ -1422,6 +1422,7 @@ MonoBehaviour:
   - {fileID: 1524852735}
   - {fileID: 2063437765}
   - {fileID: 776278662}
+  bullet: {fileID: 776278662}
 --- !u!1 &1344661479
 GameObject:
   m_ObjectHideFlags: 0

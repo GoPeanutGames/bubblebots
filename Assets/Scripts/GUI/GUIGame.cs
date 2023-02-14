@@ -343,12 +343,12 @@ public class GUIGame : MonoBehaviour
     }
 
 
-
-    public void ExplodeTile(int x, int y, bool destroyTile)
+    public void SpawnTileDamageToEnemyRobot(int x, int y)
     {
         if (true)
         {
             EnemyRobot targetedRobot = GetComponent<GameScreenGame>().GetTargetedRobot();
+            
             Transform explodedTile = BoardParent.transform.Find("Tile_" + x + "_" + y);
             if (explodedTile == null)
             {
@@ -369,24 +369,24 @@ public class GUIGame : MonoBehaviour
                 }
 
                 Vector3 position = backgroundTiles[x, y].transform.GetComponent<RectTransform>().anchoredPosition3D;
-
-
-                rect.anchoredPosition3D = position;// BoardParent.transform.Find("Tile_" + x + "_" + y).GetComponent<RectTransform>().anchoredPosition3D;
+                rect.anchoredPosition3D = position;
                 rect.sizeDelta = new Vector2(TileSize, TileSize);
-                rect.localScale = new Vector3(1, 1, 1);
+                rect.localScale = Vector3.one;
 
-                Image tileImage = animObject.GetComponent<Image>();
-                if (tileImage == null)
-                {
-                    tileImage = animObject.AddComponent<Image>();
-                }
+                GameObject bullet = Instantiate(VFXManager.Instance.bullet, animObject.transform);
+                bullet.SetActive(true);
 
-                tileImage.sprite = explodedTile.GetComponent<Image>().sprite;
-                animObject.transform.DOMove(targetedRobot.transform.position, .4f).OnComplete(() => { Destroy(animObject); });
+                animObject.transform.DOMove(targetedRobot.transform.position, .36f).OnComplete(() => { Destroy(animObject); });
             }
         }
 
 
+    }
+
+    public void ExplodeTile(int x, int y, bool destroyTile)
+    {
+        SpawnTileDamageToEnemyRobot(x, y);
+        
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
@@ -439,12 +439,12 @@ public class GUIGame : MonoBehaviour
         }
     }
 
-    public void ScrollTileDown(int x, int y, int howMany, float duration)
+    public void ScrollTile(int x, int y, int howMany, float duration, int direction = 1)
     {
-        StartCoroutine(ScrollTileDownNow(x, y, howMany, duration));
+        StartCoroutine(ScrollTileNow(x, y, howMany, duration, direction));
     }
 
-    IEnumerator ScrollTileDownNow(int x, int y, int howMany, float duration)
+    IEnumerator ScrollTileNow(int x, int y, int howMany, float duration, int direction = 1)
     {
         Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 
@@ -455,13 +455,13 @@ public class GUIGame : MonoBehaviour
         }
 
         Vector2 tilePos = tile.GetComponent<RectTransform>().anchoredPosition;
-        tile.GetComponent<RectTransform>().DOAnchorPos(tilePos + Vector2.down * TileSize * howMany + Vector2.down * howMany * Spacing, duration);
+        tile.GetComponent<RectTransform>().DOAnchorPos(tilePos + direction * Vector2.down * TileSize * howMany + direction * Vector2.down * howMany * Spacing, duration);
 
         yield return new WaitForSeconds(duration);
 
-        tile.gameObject.name = "Tile_" + x + "_" + (y - howMany);
+        tile.gameObject.name = "Tile_" + x + "_" + (y - direction * howMany);
         tile.GetComponent<GUITile>().X = x;
-        tile.GetComponent<GUITile>().Y = y - howMany;
+        tile.GetComponent<GUITile>().Y = y - direction * howMany;
     }
 
 

@@ -240,25 +240,26 @@ namespace BubbleBots.Match3.Models
             InvalidateHint();
             bool canSpawnBubbles = _canSpawnBubbles && levelData.bubbleSpawnChance > 0;
             List<GemMove> gemMoves = new List<GemMove>();
+
             for (int i = 0; i < width; i++)
-                for (int j = 0; j < height; j++)
+                for (int j = height - 1; j >= 0; j--)
                 {
                     if (cells[i][j].empty)
                     {
-                        //search for the first one available on top of it
-                        int top = j + 1;
-                        while (top < height && cells[i][top].empty)
+                        //search for the first one available unde it
+                        int bottom = j - 1;
+                        while (bottom >= 0 && cells[i][bottom].empty)
                         {
-                            top++;
+                            bottom--;
                         }
 
-                        if (top == height) // whole column is empty
+                        if (bottom == -1) // whole column is empty
                         {
                             cells[i][j].empty = false;
                             if (i == lastCreatedSpecialPosittion.x && canCreateSpecial)
                             {
                                 cells[i][j].gem = new BoardGem(lastCreatedSpecialType, GemType.Special);
-                                lastCreatedSpecialPosittion.y = j;
+                                lastCreatedSpecialPosittion.y = -(j + 1);
                             }
                             else
                             {
@@ -272,14 +273,14 @@ namespace BubbleBots.Match3.Models
                                 }
                             }
 
-                            gemMoves.Add(new GemMove(new Vector2Int(i, j), new Vector2Int(i, j + height)));
+                            gemMoves.Add(new GemMove(new Vector2Int(i, j), new Vector2Int(i, -(j + 1))));
                         }
                         else
                         {
                             cells[i][j].empty = false;
-                            cells[i][j].gem = cells[i][top].gem;
-                            cells[i][top].empty = true;
-                            gemMoves.Add(new GemMove(new Vector2Int(i, j), new Vector2Int(i, top)));
+                            cells[i][j].gem = cells[i][bottom].gem;
+                            cells[i][bottom].empty = true;
+                            gemMoves.Add(new GemMove(new Vector2Int(i, j), new Vector2Int(i, bottom)));
                         }
                     }
                 }
@@ -287,12 +288,13 @@ namespace BubbleBots.Match3.Models
 
             for (int i = 0; i < gemMoves.Count; ++i)
             {
-                if (gemMoves[i].From == lastCreatedSpecialPosittion && lastCreatedSpecialPosittion.y < height - 1)
+                if (gemMoves[i].From == lastCreatedSpecialPosittion)
                 {
                     lastCreatedSpecialPosittion = gemMoves[i].To;
                     break;
                 }
             }
+
             return gemMoves;
         }
 

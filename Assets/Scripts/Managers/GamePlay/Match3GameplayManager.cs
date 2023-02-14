@@ -504,26 +504,25 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
             }
         }
 
-
     }
 
     IEnumerator RefillBoard(List<GemMove> gemMoves)
     {
         for (int i = 0; i < gemMoves.Count; ++i)
         {
-            if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
+            if (gemMoves[i].From.y < 0)
             {
                 //GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId().ToString(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration);
             }
             else
             {
-                GameGUI.ScrollTileDown(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].From.y - gemMoves[i].To.y, GameGUI.SwapDuration);
+                GameGUI.ScrollTile(gemMoves[i].From.x, gemMoves[i].From.y, gemMoves[i].To.y - gemMoves[i].From.y, GameGUI.SwapDuration, -1);
             }
         }
         yield return new WaitForSeconds(GameGUI.SwapDuration);
         for (int i = 0; i < gemMoves.Count; ++i)
         {
-            if (gemMoves[i].From.y >= boardController.GetBoardModel().height)
+            if (gemMoves[i].From.y < 0)
             {
                 GameGUI.AppearAt(gemMoves[i].To.x, gemMoves[i].To.y, boardController.GetBoardModel()[gemMoves[i].To.x][gemMoves[i].To.y].gem.GetId(), boardController.GetBoardModel().width, boardController.GetBoardModel().height, GameGUI.SwapDuration / 2, levelData);
             }
