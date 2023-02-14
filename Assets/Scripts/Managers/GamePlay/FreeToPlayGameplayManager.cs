@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
 using BubbleBots.Modes;
-using CodeStage.AntiCheat.ObscuredTypes;
 using UnityEngine;
-
 
 public class FreeToPlayGameplayManager : MonoBehaviour
 {
@@ -338,7 +336,6 @@ public class FreeToPlayGameplayManager : MonoBehaviour
             }
         }
         gameplayState = FreeToPlayGameplayState.LevelCompleteMenu;
-        UserManager.Instance.SetPlayerScore((int)GetScore());
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
         AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 

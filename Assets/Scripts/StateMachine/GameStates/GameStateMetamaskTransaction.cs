@@ -28,7 +28,7 @@ public class GameStateMetamaskTransaction : GameState
         UserManager.Instance.GetPlayerResourcesAfter(3);
         UserManager.Instance.GetPlayerResourcesAfter(8);
         UserManager.Instance.GetPlayerResourcesAfter(12);
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
     }
     
     public override void Enable()

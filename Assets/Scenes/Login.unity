@@ -1137,7 +1137,7 @@ MonoBehaviour:
   Production: 0
   Rhym: 0
   DevelopmentEnvironment:
-    serverUrl: https://api-bb.peanuthub.dev
+    serverUrl: https://bubble-bots-api-dev.herokuapp.com
     unityEnvironmentName: development
     publicKey:
     - -----BEGIN RSA PUBLIC KEY-----
@@ -1236,7 +1236,7 @@ MonoBehaviour:
   - store_gems_6
   - store_gems_25
   - store_gems_70
-  listener: {fileID: 1073275980}
+  listener: {fileID: 0}
   observerMode: 0
   usesStoreKit2IfAvailable: 0
   userDefaultsSuiteName: 
@@ -2066,6 +2066,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 394c08ed5255efe4a8545b0942bf061a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerAvatars:
+  - {fileID: 21300000, guid: de10c51e5c2b68c4996e8600592bb03a, type: 3}
+  - {fileID: 21300000, guid: e4e9448d26fe5374489b15986d25da49, type: 3}
+  - {fileID: 21300000, guid: 17e057996f84cbf42818f7b185367c8a, type: 3}
 --- !u!1 &1814132886
 GameObject:
   m_ObjectHideFlags: 0
@@ -2309,7 +2313,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1882204200
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2371,7 +2375,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9578eb8484e3caf4092486d14b20b72c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 26d5dc53a62326f4bba9f96372dd5b37, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2747,9 +2751,8 @@ MonoBehaviour:
   - {fileID: 9027070982741754900, guid: 789bc037baa917049b5fed3437a8b18b, type: 3}
   - {fileID: 4517260359929873612, guid: 8facaad4bedaaaa42b62ce45fc2669a6, type: 3}
   - {fileID: 6954776349591162396, guid: b82ab928c3bbaea468750008f83f99d2, type: 3}
-  - {fileID: 6852108186862858203, guid: 5ebb376695fd3f3428c2f8429a0b1d9a, type: 3}
+  - {fileID: 545320773130684018, guid: 74de3c49e7fc782449f52d0375602d25, type: 3}
   - {fileID: -1312035993938228030, guid: fb20430fadfec6c4f8df5b165f86ff88, type: 3}
-  - {fileID: 614840099462105615, guid: 1ab0eca7f8b88d744a94826a3493a4d7, type: 3}
   - {fileID: 1896057103663101010, guid: 63d43a9946b9a5e4fba7334f14bfb05e, type: 3}
   - {fileID: -2363525908864316044, guid: 67704ef825b1d5640bd290fddd254892, type: 3}
   - {fileID: -7879914156153614160, guid: b729debc04d8fca47a4b8a87c030e3e4, type: 3}
@@ -2758,6 +2761,9 @@ MonoBehaviour:
   - {fileID: 3623136457902481260, guid: c785dede661acf44ca6d29b6753db5e4, type: 3}
   - {fileID: 6913216930101042160, guid: 0fb164c51b5ffd840a5b258ca1833db6, type: 3}
   - {fileID: -4421711895176522895, guid: 1f861f2c807cd434697accbc1ae73f71, type: 3}
+  - {fileID: 469175161133347662, guid: 02432dea2cbc19b4bb8a543bd8ba9205, type: 3}
+  - {fileID: -8845832395269499321, guid: d1f0287255b600a4789902046db5870b, type: 3}
+  - {fileID: -8321852107518593474, guid: 5833c7aeacf32f2469299366d78b1a87, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0

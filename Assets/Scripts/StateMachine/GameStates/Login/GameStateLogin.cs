@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using BubbleBots.Server.Player;
@@ -260,6 +259,7 @@ public class GameStateLogin : GameState
 
     private void Submit2FACode()
     {
+        _gameScreenLogin.ShowLoading();
         string code = _gameScreenLogin.GetLoginInputFieldCode();
         Login2ndStep data = new Login2ndStep()
         {
@@ -273,6 +273,7 @@ public class GameStateLogin : GameState
 
     private void TwoFACodeSuccess(string success)
     {
+        _gameScreenLogin.HideLoading();
         Debug.Log("success: " + success);
         LoginResult result = JsonUtility.FromJson<LoginResult>(success);
         LoginSuccessSetData(result);
@@ -280,6 +281,7 @@ public class GameStateLogin : GameState
 
     private void TwoFACodeFail(string error)
     {
+        _gameScreenLogin.HideLoading();
         Debug.Log("error: " + error);
         _gameScreenLogin.Set2FAError();
     }
@@ -293,7 +295,7 @@ public class GameStateLogin : GameState
 
     private void GoToMainMenu()
     {
-        stateMachine.PushState(new GameStateMainMenu());
+        stateMachine.PushState(new GameStateHome());
     }
 
     private void GoogleLoginFail(string reason)

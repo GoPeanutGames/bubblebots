@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using BubbleBots.User;
 using CodeStage.AntiCheat.Storage;
-using UnityEditor;
 using UnityEngine;
 
 public enum PlayerType
@@ -19,6 +18,8 @@ public class UserManager : MonoSingleton<UserManager>
     public static int RobotsKilled = 0;
     public static Action<GetPlayerWallet> CallbackWithResources;
 
+    public List<Sprite> PlayerAvatars;
+    
     private User CurrentUser;
 
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
@@ -26,27 +27,33 @@ public class UserManager : MonoSingleton<UserManager>
         { PrefsKey.Nickname, "full_name" },
         { PrefsKey.WalletAddress, "wallet_address" },
         { PrefsKey.SessionToken, "session_token" },
-        { PrefsKey.Rank, "rank" },
-        { PrefsKey.Signature, "signature" }
+        { PrefsKey.Signature, "signature" },
+        { PrefsKey.Hints, "hints"},
+        { PrefsKey.Avatar, "avatar"}
+    };
+    
+    private readonly Dictionary<PrefsKeyToDelete, string> prefsKeysToDeleteMap = new()
+    {
+        { PrefsKeyToDelete.Rank, "rank" }
     };
 
+    private void DeleteOldKeys()
+    {
+        ObscuredPrefs.DeleteKey(prefsKeysToDeleteMap[PrefsKeyToDelete.Rank]);
+    }
+    
     private void GetUserOrSetDefault()
     {
+        DeleteOldKeys();
         CurrentUser = new()
         {
             UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], ""),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
-            Score = 0,
-            Rank = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Rank], 9999),
-            Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], "")
+            Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),
+            Hints = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Hints], true), 
+            Avatar = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], 0) 
         };
-        CrashManager.Instance.SetCustomCrashKey(CrashTypes.WalletAddress, CurrentUser.WalletAddress);
-    }
-
-    private void OnNicknameSet(string data)
-    {
-        Debug.Log("Nickname set");
     }
 
     protected override void Awake()
@@ -55,8 +62,22 @@ public class UserManager : MonoSingleton<UserManager>
         GetUserOrSetDefault();
     }
 
+    private void Start()
+    {
+        if (!string.IsNullOrEmpty(CurrentUser.WalletAddress))
+        {
+            CrashManager.Instance.SetCustomCrashKey(CrashTypes.WalletAddress, CurrentUser.WalletAddress);
+        }
+    }
+
     public void SetWalletAddress(string address)
     {
+        if (string.IsNullOrEmpty(address))
+        {
+            Debug.LogWarning("Address empty: " + address);
+            return;
+        }
+
         CurrentUser.WalletAddress = address;
         CrashManager.Instance.SetCustomCrashKey(CrashTypes.WalletAddress, CurrentUser.WalletAddress);
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.WalletAddress], address);
@@ -64,20 +85,33 @@ public class UserManager : MonoSingleton<UserManager>
 
     public void SetSignature(string signature)
     {
+        if (string.IsNullOrEmpty(signature))
+        {
+            Debug.LogWarning("Signature empty: " + signature);
+            return;
+        }
+
         CurrentUser.Signature = signature;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Signature], signature);
     }
 
     public void SetJwtToken(string token)
     {
+        if (string.IsNullOrEmpty(token))
+        {
+            Debug.LogWarning("Token empty: " + token);
+            return;
+        }
+
         CurrentUser.SessionToken = token;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.SessionToken], token);
     }
 
-    public void SetPlayerUserName(string userName, bool sendToServer)
+    public void SetPlayerUserName(string userName, bool sendToServer, Action<string> onSuccess = null, Action<string> onFail = null)
     {
         if (string.IsNullOrEmpty(userName))
         {
+            Debug.LogWarning("Username empty: " + userName);
             return;
         }
 
@@ -93,8 +127,14 @@ public class UserManager : MonoSingleton<UserManager>
                 nickname = sanitizedUsername
             };
             string jsonFormData = JsonUtility.ToJson(formData);
-            ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.UpdateNickname, jsonFormData, OnNicknameSet);
+            ServerManager.Instance.SendPlayerDataToServer(PlayerAPI.UpdateNickname, jsonFormData, onSuccess, onFail);
         }
+    }
+
+    public void ChangePlayerAvatar(int avatar)
+    {
+        CurrentUser.Avatar = avatar;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], avatar);
     }
 
     public string GetPlayerWalletAddress()
@@ -117,25 +157,20 @@ public class UserManager : MonoSingleton<UserManager>
         return CurrentUser.SessionToken;
     }
 
-    public void SetPlayerRank(int rank)
+    public int GetPlayerAvatar()
     {
-        CurrentUser.Rank = rank;
-        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Rank], rank);
+        return CurrentUser.Avatar;
     }
-
-    public int GetPlayerRank()
+    
+    public void SetPlayerHints(bool hints)
     {
-        return CurrentUser.Rank;
+        CurrentUser.Hints = true;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Hints], hints);
     }
-
-    public void SetPlayerScore(int score)
+    
+    public bool GetPlayerHints()
     {
-        CurrentUser.Score = score;
-    }
-
-    public int GetPlayerScore()
-    {
-        return CurrentUser.Score;
+        return CurrentUser.Hints;
     }
 
     //stub
@@ -173,11 +208,8 @@ public class UserManager : MonoSingleton<UserManager>
         StartCoroutine(CallGetPlayerResourcesAfter(seconds));
     }
 
-#if UNITY_EDITOR
-    [MenuItem("Peanut Games/Clear Prefs")]
     public static void ClearPrefs()
     {
         ObscuredPrefs.DeleteAll();
     }
-#endif
 }

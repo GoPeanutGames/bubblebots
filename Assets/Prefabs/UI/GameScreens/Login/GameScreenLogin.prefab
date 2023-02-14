@@ -94,7 +94,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 59.6
+  m_fontSize: 60
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -721,7 +721,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 27.1
+  m_fontSize: 38.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1933,7 +1933,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 51.15
+  m_fontSize: 53.2
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3336,7 +3336,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.65
+  m_fontSize: 39.35
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -3540,7 +3540,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 31.75
+  m_fontSize: 28.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4065,7 +4065,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21.5
+  m_fontSize: 29.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4254,7 +4254,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 34.6
+  m_fontSize: 31.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4603,7 +4603,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.3
+  m_fontSize: 29.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -5603,6 +5603,7 @@ GameObject:
   - component: {fileID: 5063401533364049566}
   - component: {fileID: 200998608736754195}
   - component: {fileID: 1349099318499799937}
+  - component: {fileID: 2575195320674739272}
   m_Layer: 5
   m_Name: PopupImage
   m_TagString: Untagged
@@ -5670,6 +5671,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2575195320674739272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3766198779788578252}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 1
+  m_AspectRatio: 0.8821752
 --- !u!1 &3823065047253869695
 GameObject:
   m_ObjectHideFlags: 0
@@ -5681,6 +5696,7 @@ GameObject:
   - component: {fileID: 4094409767991880354}
   - component: {fileID: 7875040916845143735}
   - component: {fileID: 5935691421283922357}
+  - component: {fileID: 8769020174512183481}
   m_Layer: 5
   m_Name: PopupImage
   m_TagString: Untagged
@@ -5708,7 +5724,7 @@ RectTransform:
   m_AnchorMin: {x: 0.05, y: 0.25}
   m_AnchorMax: {x: 0.95, y: 0.75}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0.00012207031}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7875040916845143735
 CanvasRenderer:
@@ -5748,6 +5764,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8769020174512183481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3823065047253869695}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 1
+  m_AspectRatio: 0.8821751
 --- !u!1 &3883006377436807579
 GameObject:
   m_ObjectHideFlags: 0
@@ -7313,6 +7343,7 @@ GameObject:
   - component: {fileID: 7379336839457297619}
   - component: {fileID: 5267925210983269706}
   - component: {fileID: 3814015401527191630}
+  - component: {fileID: 4553452711814488234}
   m_Layer: 5
   m_Name: PopupImage
   m_TagString: Untagged
@@ -7380,6 +7411,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4553452711814488234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4765729584469503028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 1
+  m_AspectRatio: 0.8821752
 --- !u!1 &4853157347841968662
 GameObject:
   m_ObjectHideFlags: 0
@@ -8248,6 +8293,7 @@ GameObject:
   - component: {fileID: 5823892504442090952}
   - component: {fileID: 2720413081719355889}
   - component: {fileID: 1610201004637587646}
+  - component: {fileID: 3099323433745341477}
   m_Layer: 5
   m_Name: PopupImage
   m_TagString: Untagged
@@ -8275,7 +8321,7 @@ RectTransform:
   m_AnchorMin: {x: 0.05, y: 0.25}
   m_AnchorMax: {x: 0.95, y: 0.75}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0.00012207031}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2720413081719355889
 CanvasRenderer:
@@ -8315,6 +8361,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3099323433745341477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5174741638143401703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 1
+  m_AspectRatio: 0.8821751
 --- !u!1 &5233415049787616810
 GameObject:
   m_ObjectHideFlags: 0
@@ -8786,7 +8846,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.65
+  m_fontSize: 39.35
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -8990,7 +9050,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.65
+  m_fontSize: 39.35
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -9202,7 +9262,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 52.75
+  m_fontSize: 47.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -9958,7 +10018,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.65
+  m_fontSize: 39.35
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -10095,7 +10155,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 28.65
+  m_fontSize: 38.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -11219,6 +11279,7 @@ GameObject:
   - component: {fileID: 782424296204995287}
   - component: {fileID: 2974798575598853307}
   - component: {fileID: 5742908507666901583}
+  - component: {fileID: 4479357805928097978}
   m_Layer: 5
   m_Name: PopupImage
   m_TagString: Untagged
@@ -11286,6 +11347,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &4479357805928097978
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8018402879080170314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 1
+  m_AspectRatio: 0.8821752
 --- !u!1 &8050497025196156167
 GameObject:
   m_ObjectHideFlags: 0
@@ -12132,7 +12207,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 21.5
+  m_fontSize: 36
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -12522,7 +12597,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20.3
+  m_fontSize: 29.5
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

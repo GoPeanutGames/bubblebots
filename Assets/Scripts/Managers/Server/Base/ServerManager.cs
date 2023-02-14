@@ -36,13 +36,14 @@ public class ServerManager : MonoSingleton<ServerManager>
         { SignatureLoginAPI.Get, "/auth/login-schema/" },
         { SignatureLoginAPI.Web3LoginCheck, "/auth/web3-login" },
         { SignatureLoginAPI.GoogleLogin, "/user/auth/google" },
-        { SignatureLoginAPI.AppleLogin, "/auth/apple" },
+        { SignatureLoginAPI.AppleLogin, "/user/auth/apple" },
         { SignatureLoginAPI.EmailPassSignUp, "/user"},
         { SignatureLoginAPI.Login1StStep, "/user/ask-login"},
         { SignatureLoginAPI.Login2NdStep, "/user/login"},
         { SignatureLoginAPI.AutoLoginGet, "/user/me"},
         { SignatureLoginAPI.ResetPassword, "/user/ask-reset-password"},
-        { SignatureLoginAPI.SetNewPass, "/user/reset-password"}
+        { SignatureLoginAPI.SetNewPass, "/user/reset-password"},
+        { SignatureLoginAPI.Logout, "/user/logout"}
     };
 
     private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()
