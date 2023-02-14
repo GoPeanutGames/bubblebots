@@ -41,6 +41,7 @@ public static class ButtonId
     
     //main menu top hud
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
+    public const string HomeHeaderExplanator = "home.header.explanator";
     
     //options popup
     public const string OptionsChangePicture = "options.changepicture";
@@ -108,6 +109,9 @@ public static class ButtonId
     //change nickname popup
     public const string ChangeNicknameClose = "changenickname.close";
     public const string ChangeNicknameOk = "changenickname.ok";
+    
+    //explanator popup
+    public const string ExplanatorPopupClose = "explanator.close";
 }
 
 public static class TypeUtilities

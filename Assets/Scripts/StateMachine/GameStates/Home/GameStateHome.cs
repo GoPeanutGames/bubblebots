@@ -121,6 +121,9 @@ public class GameStateHome : GameState
 			case ButtonId.ModeSelectNethermode:
 				TryPlayNetherMode();
 				break;
+			case ButtonId.HomeHeaderExplanator:
+				stateMachine.PushState(new GameStateExplanatorPopup());
+				break;
 			case ButtonId.MainMenuSideBarSettings:
 				stateMachine.PushState(new GameStateOptions());
 				break;

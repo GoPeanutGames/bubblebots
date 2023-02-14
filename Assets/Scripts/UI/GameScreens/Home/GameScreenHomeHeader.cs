@@ -77,11 +77,6 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
         }
     }
 
-    public void SwitchGameObjectActive(GameObject gameObject)
-    {
-        gameObject.SetActive(!gameObject.activeSelf);
-    }
-    
     public bool AreResourcesSet()
     {
         return _resourcesSet;

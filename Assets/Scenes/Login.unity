@@ -2763,6 +2763,7 @@ MonoBehaviour:
   - {fileID: -4421711895176522895, guid: 1f861f2c807cd434697accbc1ae73f71, type: 3}
   - {fileID: 469175161133347662, guid: 02432dea2cbc19b4bb8a543bd8ba9205, type: 3}
   - {fileID: -8845832395269499321, guid: d1f0287255b600a4789902046db5870b, type: 3}
+  - {fileID: -8321852107518593474, guid: 5833c7aeacf32f2469299366d78b1a87, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0
