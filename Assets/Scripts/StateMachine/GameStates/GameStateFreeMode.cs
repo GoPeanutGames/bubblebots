@@ -237,6 +237,7 @@ public class GameStateFreeMode : GameState
     private void StartPlay()
     {
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
+        gameScreenGame.SetPlayerName(UserManager.Instance.GetPlayerUserName());
         freeToPlayGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.freemodeGameplayManager).GetComponent<FreeToPlayGameplayManager>();
 
         freeToPlayGameplayManager.gameplayData = GameSettingsManager.Instance.freeModeGameplayData;

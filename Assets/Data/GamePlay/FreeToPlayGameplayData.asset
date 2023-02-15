@@ -16,8 +16,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a071d739e102572428c31244c15f4257, type: 2}
   - {fileID: 11400000, guid: 2133ded61b09b5646acd635d2a09d5cc, type: 2}
   - {fileID: 11400000, guid: eec9c9c1166f62d4da05206d2b2bf276, type: 2}
-  backgroundSprite: {fileID: 21300000, guid: eb71ccbda002da54899174b2474d5700, type: 3}
-  gamebackgroundSprite: {fileID: 21300000, guid: 073d696e036c5f845a3f33aef695b2a3,
+  gamebackgroundSprite: {fileID: 21300000, guid: ee5207def027c8347a6ef3b7d739c4e1,
     type: 3}
   robotsAvailable:
   - {fileID: 11400000, guid: 03dc974d257658f4aa1115df6b505e9f, type: 2}

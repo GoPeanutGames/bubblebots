@@ -20,7 +20,6 @@ public class GameStateLogin : GameState
 
     public override void Enter()
     {
-        base.Enter();
         SoundManager.Instance.FadeInMusic();
         SoundManager.Instance.PlayStartMusicNew();
         _gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>(true);
@@ -290,11 +289,13 @@ public class GameStateLogin : GameState
     {
         UserManager.PlayerType = PlayerType.Guest;
         AnalyticsManager.Instance.InitAnalyticsGuest();
+        stateMachine.PopState();
         stateMachine.PushState(new GameStateFreeMode());
     }
 
     private void GoToMainMenu()
     {
+        stateMachine.PopState();
         stateMachine.PushState(new GameStateHome());
     }
 
@@ -338,12 +339,10 @@ public class GameStateLogin : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        base.Disable();
     }
 
     public override void Exit()
     {
         Screens.Instance.PopScreen(_gameScreenLogin);
-        base.Exit();
     }
 }

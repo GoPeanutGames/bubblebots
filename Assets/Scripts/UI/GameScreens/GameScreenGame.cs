@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using BubbleBots.Gameplay.Models;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 
 public class GameScreenGame : GameScreen
 {
     public List<PlayerRobot> playerRobotVisuals;
     public List<EnemyRobot> enemyRobotVisuals;
+    public TextMeshProUGUI playerNameText;
 
     public void InitialiseEnemyRobots()
     {
@@ -98,5 +100,10 @@ public class GameScreenGame : GameScreen
         yield return new WaitForSeconds(timeToDestroy);
 
         Destroy(target);
+    }
+
+    public void SetPlayerName(string name)
+    {
+        playerNameText.text = name;
     }
 }

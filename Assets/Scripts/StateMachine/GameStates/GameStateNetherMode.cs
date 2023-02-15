@@ -232,6 +232,7 @@ public class GameStateNetherMode : GameState
     {
         
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
+        gameScreenGame.SetPlayerName(UserManager.Instance.GetPlayerUserName());
         netherModeGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.netherModeGameplayManager).GetComponent<NetherModeGameplayManager>();
 
         netherModeGameplayManager.gameplayData = GameSettingsManager.Instance.netherModeGameplayData;

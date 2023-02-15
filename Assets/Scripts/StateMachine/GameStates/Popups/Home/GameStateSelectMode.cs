@@ -45,7 +45,7 @@ public class GameStateSelectMode : GameState
 				stateMachine.PushState(new GameStateFreeModeTooltip());
 				break;
 			case ButtonId.ModeSelectNetherModeTooltip:
-				stateMachine.PushState(new GameStatenetherModeTooltip());
+				stateMachine.PushState(new GameStateNetherModeTooltip());
 				break;
 			case ButtonId.ModeSelectNethermode:
 				UserManager.CallbackWithResources += ResourcesReceived;
@@ -69,7 +69,6 @@ public class GameStateSelectMode : GameState
 		{
 			return;
 		}
-
 		ClearStatesAndScreens();
 		stateMachine.PushState(new GameStateNetherMode());
 	}
@@ -77,6 +76,7 @@ public class GameStateSelectMode : GameState
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
+		UserManager.CallbackWithResources -= ResourcesReceived;
 	}
 
 	public override void Exit()
