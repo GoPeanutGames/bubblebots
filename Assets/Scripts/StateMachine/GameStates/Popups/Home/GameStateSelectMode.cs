@@ -44,6 +44,9 @@ public class GameStateSelectMode : GameState
 			case ButtonId.ModeSelectFreeModeTooltip:
 				stateMachine.PushState(new GameStateFreeModeTooltip());
 				break;
+			case ButtonId.ModeSelectNetherModeTooltip:
+				stateMachine.PushState(new GameStatenetherModeTooltip());
+				break;
 			case ButtonId.ModeSelectNethermode:
 				UserManager.CallbackWithResources += ResourcesReceived;
 				UserManager.Instance.GetPlayerResources();

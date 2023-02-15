@@ -1,5 +1,3 @@
-using BubbleBots.Server.Player;
-
 public class GameStateHome : GameState
 {
 	private GameScreenHomeFooter _gameScreenHomeFooter;
@@ -8,12 +6,6 @@ public class GameStateHome : GameState
 	private GameScreenHome _gameScreenHome;
 	private GameScreenLoading _gameScreenLoading;
 	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
-	private GameScreenComingSoonGeneric _gameScreenComingSoonGeneric;
-	private GameScreenComingSoonNether _gameScreenComingSoonNether;
-	private GameScreenComingSoonItems _gameScreenComingSoonItems;
-
-	private bool canPlayNetherMode = false;
-	private bool canPlayFreeMode = false;
 
 	public override string GetGameStateName()
 	{
@@ -37,8 +29,6 @@ public class GameStateHome : GameState
 
 	public override void Enable()
 	{
-		canPlayNetherMode = false;
-		canPlayFreeMode = false;
 		_gameScreenHomeFooter.Show();
 		_gameScreenHomeSideBar.Show();
 		_gameScreenHomeHeader.Show();
@@ -52,7 +42,6 @@ public class GameStateHome : GameState
 
 		Screens.Instance.BringToFront<GameScreenLoading>();
 		GameScreenHomeHeader.ResourcesSet += ResourcesSet;
-		UserManager.CallbackWithResources += ResourcesReceived;
 		UserManager.Instance.GetPlayerResources();
 	}
 
@@ -77,21 +66,6 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuBottomHUDPlay:
 				stateMachine.PushState(new GameStateSelectMode());
 				break;
-			case ButtonId.MainMenuBottomHUDFriends:
-				ShowComingSoonGeneric();
-				break;
-			case ButtonId.MainMenuBottomHUDNetherpass:
-				ShowComingSoonNether();
-				break;
-			case ButtonId.ComingSoonNetherpassClose:
-				HideComingSoonNether();
-				break;
-			case ButtonId.MainMenuBottomHUDItems:
-				ShowComingSoonItems();
-				break;
-			case ButtonId.ComingSoonItemsClose:
-				HideComingSoonItems();
-				break;
 			case ButtonId.MainMenuTopHUDGemPlus:
 			case ButtonId.MainMenuBottomHUDStore:
 				ShowStore();
@@ -99,14 +73,8 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuSideBarLeaderboard:
 				ShowLeaderboard();
 				break;
-			case ButtonId.ComingSoonGenericClose:
-				HideComingSoonGeneric();
-				break;
 			case ButtonId.ModeSelectFreeMode:
 				PlayFreeMode();
-				break;
-			case ButtonId.ModeSelectNethermode:
-				TryPlayNetherMode();
 				break;
 			case ButtonId.HomeHeaderExplanator:
 				stateMachine.PushState(new GameStateExplanatorPopup());
@@ -127,55 +95,11 @@ public class GameStateHome : GameState
 		stateMachine.PushState(new GameStateLeaderboard());
 	}
 
-	private void ShowComingSoonGeneric()
-	{
-		_gameScreenComingSoonGeneric = Screens.Instance.PushScreen<GameScreenComingSoonGeneric>();
-	}
-
-	private void HideComingSoonGeneric()
-	{
-		Screens.Instance.PopScreen(_gameScreenComingSoonGeneric);
-	}
-
-	private void ShowComingSoonNether()
-	{
-		_gameScreenComingSoonNether = Screens.Instance.PushScreen<GameScreenComingSoonNether>();
-	}
-
-	private void HideComingSoonNether()
-	{
-		Screens.Instance.PopScreen(_gameScreenComingSoonNether);
-	}
-
-	private void ShowComingSoonItems()
-	{
-		_gameScreenComingSoonItems = Screens.Instance.PushScreen<GameScreenComingSoonItems>();
-	}
-
-	private void HideComingSoonItems()
-	{
-		Screens.Instance.PopScreen(_gameScreenComingSoonItems);
-	}
-
 	private void PlayFreeMode()
 	{
 		Screens.Instance.PopScreen(_gameScreenHome);
 		Screens.Instance.PopScreen(_gameScreenHomeFooter);
 		stateMachine.PushState(new GameStateFreeMode());
-	}
-
-	private void TryPlayNetherMode()
-	{
-		if (canPlayNetherMode)
-		{
-			PlayNetherMode();
-		}
-		else
-		{
-			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
-		}
-
-		UserManager.Instance.GetPlayerResources();
 	}
 
 	private void CloseNotEnoughGems()
@@ -200,13 +124,6 @@ public class GameStateHome : GameState
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-		UserManager.CallbackWithResources -= ResourcesReceived;
-	}
-
-	private void ResourcesReceived(GetPlayerWallet wallet)
-	{
-		canPlayNetherMode = wallet.gems > 0;
-		canPlayFreeMode = wallet.energy > 0;
 	}
 
 	public override void Exit()

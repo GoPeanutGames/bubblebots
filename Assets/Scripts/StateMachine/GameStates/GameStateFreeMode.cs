@@ -8,7 +8,6 @@ public class GameStateFreeMode : GameState
     private GameScreenLevelComplete gameScreenLevelComplete;
     private GameScreenGameEnd gameScreenGameEnd;
     private GameScreenQuitToMainMenu gameScreenQuitToMainMenu;
-    private GameScreenHomeHeader _gameScreenHomeHeader;
     private GameScreenSkinsInfoPopup _gameScreenSkinsInfoPopup;
     private GameScreenRobotSelectQuit _gameScreenRobotSelectQuit;
     
@@ -22,12 +21,6 @@ public class GameStateFreeMode : GameState
     public override void Enable()
     {
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
-        if (UserManager.PlayerType != PlayerType.Guest)
-        {
-            _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
-            _gameScreenHomeHeader.DisablePlusButton();
-            _gameScreenHomeHeader.HidePlayerInfoGroup();
-        }
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
         Screens.Instance.HideGameBackground();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
@@ -111,7 +104,6 @@ public class GameStateFreeMode : GameState
         switch (customButtonData.stringData)
         {
             case ButtonId.RobotSelectionStartButton:
-                Screens.Instance.PopScreen(_gameScreenHomeHeader);
                 StartPlay();
                 break;
             case ButtonId.LevelCompleteContinue:
