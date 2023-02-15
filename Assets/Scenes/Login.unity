@@ -2742,7 +2742,6 @@ MonoBehaviour:
   - {fileID: -1283444981703196507, guid: 8ad2028d628fd974383fccacc9c680d6, type: 3}
   - {fileID: -3374904953948213828, guid: d8d8b98c30f1f7a42bdb2a7fc85dd72b, type: 3}
   - {fileID: -8750169069552571534, guid: 979ffab779f631b46acf48e34135dc26, type: 3}
-  - {fileID: 1143902020602953717, guid: cdc48064a49f6254a9d5f6830f893248, type: 3}
   - {fileID: 2150561427873410362, guid: 913bf352e0463e646a9efe560a468c11, type: 3}
   - {fileID: -6765568567771343533, guid: 31fab7717676b1846b098cb6ec562bc3, type: 3}
   - {fileID: 415841699742652084, guid: b7b72207b5e3b0844889131f026150de, type: 3}
@@ -2765,6 +2764,8 @@ MonoBehaviour:
   - {fileID: 469175161133347662, guid: 02432dea2cbc19b4bb8a543bd8ba9205, type: 3}
   - {fileID: -8845832395269499321, guid: d1f0287255b600a4789902046db5870b, type: 3}
   - {fileID: -8321852107518593474, guid: 5833c7aeacf32f2469299366d78b1a87, type: 3}
+  - {fileID: 7286085697189625235, guid: b341d299196557147b40a7edcef39ed3, type: 3}
+  - {fileID: 294084577123265818, guid: b3acde4dd52056042b19f348d6e9ecc0, type: 3}
   uiCamera: {fileID: 159182118}
   screenLocationParentsMobile:
   - location: 0

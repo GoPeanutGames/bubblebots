@@ -6,7 +6,6 @@ public class GameStateHome : GameState
 	private GameScreenHomeHeader _gameScreenHomeHeader;
 	private GameScreenHomeSideBar _gameScreenHomeSideBar;
 	private GameScreenHome _gameScreenHome;
-	private GameScreenModeSelect _gameScreenModeSelect;
 	private GameScreenLoading _gameScreenLoading;
 	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
 	private GameScreenComingSoonGeneric _gameScreenComingSoonGeneric;
@@ -50,6 +49,7 @@ public class GameStateHome : GameState
 		{
 			_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
 		}
+
 		Screens.Instance.BringToFront<GameScreenLoading>();
 		GameScreenHomeHeader.ResourcesSet += ResourcesSet;
 		UserManager.CallbackWithResources += ResourcesReceived;
@@ -75,7 +75,7 @@ public class GameStateHome : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.MainMenuBottomHUDPlay:
-				ShowModeSelect();
+				stateMachine.PushState(new GameStateSelectMode());
 				break;
 			case ButtonId.MainMenuBottomHUDFriends:
 				ShowComingSoonGeneric();
@@ -92,9 +92,6 @@ public class GameStateHome : GameState
 			case ButtonId.ComingSoonItemsClose:
 				HideComingSoonItems();
 				break;
-			case ButtonId.ModeSelectBackButton:
-				HideModeSelect();
-				break;
 			case ButtonId.MainMenuTopHUDGemPlus:
 			case ButtonId.MainMenuBottomHUDStore:
 				ShowStore();
@@ -104,16 +101,6 @@ public class GameStateHome : GameState
 				break;
 			case ButtonId.ComingSoonGenericClose:
 				HideComingSoonGeneric();
-				break;
-			case ButtonId.ModeSelectFreeModeTooltip:
-				ShowFreeModeTooltip();
-				break;
-			case ButtonId.ModeSelectNetherModeTooltip:
-				ShowNetherModeTooltip();
-				break;
-			case ButtonId.ModeSelectFreeModeTooltipBack:
-			case ButtonId.ModeSelectNetherModeTooltipBack:
-				HideFreeModeTooltip();
 				break;
 			case ButtonId.ModeSelectFreeMode:
 				PlayFreeMode();
@@ -129,8 +116,6 @@ public class GameStateHome : GameState
 				break;
 			case ButtonId.NotEnoughGemsBack:
 				CloseNotEnoughGems();
-				break;
-			default:
 				break;
 		}
 	}
@@ -172,39 +157,10 @@ public class GameStateHome : GameState
 		Screens.Instance.PopScreen(_gameScreenComingSoonItems);
 	}
 
-	private void ShowFreeModeTooltip()
-	{
-		_gameScreenModeSelect.ShowToolTipFreeMode();
-	}
-
-	private void ShowNetherModeTooltip()
-	{
-		_gameScreenModeSelect.ShowToolTipNetherMode();
-	}
-
-	private void HideFreeModeTooltip()
-	{
-		_gameScreenModeSelect.HideToolTips();
-	}
-
-	private void HideModeSelect()
-	{
-		Screens.Instance.PopScreen(_gameScreenModeSelect);
-		_gameScreenHomeHeader.ShowPlayerInfoGroup();
-	}
-
-	private void ShowModeSelect()
-	{
-		_gameScreenModeSelect = Screens.Instance.PushScreen<GameScreenModeSelect>();
-		Screens.Instance.BringToFront<GameScreenHomeHeader>();
-		_gameScreenHomeHeader.HidePlayerInfoGroup();
-	}
-
 	private void PlayFreeMode()
 	{
 		Screens.Instance.PopScreen(_gameScreenHome);
 		Screens.Instance.PopScreen(_gameScreenHomeFooter);
-		Screens.Instance.PopScreen(_gameScreenModeSelect);
 		stateMachine.PushState(new GameStateFreeMode());
 	}
 
@@ -232,7 +188,6 @@ public class GameStateHome : GameState
 	{
 		Screens.Instance.PopScreen(_gameScreenHome);
 		Screens.Instance.PopScreen(_gameScreenHomeFooter);
-		Screens.Instance.PopScreen(_gameScreenModeSelect);
 		Screens.Instance.PopScreen(_gameScreenHomeSideBar);
 		stateMachine.PushState(new GameStateNetherMode());
 	}
@@ -241,7 +196,7 @@ public class GameStateHome : GameState
 	{
 		stateMachine.PushState(new GameStateStore());
 	}
-	
+
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);

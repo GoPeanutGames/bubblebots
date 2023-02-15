@@ -61,7 +61,7 @@ public static class ButtonId
     public const string ComingSoonItemsClose = "comingsoon.items.close";
     
     //mode select
-    public const string ModeSelectBackButton = "modeselect.back";
+    public const string ModeSelectCloseButton = "modeselect.close";
     public const string ModeSelectNethermode = "modeselect.nethermode";
     public const string ModeSelectFreeMode = "modeselect.freemode";
     public const string ModeSelectNetherModeTooltip = "modeselect.nethermode.tooltip";
