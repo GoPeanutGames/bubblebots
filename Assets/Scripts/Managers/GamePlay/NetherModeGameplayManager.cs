@@ -314,7 +314,8 @@ public class NetherModeGameplayManager : MonoBehaviour
     private void OnNetherModeComplete()
     {
         serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
-        GameEventsManager.Instance.PostEvent(new GameEventNetherModeComplete() { eventName = GameEvents.NetherModeComplete, numBubblesWon = sessionData.GetTotalBubbles()});
+        if(IsFinished())
+            GameEventsManager.Instance.PostEvent(new GameEventNetherModeComplete() { eventName = GameEvents.NetherModeComplete, numBubblesWon = sessionData.GetTotalBubbles()});
     }
 
     IEnumerator EndLevelSequence()

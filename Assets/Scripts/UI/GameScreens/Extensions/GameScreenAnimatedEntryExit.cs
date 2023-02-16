@@ -6,12 +6,14 @@ public class GameScreenAnimatedEntryExit : GameScreen
 
     public void StartOpen()
     {
+        if (AnimatorComponent == null) return;
         AnimatorComponent.SetTrigger("Enter");
     }
 
     public void StartClose(Action closeSuccess = null)
     {
         _closeCallback = closeSuccess;
+        if (AnimatorComponent == null) return;
         AnimatorComponent.SetTrigger("Exit");
     }
 
