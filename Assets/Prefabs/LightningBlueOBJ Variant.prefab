@@ -1,0 +1,107 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &549090794779723962
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 128572, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_Name
+      value: LightningBlueOBJ
+      objectReference: {fileID: 0}
+    - target: {fileID: 128572, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 128572, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 450904, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11464288, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 13576440, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+    - {fileID: 5479992, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+    - {fileID: 11464288, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: c381319d1b39d9e4da9530bd4d30d365, type: 3}
+--- !u!1 &549090794779819654 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 128572, guid: c381319d1b39d9e4da9530bd4d30d365,
+    type: 3}
+  m_PrefabInstance: {fileID: 549090794779723962}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1787124903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549090794779819654}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3132a85676ab05b4e8ad98b49ce7714b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  impactParticle: {fileID: 121496, guid: 5e8a137808d7d374487f34e236c723db, type: 3}
+  projectileParticle: {fileID: 163948, guid: 153ff601b9ac43240921bf65f009e220, type: 3}
+  muzzleParticle: {fileID: 170656, guid: 0d5c766eef271384bab79cf527f98264, type: 3}

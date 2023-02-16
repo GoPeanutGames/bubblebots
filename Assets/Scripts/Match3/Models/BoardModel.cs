@@ -102,6 +102,8 @@ namespace BubbleBots.Match3.Models
                 return null;
             }
             MatchTestResult matchTestResult = new MatchTestResult();
+            matchTestResult.id = cells[posX][posY].gem.GetId();
+
             for (int i = 0; i < shape.offsets.Count; ++i)
             {
                 bool foundMatch = false;
@@ -205,7 +207,7 @@ namespace BubbleBots.Match3.Models
             cells[newPosX][newPosY].gem.SetId(id);
         }
 
-        public void RemoveGems(List<Vector2Int> toRemove)
+        public void RemoveGems(List<Explosion> toRemove)
         {
             if (toRemove == null)
             {
@@ -213,7 +215,7 @@ namespace BubbleBots.Match3.Models
             }
             for (int i = 0; i < toRemove.Count; ++i)
             {
-                cells[toRemove[i].x][toRemove[i].y].empty = true;
+                cells[toRemove[i].position.x][toRemove[i].position.y].empty = true;
             }
         }
 
@@ -298,9 +300,9 @@ namespace BubbleBots.Match3.Models
             return gemMoves;
         }
 
-        public List<Vector2Int> BombBlast(int posX, int posY, int bombRadius = 1)
+        public List<Explosion> BombBlast(int posX, int posY, int bombRadius = 1)
         {
-            List<Vector2Int> toExplode = new List<Vector2Int>();
+            List<Explosion> toExplode = new List<Explosion>();
 
             if (bombRadius == 1)
             {
@@ -315,7 +317,11 @@ namespace BubbleBots.Match3.Models
                         {
                             continue;
                         }
-                        toExplode.Add(new Vector2Int(posX + i, posY + j));
+                        toExplode.Add(new Explosion()
+                        {
+                            position = new Vector2Int(posX + i, posY + j),
+                            id = cells[posX + i][posY + j].gem.GetId()
+                        });
                         cells[posX + i][posY + j].empty = true;
                     }
             }
@@ -361,16 +367,20 @@ namespace BubbleBots.Match3.Models
 
                 for (int i = 0; i < possible4RadiusExplodes[maxIndex].Count; ++i)
                 {
-                    toExplode.Add(possible4RadiusExplodes[maxIndex][i]);
+                    toExplode.Add(new Explosion()
+                    {
+                        position = possible4RadiusExplodes[maxIndex][i],
+                        id = cells[possible4RadiusExplodes[maxIndex][i].x][possible4RadiusExplodes[maxIndex][i].y].gem.GetId()
+                    });
                     cells[possible4RadiusExplodes[maxIndex][i].x][possible4RadiusExplodes[maxIndex][i].y].empty = true;
                 }
             }
             return toExplode;
         }
 
-        public List<Vector2Int> HammerBlast(int posX, int posY, int rangeX, int rangeY)
+        public List<Explosion> HammerBlast(int posX, int posY, int rangeX, int rangeY)
         {
-            List<Vector2Int> toExplode = new List<Vector2Int>();
+            List<Explosion> toExplode = new List<Explosion>();
             for (int i = -rangeX; i <= rangeX; ++i)
             {
                 if (!BoundaryTest(posX + i, posY) || i == 0)
@@ -381,7 +391,12 @@ namespace BubbleBots.Match3.Models
                 {
                     continue;
                 }
-                toExplode.Add(new Vector2Int(posX + i, posY));
+                toExplode.Add(
+                    new Explosion()
+                    {
+                        position = new Vector2Int(posX + i, posY),
+                        id = cells[posX + i][posY].gem.GetId()
+                    });
                 cells[posX + i][posY].empty = true;
             }
             for (int i = -rangeY; i <= rangeY; ++i)
@@ -394,39 +409,59 @@ namespace BubbleBots.Match3.Models
                 {
                     continue;
                 }
-                toExplode.Add(new Vector2Int(posX, posY + i));
+                toExplode.Add(
+                    new Explosion()
+                    {
+                        position = new Vector2Int(posX, posY + i),
+                        id = cells[posX][posY + i].gem.GetId()
+                    });
                 cells[posX][posY + i].empty = true;
             }
-            toExplode.Add(new Vector2Int(posX, posY));
+            toExplode.Add(
+                new Explosion()
+                {
+                    position = new Vector2Int(posX, posY),
+                    id = cells[posX][posY].gem.GetId()
+                });
             cells[posX][posY].empty = true;
             return toExplode;
         }
 
-        public List<Vector2Int> LineBlast(int posX, int posY)
+        public List<Explosion> LineBlast(int posX, int posY)
         {
-            List<Vector2Int> toExplode = new List<Vector2Int>();
+            List<Explosion> toExplode = new List<Explosion>();
             for (int i = 0; i < width; ++i)
             {
                 if (cells[i][posY].empty)
                 {
                     continue;
                 }
-                toExplode.Add(new Vector2Int(i, posY));
+                toExplode.Add(
+                    new Explosion()
+                    {
+                        position = new Vector2Int(i, posY),
+                        id = cells[i][posY].gem.GetId()
+                    });
                 cells[i][posY].empty = true;
             }
             return toExplode;
         }
 
-        public List<Vector2Int> ColumnBlast(int posX, int posY)
+        public List<Explosion> ColumnBlast(int posX, int posY)
         {
-            List<Vector2Int> toExplode = new List<Vector2Int>();
+            List<Explosion> toExplode = new List<Explosion>();
             for (int i = 0; i < height; ++i)
             {
                 if (cells[posX][i].empty)
                 {
                     continue;
                 }
-                toExplode.Add(new Vector2Int(posX, i));
+                toExplode.Add(
+                    new Explosion()
+                    {
+                        position = new Vector2Int(posX, i),
+                        id = cells[posX][i].gem.GetId()
+                    });
                 cells[posX][i].empty = true;
             }
             return toExplode;
@@ -472,9 +507,9 @@ namespace BubbleBots.Match3.Models
             return possibleChanges;
         }
 
-        public List<Vector2Int> GetAllById(string targetColor)
+        public List<Explosion> GetAllById(string targetColor)
         {
-            List<Vector2Int> gemsOfColor = new List<Vector2Int>();
+            List<Explosion> gemsOfColor = new List<Explosion>();
             for (int i = 0; i < width; ++i)
                 for (int j = 0; j < height; ++j)
                 {
@@ -484,7 +519,11 @@ namespace BubbleBots.Match3.Models
                     {
                         continue;
                     }
-                    gemsOfColor.Add(new Vector2Int(i, j));
+                    gemsOfColor.Add(new Explosion()
+                    {
+                        position = new Vector2Int(i, j),
+                        id = targetColor
+                    });
                 }
 
             return gemsOfColor;
@@ -507,14 +546,18 @@ namespace BubbleBots.Match3.Models
             }
         }
 
-        public List<Vector2Int> BoardBlast()
+        public List<Explosion> BoardBlast()
         {
             DisableSpecialBug();
-            List<Vector2Int> toExplode = new List<Vector2Int>();
+            List<Explosion> toExplode = new List<Explosion>();
             for (int i = 0; i < width; ++i)
                 for (int j = 0; j < height; ++j)
                 {
-                    toExplode.Add(new Vector2Int(i, j));
+                    toExplode.Add(new Explosion()
+                    {
+                        position = new Vector2Int(i, j),
+                        id = cells[i][j].gem.GetId()
+                    });
                     cells[i][j].empty = true;
                 }
             return toExplode;

@@ -574,7 +574,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
                 //GameGUI.ColorBlastEffect(colorBlastEvent.colorBlastPosition.x, colorBlastEvent.colorBlastPosition.y);
                 for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
                 {
-                    GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, specialSpecialMatch ? 0.4f : 0.2f, 3);
+                    GameGUI.ColorBombEffect(swapResult.explodeEvents[i].toExplode[j].position.x, swapResult.explodeEvents[i].toExplode[j].position.y, specialSpecialMatch ? 0.4f : 0.2f, 3);
                 }
                 SoundManager.Instance?.PlayColorSfx();
                 yield return new WaitForSeconds(6 * (specialSpecialMatch ? 0.4f : 0.2f) + 0.01f); // should fix and implement total duration and remove harcode,  duration  * 2 * numShakes 
@@ -607,10 +607,10 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
             SoundManager.Instance?.PlayComboSfx(combo);
             for (int j = 0; j < swapResult.explodeEvents[i].toExplode.Count; ++j)
             {
-                GameGUI.ExplodeTile(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y, false);
-                if (boardController.GetBoardModel()[swapResult.explodeEvents[i].toExplode[j].x][swapResult.explodeEvents[i].toExplode[j].y].gem.IsBubble())
+                GameGUI.ExplodeTile(swapResult.explodeEvents[i].toExplode[j].position.x, swapResult.explodeEvents[i].toExplode[j].position.y, swapResult.explodeEvents[i].toExplode[j].id, false);
+                if (boardController.GetBoardModel()[swapResult.explodeEvents[i].toExplode[j].position.x][swapResult.explodeEvents[i].toExplode[j].position.y].gem.IsBubble())
                 {
-                    BubbleExploded(swapResult.explodeEvents[i].toExplode[j].x, swapResult.explodeEvents[i].toExplode[j].y);
+                    BubbleExploded(swapResult.explodeEvents[i].toExplode[j].position.x, swapResult.explodeEvents[i].toExplode[j].position.y);
                 }
             }
             onGemsExploded?.Invoke(swapResult.explodeEvents[i].toExplode.Count);

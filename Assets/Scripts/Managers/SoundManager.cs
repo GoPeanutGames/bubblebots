@@ -7,6 +7,7 @@ public class SoundManager : MonoSingleton<SoundManager>
 {
     public AudioSource musicSource;
     public AudioSource sfxSource;
+    public AudioSource lightningSource;
 
     public AudioClip StartMusic;
     public AudioClip RobotSelectMusic;
@@ -19,6 +20,9 @@ public class SoundManager : MonoSingleton<SoundManager>
     public AudioClip BombSfx;
     public AudioClip StartButtonSfx;
     public AudioClip MetamaskSfx;
+
+    public AudioClip lightningMissile;
+    public AudioClip lightningExplosion;
 
     private bool muted = false;
 
@@ -95,6 +99,16 @@ public class SoundManager : MonoSingleton<SoundManager>
             combo = 5;
         }
         sfxSource.PlayOneShot(ComboSfxs[combo]);
+    }
+
+    public void PlayLightningMissile()
+    {
+        lightningSource.PlayOneShot(lightningMissile);
+    }
+
+    public void PlayLightningExplosion()
+    {
+        lightningSource.PlayOneShot(lightningExplosion);
     }
 
     public void PlayHammerSfx()

@@ -343,12 +343,12 @@ public class GUIGame : MonoBehaviour
     }
 
 
-    public void SpawnTileDamageToEnemyRobot(int x, int y)
+    public void SpawnTileDamageToEnemyRobot(int x, int y, string id)
     {
         if (true)
         {
             EnemyRobot targetedRobot = GetComponent<GameScreenGame>().GetTargetedRobot();
-            
+
             Transform explodedTile = BoardParent.transform.Find("Tile_" + x + "_" + y);
             if (explodedTile == null)
             {
@@ -373,20 +373,81 @@ public class GUIGame : MonoBehaviour
                 rect.sizeDelta = new Vector2(TileSize, TileSize);
                 rect.localScale = Vector3.one;
 
-                GameObject bullet = Instantiate(VFXManager.Instance.bullet, animObject.transform);
+                GameObject bullet = Instantiate(VFXManager.Instance.GetMissileForId(id), animObject.transform);
                 bullet.SetActive(true);
+                bullet.GetComponent<OrbDamageMissile>().Init();
 
-                animObject.transform.DOMove(targetedRobot.transform.position, .36f).OnComplete(() => { Destroy(animObject); });
+                animObject.transform.DOMove(targetedRobot.transform.position, .36f).OnComplete(() =>
+                {
+                    SoundManager.Instance.PlayLightningExplosion();
+                    animObject.GetComponentInChildren<OrbDamageMissile>().Explode();
+                    Destroy(animObject, 3f);
+                });
             }
         }
 
 
     }
 
-    public void ExplodeTile(int x, int y, bool destroyTile)
+    //public void Update()
+    //{
+    //    //if (Input.GetMouseButtonDown(0))
+    //    //{
+    //    //    //TestFire();
+    //    //}
+    //}
+
+
+
+    //public void TestFire()
+    //{
+    //    int x = 0;
+    //    int y = 0;
+
+    //    EnemyRobot targetedRobot = GetComponent<GameScreenGame>().GetTargetedRobot();
+
+    //    Transform explodedTile = BoardParent.transform.Find("Tile_" + x + "_" + y);
+    //    if (explodedTile == null)
+    //    {
+    //        explodedTile = BoardParent.transform.Find("Tile_" + x + "_" + y + "_deleted");
+    //    }
+
+    //    if (targetedRobot != null && explodedTile != null)
+    //    {
+    //        GameObject animObject = new GameObject();
+    //        animObject.transform.SetParent(BoardParent.transform);
+    //        animObject.name = "moveToTopTile_" + x + "_" + y;
+    //        animObject.SetActive(true);
+
+    //        RectTransform rect = animObject.GetComponent<RectTransform>();
+    //        if (rect == null)
+    //        {
+    //            rect = animObject.AddComponent<RectTransform>();
+    //        }
+
+    //        Vector3 position = backgroundTiles[x, y].transform.GetComponent<RectTransform>().anchoredPosition3D;
+    //        rect.anchoredPosition3D = position;
+    //        rect.sizeDelta = new Vector2(TileSize, TileSize);
+    //        rect.localScale = Vector3.one;
+
+    //        GameObject bullet = Instantiate(VFXManager.Instance.GetMissileForId("-1"), animObject.transform);
+    //        bullet.SetActive(true);
+    //        bullet.GetComponent<OrbDamageMissile>().Init();
+
+    //        //SoundManager.Instance.PlayLightningMissile();
+    //        animObject.transform.DOMove(targetedRobot.transform.position, .36f).OnComplete(() =>
+    //        {
+    //            SoundManager.Instance.PlayLightningExplosion();
+    //            animObject.GetComponentInChildren<OrbDamageMissile>().Explode();
+    //            Destroy(animObject, 2f);
+    //        });
+    //    }
+    //}
+
+    public void ExplodeTile(int x, int y, string id, bool destroyTile)
     {
-        SpawnTileDamageToEnemyRobot(x, y);
-        
+        SpawnTileDamageToEnemyRobot(x, y, id);
+
         GameObject explosionEffect = InstantiateOrReuseExplosion();
         Transform tile = BoardParent.transform.Find("Tile_" + x + "_" + y);
 

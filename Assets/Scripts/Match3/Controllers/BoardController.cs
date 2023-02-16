@@ -38,7 +38,7 @@ namespace BubbleBots.Match3.Controllers
         public void PopulateBoardWithPredefinedGems(LevelDesign levelDesign)
         {
             //levelDesign.LoadFromJson("Assets/Data/Levels/LevelDesign/level.json");
-            
+
             for (int i = 0; i < boardModel.width; i++)
                 for (int j = 0; j < boardModel.height; ++j)
                 {
@@ -131,7 +131,7 @@ namespace BubbleBots.Match3.Controllers
                 toExplode = new HashSet<ToExplode>(ExplodeSpecialNormal(ref swapResult, startX, startY, releaseX, releaseY));
                 if (toExplode.Count == 0) // no special-normal swap
                 {
-                    toExplode = new HashSet<ToExplode>(ExplodeSpecialBubble(ref swapResult, startX, startY, releaseX, releaseY)); 
+                    toExplode = new HashSet<ToExplode>(ExplodeSpecialBubble(ref swapResult, startX, startY, releaseX, releaseY));
                     if (toExplode.Count == 0) // no special-bubble swap
                     {
                         toExplode = new HashSet<ToExplode>(ExplodeNormalNormal(ref swapResult, startX, startY, releaseX, releaseY));
@@ -237,7 +237,7 @@ namespace BubbleBots.Match3.Controllers
                         //fun bug
                         if (boardModel[matchTestResult.match[0].x][matchTestResult.match[0].y].gem.IsSpecial())
                         {
-                            List<Vector2Int> boardBlast = boardModel.BoardBlast();
+                            List<Explosion> boardBlast = boardModel.BoardBlast();
                             BoardBlastEvent boardBlastEventFunBug = new BoardBlastEvent()
                             {
                                 blastPosition = new Vector2Int(i, j),
@@ -250,8 +250,17 @@ namespace BubbleBots.Match3.Controllers
                         }
 
                         ExplodeEvent explodeEvent = new ExplodeEvent();
-                        explodeEvent.toExplode = new List<Vector2Int>();
-                        explodeEvent.toExplode.AddRange(matchTestResult.match);
+                        explodeEvent.toExplode = new List<Explosion>();
+
+                        foreach (Vector2Int pos in matchTestResult.match)
+                        {
+                            explodeEvent.toExplode.Add(new Explosion()
+                            {
+                                position = pos,
+                                id = matchTestResult.id
+                            });
+                        }
+
 
                         if (matchTestResult.outcome != null)
                         {
@@ -290,19 +299,19 @@ namespace BubbleBots.Match3.Controllers
                 case "11": //bomb
                     Vector2Int bombPosition = explosion.position;
 
-                    List<Vector2Int> bombBlast = boardModel.BombBlast(bombPosition.x, bombPosition.y, explosion.bombRadius);
+                    List<Explosion> bombBlast = boardModel.BombBlast(bombPosition.x, bombPosition.y, explosion.bombRadius);
 
                     BombBlastEvent bombBlastEvent = new BombBlastEvent();
-                    bombBlastEvent.toExplode = new List<Vector2Int>();
+                    bombBlastEvent.toExplode = new List<Explosion>();
                     bombBlastEvent.toCreate = null;
 
-                    foreach (Vector2Int bombExplosion in bombBlast)
+                    foreach (Explosion bombExplosion in bombBlast)
                     {
-                        if (processed == null || !processed.Contains(bombExplosion))
+                        if (processed == null || !processed.Contains(bombExplosion.position))
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(bombExplosion.x, bombExplosion.y),
+                                position = new Vector2Int(bombExplosion.position.x, bombExplosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.BombBlast,
                             });
                             bombBlastEvent.toExplode.Add(bombExplosion);
@@ -318,32 +327,32 @@ namespace BubbleBots.Match3.Controllers
                         explosion.explosionSource == ToExplode.ExplosionSource.LineBlast ? false :
                         Random.Range(0f, 1f) < 0.5f ? true : false;
 
-                    List<Vector2Int> blastOutcome = lineBlast ? boardModel.LineBlast(explosion.position.x, explosion.position.y) :
+                    List<Explosion> blastOutcome = lineBlast ? boardModel.LineBlast(explosion.position.x, explosion.position.y) :
                         boardModel.ColumnBlast(explosion.position.x, explosion.position.y);
 
                     ExplodeEvent explodeEvent = lineBlast ?
                              new LineBlastExplodeEvent()
                              {
                                  lineBlastStartPosition = new Vector2Int(explosion.position.x, explosion.position.y),
-                                 toExplode = new List<Vector2Int>(),
+                                 toExplode = new List<Explosion>(),
                                  toCreate = null
                              } : new ColumnBlastEvent()
                              {
                                  columnBlastStartPosition = new Vector2Int(explosion.position.x, explosion.position.y),
-                                 toExplode = new List<Vector2Int>(),
+                                 toExplode = new List<Explosion>(),
                                  toCreate = null
                              };
-                    foreach (Vector2Int outcome in blastOutcome)
+                    foreach (Explosion outcome in blastOutcome)
                     {
-                        if (outcome.x == explosion.position.x && outcome.y == explosion.position.y)
+                        if (outcome.position.x == explosion.position.x && outcome.position.y == explosion.position.y)
                         {
                             continue;
                         }
-                        if (processed == null || !processed.Contains(outcome))
+                        if (processed == null || !processed.Contains(outcome.position))
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(outcome.x, outcome.y),
+                                position = new Vector2Int(outcome.position.x, outcome.position.y),
                                 explosionSource = lineBlast ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast,
                             });
                             explodeEvent.toExplode.Add(outcome);
@@ -351,29 +360,33 @@ namespace BubbleBots.Match3.Controllers
                     }
                     if (explodeEvent.toExplode.Count > 0)
                     {
-                        explodeEvent.toExplode.Add(explosion.position);
+                        explodeEvent.toExplode.Add(new Explosion()
+                        {
+                            position = explosion.position,
+                            id = specialId
+                        });
                         swapResult.explodeEvents.Add(explodeEvent);
                     }
                     break;
                 case "12":
-                    
+
                     Vector2Int hammerPosition = explosion.position;
 
-                    List<Vector2Int> hammerBlast = boardModel.HammerBlast(hammerPosition.x, hammerPosition.y, explosion.hammerRadius, explosion.hammerRadius);
+                    List<Explosion> hammerBlast = boardModel.HammerBlast(hammerPosition.x, hammerPosition.y, explosion.hammerRadius, explosion.hammerRadius);
 
                     HammerBlastEvent hammerBlastEvent = new HammerBlastEvent();
-                    hammerBlastEvent.toExplode = new List<Vector2Int>();
+                    hammerBlastEvent.toExplode = new List<Explosion>();
                     hammerBlastEvent.toCreate = null;
 
-                    foreach (Vector2Int hammerExplosion in hammerBlast)
+                    foreach (Explosion hammerExplosion in hammerBlast)
                     {
-                        if (processed == null || !processed.Contains(hammerExplosion))
+                        if (processed == null || !processed.Contains(hammerExplosion.position))
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(hammerExplosion.x, hammerExplosion.y),
+                                position = new Vector2Int(hammerExplosion.position.x, hammerExplosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.HammerBlast,
-                            }); 
+                            });
                             hammerBlastEvent.toExplode.Add(hammerExplosion);
                         }
                     }
@@ -398,22 +411,22 @@ namespace BubbleBots.Match3.Controllers
                         targetColor = target,
                         toChange = candidates,
                         toCreate = null,
-                        toExplode = new List<Vector2Int>()
+                        toExplode = new List<Explosion>()
                     };
                     swapResult.explodeEvents.Add(colorChangeEvent);
                     break;
                 case "10":
                     string targetColor = levelData.gemSet[Random.Range(0, levelData.gemSet.Count)].gemId;
-                    List<Vector2Int> toDestroy = boardModel.GetAllById(targetColor);
+                    List<Explosion> toDestroy = boardModel.GetAllById(targetColor);
 
-                    toDestroy.Add(explosion.position);
-                    toDestroy.RemoveAll(x => processed.Contains(x));
+                    toDestroy.Add(new Explosion() { position = explosion.position});
+                    toDestroy.RemoveAll(x => processed.Contains(x.position));
 
-                    foreach (Vector2Int item in toDestroy)
+                    foreach (Explosion item in toDestroy)
                     {
                         toExplode.Add(new ToExplode()
                         {
-                            position = new Vector2Int(item.x, item.y),
+                            position = new Vector2Int(item.position.x, item.position.y),
                             explosionSource = ToExplode.ExplosionSource.ColorBlast,
                         });
                     }
@@ -448,7 +461,16 @@ namespace BubbleBots.Match3.Controllers
                     toExplode.Add(explosion);
                 }
                 ExplodeEvent explodeEvent = new ExplodeEvent();
-                explodeEvent.toExplode = new List<Vector2Int>(matchTestResult.match);
+                explodeEvent.toExplode = new List<Explosion>(/*matchTestResult.match*/);
+                foreach (Vector2Int pos in matchTestResult.match)
+                {
+                    explodeEvent.toExplode.Add(new Explosion()
+                    {
+                        position = pos,
+                        id = matchTestResult.id
+                    });
+                }
+
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
 
@@ -470,7 +492,15 @@ namespace BubbleBots.Match3.Controllers
                     toExplode.Add(explosion);
                 }
                 ExplodeEvent explodeEvent = new ExplodeEvent();
-                explodeEvent.toExplode = new List<Vector2Int>(matchTestResult.match);
+                explodeEvent.toExplode = new List<Explosion>(/*matchTestResult.match*/);
+                foreach (Vector2Int pos in matchTestResult.match)
+                {
+                    explodeEvent.toExplode.Add(new Explosion()
+                    {
+                        position = pos,
+                        id = matchTestResult.id
+                    });
+                }
                 explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                 swapResult.explodeEvents.Add(explodeEvent);
 
@@ -492,21 +522,21 @@ namespace BubbleBots.Match3.Controllers
         {
             HashSet<ToExplode> toExplode = new HashSet<ToExplode>();
             if ((boardModel.cells[startX][startY].gem.IsBubble() && boardModel.cells[releaseX][releaseY].gem.IsSpecial()) ||
-                (boardModel.cells[startX][startY].gem.IsSpecial() && boardModel.cells[releaseX][releaseY].gem.IsBubble())) 
-            { 
-            toExplode.Add(
-                new ToExplode()
-                {
-                    position = new Vector2Int(startX, startY),
-                    explosionSource = ToExplode.ExplosionSource.Swap
-                });
-            toExplode.Add(
-                new ToExplode()
-                {
-                    position = new Vector2Int(releaseX, releaseY),
-                    explosionSource = ToExplode.ExplosionSource.Swap
-                });
-            ///code to handle special-bubble swap
+                (boardModel.cells[startX][startY].gem.IsSpecial() && boardModel.cells[releaseX][releaseY].gem.IsBubble()))
+            {
+                toExplode.Add(
+                    new ToExplode()
+                    {
+                        position = new Vector2Int(startX, startY),
+                        explosionSource = ToExplode.ExplosionSource.Swap
+                    });
+                toExplode.Add(
+                    new ToExplode()
+                    {
+                        position = new Vector2Int(releaseX, releaseY),
+                        explosionSource = ToExplode.ExplosionSource.Swap
+                    });
+                ///code to handle special-bubble swap
             }
             return toExplode;
         }
@@ -533,7 +563,15 @@ namespace BubbleBots.Match3.Controllers
                         toExplode.Add(explosion);
                     }
                     ExplodeEvent explodeEvent = new ExplodeEvent();
-                    explodeEvent.toExplode = new List<Vector2Int>(matchTestResult.match);
+                    explodeEvent.toExplode = new List<Explosion>(/*matchTestResult.match*/);
+                    foreach (Vector2Int pos in matchTestResult.match)
+                    {
+                        explodeEvent.toExplode.Add(new Explosion()
+                        {
+                            position = pos,
+                            id = matchTestResult.id
+                        });
+                    }
                     explodeEvent.toCreate = new List<GemCreate>() { matchTestResult.outcome };
                     swapResult.explodeEvents.Add(explodeEvent);
                 }
@@ -548,7 +586,7 @@ namespace BubbleBots.Match3.Controllers
                         toExplode.Add(new ToExplode() { explosionSource = ToExplode.ExplosionSource.Swap, position = new Vector2Int(startX, startY) });
                         toExplode.Add(new ToExplode() { explosionSource = ToExplode.ExplosionSource.Swap, position = new Vector2Int(releaseX, releaseY) });
 
-                        List<Vector2Int> blast = isLineBlast ? boardModel.LineBlast(startX, startY) : boardModel.ColumnBlast(startX, startY);
+                        List<Explosion> blast = isLineBlast ? boardModel.LineBlast(startX, startY) : boardModel.ColumnBlast(startX, startY);
 
                         ExplodeEvent explodeEvent = isLineBlast ?
                              new LineBlastExplodeEvent()
@@ -564,19 +602,19 @@ namespace BubbleBots.Match3.Controllers
                              };
                         swapResult.explodeEvents.Add(explodeEvent);
 
-                        foreach (Vector2Int explosion in blast)
+                        foreach (Explosion explosion in blast)
                         {
-                            if (explosion.x == startX && explosion.y == startY)
+                            if (explosion.position.x == startX && explosion.position.y == startY)
                             {
                                 continue;
                             }
-                            if (explosion.x == releaseX && explosion.y == releaseY)
+                            if (explosion.position.x == releaseX && explosion.position.y == releaseY)
                             {
                                 continue;
                             }
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = isLineBlast ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast
                             });
                         }
@@ -586,12 +624,12 @@ namespace BubbleBots.Match3.Controllers
                         Vector2Int hammerPosition = boardModel[startX][startY].gem.IsSpecial() ? new Vector2Int(startX, startY) :
                             new Vector2Int(releaseX, releaseY);
 
-                        List<Vector2Int> hammerBlast = boardModel.HammerBlast(hammerPosition.x, hammerPosition.y, explosionRange, explosionRange);
-                        foreach (Vector2Int explosion in hammerBlast)
+                        List<Explosion> hammerBlast = boardModel.HammerBlast(hammerPosition.x, hammerPosition.y, explosionRange, explosionRange);
+                        foreach (Explosion explosion in hammerBlast)
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.HammerBlast
                             });
                         }
@@ -604,13 +642,13 @@ namespace BubbleBots.Match3.Controllers
                         Vector2Int bombPosition = boardModel[startX][startY].gem.IsSpecial() ? new Vector2Int(startX, startY) :
                             new Vector2Int(releaseX, releaseY);
 
-                        List<Vector2Int> bombBlast = boardModel.BombBlast(bombPosition.x, bombPosition.y);
+                        List<Explosion> bombBlast = boardModel.BombBlast(bombPosition.x, bombPosition.y);
 
-                        foreach (Vector2Int explosion in bombBlast)
+                        foreach (Explosion explosion in bombBlast)
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.BombBlast
                             });
                         }
@@ -642,15 +680,18 @@ namespace BubbleBots.Match3.Controllers
                     case "10": //color bomb
                         string targetColor = boardModel[startX][startY].gem.IsSpecial() ? boardModel[releaseX][releaseY].gem.GetId() :
                             boardModel[startX][startY].gem.GetId();
-                        List<Vector2Int> toDestroy = boardModel.GetAllById(targetColor);
+                        List<Explosion> toDestroy = boardModel.GetAllById(targetColor);
 
-                        toDestroy.Add(boardModel[startX][startY].gem.IsSpecial() ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY));
+                        toDestroy.Add(
+                            new Explosion() {
+                                position = boardModel[startX][startY].gem.IsSpecial() ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY)
+                            });
 
-                        foreach (Vector2Int explosion in toDestroy)
+                        foreach (Explosion explosion in toDestroy)
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.ColorBlast
                             });
                         }
@@ -687,8 +728,8 @@ namespace BubbleBots.Match3.Controllers
                         toExplode.Add(new ToExplode() { explosionSource = ToExplode.ExplosionSource.Swap, position = new Vector2Int(releaseX, releaseY) });
 
 
-                        List<Vector2Int> lineBlast1 = boardModel.LineBlast(startX, startY);
-                        List<Vector2Int> lineBlast2 = boardModel.LineBlast(releaseX, releaseY);
+                        List<Explosion> lineBlast1 = boardModel.LineBlast(startX, startY);
+                        List<Explosion> lineBlast2 = boardModel.LineBlast(releaseX, releaseY);
 
                         LineBlastExplodeEvent lineBlastExplodeEvent = new LineBlastExplodeEvent()
                         {
@@ -709,34 +750,34 @@ namespace BubbleBots.Match3.Controllers
                             swapResult.explodeEvents.Add(lineBlastExplodeEvent);
                         }
 
-                        HashSet<Vector2Int> lineBlasts = new HashSet<Vector2Int>(lineBlast1);
+                        HashSet<Explosion> lineBlasts = new HashSet<Explosion>(lineBlast1);
                         lineBlasts.UnionWith(lineBlast2);
 
-                        foreach (Vector2Int explosion in lineBlasts)
+                        foreach (Explosion explosion in lineBlasts)
                         {
-                            if (explosion.x == startX && explosion.y == startY)
+                            if (explosion.position.x == startX && explosion.position.y == startY)
                             {
                                 continue;
                             }
-                            if (explosion.x == releaseX && explosion.y == releaseY)
+                            if (explosion.position.x == releaseX && explosion.position.y == releaseY)
                             {
                                 continue;
                             }
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.LineBlast
                             });
                         }
 
 
-                        List<Vector2Int> columnBlast1 = boardModel.ColumnBlast(startX, startY);
-                        List<Vector2Int> columnBlast2 = boardModel.ColumnBlast(releaseX, releaseY);
+                        List<Explosion> columnBlast1 = boardModel.ColumnBlast(startX, startY);
+                        List<Explosion> columnBlast2 = boardModel.ColumnBlast(releaseX, releaseY);
 
                         ColumnBlastEvent columnBlastEvent = new ColumnBlastEvent()
                         {
                             columnBlastStartPosition = new Vector2Int(startX, startY),
-                            toExplode = new List<Vector2Int>(columnBlast1),
+                            toExplode = new List<Explosion>(columnBlast1),
                             toCreate = null
                         };
                         swapResult.explodeEvents.Add(columnBlastEvent);
@@ -746,28 +787,28 @@ namespace BubbleBots.Match3.Controllers
                             columnBlastEvent = new ColumnBlastEvent()
                             {
                                 columnBlastStartPosition = new Vector2Int(releaseX, releaseY),
-                                toExplode = new List<Vector2Int>(columnBlast2),
+                                toExplode = new List<Explosion>(columnBlast2),
                                 toCreate = null
                             };
                             swapResult.explodeEvents.Add(columnBlastEvent);
                         }
 
-                        HashSet<Vector2Int> columnBlasts = new HashSet<Vector2Int>(columnBlast1);
+                        HashSet<Explosion> columnBlasts = new HashSet<Explosion>(columnBlast1);
                         columnBlasts.UnionWith(columnBlast2);
 
-                        foreach (Vector2Int explosion in columnBlasts)
+                        foreach (Explosion explosion in columnBlasts)
                         {
-                            if (explosion.x == startX && explosion.y == startY)
+                            if (explosion.position.x == startX && explosion.position.y == startY)
                             {
                                 continue;
                             }
-                            if (explosion.x == releaseX && explosion.y == releaseY)
+                            if (explosion.position.x == releaseX && explosion.position.y == releaseY)
                             {
                                 continue;
                             }
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.ColumnBlast
                             });
                         }
@@ -775,12 +816,12 @@ namespace BubbleBots.Match3.Controllers
                     case "12": // hammer-hammer
                         int explosionRange = 2;
 
-                        List<Vector2Int> hammerBlast = boardModel.HammerBlast(startX, startY, explosionRange, explosionRange);
-                        foreach (Vector2Int explosion in hammerBlast)
+                        List<Explosion> hammerBlast = boardModel.HammerBlast(startX, startY, explosionRange, explosionRange);
+                        foreach (Explosion explosion in hammerBlast)
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.HammerBlast
                             });
                         }
@@ -790,11 +831,11 @@ namespace BubbleBots.Match3.Controllers
                         swapResult.explodeEvents.Add(hammerBlastEvent1);
 
                         hammerBlast = boardModel.HammerBlast(releaseX, releaseY, explosionRange, explosionRange);
-                        foreach (Vector2Int explosion in hammerBlast)
+                        foreach (Explosion explosion in hammerBlast)
                         {
                             toExplode.Add(new ToExplode()
                             {
-                                position = new Vector2Int(explosion.x, explosion.y),
+                                position = new Vector2Int(explosion.position.x, explosion.position.y),
                                 explosionSource = ToExplode.ExplosionSource.HammerBlast
                             });
                         }
@@ -806,7 +847,7 @@ namespace BubbleBots.Match3.Controllers
                     case "11":
                     case "10":
                     case "13":
-                        List<Vector2Int> boardBlast = boardModel.BoardBlast();
+                        List<Explosion> boardBlast = boardModel.BoardBlast();
 
                         BoardBlastEvent boardBlastEvent = new BoardBlastEvent()
                         {
@@ -832,7 +873,7 @@ namespace BubbleBots.Match3.Controllers
                 if (specialId1 == "13" || specialId2 == "13" ||
                     specialId1 == "10" || specialId2 == "10") // color switch and color bomb with anything = board blast
                 {
-                    List<Vector2Int> boardBlastColorSwitch = boardModel.BoardBlast();
+                    List<Explosion> boardBlastColorSwitch = boardModel.BoardBlast();
 
                     BoardBlastEvent boardBlastEventColorSwitch = new BoardBlastEvent()
                     {
@@ -852,7 +893,7 @@ namespace BubbleBots.Match3.Controllers
                     {
                         explosionSource = startX == releaseX ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast,
                         position = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
-                        bombRadius = specialId1 == "11" ?  2 : 1
+                        bombRadius = specialId1 == "11" ? 2 : 1
                     }, exclusionList));
 
                     Vector2Int bombPosition = specialId1 == "11" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY);
@@ -895,8 +936,8 @@ namespace BubbleBots.Match3.Controllers
                     toExplode.UnionWith(ExplodeSpecial(ref swapResult, new ToExplode()
                     {
                         explosionSource = startX == releaseX ? ToExplode.ExplosionSource.LineBlast : ToExplode.ExplosionSource.ColumnBlast,
-                        position = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY), 
-                        hammerRadius = lightningHammerMatch ? 2 : 1 
+                        position = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY),
+                        hammerRadius = lightningHammerMatch ? 2 : 1
                     }, exclusionList));
 
                     Vector2Int hammerPosition = specialId1 == "12" ? new Vector2Int(startX, startY) : new Vector2Int(releaseX, releaseY);
@@ -932,7 +973,7 @@ namespace BubbleBots.Match3.Controllers
             };
 
             HashSet<ToExplode> toExplode = new HashSet<ToExplode>();
-            for (int i = 0; i < boardModel.width ; i++)
+            for (int i = 0; i < boardModel.width; i++)
                 for (int j = 0; j < boardModel.height; ++j)
                 {
                     if (boardModel[i][j].gem.IsSpecial())
@@ -940,7 +981,8 @@ namespace BubbleBots.Match3.Controllers
                         if (boardModel[i][j].gem.GetId() == "10")
                         {
                             ToExplode alreadyAdded = toExplode.ToList().Find(x => (boardModel[x.position.x][x.position.y].gem.GetId() == "10"));
-                            if (alreadyAdded == null) {
+                            if (alreadyAdded == null)
+                            {
                                 toExplode.Add(new ToExplode() { position = new Vector2Int(i, j), explosionSource = ToExplode.ExplosionSource.Chain });
                             }
                         }
@@ -991,10 +1033,15 @@ namespace BubbleBots.Match3.Controllers
                 {
                     swapResult.explodeEvents.Add(new ExplodeEvent()
                     {
-                        toExplode = new List<Vector2Int>()
+                        toExplode = new List<Explosion>()
                     });
                 }
-                swapResult.explodeEvents[0].toExplode.Add(new Vector2Int(currentSpecial.position.x, currentSpecial.position.y));
+                swapResult.explodeEvents[0].toExplode.Add(
+                    new Explosion()
+                    {
+                        position = new Vector2Int(currentSpecial.position.x, currentSpecial.position.y),
+                        id = specialId
+                    });
             }
 
             for (int i = 0; i < swapResult.explodeEvents.Count; ++i)

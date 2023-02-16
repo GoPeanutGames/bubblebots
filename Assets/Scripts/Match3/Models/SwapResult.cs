@@ -10,9 +10,15 @@ namespace BubbleBots.Match3.Data
         public List<ExplodeEvent> explodeEvents;
     }
 
+    public class Explosion
+    {
+        public Vector2Int position;
+        public string id;
+    }
+
     public class ExplodeEvent
     {
-        public List<Vector2Int> toExplode;
+        public List<Explosion> toExplode;
         public List<GemCreate> toCreate;
     }
 
