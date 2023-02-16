@@ -78,6 +78,7 @@ public class StoreManager : MonoSingleton<StoreManager>
     {
         ServerManager.Instance.GetStoreDataFromServer(StoreAPI.Bundles, (jsonData) =>
         {
+            Debug.Log(jsonData);
             GetBundlesData bundlesData = JsonUtility.FromJson<GetBundlesData>(jsonData);
             bundleCallback(bundlesData.bundles);
         });
@@ -138,7 +139,7 @@ public class StoreManager : MonoSingleton<StoreManager>
                 {
                     foreach (Purchases.Package package in offering.AvailablePackages)
                     {
-                        if (package.Identifier == data.googleId)
+                        if (package.Identifier == data.revenuecatPackageId)
                         {
                             Debug.Log("found package");
                             purchases.PurchasePackage(package,
