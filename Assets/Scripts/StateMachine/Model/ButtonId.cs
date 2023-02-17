@@ -54,12 +54,7 @@ public static class ButtonId
     public const string LeaderboardFree = "leaderboard.free";
     public const string LeaderboardNether = "leaderboard.nether";
     public const string LeaderboardClose = "leaderboard.close";
-    
-    //coming soon
-    public const string ComingSoonGenericClose = "comingsoon.generic.close";
-    public const string ComingSoonNetherpassClose = "comingsoon.netherpass.close";
-    public const string ComingSoonItemsClose = "comingsoon.items.close";
-    
+
     //mode select
     public const string ModeSelectCloseButton = "modeselect.close";
     public const string ModeSelectNethermode = "modeselect.nethermode";
@@ -99,7 +94,6 @@ public static class ButtonId
     public const string LevelCompleteContinue = "level.complete.continue";
 
     //game end
-    public const string GameEndPremint = "game.end.premint";
     public const string GameEndGoToMainMenu = "game.end.mainmenu";
 
     //quit game menu

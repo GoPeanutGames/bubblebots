@@ -765,7 +765,7 @@ GameObject:
   - component: {fileID: 6808196277790847432}
   - component: {fileID: 8200186220138243552}
   m_Layer: 5
-  m_Name: AccountDisabledPopup
+  m_Name: BG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

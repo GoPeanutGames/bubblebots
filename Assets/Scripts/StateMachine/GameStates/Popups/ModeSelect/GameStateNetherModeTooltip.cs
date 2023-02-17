@@ -1,4 +1,4 @@
-public class GameStatenetherModeTooltip : GameState
+public class GameStateNetherModeTooltip : GameState
 {
 	private GamePopupNetherModeTooltip _gamePopupNetherModeTooltip;
 	
