@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using BubbleBots.Store;
 
 public class GameStateStore : GameState
@@ -6,8 +5,9 @@ public class GameStateStore : GameState
     private GameScreenStore _gameScreenStore;
     private GameScreenHomeHeader _gameScreenHomeHeader;
     private GameScreenHomeFooter _gameScreenHomeFooter;
+    private GameScreenHomeSideBar _gameScreenHomeSideBar;
     private StoreTabs _activeTab = StoreTabs.Gems;
-    private int currentlyShowingOfferIndex = 0;
+    private int _currentlyShowingOfferIndex = 0;
 
     public override string GetGameStateName()
     {
@@ -20,10 +20,12 @@ public class GameStateStore : GameState
         _gameScreenStore = Screens.Instance.PushScreen<GameScreenStore>(true);
         _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
         _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
+        _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
         Screens.Instance.BringToFront<GameScreenHomeHeader>();
         Screens.Instance.BringToFront<GameScreenHomeFooter>();
         _gameScreenHomeFooter.ShowHomeButton();
-        _gameScreenHomeHeader.HidePlayerInfoGroup();
+        _gameScreenHomeHeader.Hide();
+        _gameScreenHomeSideBar.Hide();
         ActivateTab(_activeTab);
     }
 
@@ -130,7 +132,6 @@ public class GameStateStore : GameState
         stateMachine.PushState(new GameStateHome());
         Screens.Instance.PopScreen(_gameScreenStore);
         _gameScreenHomeFooter.HideHomeButton();
-        _gameScreenHomeHeader.ShowPlayerInfoGroup();
     }
 
     public override void Disable()

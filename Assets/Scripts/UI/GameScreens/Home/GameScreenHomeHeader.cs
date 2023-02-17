@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using BubbleBots.Server.Player;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
 public class GameScreenHomeHeader : GameScreenAnimatedShowHide
@@ -16,12 +15,10 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
 
     public static Action ResourcesSet;
 
-    public GameObject playerInfoGroup;
     public TextMeshProUGUI bubblesText;
     public TextMeshProUGUI gemsText;
     public TextMeshProUGUI energyText;
     public TextMeshProUGUI usernameText;
-    public GameObject plusButton;
     public Image avatarImage;
 
     const int MAX_ENERGY = 10;
@@ -54,16 +51,6 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
         ResourcesSet?.Invoke();
     }
 
-    public void ShowPlayerInfoGroup()
-    {
-        playerInfoGroup.SetActive(true);
-    }
-
-    public void HidePlayerInfoGroup()
-    {
-        playerInfoGroup.SetActive(false);
-    }
-
     private void SetTopInfo(PlayerResource resource, int value)
     {
         _resourcesSet = true;
@@ -80,16 +67,6 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
     public bool AreResourcesSet()
     {
         return _resourcesSet;
-    }
-
-    public void EnablePlusButton()
-    {
-        plusButton.SetActive(true);
-    }
-
-    public void DisablePlusButton()
-    {
-        plusButton.SetActive(false);
     }
 
     public void RefreshData()
