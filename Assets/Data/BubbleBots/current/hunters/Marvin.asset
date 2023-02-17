@@ -19,5 +19,5 @@ MonoBehaviour:
   asEnemySprite: {fileID: 21300000, guid: 35dc30a6a0f4fcb48ae72f210fea8222, type: 3}
   frameSprite: {fileID: 21300000, guid: c274edd08c43c17448883e4b529ce470, type: 3}
   badgeSprite: {fileID: 21300000, guid: 8704189ec375d744eab93975ac2c963c, type: 3}
-  labelSprite: {fileID: 21300000, guid: e52faebfc5d4aaa4a8c483dffb932a2b, type: 3}
+  labelSprite: {fileID: 21300000, guid: deb1d9a8b7ca5134d83c7a41dfc9d0f6, type: 3}
   robotSelection: {fileID: 21300000, guid: c0cd6bdc573187642a8a063508c52a39, type: 3}

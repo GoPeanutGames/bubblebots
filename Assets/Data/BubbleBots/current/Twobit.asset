@@ -16,7 +16,8 @@ MonoBehaviour:
   botName: Twobit
   bgSprite: {fileID: 21300000, guid: e6149ea6cb34395469de163190f8196b, type: 3}
   robotSprite: {fileID: 21300000, guid: 5f4e08985aba7a6418c96e6218866920, type: 3}
+  asEnemySprite: {fileID: 0}
   frameSprite: {fileID: 21300000, guid: b6fc607832eae134aac982d416512dbb, type: 3}
   badgeSprite: {fileID: 21300000, guid: f230fd3e4c3fc554fb656c5c69a28f8a, type: 3}
-  labelSprite: {fileID: 21300000, guid: ab3a153e23816274db3a1174c92f3440, type: 3}
+  labelSprite: {fileID: 21300000, guid: b9c9196e51363ce48ac5da3be54818c3, type: 3}
   robotSelection: {fileID: 21300000, guid: a4e1c9b54be078540b991b636e929e81, type: 3}

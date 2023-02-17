@@ -128,11 +128,12 @@ public class GameStateFreeMode : GameState
     private void OpenSkinPopup()
     {
         _gameScreenSkinsInfoPopup = Screens.Instance.PushScreen<GameScreenSkinsInfoPopup>();
+        _gameScreenSkinsInfoPopup.StartOpen();
     }
 
     private void CloseSkinPopup()
     {
-        Screens.Instance.PopScreen(_gameScreenSkinsInfoPopup);
+        _gameScreenSkinsInfoPopup.StartClose();
     }
 
     private void ShowQuitRobotSelect()
