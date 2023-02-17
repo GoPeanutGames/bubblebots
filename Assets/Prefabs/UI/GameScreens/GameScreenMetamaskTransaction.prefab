@@ -709,6 +709,7 @@ GameObject:
   - component: {fileID: 3939017934564064081}
   - component: {fileID: 7659120887258469918}
   - component: {fileID: 7458621028625279004}
+  - component: {fileID: 2800385960108034491}
   m_Layer: 5
   m_Name: ConfirmTransactionBg
   m_TagString: Untagged
@@ -777,6 +778,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2800385960108034491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5676431405490686619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86710e43de46f6f4bac7c8e50813a599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AspectMode: 1
+  m_AspectRatio: 1.5416666
 --- !u!1 &6873621595597843615
 GameObject:
   m_ObjectHideFlags: 0
@@ -1243,7 +1258,7 @@ Canvas:
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
-  m_OverrideSorting: 1
+  m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
