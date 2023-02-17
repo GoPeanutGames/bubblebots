@@ -15,7 +15,6 @@ public class GameStateHome : GameState
 	private void ResetMainMenuLook()
 	{
 		_gameScreenHomeFooter.HideHomeButton();
-		_gameScreenHomeHeader.ShowPlayerInfoGroup();
 	}
 
 	public override void Enter()
