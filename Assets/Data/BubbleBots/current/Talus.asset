@@ -16,7 +16,8 @@ MonoBehaviour:
   botName: Talus
   bgSprite: {fileID: 21300000, guid: 7ffbf3a7db8a52d428323552f08a8656, type: 3}
   robotSprite: {fileID: 21300000, guid: 5939d59d84ff39549a6c579c44cab525, type: 3}
+  asEnemySprite: {fileID: 0}
   frameSprite: {fileID: 21300000, guid: c26875dd29d09c24d89016f531374613, type: 3}
   badgeSprite: {fileID: 21300000, guid: 32e8128d7d14fc94eb6df1e694940ac2, type: 3}
-  labelSprite: {fileID: 21300000, guid: 31bb66976ec207e4fbe69ab78d5e8ce6, type: 3}
+  labelSprite: {fileID: 21300000, guid: 85ac0c55bacb5024bbc6a2853f4be996, type: 3}
   robotSelection: {fileID: 21300000, guid: d50e8abb1dc414347a036c8f4d1c8f56, type: 3}

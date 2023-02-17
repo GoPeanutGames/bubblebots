@@ -16,7 +16,8 @@ MonoBehaviour:
   botName: Dustie
   bgSprite: {fileID: 21300000, guid: 291b5d5e8d82e514281494f44f3b0213, type: 3}
   robotSprite: {fileID: 21300000, guid: 46f61f720d71a23428987a1959cfc054, type: 3}
+  asEnemySprite: {fileID: 0}
   frameSprite: {fileID: 21300000, guid: c26875dd29d09c24d89016f531374613, type: 3}
   badgeSprite: {fileID: 21300000, guid: 32e8128d7d14fc94eb6df1e694940ac2, type: 3}
-  labelSprite: {fileID: 21300000, guid: ab3a153e23816274db3a1174c92f3440, type: 3}
+  labelSprite: {fileID: 21300000, guid: 85ac0c55bacb5024bbc6a2853f4be996, type: 3}
   robotSelection: {fileID: 21300000, guid: 06245b71e8c873d48be5414a0cbbf803, type: 3}

@@ -41,7 +41,7 @@ public class GameScreenRobotSelection : GameScreen
             selectableRobots.Add(selectionObject.GetComponent<RobotSelectionUIElement>());
         }
 
-        for (int i = availableBots.Count; i < 9; ++i)
+        for (int i = availableBots.Count; i < 12; ++i)
         {
             Instantiate(questionMarkItemPrefab, selectionListRoot.transform);
         }

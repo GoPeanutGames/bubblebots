@@ -1,4 +1,4 @@
-public class GameScreenSkinsInfoPopup : GameScreen
+public class GameScreenSkinsInfoPopup : GameScreenAnimatedEntryExit
 {
     
 }
