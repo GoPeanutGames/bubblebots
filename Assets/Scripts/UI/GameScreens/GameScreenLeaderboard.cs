@@ -2,11 +2,10 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameScreenLeaderboard : GameScreen
+public class GameScreenLeaderboard : GameScreenAnimatedEntryExit
 {
     public GameObject LeaderboardEntryPrefab;
     
-    public Sprite BackgroundImage;
     public Sprite ActiveTabSprite;
     public Sprite InactiveTabSprite;
     public Color InactiveColor;
