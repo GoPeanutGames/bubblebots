@@ -45,6 +45,6 @@ public class GameStateExplanatorPopup : GameState
 
 	public override void Exit()
 	{
-		_gamePopupExplanator.StartClose();
+		Screens.Instance.PopScreen(_gamePopupExplanator);
 	}
 }

@@ -5,7 +5,6 @@ public class GameStateHome : GameState
 	private GameScreenHomeSideBar _gameScreenHomeSideBar;
 	private GameScreenHome _gameScreenHome;
 	private GameScreenLoading _gameScreenLoading;
-	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
 
 	public override string GetGameStateName()
 	{
@@ -72,17 +71,11 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuSideBarLeaderboard:
 				ShowLeaderboard();
 				break;
-			case ButtonId.ModeSelectFreeMode:
-				PlayFreeMode();
-				break;
 			case ButtonId.HomeHeaderExplanator:
 				stateMachine.PushState(new GameStateExplanatorPopup());
 				break;
 			case ButtonId.MainMenuSideBarSettings:
 				stateMachine.PushState(new GameStateOptions());
-				break;
-			case ButtonId.NotEnoughGemsBack:
-				CloseNotEnoughGems();
 				break;
 		}
 	}
@@ -92,27 +85,6 @@ public class GameStateHome : GameState
 		Screens.Instance.PopScreen(_gameScreenHomeHeader);
 		Screens.Instance.PopScreen(_gameScreenHomeFooter);
 		stateMachine.PushState(new GameStateLeaderboard());
-	}
-
-	private void PlayFreeMode()
-	{
-		Screens.Instance.PopScreen(_gameScreenHome);
-		Screens.Instance.PopScreen(_gameScreenHomeFooter);
-		stateMachine.PushState(new GameStateFreeMode());
-	}
-
-	private void CloseNotEnoughGems()
-	{
-		Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
-		Screens.Instance.BringToFront<GameScreenHomeHeader>();
-	}
-
-	private void PlayNetherMode()
-	{
-		Screens.Instance.PopScreen(_gameScreenHome);
-		Screens.Instance.PopScreen(_gameScreenHomeFooter);
-		Screens.Instance.PopScreen(_gameScreenHomeSideBar);
-		stateMachine.PushState(new GameStateNetherMode());
 	}
 
 	private void ShowStore()

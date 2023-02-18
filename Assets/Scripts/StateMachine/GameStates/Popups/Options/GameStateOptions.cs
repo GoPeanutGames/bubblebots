@@ -15,6 +15,7 @@ public class GameStateOptions : GameState
     {
         _gamePopupOptions = Screens.Instance.PushScreen<GamePopupOptions>();
         _gamePopupOptions.StartOpen();
+        _finalAvatar = UserManager.Instance.GetPlayerAvatar();
         Screens.Instance.BringToFront<GamePopupOptions>();
     }
 
@@ -58,10 +59,9 @@ public class GameStateOptions : GameState
 
     private void ChangePicture()
     {
-        int avatar = UserManager.Instance.GetPlayerAvatar() + 1;
-        if (avatar == 3) avatar = 0;
-        _finalAvatar = avatar;
-        _gamePopupOptions.SetPlayerAvatar(avatar);
+        _finalAvatar++;
+        if (_finalAvatar == 3) _finalAvatar = 0;
+        _gamePopupOptions.SetPlayerAvatar(_finalAvatar);
     }
 
     private void SaveSettings()
