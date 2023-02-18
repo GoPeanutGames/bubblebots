@@ -1005,7 +1005,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: On Free Mode, you're given 10 Energies as a start. Whenever you play the
-    Free Mode, you will spend 1 Energy. it is regenerated at the rate of 1 Energy
+    Free Mode, you will spend 1 Energy. It is regenerated at the rate of 1 Energy
     every 3 hours with a fixed maximum amount of 10 Energies in store.
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3378af4a89b351c45826b1f6c3c294b3, type: 2}
