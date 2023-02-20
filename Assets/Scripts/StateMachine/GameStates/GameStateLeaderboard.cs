@@ -19,7 +19,7 @@ public class GameStateLeaderboard : GameState
     public override void Enable()
     {
         _gameScreenLeaderboard = Screens.Instance.PushScreen<GameScreenLeaderboard>();
-        Screens.Instance.HideGameBackground();
+        _gameScreenLeaderboard.StartOpen();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         currentTab = SelectedTab.Nether;
         ShowFreeData();
@@ -104,7 +104,7 @@ public class GameStateLeaderboard : GameState
 
     public override void Disable()
     {
-        Screens.Instance.PopScreen(_gameScreenLeaderboard);
+        _gameScreenLeaderboard.StartClose();
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
     }
 }

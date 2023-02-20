@@ -82,8 +82,8 @@ public class GameStateHome : GameState
 
 	private void ShowLeaderboard()
 	{
-		Screens.Instance.PopScreen(_gameScreenHomeHeader);
-		Screens.Instance.PopScreen(_gameScreenHomeFooter);
+		_gameScreenHomeHeader.Hide();
+		_gameScreenHomeSideBar.Hide();
 		stateMachine.PushState(new GameStateLeaderboard());
 	}
 
