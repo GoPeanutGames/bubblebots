@@ -25,6 +25,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03dc974d257658f4aa1115df6b505e9f, type: 2}
   - {fileID: 11400000, guid: e56b7cb2d6b55b6438dee25bd57e2d1c, type: 2}
   - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
+  - {fileID: 11400000, guid: e4d55a4467e5c184395902e765957b0c, type: 2}
+  - {fileID: 11400000, guid: 37a34d42834f676418f667f2b1fb138a, type: 2}
   enemyRobots:
   - {fileID: 11400000, guid: c5d3c7bf2b4d7a24f88b1d9b45f2961e, type: 2}
   - {fileID: 11400000, guid: 7876ec073967a774f808878c371e60e2, type: 2}

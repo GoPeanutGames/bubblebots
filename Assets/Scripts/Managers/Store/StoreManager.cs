@@ -150,8 +150,7 @@ public class StoreManager : MonoSingleton<StoreManager>
                                         if (error != null)
                                         {
                                             // show error
-                                            transactionFail?.Invoke(error.ReadableErrorCode + ":" +
-                                                                    error.UnderlyingErrorMessage);
+                                            transactionFail?.Invoke("error");
                                             
                                             Debug.Log("fail");
                                         }
@@ -165,7 +164,7 @@ public class StoreManager : MonoSingleton<StoreManager>
                                     }
                                     else
                                     {
-                                        // user cancelled, don't show an error
+                                        transactionFail?.Invoke("cancelled");
                                     }
                                 });
                         }
