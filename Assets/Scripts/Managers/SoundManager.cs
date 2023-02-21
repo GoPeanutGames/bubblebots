@@ -9,24 +9,27 @@ public class SoundManager : MonoSingleton<SoundManager>
     public AudioSource sfxSource;
     public AudioSource lightningSource;
 
-    public AudioClip StartMusic;
-    public AudioClip RobotSelectMusic;
-    public AudioClip LevelMusic;
-    public AudioClip NetherModeMusic;
+    [Header("BGM")]
+    public AudioClip homeBgm;
+    public AudioClip robotSelectBgm;
+    public AudioClip battleBgm;
+    [Header("Battle SFX")]
     public List<AudioClip> ComboSfxs;
     public AudioClip HammerSfx;
     public AudioClip ColorSfx;
     public AudioClip LightningSfx;
     public AudioClip BombSfx;
-    public AudioClip StartButtonSfx;
-    public AudioClip MetamaskSfx;
-
     public AudioClip lightningMissile;
     public AudioClip lightningExplosion;
+    [Header("Game SFX")] 
+    public AudioClip modeSelectSfx;
+    public AudioClip loginSuccessSfx;
+    public AudioClip battleLostSfx;
+    public AudioClip battleStartSfx;
 
     private bool muted = false;
 
-    private static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume)
+    private static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume, Action onFadeEnd = null)
     {
         float currentTime = 0;
         float start = audioSource.volume;
@@ -36,20 +39,7 @@ public class SoundManager : MonoSingleton<SoundManager>
             audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
             yield return null;
         }
-        yield break;
-    }
-
-    private static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume, Action onFadeEnd)
-    {
-        float currentTime = 0;
-        float start = audioSource.volume;
-        while (currentTime < duration)
-        {
-            currentTime += Time.deltaTime;
-            audioSource.volume = Mathf.Lerp(start, targetVolume, currentTime / duration);
-            yield return null;
-        }
-        onFadeEnd.Invoke();
+        onFadeEnd?.Invoke();
         yield break;
     }
 
@@ -130,38 +120,45 @@ public class SoundManager : MonoSingleton<SoundManager>
     {
         sfxSource.PlayOneShot(BombSfx);
     }
-
-    public void PlayStartButtonSfx()
+    
+    public void PlayHomeMusic()
     {
-        sfxSource.PlayOneShot(StartButtonSfx);
-    }
-
-    public void PlayMetamaskSfx()
-    {
-        sfxSource.PlayOneShot(MetamaskSfx);
-    }
-
-    public void PlayStartMusicNew()
-    {
-        musicSource.clip = StartMusic;
+        if (musicSource.clip == homeBgm) return;
+        musicSource.clip = homeBgm;
         musicSource.Play();
     }
 
-    public void PlayRobotSelectMusicNew()
+    public void PlayRobotSelectMusic()
     {
-        musicSource.clip = RobotSelectMusic;
+        if (musicSource.clip == robotSelectBgm) return;
+        musicSource.clip = robotSelectBgm;
+        musicSource.Play();
+    }
+    
+    public void PlayBattleBgm()
+    {
+        if (musicSource.clip == battleBgm) return;
+        musicSource.clip = battleBgm;
         musicSource.Play();
     }
 
-    public void PlayLevelMusicNew()
+    public void PlayModeSelectedSfx()
     {
-        musicSource.clip = LevelMusic;
-        musicSource.Play();
+        sfxSource.PlayOneShot(modeSelectSfx);
     }
-
-    public void PlayNetherModeMusic()
+    
+    public void PlayLoginSuccessSfx()
     {
-        musicSource.clip = NetherModeMusic;
-        musicSource.Play();
+        sfxSource.PlayOneShot(loginSuccessSfx);
+    }
+    
+    public void PlayBattleLostSfx()
+    {
+        sfxSource.PlayOneShot(battleLostSfx);
+    }
+    
+    public void PlayBattleStartSfx()
+    {
+        sfxSource.PlayOneShot(battleStartSfx);
     }
 }

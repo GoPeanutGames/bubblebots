@@ -42,7 +42,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         gameplayState = NethermodeGameplayState.ShowingLevelText;
         SoundManager.Instance?.FadeOutMusic(() =>
         {
-            SoundManager.Instance.PlayNetherModeMusic();
+            SoundManager.Instance.PlayBattleBgm();
             SoundManager.Instance.FadeInMusic();
         });
 

@@ -19,7 +19,7 @@ public class GameStateNetherMode : GameState
         gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.netherModeGameplayData.robotsAvailable);
         SoundManager.Instance.FadeOutMusic(() =>
         {
-            SoundManager.Instance.PlayRobotSelectMusicNew();
+            SoundManager.Instance.PlayRobotSelectMusic();
             SoundManager.Instance.FadeInMusic();
         });
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
@@ -82,6 +82,7 @@ public class GameStateNetherMode : GameState
         }
         else if (data.eventName == GameEvents.FreeModeLose)
         {
+            SoundManager.Instance.PlayBattleLostSfx();
             stateMachine.PushState(new GameStateWonPopup(
                 "<color=#FFCB5E>" + (data as GameEventFreeModeLose).numBubblesWon.ToString() + "</color> Bubbles from previous levels!",
                 ButtonId.GameEndGoToMainMenu,
@@ -163,16 +164,12 @@ public class GameStateNetherMode : GameState
         }
 
         stateMachine.PushState(new GameStateHome());
-        SoundManager.Instance.FadeOutMusic(() =>
-        {
-            SoundManager.Instance.PlayStartMusicNew();
-            SoundManager.Instance.FadeInMusic();
-        });
+        SoundManager.Instance.FadeOutMusic();
     }
 
     private void StartPlay()
     {
-        
+        SoundManager.Instance.PlayBattleStartSfx();
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
         gameScreenGame.SetPlayerName(UserManager.Instance.GetPlayerUserName());
         netherModeGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.netherModeGameplayManager).GetComponent<NetherModeGameplayManager>();
