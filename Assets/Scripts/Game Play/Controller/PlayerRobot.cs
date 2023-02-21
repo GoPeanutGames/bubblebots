@@ -1,4 +1,5 @@
 using System.Collections;
+using BubbleBots.Data;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -6,21 +7,26 @@ using UnityEngine.UI;
 
 public class PlayerRobot : MonoBehaviour
 {
+    public Image robotImage;
+    public Image bgImage;
+    public Image frameImage;
+    public Image badgeImage;
+    
     public GameObject HitEffect;
     public Slider hpSlider;
     public TextMeshProUGUI hpText;
 
     private bool damageAnimationIsRunning = false;
 
-    private Image robotImage;
     private int maxHp;
     private int currentHp;
 
     void Start()
     {
-        robotImage = GetComponent<Image>();
         HitEffect.SetActive(false);
         robotImage.DOFade(1f, 0f);
+        Debug.Log(robotImage);
+        Debug.Log(robotImage.transform);
         robotImage.transform.DOScale(1f, 0f);
         damageAnimationIsRunning = false;
     }
@@ -77,7 +83,6 @@ public class PlayerRobot : MonoBehaviour
 
     internal virtual void Initialize()
     {
-        robotImage = GetComponent<Image>();
         if (robotImage != null && currentHp != 0)
         {
             robotImage.DOFade(1f, 0f);
@@ -85,9 +90,12 @@ public class PlayerRobot : MonoBehaviour
         }
     }
 
-    public void SetRobotImage(Sprite sprite)
+    public void SetRobotImage(BubbleBotData botData)
     {
-        robotImage.sprite = sprite;
+        robotImage.sprite = botData.robotSprite;
+        bgImage.sprite = botData.bgSprite;
+        frameImage.sprite = botData.frameSprite;
+        badgeImage.sprite = botData.badgeSprite;
     }
 
     public void SetMaxHpTo(int maxHp)
