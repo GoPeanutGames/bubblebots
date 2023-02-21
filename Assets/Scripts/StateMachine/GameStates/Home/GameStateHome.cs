@@ -19,6 +19,8 @@ public class GameStateHome : GameState
 	public override void Enter()
 	{
 		base.Enter();
+		SoundManager.Instance.FadeInMusic();
+		SoundManager.Instance.PlayHomeMusic();
 		_gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
 		_gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
 		_gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);

@@ -20,8 +20,6 @@ public class GameStateLogin : GameState
 
     public override void Enter()
     {
-        SoundManager.Instance.FadeInMusic();
-        SoundManager.Instance.PlayStartMusicNew();
         _gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>(true);
         _googleLogin = new GoogleLogin();
         _appleLogin = new AppleLogin();
@@ -328,6 +326,7 @@ public class GameStateLogin : GameState
     {
         GetPlayerDataResult playerData = JsonUtility.FromJson<GetPlayerDataResult>(result);
         UserManager.Instance.SetPlayerUserName(playerData.nickname, false);
+        SoundManager.Instance.PlayLoginSuccessSfx();
         GoToMainMenu();
     }
 

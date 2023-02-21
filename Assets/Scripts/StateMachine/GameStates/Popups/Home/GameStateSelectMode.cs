@@ -42,9 +42,11 @@ public class GameStateSelectMode : GameState
 			case ButtonId.ModeSelectFreeMode:
 				ClearStatesAndScreens();
 				stateMachine.PushState(new GameStateFreeMode());
+				SoundManager.Instance.PlayModeSelectedSfx();
 				break;
 			case ButtonId.ModeSelectFreeModeTooltip:
 				stateMachine.PushState(new GameStateFreeModeTooltip());
+				SoundManager.Instance.PlayModeSelectedSfx();
 				break;
 			case ButtonId.ModeSelectNetherModeTooltip:
 				stateMachine.PushState(new GameStateNetherModeTooltip());
