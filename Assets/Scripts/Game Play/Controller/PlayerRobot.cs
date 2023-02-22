@@ -25,8 +25,6 @@ public class PlayerRobot : MonoBehaviour
     {
         HitEffect.SetActive(false);
         robotImage.DOFade(1f, 0f);
-        Debug.Log(robotImage);
-        Debug.Log(robotImage.transform);
         robotImage.transform.DOScale(1f, 0f);
         damageAnimationIsRunning = false;
     }
