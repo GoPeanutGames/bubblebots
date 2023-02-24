@@ -139,14 +139,14 @@ public class GameStateFreeMode : GameState
 
     private void ShowQuitRobotSelect()
     {
-        if (UserManager.PlayerType == PlayerType.Guest)
-        {
+        // if (UserManager.PlayerType == PlayerType.Guest)
+        // {
             stateMachine.PopState();
-        }
-        else
-        {
-            stateMachine.PushState(new GameStateQuitPopup("You will not get your Energy back\nif you go back to the previous menu.\nAre you sure you want to go back?"));
-        }
+        // }
+        // else
+        // {
+        //     stateMachine.PushState(new GameStateQuitPopup("You will not get your Energy back\nif you go back to the previous menu.\nAre you sure you want to go back?"));
+        // }
     }
     
     private void ShowQuitGameMenu()
