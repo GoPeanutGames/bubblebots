@@ -13,7 +13,5 @@ namespace BubbleBots.Data
         public Sprite frameSprite;
         public Sprite badgeSprite;
         public Sprite labelSprite;
-
-        public Sprite robotSelection;
     }
 }

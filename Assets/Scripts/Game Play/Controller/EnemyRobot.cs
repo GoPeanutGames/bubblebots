@@ -17,7 +17,6 @@ public class EnemyRobot : MonoBehaviour
     
     void Start()
     {
-
         HitEffect.SetActive(false);
         Crossair.SetActive(false);
 
@@ -61,6 +60,7 @@ public class EnemyRobot : MonoBehaviour
 
     IEnumerator DieEffect()
     {
+        robotImage.DOFade(0.5f, 0.3f);
         Crossair.transform.DOScale(0, 0.3f);
 
         yield return new WaitForSeconds(0.3f);
@@ -80,6 +80,7 @@ public class EnemyRobot : MonoBehaviour
 
     internal virtual void Initialize()
     {
+        robotImage.color = new Color(1,1,1,1);
         Crossair.transform.localScale = Vector3.one;
     }
 

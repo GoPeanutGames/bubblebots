@@ -102,16 +102,32 @@ public class NetherModeGameplayManager : MonoBehaviour
         currentWaveIndex = 0;
         currentEnemy = 0;
         int startIndex = 3 * currentLevelIndex;
-        currentWave = new Wave()
+        if (startIndex == 6)
         {
-            bots = new List<BubbleBot>()
+            currentWave = new Wave()
             {
-                new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex] },
-                new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex + 1] },
-                new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex + 2] }
-            },
-            completed = false
-        };
+                bots = new List<BubbleBot>()
+                {
+                    new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex] },
+                    new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex + 1] },
+                    new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[startIndex + 2] }
+                },
+                completed = false
+            };
+        }
+        else
+        {
+            currentWave = new Wave()
+            {
+                bots = new List<BubbleBot>()
+                {
+                    new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[Random.Range(0,6)] },
+                    new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[Random.Range(0,6)] },
+                    new BubbleBot() { hp = 60, maxHp = 60, bubbleBotData = gameplayData.enemyRobots[Random.Range(0,6)] }
+                },
+                completed = false
+            };
+        }
 
         AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex + 1);
         serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);

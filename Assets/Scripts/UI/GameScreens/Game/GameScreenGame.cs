@@ -26,7 +26,7 @@ public class GameScreenGame : GameScreen
             playerRobotVisuals[bot].SetMaxHpTo(roster.bots[bot].maxHp);
             playerRobotVisuals[bot].SetHpTo(roster.bots[bot].hp);
             playerRobotVisuals[bot].Initialize();
-            playerRobotVisuals[bot].SetRobotImage(roster.bots[bot].bubbleBotData.robotSelection);
+            playerRobotVisuals[bot].SetRobotImage(roster.bots[bot].bubbleBotData);
         }
     }
 

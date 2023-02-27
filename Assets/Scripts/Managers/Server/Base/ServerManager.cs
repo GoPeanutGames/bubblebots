@@ -70,7 +70,8 @@ public class ServerManager : MonoSingleton<ServerManager>
     {
         string encryptedFormData = UseRSA ? Encrypt(formData) : formData;
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
-        UnityWebRequest webRequest = UnityWebRequest.Post(serverUrl + api, encryptedFormData);
+        UnityWebRequest webRequest = new UnityWebRequest(serverUrl + api, "POST");
+        webRequest.downloadHandler = (DownloadHandler) new DownloadHandlerBuffer();
         UploadHandler customUploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(encryptedFormData));
         customUploadHandler.contentType = "application/json";
         webRequest.uploadHandler = customUploadHandler;
@@ -85,7 +86,7 @@ public class ServerManager : MonoSingleton<ServerManager>
     {
         string serverUrl = EnvironmentManager.Instance.GetServerUrl();
         UnityWebRequest webRequest = UnityWebRequest.Get(serverUrl + api);
-
+        
         webRequest.SetRequestHeader("Authorization", "Bearer " + UserManager.Instance.GetPlayerJwtToken());
         webRequest.SetRequestHeader("Content-Type", "application/json");
         webRequest.SetRequestHeader("Access-Control-Allow-Origin", "*");

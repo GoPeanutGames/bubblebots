@@ -37,6 +37,10 @@ public class GameScreenMetamaskTransaction : GameScreen
         {
             FailExplanationText.text = "Not enough balance.";
         }
+        else if (reason == "cancelled")
+        {
+            FailExplanationText.text = "User cancelled.";
+        }
 
         ResetState();
         failParent.SetActive(true);
