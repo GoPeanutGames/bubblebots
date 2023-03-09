@@ -1,4 +1,5 @@
 using BubbleBots.Server.Player;
+using UnityEngine;
 
 public class GameStateSelectMode : GameState
 {
@@ -53,8 +54,7 @@ public class GameStateSelectMode : GameState
 				break;
 			case ButtonId.ModeSelectNethermode:
 				_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-				UserManager.CallbackWithResources += ResourcesReceived;
-				UserManager.Instance.GetPlayerResources();
+				CheckForBattlePass();
 				break;
 			case ButtonId.NotEnoughGemsBack:
 				Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
@@ -70,6 +70,30 @@ public class GameStateSelectMode : GameState
 		}
 		stateMachine.PopAll();
 	}
+
+	private void CheckForBattlePass()
+	{
+		ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Battlepass, BattlePassSuccess, UserManager.Instance.GetPlayerWalletAddress(), BattlePassFail);
+	}
+
+	private void BattlePassSuccess(string data)
+	{
+		GetBattlePassResponse response = JsonUtility.FromJson<GetBattlePassResponse>(data);
+		if (response.exists)
+		{
+			PlayNetherMode();
+		}
+		else
+		{
+			BattlePassFail("no battlepass");
+		}
+	}
+
+	private void BattlePassFail(string data)
+	{
+		UserManager.CallbackWithResources += ResourcesReceived;
+		UserManager.Instance.GetPlayerResources();
+	}
 	
 	private void ResourcesReceived(GetPlayerWallet wallet)
 	{
@@ -80,6 +104,11 @@ public class GameStateSelectMode : GameState
 			Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
 			return;
 		}
+		PlayNetherMode();
+	}
+
+	private void PlayNetherMode()
+	{
 		ClearStatesAndScreens();
 		stateMachine.PushState(new GameStateNetherMode());
 	}

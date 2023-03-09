@@ -1016,7 +1016,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  buttonId: mainmenu.bottomHUD.netherpass
+  buttonId: mainmenu.bottomHUD.battlepass
 --- !u!223 &518158787555448012
 Canvas:
   m_ObjectHideFlags: 0

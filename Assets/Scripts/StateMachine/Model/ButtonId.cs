@@ -31,7 +31,7 @@ public static class ButtonId
     public const string MainMenuBottomHUDStore = "mainmenu.bottomHUD.store";
     public const string MainMenuBottomHUDHome = "mainmenu.bottomHUD.home";
     public const string MainMenuBottomHUDFriends = "mainmenu.bottomHUD.friends";
-    public const string MainMenuBottomHUDNetherpass = "mainmenu.bottomHUD.netherpass";
+    public const string MainMenuBottomHUDBattlepass = "mainmenu.bottomHUD.battlepass";
     public const string MainMenuBottomHUDItems = "mainmenu.bottomHUD.items";
     
     //main menu side bar
@@ -106,6 +106,10 @@ public static class ButtonId
     
     //explanator popup
     public const string ExplanatorPopupClose = "explanator.close";
+    
+    //battlepass popup
+    public const string BattlepassPopupClose = "battlepass.close";
+    public const string BattlepassPopupBuy = "battlepass.buy";
 }
 
 public static class TypeUtilities

@@ -83,7 +83,6 @@ public class GameStateOptions : GameState
     private void Logout()
     {
         UserManager.ClearPrefs();
-        Screens.Instance.PushScreen<GameScreenLogin>();
         ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess);
     }
 
@@ -94,7 +93,7 @@ public class GameStateOptions : GameState
             Screens.Instance.PopScreen();
         }
         
-        stateMachine.ForceClean();
+        stateMachine.PopAll();
         stateMachine.PushState(new GameStateLogin());
     }
 
