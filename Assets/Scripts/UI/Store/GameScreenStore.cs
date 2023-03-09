@@ -7,6 +7,7 @@ public class GameScreenStore : GameScreen
     [Header("Prefabs")] public GameObject GridLayoutPrefab;
     public GameObject VerticalLayoutPrefab;
     public GameObject GridItemPrefab;
+    public GameObject GridItemComingSoon;
     public GameObject VerticalItemPrefab;
     public GameObject SpecialOfferPrefab;
 
@@ -50,10 +51,17 @@ public class GameScreenStore : GameScreen
 
     public void GenerateStoreItems(List<StoreItem> items)
     {
+        int amount = 0;
         foreach (StoreItem storeItem in items)
         {
             GameObject itemGO = Instantiate(_currentLayout == StoreTabContentLayout.Grid ? GridItemPrefab : VerticalItemPrefab, _spawnedItemContainer.transform);
             itemGO.GetComponent<StoreItemController>().SetupItem(storeItem);
+            amount++;
+        }
+
+        for (int itemsAmount = amount; itemsAmount < 4; itemsAmount++)
+        {
+            Instantiate(_currentLayout == StoreTabContentLayout.Grid ? GridItemComingSoon : VerticalItemPrefab, _spawnedItemContainer.transform);
         }
     }
 

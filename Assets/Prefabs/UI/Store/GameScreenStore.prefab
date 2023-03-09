@@ -2931,6 +2931,8 @@ MonoBehaviour:
     type: 3}
   GridItemPrefab: {fileID: 1403424900059911133, guid: 4eae7c23637fcb2409d304ed927b2d43,
     type: 3}
+  GridItemComingSoon: {fileID: 1403424900059911133, guid: 0f16e447789992042af9e81d4b88a3d6,
+    type: 3}
   VerticalItemPrefab: {fileID: 4132008758587165156, guid: 40905b8487f3a8140a7961477b195530,
     type: 3}
   SpecialOfferPrefab: {fileID: 8758093727572398289, guid: 7783eb1a0435b7e44b632d9e7fb4a5c5,

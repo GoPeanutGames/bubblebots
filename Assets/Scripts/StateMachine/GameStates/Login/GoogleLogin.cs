@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class GoogleLogin
 {
-    private Action<LoginResult> _successCallback;
+    private Action<LoginResultGoogleOrApple> _successCallback;
     private Action<string> _failCallback;
     
-    public void StartLogin(Action<LoginResult> success, Action<string> fail)
+    public void StartLogin(Action<LoginResultGoogleOrApple> success, Action<string> fail)
     {
         _successCallback = success;
         _failCallback = fail;
@@ -63,7 +63,7 @@ public class GoogleLogin
 
     private void LoginServerSuccess(string result)
     {
-        LoginResult loginResult = JsonUtility.FromJson<LoginResult>(result);
+        LoginResultGoogleOrApple loginResult = JsonUtility.FromJson<LoginResultGoogleOrApple>(result);
         _successCallback?.Invoke(loginResult);
     }
 

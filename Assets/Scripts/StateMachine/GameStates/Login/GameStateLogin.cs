@@ -86,11 +86,11 @@ public class GameStateLogin : GameState
                 break;
             case ButtonId.LoginSignInGoogle:
                 _gameScreenLogin.ShowLoading();
-                _googleLogin.StartLogin(LoginSuccessSetData, GoogleLoginFail);
+                _googleLogin.StartLogin(LoginSuccessGoogleOrApple, GoogleLoginFail);
                 break;
             case ButtonId.LoginSignInApple:
                 _gameScreenLogin.ShowLoading();
-                _appleLogin.StartLogin(LoginSuccessSetData, AppleLoginFail);
+                _appleLogin.StartLogin(LoginSuccessGoogleOrApple, AppleLoginFail);
                 break;
             case ButtonId.LoginSignInSubmit:
                 if (_gameScreenLogin.SignInValidation())
@@ -311,8 +311,20 @@ public class GameStateLogin : GameState
         _gameScreenLogin.HideLoading();
     }
 
+    private void LoginSuccessGoogleOrApple(LoginResultGoogleOrApple result)
+    {
+        LoginResult loginResult = new LoginResult()
+        {
+            token = result.jwt,
+            user = result.user,
+            web3Info = result.web3Info
+        };
+        LoginSuccessSetData(loginResult);
+    }
+    
     private void LoginSuccessSetData(LoginResult result)
     {
+        Debug.Log(result.token);
         AnalyticsManager.Instance.InitAnalyticsWithWallet(result.web3Info.address);
         UserManager.PlayerType = PlayerType.LoggedInUser;
         UserManager.Instance.SetJwtToken(result.token);

@@ -1,4 +1,5 @@
 using BubbleBots.Server.Signature;
+using GooglePlayGames;
 
 public class GameStateOptions : GameState
 {
@@ -83,7 +84,8 @@ public class GameStateOptions : GameState
     private void Logout()
     {
         UserManager.ClearPrefs();
-        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess);
+        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess,"", LogoutSuccess);
+        PlayGamesPlatform.Instance.SignOut();
     }
 
     private void LogoutSuccess(string result)
