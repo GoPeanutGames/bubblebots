@@ -1,5 +1,4 @@
 using System;
-using UnityEngine.Serialization;
 
 namespace BubbleBots.Server.Signature
 {
@@ -99,6 +98,14 @@ namespace BubbleBots.Server.Signature
     public class LoginResult
     {
         public string token;
+        public User user;
+        public PostWeb3Login web3Info;
+    }
+    
+    [Serializable]
+    public class LoginResultGoogleOrApple
+    {
+        public string jwt;
         public User user;
         public PostWeb3Login web3Info;
     }

@@ -58,10 +58,10 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 310, y: 350}
-  m_Spacing: {x: 20, y: 60}
-  m_Constraint: 0
-  m_ConstraintCount: 3
+  m_CellSize: {x: 480, y: 530}
+  m_Spacing: {x: 20, y: 120}
+  m_Constraint: 1
+  m_ConstraintCount: 2
 --- !u!114 &8100151469005511519
 MonoBehaviour:
   m_ObjectHideFlags: 0
