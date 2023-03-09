@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace BubbleBots.Server.Player
 {
-    public enum PlayerAPI { Create, Get, UpdateNickname, Top100Pro, Top100Free, Wallet };
+    public enum PlayerAPI { Create, Get, UpdateNickname, Top100Pro, Top100Free, Wallet, Battlepass };
 
     [Serializable]
     public class CreatePlayerData
@@ -19,6 +19,12 @@ namespace BubbleBots.Server.Player
         public string nickname;
         public int rank;
         public string address;
+    }
+
+    [Serializable]
+    public class GetBattlePassResponse
+    {
+        public bool exists;
     }
     
     [Serializable]

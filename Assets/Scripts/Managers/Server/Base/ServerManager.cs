@@ -28,7 +28,8 @@ public class ServerManager : MonoSingleton<ServerManager>
         { PlayerAPI.Get, "/player/me/" },
         { PlayerAPI.Top100Pro, "/player/topActivities?mode=PRO" },
         { PlayerAPI.Top100Free, "/player/topActivities?mode=FREE" },
-        { PlayerAPI.Wallet , "/player/wallet/"}
+        { PlayerAPI.Wallet , "/player/wallet/"},
+        { PlayerAPI.Battlepass, "/player/battlepass-exist/"}
     };
 
     private readonly Dictionary<SignatureLoginAPI, string> signatureAPIMap = new()

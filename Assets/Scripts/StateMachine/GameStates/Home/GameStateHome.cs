@@ -70,6 +70,9 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuBottomHUDStore:
 				ShowStore();
 				break;
+			case ButtonId.MainMenuBottomHUDBattlepass:
+				stateMachine.PushState(new GameStateBattlepassPopup());
+				break;
 			case ButtonId.MainMenuSideBarLeaderboard:
 				ShowLeaderboard();
 				break;
