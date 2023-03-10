@@ -47,6 +47,7 @@ public class NFTManager : MonoBehaviour
 
 	public void DownloadPLayerNfts()
 	{
+		NFTImagesAvailable = new List<NFTImage>();
 		ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.GetOwnedNFTs, GetNftsSuccess, UserManager.Instance.GetPlayerWalletAddress());
 	}
 
