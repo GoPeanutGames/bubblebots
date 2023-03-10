@@ -132,7 +132,9 @@ public class GameStateOptions : GameState
 	{
 		UserManager.ClearPrefs();
 		ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutSuccess);
+#if UNITY_ANDROID
 		PlayGamesPlatform.Instance.SignOut();
+#endif
 	}
 
 	private void LogoutSuccess(string result)
