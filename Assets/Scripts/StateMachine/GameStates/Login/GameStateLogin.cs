@@ -324,7 +324,6 @@ public class GameStateLogin : GameState
     
     private void LoginSuccessSetData(LoginResult result)
     {
-        Debug.Log(result.token);
         AnalyticsManager.Instance.InitAnalyticsWithWallet(result.web3Info.address);
         UserManager.PlayerType = PlayerType.LoggedInUser;
         UserManager.Instance.SetJwtToken(result.token);
@@ -332,6 +331,7 @@ public class GameStateLogin : GameState
         UserManager.Instance.SetSignature(result.web3Info.signature);
         StoreManager.Instance.InitialiseStore(result.web3Info.address);
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get, GetPlayerSuccess, result.web3Info.address, GetPlayerFail);
+        UserManager.Instance.NftManager.DownloadPLayerNfts();
     }
 
     private void GetPlayerSuccess(string result)

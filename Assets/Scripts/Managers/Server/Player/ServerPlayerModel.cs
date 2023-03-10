@@ -3,13 +3,34 @@ using System.Collections.Generic;
 
 namespace BubbleBots.Server.Player
 {
-    public enum PlayerAPI { Create, Get, UpdateNickname, Top100Pro, Top100Free, Wallet, Battlepass };
+    public enum PlayerAPI { Create, Get, UpdateNickname, Top100Pro, Top100Free, Wallet, Battlepass, GetOwnedNFTs, SetDefaultNFT };
 
     [Serializable]
     public class CreatePlayerData
     {
         public string address;
         public string signature;
+    }
+
+    [Serializable]
+    public class GetPlayerNftsResponse
+    {
+        public List<NftDataResponse> images;
+    }
+
+    [Serializable]
+    public class NftDataResponse
+    {
+        public string name;
+        public int tokenId;
+    }
+
+    [Serializable]
+    public class SetDefaultNftData
+    {
+        public string address;
+        public string signature;
+        public int tokenId;
     }
 
     [Serializable]

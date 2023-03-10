@@ -1,3 +1,6 @@
+using System.Collections;
+using System.Collections.Generic;
+using BubbleBots.User;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -18,6 +21,8 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     public Image playerAvatar;
     public TextMeshProUGUI playerUsername;
 
+    private AvatarInformation currentAvatar;
+    
     private void Start()
     {
         InitialiseMusicToggle();
@@ -42,6 +47,25 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
         HintsToggleOn.SetActive(hinting);
     }
 
+    private IEnumerator CheckIfNftAvailable()
+    {
+        bool waiting = true;
+        int id = currentAvatar.id;
+        while (waiting)
+        {
+            NFTImage selectedImage = new List<NFTImage>(UserManager.Instance.NftManager.GetAvailableNfts()).Find((image)=> image.tokenId == id);
+            if (selectedImage.loaded)
+            {
+                playerAvatar.sprite = selectedImage.sprite;
+                waiting = false;
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+    }
+
     public void MusicToggleValueChanged(bool value)
     {
         MusicToggleOff.SetActive(!value);
@@ -64,9 +88,19 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
         return HintsToggle.isOn;
     }
 
-    public void SetPlayerAvatar(int avatar)
+    public void SetPlayerAvatar(AvatarInformation avatar)
     {
-        playerAvatar.sprite = UserManager.Instance.PlayerAvatars[avatar];
+        currentAvatar = avatar;
+        StopCoroutine(CheckIfNftAvailable());
+        if (avatar.isNft)
+        {
+            StartCoroutine(CheckIfNftAvailable());
+        }
+        else
+        {
+            playerAvatar.sprite = UserManager.Instance.PlayerAvatars[avatar.id];
+        }
+        Debug.LogWarning("Switching to: " + currentAvatar.id);
     }
 
     public void RefreshPlayerUsername()
