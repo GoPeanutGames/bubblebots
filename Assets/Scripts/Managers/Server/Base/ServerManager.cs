@@ -108,8 +108,7 @@ public class ServerManager : MonoSingleton<ServerManager>
             }
             else
             {
-                Debug.Log(decryptedData);
-                ServerError error = JsonUtility.FromJson<ServerError>(decryptedData);
+                ServerError error = JsonUtility.FromJson<ServerError>(data);
                 switch (error.code)
                 {
                     case "disabled_account":
@@ -119,7 +118,7 @@ public class ServerManager : MonoSingleton<ServerManager>
                         FindObjectsOfType<MonoBehaviour>().OfType<IErrorManager>().First().AccessDeniedError();
                         break;
                 }
-                onFail?.Invoke(decryptedData);
+                onFail?.Invoke(data);
             }
             webRequest.Dispose();
         };
