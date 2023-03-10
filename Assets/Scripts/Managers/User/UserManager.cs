@@ -151,7 +151,7 @@ public class UserManager : MonoSingleton<UserManager>
     {
         CurrentUser.Avatar.id = avatar;
         CurrentUser.Avatar.isNft = nft;
-        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], avatar);
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(CurrentUser.Avatar));
     }
 
     public string GetPlayerWalletAddress()

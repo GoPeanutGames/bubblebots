@@ -75,7 +75,7 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
         while (waiting)
         {
             NFTImage selectedImage = new List<NFTImage>(UserManager.Instance.NftManager.GetAvailableNfts()).Find((image)=> image.tokenId == currentAvatar.id);
-            if (selectedImage.loaded)
+            if (selectedImage is { loaded: true })
             {
                 avatarImage.sprite = selectedImage.sprite;
                 waiting = false;

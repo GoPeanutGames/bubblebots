@@ -50,9 +50,10 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     private IEnumerator CheckIfNftAvailable()
     {
         bool waiting = true;
+        int id = currentAvatar.id;
         while (waiting)
         {
-            NFTImage selectedImage = new List<NFTImage>(UserManager.Instance.NftManager.GetAvailableNfts()).Find((image)=> image.tokenId == currentAvatar.id);
+            NFTImage selectedImage = new List<NFTImage>(UserManager.Instance.NftManager.GetAvailableNfts()).Find((image)=> image.tokenId == id);
             if (selectedImage.loaded)
             {
                 playerAvatar.sprite = selectedImage.sprite;
@@ -99,6 +100,7 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
         {
             playerAvatar.sprite = UserManager.Instance.PlayerAvatars[avatar.id];
         }
+        Debug.LogWarning("Switching to: " + currentAvatar.id);
     }
 
     public void RefreshPlayerUsername()

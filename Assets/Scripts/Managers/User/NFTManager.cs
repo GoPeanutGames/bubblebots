@@ -21,8 +21,9 @@ public class NFTManager : MonoBehaviour
 			else
 			{
 				var texture = DownloadHandlerTexture.GetContent(uwr);
-				Sprite nftImage = Sprite.Create(texture, new Rect(0f, 0f, 188, 188), new Vector2(0.5f, 0.5f));
+				Sprite nftImage = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f));
 				image.sprite = nftImage;
+				image.loaded = true;
 			}
 		}
 	}
