@@ -18,9 +18,16 @@ public class UserManager : MonoSingleton<UserManager>
     public static int RobotsKilled = 0;
     public static Action<GetPlayerWallet> CallbackWithResources;
 
+    public NFTManager NftManager;
     public List<Sprite> PlayerAvatars;
     
     private User CurrentUser;
+
+    private AvatarInformation EMPTY_AVATAR = new AvatarInformation()
+    {
+        id = 0,
+        isNft = false
+    };
 
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
     {
@@ -40,6 +47,15 @@ public class UserManager : MonoSingleton<UserManager>
     private void DeleteOldKeys()
     {
         ObscuredPrefs.DeleteKey(prefsKeysToDeleteMap[PrefsKeyToDelete.Rank]);
+        if (int.TryParse(ObscuredPrefs.Get<string>(prefsKeyMap[PrefsKey.Avatar]), out int result))
+        {
+            AvatarInformation info = new AvatarInformation()
+            {
+                id = result,
+                isNft = false
+            };
+            ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(info));
+        }
     }
     
     private void GetUserOrSetDefault()
@@ -52,7 +68,7 @@ public class UserManager : MonoSingleton<UserManager>
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),
             Hints = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Hints], true), 
-            Avatar = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], 0) 
+            Avatar = JsonUtility.FromJson<AvatarInformation>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(EMPTY_AVATAR))) 
         };
     }
 
@@ -131,9 +147,10 @@ public class UserManager : MonoSingleton<UserManager>
         }
     }
 
-    public void ChangePlayerAvatar(int avatar)
+    public void ChangePlayerAvatar(int avatar, bool nft)
     {
-        CurrentUser.Avatar = avatar;
+        CurrentUser.Avatar.id = avatar;
+        CurrentUser.Avatar.isNft = nft;
         ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], avatar);
     }
 
@@ -157,7 +174,7 @@ public class UserManager : MonoSingleton<UserManager>
         return CurrentUser.SessionToken;
     }
 
-    public int GetPlayerAvatar()
+    public AvatarInformation GetPlayerAvatar()
     {
         return CurrentUser.Avatar;
     }

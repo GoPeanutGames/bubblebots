@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using BubbleBots.Server.Player;
+using BubbleBots.User;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class GameScreenHomeHeader : GameScreenAnimatedShowHide
@@ -26,6 +29,8 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
     private Dictionary<PlayerResource, TextMeshProUGUI> _resourceTextMap;
     private bool _resourcesSet = false;
 
+    private AvatarInformation currentAvatar;
+    
     private void Start()
     {
         _resourceTextMap = new()
@@ -63,6 +68,24 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
             _resourceTextMap[resource].text = value.ToString();
         }
     }
+    
+    private IEnumerator CheckIfNftAvailable()
+    {
+        bool waiting = true;
+        while (waiting)
+        {
+            NFTImage selectedImage = new List<NFTImage>(UserManager.Instance.NftManager.GetAvailableNfts()).Find((image)=> image.tokenId == currentAvatar.id);
+            if (selectedImage.loaded)
+            {
+                avatarImage.sprite = selectedImage.sprite;
+                waiting = false;
+            }
+            else
+            {
+                yield return new WaitForSeconds(0.5f);
+            }
+        }
+    }
 
     public bool AreResourcesSet()
     {
@@ -71,7 +94,16 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
 
     public void RefreshData()
     {
-        avatarImage.sprite = UserManager.Instance.PlayerAvatars[UserManager.Instance.GetPlayerAvatar()];
+        currentAvatar = UserManager.Instance.GetPlayerAvatar();
+        StopCoroutine(CheckIfNftAvailable());
+        if (currentAvatar.isNft)
+        {
+            StartCoroutine(CheckIfNftAvailable());
+        }
+        else
+        {
+            avatarImage.sprite = UserManager.Instance.PlayerAvatars[currentAvatar.id];
+        }
         usernameText.text = UserManager.Instance.GetPlayerUserName();
     }
 }
