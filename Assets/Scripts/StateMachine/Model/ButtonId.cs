@@ -16,6 +16,7 @@ public static class ButtonId
     
     //login
     public const string LoginGuest = "login.guest";
+    public const string LoginSignInQuick = "login.signin.quick";
     public const string LoginSignInGoogle = "login.signin.google";
     public const string LoginSignInApple = "login.signin.apple";
     public const string LoginSignInSubmit = "login.signin.submit";

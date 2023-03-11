@@ -104,6 +104,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         {
             string data = webRequest.downloadHandler.text;
             string decryptedData = UseRSA ? Decrypt(data) : data;
+            Debug.LogWarning(data);
             if (webRequest.result == UnityWebRequest.Result.Success)
             {
                 onComplete?.Invoke(decryptedData);
