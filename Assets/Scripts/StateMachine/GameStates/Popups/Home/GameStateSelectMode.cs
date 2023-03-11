@@ -101,7 +101,7 @@ public class GameStateSelectMode : GameState
 		UserManager.CallbackWithResources -= ResourcesReceived;
 		if (wallet.gems <= 0)
 		{
-			Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
 			return;
 		}
 		PlayNetherMode();
