@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using BubbleBots.Data;
 using BubbleBots.Server.Player;
+using BubbleBots.User;
 using UnityEngine;
 
 public class GameStateFreeMode : GameState
@@ -14,10 +17,50 @@ public class GameStateFreeMode : GameState
         return "game state free mode";
     }
 
+    private List<BubbleBotData> GetAvailableBots()
+    {
+        List<BubbleBotData> availableBots = new List<BubbleBotData>(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
+        List<NFTImage> nftImages = UserManager.Instance.NftManager.GetAvailableNfts();
+        foreach (NFTImage nftImage in nftImages)
+        {
+            NFTData data = UserManager.Instance.NftManager.GetCorrectNFTFromTokenId(nftImage.tokenId);
+            string faction = data.attributes.Find((trait) => trait.trait_type == "Factions").value;
+            string botName = data.attributes.Find((trait) => trait.trait_type == "Bots").value;
+            BubbleBotData bot = ScriptableObject.CreateInstance<BubbleBotData>();
+            bot.botName = botName;
+            bot.id = data.edition;
+            bot.robotSprite = nftImage.sprite;
+            switch (faction)
+            {
+                case "Guardian":
+                    bot.badgeSprite = UserManager.Instance.NftManager.guardianBadge;
+                    bot.frameSprite = UserManager.Instance.NftManager.guardianFrame;
+                    bot.labelSprite = UserManager.Instance.NftManager.guardianLabel;
+                    bot.bgSprite = UserManager.Instance.NftManager.guardianBg;
+                    break;
+                case "Hunter":
+                    bot.badgeSprite = UserManager.Instance.NftManager.hunterBadge;
+                    bot.frameSprite = UserManager.Instance.NftManager.hunterFrame;
+                    bot.labelSprite = UserManager.Instance.NftManager.hunterLabel;
+                    bot.bgSprite = UserManager.Instance.NftManager.hunterBg;
+                    break;
+                case "Builder":
+                    bot.badgeSprite = UserManager.Instance.NftManager.builderBadge;
+                    bot.frameSprite = UserManager.Instance.NftManager.builderFrame;
+                    bot.labelSprite = UserManager.Instance.NftManager.builderLabel;
+                    bot.bgSprite = UserManager.Instance.NftManager.builderBg;
+                    break;
+            }
+            availableBots.Add(bot);
+        }
+        return availableBots;
+    }
+    
     public override void Enter()
     {
         gameScreenRobotSelection = Screens.Instance.PushScreen<GameScreenRobotSelection>();
-        gameScreenRobotSelection.PopulateSelectionList(GameSettingsManager.Instance.freeModeGameplayData.robotsAvailable);
+        List<BubbleBotData> bots = GetAvailableBots();
+        gameScreenRobotSelection.PopulateSelectionList(bots);
         SoundManager.Instance.FadeOutMusic(() =>
         {
             SoundManager.Instance.PlayRobotSelectMusic();

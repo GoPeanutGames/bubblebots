@@ -7,7 +7,28 @@ using UnityEngine.Networking;
 
 public class NFTManager : MonoBehaviour
 {
+	public Sprite guardianBadge;
+	public Sprite guardianFrame;
+	public Sprite guardianLabel;
+	public Sprite guardianBg;
+	public Sprite hunterBadge;
+	public Sprite hunterFrame;
+	public Sprite hunterLabel;
+	public Sprite hunterBg;
+	public Sprite builderBadge;
+	public Sprite builderFrame;
+	public Sprite builderLabel;
+	public Sprite builderBg;
+	
+	private NFTFile _nftFile;
 	private List<NFTImage> NFTImagesAvailable = new List<NFTImage>();
+
+	private void Awake()
+	{
+		TextAsset textAsset = Resources.Load<TextAsset>("metadata");
+		string text = textAsset.text;
+		_nftFile = JsonUtility.FromJson<NFTFile>(text);
+	}
 
 	private IEnumerator GetNftImage(NFTImage image)
 	{
@@ -54,5 +75,11 @@ public class NFTManager : MonoBehaviour
 	public List<NFTImage> GetAvailableNfts()
 	{
 		return NFTImagesAvailable;
+	}
+
+	public NFTData GetCorrectNFTFromTokenId(int tokenId)
+	{
+		string token = tokenId.ToString();
+		return _nftFile.nfts.Find((nft) => nft.edition == tokenId);
 	}
 }
