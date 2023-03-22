@@ -19,6 +19,7 @@ public class UserManager : MonoSingleton<UserManager>
     public static Action<GetPlayerWallet> CallbackWithResources;
 
     public NFTManager NftManager;
+    public LoginManager loginManager;
     public List<Sprite> PlayerAvatars;
     
     private User CurrentUser;
@@ -207,11 +208,24 @@ public class UserManager : MonoSingleton<UserManager>
 
     public void GetPlayerResources()
     {
-        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+        if (PlayerType == PlayerType.Guest)
         {
-            GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
-            CallbackWithResources?.Invoke(walletData);
-        }, CurrentUser.WalletAddress);
+            GetPlayerWallet wallet = new GetPlayerWallet()
+            {
+                bubbles = 0,
+                energy = 0,
+                gems = 0
+            };
+            CallbackWithResources?.Invoke(wallet);
+        }
+        else
+        {
+            ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+            {
+                GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
+                CallbackWithResources?.Invoke(walletData);
+            }, CurrentUser.WalletAddress);
+        }
     }
 
     private IEnumerator CallGetPlayerResourcesAfter(float seconds)

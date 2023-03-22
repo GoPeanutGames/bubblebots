@@ -53,8 +53,7 @@ public class GameStateSelectMode : GameState
 				stateMachine.PushState(new GameStateNetherModeTooltip());
 				break;
 			case ButtonId.ModeSelectNethermode:
-				_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-				CheckForBattlePass();
+				NethermodeClick();
 				break;
 			case ButtonId.NotEnoughGemsBack:
 				Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
@@ -69,6 +68,19 @@ public class GameStateSelectMode : GameState
 			Screens.Instance.PopScreen();
 		}
 		stateMachine.PopAll();
+	}
+
+	private void NethermodeClick()
+	{
+		if (UserManager.PlayerType == PlayerType.Guest)
+		{
+			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+		}
+		else
+		{
+			_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+			CheckForBattlePass();
+		}
 	}
 
 	private void CheckForBattlePass()
@@ -99,11 +111,11 @@ public class GameStateSelectMode : GameState
 	{
 		Screens.Instance.PopScreen(_gameScreenLoading);
 		UserManager.CallbackWithResources -= ResourcesReceived;
-		// if (wallet.gems <= 0)
-		// {
-			// _gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
-			// return;
-		// }
+		if (wallet.gems <= 0)
+		{
+			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+			return;
+		}
 		PlayNetherMode();
 	}
 

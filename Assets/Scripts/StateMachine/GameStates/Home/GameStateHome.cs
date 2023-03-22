@@ -35,19 +35,7 @@ public class GameStateHome : GameState
 		_gameScreenHomeHeader.RefreshData();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 		ResetMainMenuLook();
-		if (_gameScreenHomeHeader.AreResourcesSet() == false)
-		{
-			_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-		}
-
-		Screens.Instance.BringToFront<GameScreenLoading>();
-		GameScreenHomeHeader.ResourcesSet += ResourcesSet;
 		UserManager.Instance.GetPlayerResources();
-	}
-
-	private void ResourcesSet()
-	{
-		Screens.Instance.PopScreen(_gameScreenLoading);
 	}
 
 	private void OnGameEvent(GameEventData data)

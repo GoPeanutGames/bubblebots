@@ -67,9 +67,7 @@ public class FreeToPlayGameplayManager : MonoBehaviour
         currentLevelIndex = 0;
 
         match3Manager.Initialize(gameplayData.levels[currentLevelIndex], false);
-
-
-
+        
         match3Manager.onGemsExploded -= OnGemsExploded;
         match3Manager.onGemsExploded += OnGemsExploded;
 
@@ -143,7 +141,6 @@ public class FreeToPlayGameplayManager : MonoBehaviour
     public void StartNextLevel()
     {
         currentLevelIndex++;
-        //MenuGUI.HideWin();
         StartLevel();
     }
 

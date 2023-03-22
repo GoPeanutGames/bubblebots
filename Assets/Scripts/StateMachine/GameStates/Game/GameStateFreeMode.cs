@@ -182,14 +182,7 @@ public class GameStateFreeMode : GameState
 
     private void ShowQuitRobotSelect()
     {
-        // if (UserManager.PlayerType == PlayerType.Guest)
-        // {
-            stateMachine.PopState();
-        // }
-        // else
-        // {
-        //     stateMachine.PushState(new GameStateQuitPopup("You will not get your Energy back\nif you go back to the previous menu.\nAre you sure you want to go back?"));
-        // }
+        stateMachine.PopState();
     }
     
     private void ShowQuitGameMenu()
@@ -213,13 +206,6 @@ public class GameStateFreeMode : GameState
             gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
         }
         
-        if (UserManager.PlayerType == PlayerType.Guest)
-        {
-            Screens.Instance.PopScreen(gameScreenRobotSelection);
-            stateMachine.PushState(new GameStateLogin());
-            return;
-        }
-
         stateMachine.PushState(new GameStateHome());
         SoundManager.Instance.FadeOutMusic();
     }
