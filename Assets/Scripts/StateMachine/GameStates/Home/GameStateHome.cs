@@ -8,7 +8,7 @@ public class GameStateHome : GameState
 
 	public override string GetGameStateName()
 	{
-		return "game state main menu";
+		return "game state home";
 	}
 
 	private void ResetMainMenuLook()

@@ -10,7 +10,6 @@ public class GameScreenLogin : GameScreen
     public GameObject setNewPassPopup;
     public GameObject loadingOverlay;
 
-    public TextMeshProUGUI signInErrorText;
     public TextMeshProUGUI signUpErrorText;
     public TextMeshProUGUI signUpDescText;
     public TextMeshProUGUI twoFaCodeText;
@@ -19,8 +18,6 @@ public class GameScreenLogin : GameScreen
     public TextMeshProUGUI setNewPassError;
     public TextMeshProUGUI codeTitle;
     public TextMeshProUGUI codeError;
-    public TMP_InputField emailInputFieldSignIn;
-    public TMP_InputField passInputFieldSignIn;
     public TMP_InputField emailInputFieldSignUp;
     public TMP_InputField passInputFieldSignUp;
     public TMP_InputField codeInputField;
@@ -76,16 +73,6 @@ public class GameScreenLogin : GameScreen
         return codeInputField.text;
     }
 
-    public string GetLoginInputFieldEmail()
-    {
-        return emailInputFieldSignIn.text;
-    }
-
-    public string GetLoginInputFieldPass()
-    {
-        return passInputFieldSignIn.text;
-    }
-
     public string GetResetPassInputFieldEmail()
     {
         return emailInputFieldResetPass.text;
@@ -99,28 +86,6 @@ public class GameScreenLogin : GameScreen
     public string GetSetNewPassInputFieldAuthCode()
     {
         return authCodeInputFieldSetNewPass.text;
-    }
-
-    public bool SignInValidation()
-    {
-        signInErrorText.text = "";
-        if (string.IsNullOrEmpty(emailInputFieldSignIn.text) || string.IsNullOrEmpty(passInputFieldSignIn.text))
-        {
-            signInErrorText.text = "Please fill in all necessary information.";
-            return false;
-        }
-
-        return true;
-    }
-
-    public void SetSignInWrongError()
-    {
-        signInErrorText.text = "You've entered the wrong password or email address!";
-    }
-
-    public void SetSignInPlatformError(string platform)
-    {
-        signInErrorText.text = platform + " sign in failed!";
     }
 
     public bool SignUpValidation()

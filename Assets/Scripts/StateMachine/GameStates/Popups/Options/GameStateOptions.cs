@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using BubbleBots.Server.Player;
-using BubbleBots.Server.Signature;
 using BubbleBots.User;
-using GooglePlayGames;
 using UnityEngine;
 
 public class GameStateOptions : GameState
 {
 	private GamePopupOptions _gamePopupOptions;
+	private GameScreenDarkenedBg _darkenedBg;
 
 	private AvatarInformation _finalAvatar;
 
@@ -18,6 +17,7 @@ public class GameStateOptions : GameState
 
 	public override void Enter()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>(true);
 		_gamePopupOptions = Screens.Instance.PushScreen<GamePopupOptions>();
 		_gamePopupOptions.StartOpen();
 		_finalAvatar = UserManager.Instance.GetPlayerAvatar();
@@ -44,10 +44,12 @@ public class GameStateOptions : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.OptionsClose:
+				Screens.Instance.PopScreen(_darkenedBg);
 				stateMachine.PopState();
 				break;
-			case ButtonId.OptionsSignOut:
-				Logout();
+			case ButtonId.OptionsSyncProgress:
+				stateMachine.PopState();
+				stateMachine.PushState(new GameStateLogin());
 				break;
 			case ButtonId.OptionsChangePicture:
 				ChangePicture();
@@ -130,22 +132,12 @@ public class GameStateOptions : GameState
 
 	private void Logout()
 	{
-		UserManager.ClearPrefs();
-		ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutSuccess);
-#if UNITY_ANDROID
-		PlayGamesPlatform.Instance.SignOut();
-#endif
-	}
-
-	private void LogoutSuccess(string result)
-	{
-		for (int i = 0; i < 50; i++)
-		{
-			Screens.Instance.PopScreen();
-		}
-
-		stateMachine.PopAll();
-		stateMachine.PushState(new GameStateLogin());
+		//TODO:
+// 		UserManager.ClearPrefs();
+// 		ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutSuccess);
+// #if UNITY_ANDROID
+// 		PlayGamesPlatform.Instance.SignOut();
+// #endif
 	}
 
 	public override void Disable()
@@ -155,6 +147,6 @@ public class GameStateOptions : GameState
 
 	public override void Exit()
 	{
-		_gamePopupOptions.StartClose();
+		Screens.Instance.PopScreen(_gamePopupOptions);
 	}
 }

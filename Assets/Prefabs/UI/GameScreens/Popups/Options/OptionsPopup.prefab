@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 6888416752112809480}
   - component: {fileID: 1511435012887986376}
   m_Layer: 5
-  m_Name: SignOutbutton
+  m_Name: SyncProgressButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -258,7 +258,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
-  buttonId: options.signout
+  buttonId: options.syncprogress
 --- !u!1 &389789060323282368
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: machrom
+  m_text: Guest user
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3378af4a89b351c45826b1f6c3c294b3, type: 2}
   m_sharedMaterial: {fileID: 8760506590217660936, guid: 3378af4a89b351c45826b1f6c3c294b3,
@@ -2602,7 +2602,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2754,7 +2754,7 @@ GameObject:
   - component: {fileID: 6962515946041212657}
   - component: {fileID: 3977208738071611520}
   m_Layer: 5
-  m_Name: SignOutText
+  m_Name: SyncProgressText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2808,7 +2808,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Sign Out
+  m_text: Sync progress
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3378af4a89b351c45826b1f6c3c294b3, type: 2}
   m_sharedMaterial: {fileID: 8760506590217660936, guid: 3378af4a89b351c45826b1f6c3c294b3,
@@ -2836,7 +2836,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 72
+  m_fontSize: 48.05
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

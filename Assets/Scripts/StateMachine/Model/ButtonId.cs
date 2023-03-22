@@ -15,10 +15,12 @@ public static class ButtonId
     public const string AccountDisabledClose = "accountdisabled.close";
     
     //login
-    public const string LoginGuest = "login.guest";
-    public const string LoginSignInQuick = "login.signin.quick";
+    public const string LoginSignInClose = "login.signin.close";
     public const string LoginSignInGoogle = "login.signin.google";
     public const string LoginSignInApple = "login.signin.apple";
+    public const string LoginGoToSignUp = "login.goto.signup";
+    public const string LoginForgotPassword = "login.forgotpassword";
+    
     public const string LoginSignInSubmit = "login.signin.submit";
     public const string LoginSignUpSubmit = "login.signup.submit";
     public const string LoginCodeSubmit = "login.code.submit";
@@ -47,8 +49,8 @@ public static class ButtonId
     //options popup
     public const string OptionsChangePicture = "options.changepicture";
     public const string OptionsChangeName = "options.changename";
-    public const string OptionsSignOut = "options.signout";
     public const string OptionsSave = "options.save";
+    public const string OptionsSyncProgress = "options.syncprogress";
     public const string OptionsClose = "options.close";
 
     //leaderboard
