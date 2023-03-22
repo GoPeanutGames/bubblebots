@@ -99,11 +99,11 @@ public class GameStateSelectMode : GameState
 	{
 		Screens.Instance.PopScreen(_gameScreenLoading);
 		UserManager.CallbackWithResources -= ResourcesReceived;
-		if (wallet.gems <= 0)
-		{
-			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
-			return;
-		}
+		// if (wallet.gems <= 0)
+		// {
+			// _gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+			// return;
+		// }
 		PlayNetherMode();
 	}
 
