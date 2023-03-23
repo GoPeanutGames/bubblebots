@@ -32,8 +32,11 @@ public class GameStateForgotPassword : GameState
 		switch (buttonTapData.stringData)
 		{
 			case ButtonId.LoginResetPassSubmit:
-				_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-				UserManager.Instance.loginManager.ResetPassword(_gamePopupForgotPassword.GetResetPassInputFieldEmail(), false, ResetPassSuccess, ResetPassFail);
+				if (_gamePopupForgotPassword.ResetPassValidation())
+				{
+					_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+					UserManager.Instance.loginManager.ResetPassword(_gamePopupForgotPassword.GetResetPassInputFieldEmail(), false, ResetPassSuccess, ResetPassFail);
+				}
 				break;
 			case ButtonId.LoginResetPassGoBack:
 				stateMachine.PopState();
