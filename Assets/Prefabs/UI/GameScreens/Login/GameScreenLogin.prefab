@@ -3332,7 +3332,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 29.65
+  m_fontSize: 43.7
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4107,7 +4107,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 22.25
+  m_fontSize: 32.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -7560,7 +7560,7 @@ RectTransform:
   m_AnchorMin: {x: 0.05, y: 0.25}
   m_AnchorMax: {x: 0.95, y: 0.75}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -87.273926}
+  m_SizeDelta: {x: 0, y: 363.2329}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5267925210983269706
 CanvasRenderer:
@@ -8723,26 +8723,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   location: 1
   AnimatorComponent: {fileID: 0}
-  signInPopup: {fileID: 989373896269667432}
-  signUpPopup: {fileID: 4074395538743878254}
-  twoFaPopup: {fileID: 8279739331830727517}
-  resetPassPopup: {fileID: 8738667245982354336}
-  setNewPassPopup: {fileID: 2420173580454172828}
   loadingOverlay: {fileID: 8050497025196156167}
-  signUpErrorText: {fileID: 8539474364451688113}
-  signUpDescText: {fileID: 5445913218960192783}
   twoFaCodeText: {fileID: 8479409862911808278}
-  resetPassError: {fileID: 4222215421250191748}
-  setNewPassDesc: {fileID: 5597910821567545912}
-  setNewPassError: {fileID: 2931747577551486160}
   codeTitle: {fileID: 8014241480469926035}
   codeError: {fileID: 7375197103213408717}
-  emailInputFieldSignUp: {fileID: 6572074240523234811}
-  passInputFieldSignUp: {fileID: 4236560597981462620}
   codeInputField: {fileID: 1536508707809824468}
-  emailInputFieldResetPass: {fileID: 7466939265077422621}
-  newPassInputFieldSetNewPass: {fileID: 5707048015987615681}
-  authCodeInputFieldSetNewPass: {fileID: 1428949221029949439}
 --- !u!1 &5233415050925230736
 GameObject:
   m_ObjectHideFlags: 0
@@ -12191,7 +12176,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 40
+  m_fontSize: 72
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1

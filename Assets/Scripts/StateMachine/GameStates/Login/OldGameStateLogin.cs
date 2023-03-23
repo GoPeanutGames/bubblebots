@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using UnityEngine;
@@ -42,13 +40,6 @@ public class OldGameStateLogin : GameState
 		GameEventString buttonTapData = data as GameEventString;
 		switch (buttonTapData.stringData)
 		{
-			case ButtonId.LoginSignUpSubmit:
-				if (_gameScreenLogin.SignUpValidation())
-				{
-					SignUp();
-				}
-
-				break;
 			case ButtonId.LoginCodeSubmit:
 				if (_gameScreenLogin.CodeValidation())
 				{
@@ -60,43 +51,6 @@ public class OldGameStateLogin : GameState
 				// SignIn();
 				break;
 		}
-	}
-
-	private void SignUp()
-	{
-		_gameScreenLogin.ShowLoading();
-		string email = _gameScreenLogin.GetSignUpInputFieldEmail();
-		string pass = _gameScreenLogin.GetSignUpInputFieldPass();
-		var provider = new SHA256Managed();
-		var hash = provider.ComputeHash(Encoding.UTF8.GetBytes(pass));
-		string hashString = string.Empty;
-		foreach (byte x in hash)
-		{
-			hashString += $"{x:x2}";
-		}
-
-		_tempEmail = email;
-		_tempHashedPass = hashString;
-		EmailPassSignUp data = new EmailPassSignUp()
-		{
-			email = email,
-			password = hashString
-		};
-		string formData = JsonUtility.ToJson(data);
-		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.EmailPassSignUp, formData, EmailPassSignUpSuccess, EmailPassSignUpFail);
-	}
-
-	private void EmailPassSignUpSuccess(string success)
-	{
-		_gameScreenLogin.HideLoading();
-		_gameScreenLogin.Show2FAuth();
-	}
-
-	private void EmailPassSignUpFail(string error)
-	{
-		_gameScreenLogin.HideLoading();
-		_gameScreenLogin.SetSignUpWrongError();
-		Debug.Log("error: " + error);
 	}
 
 	private void Submit2FACode()

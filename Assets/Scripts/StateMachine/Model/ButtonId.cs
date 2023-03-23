@@ -19,14 +19,15 @@ public static class ButtonId
     public const string LoginSignInGoogle = "login.signin.google";
     public const string LoginSignInApple = "login.signin.apple";
     public const string LoginGoToSignUp = "login.goto.signup";
+    public const string LoginSignInSubmit = "login.signin.submit";
     public const string LoginForgotPassword = "login.forgotpassword";
     public const string LoginResetPassSubmit = "login.resetpass.submit";
     public const string LoginResetPassGoBack = "login.resetpass.goback";
     public const string LoginSetNewPassSubmit = "login.setnewpass.submit";
     public const string LoginSetNewPassGoBack = "login.setnewpass.goback";
-    
-    public const string LoginSignInSubmit = "login.signin.submit";
     public const string LoginSignUpSubmit = "login.signup.submit";
+    public const string LoginSignUpGoBack = "login.signup.goback";
+    
     public const string LoginCodeSubmit = "login.code.submit";
     public const string LoginCodeDidntReceive = "login.code.didntreceive";
     public const string LoginSetNewPassDidntReceiveCode = "login.setnewpass.didntreceivecode";

@@ -2,7 +2,6 @@ public class GameStateLogin : GameState
 {
     private GamePopupLogin _gamePopupLogin;
     private GameScreenLoading _gameScreenLoading;
-    private GameScreenDarkenedBg _darkenedBg;
 
     public override string GetGameStateName()
     {
@@ -11,7 +10,6 @@ public class GameStateLogin : GameState
 
     public override void Enter()
     {
-        _darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>(true);
         _gamePopupLogin = Screens.Instance.PushScreen<GamePopupLogin>();
     }
 
@@ -55,7 +53,8 @@ public class GameStateLogin : GameState
                 stateMachine.PushState(new GameStateForgotPassword());
                 break;
             case ButtonId.LoginGoToSignUp:
-                //todo:
+                stateMachine.PopState();
+                stateMachine.PushState(new GameStateRegister());
                 break;
         }
     }

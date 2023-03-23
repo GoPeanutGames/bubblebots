@@ -138,6 +138,36 @@ public class LoginManager : MonoBehaviour
 		ClearCallbacks();
 	}
 
+	public void SignUp(string email, string pass, UnityAction onSuccess, UnityAction onFail)
+	{
+		_callbackOnSuccess = onSuccess;
+		_callbackOnFail = onFail;
+		var provider = new SHA256Managed();
+		var hash = provider.ComputeHash(Encoding.UTF8.GetBytes(pass));
+		string hashString = string.Empty;
+		foreach (byte x in hash)
+		{
+			hashString += $"{x:x2}";
+		}
+
+		_tempEmail = email;
+		_tempHashedPass = hashString;
+		EmailPassSignUp data = new EmailPassSignUp()
+		{
+			email = email,
+			password = hashString
+		};
+		string formData = JsonUtility.ToJson(data);
+		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.EmailPassSignUp, formData, EmailPassSignUpSuccess, EmailPassSignUpFail);
+	}
+
+	private void EmailPassSignUpFail(string error)
+	{
+		_callbackOnFail?.Invoke();
+		ClearCallbacks();
+		Debug.Log("error: " + error);
+	}
+	
 	public void SignIn(string email, string pass, UnityAction onSuccess, UnityAction onFail)
 	{
 		_callbackOnSuccess = onSuccess;
