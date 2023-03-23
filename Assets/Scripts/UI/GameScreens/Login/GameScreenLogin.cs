@@ -13,7 +13,6 @@ public class GameScreenLogin : GameScreen
     public TextMeshProUGUI signUpErrorText;
     public TextMeshProUGUI signUpDescText;
     public TextMeshProUGUI twoFaCodeText;
-    public TextMeshProUGUI resetPassError;
     public TextMeshProUGUI setNewPassDesc;
     public TextMeshProUGUI setNewPassError;
     public TextMeshProUGUI codeTitle;
@@ -21,7 +20,6 @@ public class GameScreenLogin : GameScreen
     public TMP_InputField emailInputFieldSignUp;
     public TMP_InputField passInputFieldSignUp;
     public TMP_InputField codeInputField;
-    public TMP_InputField emailInputFieldResetPass;
     public TMP_InputField newPassInputFieldSetNewPass;
     public TMP_InputField authCodeInputFieldSetNewPass;
 
@@ -71,11 +69,6 @@ public class GameScreenLogin : GameScreen
     public string GetLoginInputFieldCode()
     {
         return codeInputField.text;
-    }
-
-    public string GetResetPassInputFieldEmail()
-    {
-        return emailInputFieldResetPass.text;
     }
 
     public string GetSetNewPassInputFieldPass()
@@ -133,21 +126,6 @@ public class GameScreenLogin : GameScreen
         twoFaCodeText.text = "Enter again the authorization code that we sent to your email address.";
         codeTitle.gameObject.SetActive(false);
         codeError.gameObject.SetActive(true);
-    }
-
-    public void ResetPassResetScreen()
-    {
-        resetPassError.text = "";
-    }
-    
-    public bool ResetPassValidation()
-    {
-        if (string.IsNullOrEmpty(emailInputFieldResetPass.text))
-        {
-            resetPassError.text = "Fill in a valid email address";
-            return false;
-        }
-        return true;
     }
 
     public bool SetNewPassValidation()

@@ -23,6 +23,16 @@ public class LoginManager : MonoBehaviour
 		_autoLogin = new AutoLogin();
 	}
 
+#if UNITY_IOS
+    public void Update()
+    {
+        if (Application.platform == RuntimePlatform.IPhonePlayer)
+        {
+            _appleLogin.Update();
+        }
+    }
+#endif
+	
 	private void ClearCallbacks()
 	{
 		_callbackOnFail = null;
@@ -162,5 +172,38 @@ public class LoginManager : MonoBehaviour
 		_callbackOnFail?.Invoke();
 		ClearCallbacks();
 		Debug.Log("error: " + error);
+	}
+	
+	public void ResetPassword(string resetEmail, bool useStored, UnityAction onSuccess, UnityAction onFail)
+	{
+		_callbackOnSuccess = onSuccess;
+		_callbackOnFail = onFail;
+		string email = resetEmail;
+		if (useStored)
+		{
+			email = _tempEmail;
+		}
+		else
+		{
+			_tempEmail = resetEmail;
+		}
+		ResetPassData data = new ResetPassData()
+		{
+			email = email
+		};
+		string formData = JsonUtility.ToJson(data);
+		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.ResetPassword, formData, ResetPassSuccess, ResetPassFail);
+	}
+
+	private void ResetPassSuccess(string reason)
+	{
+		_callbackOnSuccess?.Invoke();
+		ClearCallbacks();
+	}
+
+	private void ResetPassFail(string reason)
+	{
+		_callbackOnFail?.Invoke();
+		ClearCallbacks();
 	}
 }

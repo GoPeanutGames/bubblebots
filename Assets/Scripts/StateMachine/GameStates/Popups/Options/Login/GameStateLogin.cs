@@ -49,11 +49,10 @@ public class GameStateLogin : GameState
                 }
                 break;
             case ButtonId.LoginSignInClose:
-                Screens.Instance.PopScreen(_darkenedBg);
                 stateMachine.PopState();
                 break;
             case ButtonId.LoginForgotPassword:
-                //todo:
+                stateMachine.PushState(new GameStateForgotPassword());
                 break;
             case ButtonId.LoginGoToSignUp:
                 //todo:
@@ -89,7 +88,6 @@ public class GameStateLogin : GameState
     private void EmailPassSignUpSuccess()
     {
         Screens.Instance.PopScreen(_gameScreenLoading);
-        //TODO: pop this state
         //TODO: push 2fa state
         // _gameScreenLogin.Show2FAuth();
     }

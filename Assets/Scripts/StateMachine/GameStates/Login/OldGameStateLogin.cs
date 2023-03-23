@@ -21,9 +21,6 @@ public class OldGameStateLogin : GameState
 	public override void Enter()
 	{
 		_gameScreenLogin = Screens.Instance.PushScreen<GameScreenLogin>(true);
-		_googleLogin = new GoogleLogin();
-		_appleLogin = new AppleLogin();
-		_autoLogin = new AutoLogin();
 		_gameScreenLogin.ShowLoading();
 	}
 
@@ -31,17 +28,6 @@ public class OldGameStateLogin : GameState
 	{
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
-
-#if UNITY_IOS
-    public override void Update(float delta)
-    {
-        base.Update(delta);
-        if (Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            _appleLogin.Update();
-        }
-    }
-#endif
 
 	private void OnGameEvent(GameEventData gameEvent)
 	{
@@ -74,11 +60,6 @@ public class OldGameStateLogin : GameState
 				// SignIn();
 				break;
 			case ButtonId.LoginResetPassSubmit:
-				if (_gameScreenLogin.ResetPassValidation())
-				{
-					ResetPassword();
-				}
-				break;
 			case ButtonId.LoginSetNewPassSubmit:
 				if (_gameScreenLogin.SetNewPassValidation())
 				{
@@ -87,32 +68,9 @@ public class OldGameStateLogin : GameState
 
 				break;
 			case ButtonId.LoginSetNewPassDidntReceiveCode:
-				ResetPassword();
+				// ResetPassword();
 				break;
 		}
-	}
-
-	private void ResetPassword()
-	{
-		_gameScreenLogin.ShowLoading();
-		string email = _gameScreenLogin.GetResetPassInputFieldEmail();
-		ResetPassData data = new ResetPassData()
-		{
-			email = email
-		};
-		string formData = JsonUtility.ToJson(data);
-		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.ResetPassword, formData, ResetPassSuccess, ResetPassFail);
-	}
-
-	private void ResetPassFail(string reason)
-	{
-		_gameScreenLogin.HideLoading();
-	}
-
-	private void ResetPassSuccess(string _)
-	{
-		_gameScreenLogin.HideLoading();
-		_gameScreenLogin.ShowSetNewPassword();
 	}
 
 	private void SetNewPassSuccess(string data)

@@ -48,7 +48,6 @@ public class GameStateOptions : GameState
 				stateMachine.PopState();
 				break;
 			case ButtonId.OptionsSyncProgress:
-				stateMachine.PopState();
 				stateMachine.PushState(new GameStateLogin());
 				break;
 			case ButtonId.OptionsChangePicture:
