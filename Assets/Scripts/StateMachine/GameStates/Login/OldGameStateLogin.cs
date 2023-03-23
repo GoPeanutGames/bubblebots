@@ -59,53 +59,7 @@ public class OldGameStateLogin : GameState
 			case ButtonId.LoginCodeDidntReceive:
 				// SignIn();
 				break;
-			case ButtonId.LoginResetPassSubmit:
-			case ButtonId.LoginSetNewPassSubmit:
-				if (_gameScreenLogin.SetNewPassValidation())
-				{
-					SetNewPassword();
-				}
-
-				break;
-			case ButtonId.LoginSetNewPassDidntReceiveCode:
-				// ResetPassword();
-				break;
 		}
-	}
-
-	private void SetNewPassSuccess(string data)
-	{
-		_gameScreenLogin.HideLoading();
-		_gameScreenLogin.ShowSignIn();
-	}
-
-	private void SetNewPassFail(string error)
-	{
-		Debug.LogError("Set new pass fail: " + error);
-		_gameScreenLogin.HideLoading();
-		_gameScreenLogin.SetNewPassError();
-	}
-
-	private void SetNewPassword()
-	{
-		_gameScreenLogin.ShowLoading();
-		string authCode = _gameScreenLogin.GetSetNewPassInputFieldAuthCode();
-		string newPass = _gameScreenLogin.GetSetNewPassInputFieldPass();
-		var provider = new SHA256Managed();
-		var hash = provider.ComputeHash(Encoding.UTF8.GetBytes(newPass));
-		string hashString = string.Empty;
-		foreach (byte x in hash)
-		{
-			hashString += $"{x:x2}";
-		}
-
-		SetNewPassData data = new SetNewPassData()
-		{
-			newPassword = hashString,
-			token = authCode
-		};
-		string formData = JsonUtility.ToJson(data);
-		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.SetNewPass, formData, SetNewPassSuccess, SetNewPassFail);
 	}
 
 	private void SignUp()

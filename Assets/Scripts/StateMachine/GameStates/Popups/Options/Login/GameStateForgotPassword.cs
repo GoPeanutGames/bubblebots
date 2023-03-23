@@ -52,7 +52,8 @@ public class GameStateForgotPassword : GameState
 	private void ResetPassSuccess()
 	{
 		Screens.Instance.PopScreen(_gameScreenLoading);
-		//TODO: set new password
+		stateMachine.PopState();
+		stateMachine.PushState(new GameStateSetNewPassword());
 	}
 
 	public override void Disable()

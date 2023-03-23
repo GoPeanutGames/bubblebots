@@ -22,12 +22,13 @@ public static class ButtonId
     public const string LoginForgotPassword = "login.forgotpassword";
     public const string LoginResetPassSubmit = "login.resetpass.submit";
     public const string LoginResetPassGoBack = "login.resetpass.goback";
+    public const string LoginSetNewPassSubmit = "login.setnewpass.submit";
+    public const string LoginSetNewPassGoBack = "login.setnewpass.goback";
     
     public const string LoginSignInSubmit = "login.signin.submit";
     public const string LoginSignUpSubmit = "login.signup.submit";
     public const string LoginCodeSubmit = "login.code.submit";
     public const string LoginCodeDidntReceive = "login.code.didntreceive";
-    public const string LoginSetNewPassSubmit = "login.setnewpass.submit";
     public const string LoginSetNewPassDidntReceiveCode = "login.setnewpass.didntreceivecode";
 
     //main menu bottom hud

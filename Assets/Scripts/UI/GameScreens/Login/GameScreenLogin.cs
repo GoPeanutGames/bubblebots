@@ -13,15 +13,11 @@ public class GameScreenLogin : GameScreen
     public TextMeshProUGUI signUpErrorText;
     public TextMeshProUGUI signUpDescText;
     public TextMeshProUGUI twoFaCodeText;
-    public TextMeshProUGUI setNewPassDesc;
-    public TextMeshProUGUI setNewPassError;
     public TextMeshProUGUI codeTitle;
     public TextMeshProUGUI codeError;
     public TMP_InputField emailInputFieldSignUp;
     public TMP_InputField passInputFieldSignUp;
     public TMP_InputField codeInputField;
-    public TMP_InputField newPassInputFieldSetNewPass;
-    public TMP_InputField authCodeInputFieldSetNewPass;
 
     public void ShowLoading()
     {
@@ -48,14 +44,6 @@ public class GameScreenLogin : GameScreen
         twoFaPopup.SetActive(true);
     }
 
-    public void ShowSetNewPassword()
-    {
-        setNewPassDesc.gameObject.SetActive(true);
-        setNewPassError.text = "";
-        resetPassPopup.SetActive(false);
-        setNewPassPopup.SetActive(true);
-    }
-
     public string GetSignUpInputFieldEmail()
     {
         return emailInputFieldSignUp.text;
@@ -69,16 +57,6 @@ public class GameScreenLogin : GameScreen
     public string GetLoginInputFieldCode()
     {
         return codeInputField.text;
-    }
-
-    public string GetSetNewPassInputFieldPass()
-    {
-        return newPassInputFieldSetNewPass.text;
-    }
-
-    public string GetSetNewPassInputFieldAuthCode()
-    {
-        return authCodeInputFieldSetNewPass.text;
     }
 
     public bool SignUpValidation()
@@ -126,28 +104,5 @@ public class GameScreenLogin : GameScreen
         twoFaCodeText.text = "Enter again the authorization code that we sent to your email address.";
         codeTitle.gameObject.SetActive(false);
         codeError.gameObject.SetActive(true);
-    }
-
-    public bool SetNewPassValidation()
-    {
-        if (string.IsNullOrEmpty(authCodeInputFieldSetNewPass.text) || string.IsNullOrEmpty(newPassInputFieldSetNewPass.text))
-        {
-            setNewPassDesc.gameObject.SetActive(false);
-            setNewPassError.text = "Please fill in all necessary information.";
-            return false;
-        }
-        if (newPassInputFieldSetNewPass.text.Length < 8)
-        {
-            setNewPassDesc.gameObject.SetActive(false);
-            setNewPassError.text = "Password needs to have at least 8 characters.";
-            return false;
-        }
-        return true;
-    }
-
-    public void SetNewPassError()
-    {
-        setNewPassDesc.gameObject.SetActive(false);
-        setNewPassError.text = "Failed to set new password. Please check if your authentication code is correct.";
     }
 }

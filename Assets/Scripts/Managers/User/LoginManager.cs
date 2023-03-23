@@ -206,4 +206,38 @@ public class LoginManager : MonoBehaviour
 		_callbackOnFail?.Invoke();
 		ClearCallbacks();
 	}
+	
+	public void SetNewPassword(string authCode, string newPass, UnityAction onSuccess, UnityAction onFail)
+	{
+		_callbackOnSuccess = onSuccess;
+		_callbackOnFail = onFail;
+		var provider = new SHA256Managed();
+		var hash = provider.ComputeHash(Encoding.UTF8.GetBytes(newPass));
+		string hashString = string.Empty;
+		foreach (byte x in hash)
+		{
+			hashString += $"{x:x2}";
+		}
+
+		SetNewPassData data = new SetNewPassData()
+		{
+			newPassword = hashString,
+			token = authCode
+		};
+		string formData = JsonUtility.ToJson(data);
+		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.SetNewPass, formData, SetNewPassSuccess, SetNewPassFail);
+	}
+
+	private void SetNewPassSuccess(string reason)
+	{
+		_callbackOnSuccess?.Invoke();
+		ClearCallbacks();
+	}
+
+	private void SetNewPassFail(string error)
+	{
+		Debug.LogError("Set new pass fail: " + error);
+		_callbackOnFail?.Invoke();
+		ClearCallbacks();
+	}
 }
