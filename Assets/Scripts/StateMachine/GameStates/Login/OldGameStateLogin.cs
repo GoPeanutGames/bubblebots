@@ -40,46 +40,8 @@ public class OldGameStateLogin : GameState
 		GameEventString buttonTapData = data as GameEventString;
 		switch (buttonTapData.stringData)
 		{
-			case ButtonId.LoginCodeSubmit:
-				if (_gameScreenLogin.CodeValidation())
-				{
-					Submit2FACode();
-				}
-
-				break;
-			case ButtonId.LoginCodeDidntReceive:
-				// SignIn();
-				break;
+			
 		}
-	}
-
-	private void Submit2FACode()
-	{
-		_gameScreenLogin.ShowLoading();
-		string code = _gameScreenLogin.GetLoginInputFieldCode();
-		Login2ndStep data = new Login2ndStep()
-		{
-			email = _tempEmail,
-			password = _tempHashedPass,
-			twoFaCode = code
-		};
-		string formData = JsonUtility.ToJson(data);
-		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login2NdStep, formData, TwoFACodeSuccess, TwoFACodeFail);
-	}
-
-	private void TwoFACodeSuccess(string success)
-	{
-		_gameScreenLogin.HideLoading();
-		Debug.Log("success: " + success);
-		LoginResult result = JsonUtility.FromJson<LoginResult>(success);
-		LoginSuccessSetData(result);
-	}
-
-	private void TwoFACodeFail(string error)
-	{
-		_gameScreenLogin.HideLoading();
-		Debug.Log("error: " + error);
-		_gameScreenLogin.Set2FAError();
 	}
 
 	private void GoToMainMenu()

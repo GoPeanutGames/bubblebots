@@ -120,8 +120,6 @@ public class LoginManager : MonoBehaviour
 		};
 		UserManager.Instance.loginManager.
 		LoginSuccessSetData(loginResult);
-		_callbackOnSuccess?.Invoke();
-		ClearCallbacks();
 	}
 	
 	private void GoogleLoginFail(string reason)
@@ -168,7 +166,7 @@ public class LoginManager : MonoBehaviour
 		Debug.Log("error: " + error);
 	}
 	
-	public void SignIn(string email, string pass, UnityAction onSuccess, UnityAction onFail)
+	public void SignIn(string email, string pass, bool useExisting, UnityAction onSuccess, UnityAction onFail)
 	{
 		_callbackOnSuccess = onSuccess;
 		_callbackOnFail = onFail;
@@ -180,13 +178,22 @@ public class LoginManager : MonoBehaviour
 			hashString += $"{x:x2}";
 		}
 
-		_tempEmail = email;
-		_tempHashedPass = hashString;
+		
 		EmailPassSignUp data = new EmailPassSignUp()
 		{
 			email = email,
 			password = hashString
 		};
+		if (useExisting)
+		{
+			data.email = _tempEmail;
+			data.password = _tempHashedPass;
+		}
+		else
+		{
+			_tempEmail = email;
+			_tempHashedPass = hashString;
+		}
 		string formData = JsonUtility.ToJson(data);
 		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login1StStep, formData, EmailPassSignUpSuccess, SignInFail);
 	}
@@ -202,6 +209,34 @@ public class LoginManager : MonoBehaviour
 		_callbackOnFail?.Invoke();
 		ClearCallbacks();
 		Debug.Log("error: " + error);
+	}
+	
+	public void Submit2FaCode(string code, UnityAction onSuccess, UnityAction onFail)
+	{
+		_callbackOnSuccess = onSuccess;
+		_callbackOnFail = onFail;
+		Login2ndStep data = new Login2ndStep()
+		{
+			email = _tempEmail,
+			password = _tempHashedPass,
+			twoFaCode = code
+		};
+		string formData = JsonUtility.ToJson(data);
+		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Login2NdStep, formData, TwoFaCodeSuccess, TwoFaCodeFail);
+	}
+	
+	private void TwoFaCodeSuccess(string success)
+	{
+		Debug.Log("success: " + success);
+		LoginResult result = JsonUtility.FromJson<LoginResult>(success);
+		LoginSuccessSetData(result);
+	}
+
+	private void TwoFaCodeFail(string error)
+	{
+		Debug.Log("error: " + error);
+		_callbackOnFail?.Invoke();
+		ClearCallbacks();
 	}
 	
 	public void ResetPassword(string resetEmail, bool useStored, UnityAction onSuccess, UnityAction onFail)

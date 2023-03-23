@@ -48,7 +48,8 @@ public class GameStateRegister : GameState
 	private void EmailPassSignUpSuccess()
 	{
 		Screens.Instance.PopScreen(_gameScreenLoading);
-		//TODO: 2FA
+		stateMachine.PopState();
+		stateMachine.PushState(new GameStateTwoFA());
 	}
 
 	private void EmailPassSignUpFail()

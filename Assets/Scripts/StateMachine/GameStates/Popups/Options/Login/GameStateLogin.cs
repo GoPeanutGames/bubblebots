@@ -43,7 +43,7 @@ public class GameStateLogin : GameState
                 if (_gamePopupLogin.SignInValidation())
                 {
                     _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-                    UserManager.Instance.loginManager.SignIn(_gamePopupLogin.GetLoginInputFieldEmail(), _gamePopupLogin.GetLoginInputFieldPass(), EmailPassSignUpSuccess, SignInFail);
+                    UserManager.Instance.loginManager.SignIn(_gamePopupLogin.GetLoginInputFieldEmail(), _gamePopupLogin.GetLoginInputFieldPass(), false, EmailPassSignUpSuccess, SignInFail);
                 }
                 break;
             case ButtonId.LoginSignInClose:
@@ -81,17 +81,16 @@ public class GameStateLogin : GameState
     private void GoogleOrAppleLoginSuccess()
     {
         Screens.Instance.PopScreen(_gameScreenLoading);
-
+        stateMachine.PopState();
     }
     
     private void EmailPassSignUpSuccess()
     {
         Screens.Instance.PopScreen(_gameScreenLoading);
-        //TODO: push 2fa state
-        // _gameScreenLogin.Show2FAuth();
+        stateMachine.PopState();
+        stateMachine.PushState(new GameStateTwoFA());
     }
-    
-    
+
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
