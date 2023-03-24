@@ -324,4 +324,38 @@ public class LoginManager : MonoBehaviour
 		_callbackOnSuccess?.Invoke();
 		ClearCallbacks();
 	}
+
+	public void AskDeleteAccount(UnityAction onSuccess)
+	{
+		_callbackOnSuccess = onSuccess;
+		ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.AskDelete, AskDeleteSuccess);
+	}
+
+	private void AskDeleteSuccess(string data)
+	{
+		_callbackOnSuccess?.Invoke();
+		ClearCallbacks();
+	}
+
+	public void DeleteAccount(string code, UnityAction onSuccess)
+	{
+		_callbackOnSuccess = onSuccess;
+		DeleteAccPost data = new DeleteAccPost()
+		{
+			token = code
+		};
+		string formData = JsonUtility.ToJson(data);
+
+		ServerManager.Instance.SendLoginDataToServer(SignatureLoginAPI.Delete, formData, DeleteAccountSuccess);
+	}
+
+	private void DeleteAccountSuccess(string data)
+	{
+		UserManager.ClearPrefs();
+#if UNITY_ANDROID
+		PlayGamesPlatform.Instance.SignOut();
+#endif
+		_callbackOnSuccess?.Invoke();
+		ClearCallbacks();
+	}
 }

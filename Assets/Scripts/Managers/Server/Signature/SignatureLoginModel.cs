@@ -14,7 +14,9 @@ namespace BubbleBots.Server.Signature
         AutoLoginGet,
         ResetPassword,
         SetNewPass,
-        Logout
+        Logout,
+        AskDelete,
+        Delete
     }
 
     [Serializable]
@@ -121,5 +123,17 @@ namespace BubbleBots.Server.Signature
     public class ServerError
     {
         public string code;
+    }
+    
+    [Serializable]
+    public class SuccessResponse
+    {
+        public bool success;
+    }
+    
+    [Serializable]
+    public class DeleteAccPost
+    {
+        public string token;
     }
 }

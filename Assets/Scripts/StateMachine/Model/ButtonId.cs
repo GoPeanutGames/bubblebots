@@ -67,6 +67,15 @@ public static class ButtonId
     public const string ManageAccountAppleSignIn = "manageaccount.apple.signin";
     public const string ManageAccountDelete = "manageaccount.delete";
     public const string ManageAccountSignOut = "manageaccount.signout";
+    
+    //delete account popup
+    public const string DeleteAccountClose = "deleteaccount.close";
+    public const string DeleteAccountProceed = "deleteaccount.proceed";
+    
+    //confirm delete account popup
+    public const string DeleteAccountConfirmClose = "deleteaccountconfirm.close";
+    public const string DeleteAccountConfirmProceed = "deleteaccountconfirm.proceed";
+    public const string DeleteAccountConfirmNoCode = "deleteaccountconfirm.nocode";
 
     //leaderboard
     public const string LeaderboardFree = "leaderboard.free";

@@ -65,6 +65,7 @@ public class GameStateOptions : GameState
 				break;
 			case ButtonId.OptionsSave:
 				SaveSettings();
+				Screens.Instance.PopScreen(_darkenedBg);
 				stateMachine.PopState();
 				break;
 		}
