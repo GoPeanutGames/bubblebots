@@ -12,6 +12,13 @@ public enum PlayerType
     LoggedInUser
 }
 
+public enum LoginType
+{
+    None,
+    Email,
+    Provider
+}
+
 public class UserManager : MonoSingleton<UserManager>
 {
     public static PlayerType PlayerType;

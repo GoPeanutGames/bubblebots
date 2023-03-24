@@ -27,6 +27,7 @@ public class GameStateOptions : GameState
 	public override void Enable()
 	{
 		_gamePopupOptions.RefreshPlayerUsername();
+		_gamePopupOptions.RefreshAuthState();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
 
@@ -50,17 +51,28 @@ public class GameStateOptions : GameState
 			case ButtonId.OptionsSyncProgress:
 				stateMachine.PushState(new GameStateLogin());
 				break;
+			case ButtonId.OptionsSignOut:
+				UserManager.Instance.loginManager.SignOut(SignOutSuccess);
+				break;
 			case ButtonId.OptionsChangePicture:
 				ChangePicture();
 				break;
 			case ButtonId.OptionsChangeName:
 				stateMachine.PushState(new GameStateChangeNickname());
 				break;
+			case ButtonId.OptionsManageAccount:
+				stateMachine.PushState(new GameStateManageAccount());
+				break;
 			case ButtonId.OptionsSave:
 				SaveSettings();
 				stateMachine.PopState();
 				break;
 		}
+	}
+
+	private void SignOutSuccess()
+	{
+		_gamePopupOptions.RefreshAuthState();
 	}
 
 	private void GetNextPicture()
@@ -127,16 +139,6 @@ public class GameStateOptions : GameState
 		}
 
 		UserManager.Instance.SetPlayerHints(hintsOn);
-	}
-
-	private void Logout()
-	{
-		//TODO:
-// 		UserManager.ClearPrefs();
-// 		ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutSuccess);
-// #if UNITY_ANDROID
-// 		PlayGamesPlatform.Instance.SignOut();
-// #endif
 	}
 
 	public override void Disable()

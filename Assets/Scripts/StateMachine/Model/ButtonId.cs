@@ -55,7 +55,18 @@ public static class ButtonId
     public const string OptionsChangeName = "options.changename";
     public const string OptionsSave = "options.save";
     public const string OptionsSyncProgress = "options.syncprogress";
+    public const string OptionsSignOut = "options.signout";
+    public const string OptionsManageAccount = "options.manageaccount";
     public const string OptionsClose = "options.close";
+    
+    //manage account popup
+    public const string ManageAccountClose = "manageaccount.close";
+    public const string ManageAccountSignIn = "manageaccount.signin";
+    public const string ManageAccountContact = "manageaccount.contact";
+    public const string ManageAccountGoogleSignIn = "manageaccount.google.signin";
+    public const string ManageAccountAppleSignIn = "manageaccount.apple.signin";
+    public const string ManageAccountDelete = "manageaccount.delete";
+    public const string ManageAccountSignOut = "manageaccount.signout";
 
     //leaderboard
     public const string LeaderboardFree = "leaderboard.free";

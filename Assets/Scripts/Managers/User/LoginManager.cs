@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using System.Text;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
+using GooglePlayGames;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -69,6 +70,7 @@ public class LoginManager : MonoBehaviour
 	
 	private void AutoLoginSuccess(User user)
 	{
+		Debug.Log("Auto Login success ");
 		LoginResult loginResult = new LoginResult()
 		{
 			user = user,
@@ -118,7 +120,6 @@ public class LoginManager : MonoBehaviour
 			user = result.user,
 			web3Info = result.web3Info
 		};
-		UserManager.Instance.loginManager.
 		LoginSuccessSetData(loginResult);
 	}
 	
@@ -303,6 +304,24 @@ public class LoginManager : MonoBehaviour
 	{
 		Debug.LogError("Set new pass fail: " + error);
 		_callbackOnFail?.Invoke();
+		ClearCallbacks();
+	}
+
+	public void SignOut(UnityAction successCallback)
+	{
+		_callbackOnSuccess = successCallback;
+		UserManager.ClearPrefs();
+		ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutSuccess);
+#if UNITY_ANDROID
+		PlayGamesPlatform.Instance.SignOut();
+#endif
+	}
+
+	private void LogoutSuccess(string data)
+	{
+		UserManager.PlayerType = PlayerType.Guest;
+		UserManager.Instance.GetPlayerResources();
+		_callbackOnSuccess?.Invoke();
 		ClearCallbacks();
 	}
 }

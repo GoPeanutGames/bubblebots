@@ -20,6 +20,9 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     [Header("Other")]
     public Image playerAvatar;
     public TextMeshProUGUI playerUsername;
+    public Button changeNameButton;
+    public GameObject syncProgressButton;
+    public GameObject signOutButton;
 
     private AvatarInformation currentAvatar;
     
@@ -29,6 +32,7 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
         InitialiseHintsToggle();
         SetPlayerAvatar(UserManager.Instance.GetPlayerAvatar());
         RefreshPlayerUsername();
+        RefreshAuthState();
     }
 
     private void InitialiseMusicToggle()
@@ -106,5 +110,12 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     public void RefreshPlayerUsername()
     {
         playerUsername.text = UserManager.Instance.GetPlayerUserName();
+    }
+
+    public void RefreshAuthState()
+    {
+        changeNameButton.interactable = UserManager.PlayerType == PlayerType.LoggedInUser; 
+        signOutButton.SetActive(UserManager.PlayerType == PlayerType.LoggedInUser);
+        syncProgressButton.SetActive(UserManager.PlayerType == PlayerType.Guest);
     }
 }

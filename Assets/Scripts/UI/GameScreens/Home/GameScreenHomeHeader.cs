@@ -52,6 +52,7 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
         SetTopInfo(PlayerResource.Bubbles, wallet.bubbles);
         SetTopInfo(PlayerResource.Energy, wallet.energy);
         SetTopInfo(PlayerResource.Gems, wallet.gems);
+        RefreshData();
         ResourcesSet?.Invoke();
     }
 
