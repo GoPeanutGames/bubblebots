@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class GameStateHome : GameState
 {
 	private GameScreenHomeFooter _gameScreenHomeFooter;
@@ -63,6 +65,9 @@ public class GameStateHome : GameState
 				break;
 			case ButtonId.MainMenuSideBarLeaderboard:
 				ShowLeaderboard();
+				break;
+			case ButtonId.MainMenuSideBarTutorial:
+				Application.OpenURL("https://drive.google.com/file/d/1irXRB5-smW5rbZ9FB8RqBgh_OBQAS_AU/view");
 				break;
 			case ButtonId.HomeHeaderExplanator:
 				stateMachine.PushState(new GameStateExplanatorPopup());

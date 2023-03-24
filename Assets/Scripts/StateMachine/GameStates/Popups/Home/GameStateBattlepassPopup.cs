@@ -41,7 +41,7 @@ public class GameStateBattlepassPopup : GameState
 				Application.OpenURL("https://peanutgames.com/mint");
 				break;
 			case ButtonId.BattlepassPopupJoin:
-				Application.OpenURL("https://discord.com/invite/gopeanutgames");
+				Application.OpenURL("https://discord.gg/gopeanutgames");
 				break;
 		}
 	}
