@@ -66,12 +66,12 @@ public class UserManager : MonoSingleton<UserManager>
         }
     }
     
-    private void GetUserOrSetDefault()
+    public void GetUserOrSetDefault()
     {
         DeleteOldKeys();
         CurrentUser = new()
         {
-            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], ""),
+            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], "Guest User"),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),

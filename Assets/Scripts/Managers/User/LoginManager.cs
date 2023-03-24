@@ -320,6 +320,7 @@ public class LoginManager : MonoBehaviour
 	private void LogoutSuccess(string data)
 	{
 		UserManager.PlayerType = PlayerType.Guest;
+		UserManager.Instance.GetUserOrSetDefault();
 		UserManager.Instance.GetPlayerResources();
 		_callbackOnSuccess?.Invoke();
 		ClearCallbacks();
@@ -355,6 +356,9 @@ public class LoginManager : MonoBehaviour
 #if UNITY_ANDROID
 		PlayGamesPlatform.Instance.SignOut();
 #endif
+		UserManager.Instance.GetUserOrSetDefault();
+		UserManager.PlayerType = PlayerType.Guest;
+		UserManager.Instance.GetPlayerResources();
 		_callbackOnSuccess?.Invoke();
 		ClearCallbacks();
 	}

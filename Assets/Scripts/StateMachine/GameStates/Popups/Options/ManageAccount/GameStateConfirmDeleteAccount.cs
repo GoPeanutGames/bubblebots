@@ -33,7 +33,7 @@ public class GameStateConfirmDeleteAccount : GameState
 			case ButtonId.DeleteAccountConfirmClose:
 				stateMachine.PopState();
 				break;
-			case ButtonId.DeleteAccountProceed:
+			case ButtonId.DeleteAccountConfirmProceed:
 				UserManager.Instance.loginManager.DeleteAccount(_gamePopupConfirmDeleteAccount.GetCodeConfirmDelete(), DeleteAccountSuccess);
 				break;
 			case ButtonId.DeleteAccountConfirmNoCode:
