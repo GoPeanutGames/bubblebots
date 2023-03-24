@@ -116,6 +116,7 @@ public static class ButtonId
     //battlepass popup
     public const string BattlepassPopupClose = "battlepass.close";
     public const string BattlepassPopupBuy = "battlepass.buy";
+    public const string BattlepassPopupJoin = "battlepass.join";
 }
 
 public static class TypeUtilities
