@@ -44,6 +44,7 @@ public static class ButtonId
     public const string MainMenuSideBarLeaderboard = "mainmenu.sidebar.leaderboard";
     public const string MainMenuSideBarSettings = "mainmenu.sidebar.settings";
     public const string MainMenuSideBarMissions = "mainmenu.sidebar.missions";
+    public const string MainMenuSideBarTutorial = "mainmenu.sidebar.tutorial";
     
     //main menu top hud
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
