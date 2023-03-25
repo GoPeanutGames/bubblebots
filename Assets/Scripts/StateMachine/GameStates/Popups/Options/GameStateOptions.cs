@@ -138,8 +138,7 @@ public class GameStateOptions : GameState
 		{
 			SoundManager.Instance.Mute();
 		}
-
-		UserManager.Instance.SetPlayerHints(hintsOn);
+		UserManager.Instance.SetPlayerSettings(hintsOn, musicOn);
 	}
 
 	public override void Disable()

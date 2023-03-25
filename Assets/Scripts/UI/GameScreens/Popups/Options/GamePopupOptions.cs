@@ -37,15 +37,15 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
 
     private void InitialiseMusicToggle()
     {
-        bool muted = SoundManager.Instance.IsMuted();
-        MusicToggle.SetIsOnWithoutNotify(!muted);
-        MusicToggleOff.SetActive(muted);
-        MusicToggleOn.SetActive(!muted);
+        bool musicOn = UserManager.Instance.GetPlayerSettings().music;
+        MusicToggle.SetIsOnWithoutNotify(musicOn);
+        MusicToggleOff.SetActive(!musicOn);
+        MusicToggleOn.SetActive(musicOn);
     }
 
     private void InitialiseHintsToggle()
     {
-        bool hinting = UserManager.Instance.GetPlayerHints();
+        bool hinting = UserManager.Instance.GetPlayerSettings().hints;
         HintsToggle.SetIsOnWithoutNotify(hinting);
         HintsToggleOff.SetActive(!hinting);
         HintsToggleOn.SetActive(hinting);

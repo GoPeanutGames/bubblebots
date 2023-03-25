@@ -12,13 +12,6 @@ public enum PlayerType
     LoggedInUser
 }
 
-public enum LoginType
-{
-    None,
-    Email,
-    Provider
-}
-
 public class UserManager : MonoSingleton<UserManager>
 {
     public static PlayerType PlayerType;
@@ -37,24 +30,30 @@ public class UserManager : MonoSingleton<UserManager>
         isNft = false
     };
 
+    private Settings DEFAULT_SETTINGS = new Settings()
+    {
+        hints = true,
+        music = true
+    };
+
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
     {
         { PrefsKey.Nickname, "full_name" },
         { PrefsKey.WalletAddress, "wallet_address" },
         { PrefsKey.SessionToken, "session_token" },
         { PrefsKey.Signature, "signature" },
-        { PrefsKey.Hints, "hints"},
-        { PrefsKey.Avatar, "avatar"}
+        { PrefsKey.Avatar, "avatar"},
+        { PrefsKey.Settings, "settings"}
     };
     
     private readonly Dictionary<PrefsKeyToDelete, string> prefsKeysToDeleteMap = new()
     {
-        { PrefsKeyToDelete.Rank, "rank" }
+        { PrefsKeyToDelete.Hints, "hints" }
     };
 
     private void DeleteOldKeys()
     {
-        ObscuredPrefs.DeleteKey(prefsKeysToDeleteMap[PrefsKeyToDelete.Rank]);
+        ObscuredPrefs.DeleteKey(prefsKeysToDeleteMap[PrefsKeyToDelete.Hints]);
         if (int.TryParse(ObscuredPrefs.Get<string>(prefsKeyMap[PrefsKey.Avatar]), out int result))
         {
             AvatarInformation info = new AvatarInformation()
@@ -64,6 +63,12 @@ public class UserManager : MonoSingleton<UserManager>
             };
             ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(info));
         }
+    }
+
+    private Settings GetSettings()
+    {
+        string settingsStringJSON = ObscuredPrefs.Get<string>(prefsKeyMap[PrefsKey.Settings], JsonUtility.ToJson(DEFAULT_SETTINGS));
+        return JsonUtility.FromJson<Settings>(settingsStringJSON);
     }
     
     public void GetUserOrSetDefault()
@@ -75,7 +80,7 @@ public class UserManager : MonoSingleton<UserManager>
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),
-            Hints = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Hints], true), 
+            settings = GetSettings(),
             Avatar = JsonUtility.FromJson<AvatarInformation>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(EMPTY_AVATAR))) 
         };
     }
@@ -186,16 +191,17 @@ public class UserManager : MonoSingleton<UserManager>
     {
         return CurrentUser.Avatar;
     }
-    
-    public void SetPlayerHints(bool hints)
+
+    public void SetPlayerSettings(bool hints, bool music)
     {
-        CurrentUser.Hints = true;
-        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Hints], hints);
+        CurrentUser.settings.hints = hints;
+        CurrentUser.settings.music = music;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Settings], JsonUtility.ToJson(CurrentUser.settings));
     }
-    
-    public bool GetPlayerHints()
+
+    public Settings GetPlayerSettings()
     {
-        return CurrentUser.Hints;
+        return CurrentUser.settings;
     }
 
     //stub
