@@ -33,12 +33,6 @@ public class GameEventLevelComplete : GameEventData
     public int lastLevelPotentialBubbles;
 }
 
-
-public class GameEventNetherModeComplete : GameEventData
-{
-    public int numBubblesWon;
-}
-
 public class GameEventEnemyRobotDamage : GameEventData
 {
     public int index;
@@ -91,12 +85,6 @@ public class GameEventBubbleExploded : GameEventData
     public int posX;
     public int posY;
 }
-
-public class GameEventUpdateUnclaimedBubbles : GameEventData 
-{
-    public int balance;
-}
-
 
 public class GameEventUpdateSession : GameEventData
 {

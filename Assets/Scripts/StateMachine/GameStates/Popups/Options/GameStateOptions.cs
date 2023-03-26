@@ -1,13 +1,12 @@
 using System.Collections.Generic;
 using BubbleBots.Server.Player;
-using BubbleBots.Server.Signature;
 using BubbleBots.User;
-using GooglePlayGames;
 using UnityEngine;
 
 public class GameStateOptions : GameState
 {
 	private GamePopupOptions _gamePopupOptions;
+	private GameScreenDarkenedBg _darkenedBg;
 
 	private AvatarInformation _finalAvatar;
 
@@ -18,6 +17,7 @@ public class GameStateOptions : GameState
 
 	public override void Enter()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>(true);
 		_gamePopupOptions = Screens.Instance.PushScreen<GamePopupOptions>();
 		_gamePopupOptions.StartOpen();
 		_finalAvatar = UserManager.Instance.GetPlayerAvatar();
@@ -27,6 +27,7 @@ public class GameStateOptions : GameState
 	public override void Enable()
 	{
 		_gamePopupOptions.RefreshPlayerUsername();
+		_gamePopupOptions.RefreshAuthState();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
 
@@ -44,10 +45,14 @@ public class GameStateOptions : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.OptionsClose:
+				Screens.Instance.PopScreen(_darkenedBg);
 				stateMachine.PopState();
 				break;
+			case ButtonId.OptionsSyncProgress:
+				stateMachine.PushState(new GameStateLogin());
+				break;
 			case ButtonId.OptionsSignOut:
-				Logout();
+				UserManager.Instance.loginManager.SignOut(SignOutSuccess);
 				break;
 			case ButtonId.OptionsChangePicture:
 				ChangePicture();
@@ -55,11 +60,20 @@ public class GameStateOptions : GameState
 			case ButtonId.OptionsChangeName:
 				stateMachine.PushState(new GameStateChangeNickname());
 				break;
+			case ButtonId.OptionsManageAccount:
+				stateMachine.PushState(new GameStateManageAccount());
+				break;
 			case ButtonId.OptionsSave:
 				SaveSettings();
+				Screens.Instance.PopScreen(_darkenedBg);
 				stateMachine.PopState();
 				break;
 		}
+	}
+
+	private void SignOutSuccess()
+	{
+		_gamePopupOptions.RefreshAuthState();
 	}
 
 	private void GetNextPicture()
@@ -124,28 +138,7 @@ public class GameStateOptions : GameState
 		{
 			SoundManager.Instance.Mute();
 		}
-
-		UserManager.Instance.SetPlayerHints(hintsOn);
-	}
-
-	private void Logout()
-	{
-		UserManager.ClearPrefs();
-		ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Logout, LogoutSuccess, "", LogoutSuccess);
-#if UNITY_ANDROID
-		PlayGamesPlatform.Instance.SignOut();
-#endif
-	}
-
-	private void LogoutSuccess(string result)
-	{
-		for (int i = 0; i < 50; i++)
-		{
-			Screens.Instance.PopScreen();
-		}
-
-		stateMachine.PopAll();
-		stateMachine.PushState(new GameStateLogin());
+		UserManager.Instance.SetPlayerSettings(hintsOn, musicOn);
 	}
 
 	public override void Disable()
@@ -155,6 +148,6 @@ public class GameStateOptions : GameState
 
 	public override void Exit()
 	{
-		_gamePopupOptions.StartClose();
+		Screens.Instance.PopScreen(_gamePopupOptions);
 	}
 }

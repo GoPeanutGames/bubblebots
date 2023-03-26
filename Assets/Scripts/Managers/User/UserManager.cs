@@ -19,6 +19,7 @@ public class UserManager : MonoSingleton<UserManager>
     public static Action<GetPlayerWallet> CallbackWithResources;
 
     public NFTManager NftManager;
+    public LoginManager loginManager;
     public List<Sprite> PlayerAvatars;
     
     private User CurrentUser;
@@ -29,24 +30,30 @@ public class UserManager : MonoSingleton<UserManager>
         isNft = false
     };
 
+    private Settings DEFAULT_SETTINGS = new Settings()
+    {
+        hints = true,
+        music = true
+    };
+
     private readonly Dictionary<PrefsKey, string> prefsKeyMap = new()
     {
         { PrefsKey.Nickname, "full_name" },
         { PrefsKey.WalletAddress, "wallet_address" },
         { PrefsKey.SessionToken, "session_token" },
         { PrefsKey.Signature, "signature" },
-        { PrefsKey.Hints, "hints"},
-        { PrefsKey.Avatar, "avatar"}
+        { PrefsKey.Avatar, "avatar"},
+        { PrefsKey.Settings, "settings"}
     };
     
     private readonly Dictionary<PrefsKeyToDelete, string> prefsKeysToDeleteMap = new()
     {
-        { PrefsKeyToDelete.Rank, "rank" }
+        { PrefsKeyToDelete.Hints, "hints" }
     };
 
     private void DeleteOldKeys()
     {
-        ObscuredPrefs.DeleteKey(prefsKeysToDeleteMap[PrefsKeyToDelete.Rank]);
+        ObscuredPrefs.DeleteKey(prefsKeysToDeleteMap[PrefsKeyToDelete.Hints]);
         if (int.TryParse(ObscuredPrefs.Get<string>(prefsKeyMap[PrefsKey.Avatar]), out int result))
         {
             AvatarInformation info = new AvatarInformation()
@@ -57,17 +64,23 @@ public class UserManager : MonoSingleton<UserManager>
             ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(info));
         }
     }
+
+    private Settings GetSettings()
+    {
+        string settingsStringJSON = ObscuredPrefs.Get<string>(prefsKeyMap[PrefsKey.Settings], JsonUtility.ToJson(DEFAULT_SETTINGS));
+        return JsonUtility.FromJson<Settings>(settingsStringJSON);
+    }
     
-    private void GetUserOrSetDefault()
+    public void GetUserOrSetDefault()
     {
         DeleteOldKeys();
         CurrentUser = new()
         {
-            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], ""),
+            UserName = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Nickname], "Guest User"),
             WalletAddress = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.WalletAddress], ""),
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),
-            Hints = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Hints], true), 
+            settings = GetSettings(),
             Avatar = JsonUtility.FromJson<AvatarInformation>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(EMPTY_AVATAR))) 
         };
     }
@@ -178,16 +191,17 @@ public class UserManager : MonoSingleton<UserManager>
     {
         return CurrentUser.Avatar;
     }
-    
-    public void SetPlayerHints(bool hints)
+
+    public void SetPlayerSettings(bool hints, bool music)
     {
-        CurrentUser.Hints = true;
-        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Hints], hints);
+        CurrentUser.settings.hints = hints;
+        CurrentUser.settings.music = music;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.Settings], JsonUtility.ToJson(CurrentUser.settings));
     }
-    
-    public bool GetPlayerHints()
+
+    public Settings GetPlayerSettings()
     {
-        return CurrentUser.Hints;
+        return CurrentUser.settings;
     }
 
     //stub
@@ -207,11 +221,24 @@ public class UserManager : MonoSingleton<UserManager>
 
     public void GetPlayerResources()
     {
-        ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+        if (PlayerType == PlayerType.Guest)
         {
-            GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
-            CallbackWithResources?.Invoke(walletData);
-        }, CurrentUser.WalletAddress);
+            GetPlayerWallet wallet = new GetPlayerWallet()
+            {
+                bubbles = 0,
+                energy = 0,
+                gems = 0
+            };
+            CallbackWithResources?.Invoke(wallet);
+        }
+        else
+        {
+            ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Wallet, (jsonData) =>
+            {
+                GetPlayerWallet walletData = JsonUtility.FromJson<GetPlayerWallet>(jsonData);
+                CallbackWithResources?.Invoke(walletData);
+            }, CurrentUser.WalletAddress);
+        }
     }
 
     private IEnumerator CallGetPlayerResourcesAfter(float seconds)

@@ -262,7 +262,7 @@ public class Match3GameplayManager : MonoBehaviour, IMatch3Events
     
     private void UpdateHintTimer()
     {
-        if (!UserManager.Instance.GetPlayerHints()) return;
+        if (!UserManager.Instance.GetPlayerSettings().hints) return;
         
         hintTimer += Time.deltaTime;
 

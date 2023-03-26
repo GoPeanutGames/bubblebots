@@ -7,7 +7,7 @@ public class MainController : MonoBehaviour, IErrorManager
     void Start()
     {
         _stateMachine.PopAll();
-        _stateMachine.PushState(new GameStateLogin());
+        _stateMachine.PushState(new GameStateStart());
     }
     public void Update()
     {

@@ -139,7 +139,7 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.NetherModeComplete)
         {
             stateMachine.PushState(new GameStateWonPopup(
-                "You earned <color=#FFCB5E>" + (data as GameEventNetherModeComplete).numBubblesWon.ToString() + "</color> Bubbles and extra <color=#FFCB5E>10,000</color> Bubbles for completing all levels!",
+                "You earned <color=#FFCB5E>" + (data as GameEventInt).intData + "</color> Bubbles and extra <color=#FFCB5E>10,000</color> Bubbles for completing all levels!",
                 ButtonId.GameEndGoToMainMenu,
                 "Go to home"
             ));

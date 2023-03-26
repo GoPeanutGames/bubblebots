@@ -29,6 +29,12 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     private bool muted = false;
 
+    private void Start()
+    {
+        bool musicOn = UserManager.Instance.GetPlayerSettings().music;
+        SetMute(!musicOn);
+    }
+
     private static IEnumerator StartFade(AudioSource audioSource, float duration, float targetVolume, Action onFadeEnd = null)
     {
         float currentTime = 0;
@@ -48,6 +54,7 @@ public class SoundManager : MonoSingleton<SoundManager>
         muted = m;
         musicSource.mute = muted;
         sfxSource.mute = muted;
+        lightningSource.mute = muted;
     }
 
     public void FadeInMusic(float volume = 1, float time = 0.5f)

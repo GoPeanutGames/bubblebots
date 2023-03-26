@@ -15,16 +15,21 @@ public static class ButtonId
     public const string AccountDisabledClose = "accountdisabled.close";
     
     //login
-    public const string LoginGuest = "login.guest";
-    public const string LoginSignInQuick = "login.signin.quick";
+    public const string LoginSignInClose = "login.signin.close";
     public const string LoginSignInGoogle = "login.signin.google";
     public const string LoginSignInApple = "login.signin.apple";
+    public const string LoginGoToSignUp = "login.goto.signup";
     public const string LoginSignInSubmit = "login.signin.submit";
+    public const string LoginForgotPassword = "login.forgotpassword";
+    public const string LoginResetPassSubmit = "login.resetpass.submit";
+    public const string LoginResetPassGoBack = "login.resetpass.goback";
+    public const string LoginSetNewPassSubmit = "login.setnewpass.submit";
+    public const string LoginSetNewPassGoBack = "login.setnewpass.goback";
     public const string LoginSignUpSubmit = "login.signup.submit";
+    public const string LoginSignUpGoBack = "login.signup.goback";
+    
     public const string LoginCodeSubmit = "login.code.submit";
     public const string LoginCodeDidntReceive = "login.code.didntreceive";
-    public const string LoginResetPassSubmit = "login.resetpass.submit";
-    public const string LoginSetNewPassSubmit = "login.setnewpass.submit";
     public const string LoginSetNewPassDidntReceiveCode = "login.setnewpass.didntreceivecode";
 
     //main menu bottom hud
@@ -39,6 +44,7 @@ public static class ButtonId
     public const string MainMenuSideBarLeaderboard = "mainmenu.sidebar.leaderboard";
     public const string MainMenuSideBarSettings = "mainmenu.sidebar.settings";
     public const string MainMenuSideBarMissions = "mainmenu.sidebar.missions";
+    public const string MainMenuSideBarTutorial = "mainmenu.sidebar.tutorial";
     
     //main menu top hud
     public const string MainMenuTopHUDGemPlus = "mainmenu.topHUD.gems.plus";
@@ -47,9 +53,29 @@ public static class ButtonId
     //options popup
     public const string OptionsChangePicture = "options.changepicture";
     public const string OptionsChangeName = "options.changename";
-    public const string OptionsSignOut = "options.signout";
     public const string OptionsSave = "options.save";
+    public const string OptionsSyncProgress = "options.syncprogress";
+    public const string OptionsSignOut = "options.signout";
+    public const string OptionsManageAccount = "options.manageaccount";
     public const string OptionsClose = "options.close";
+    
+    //manage account popup
+    public const string ManageAccountClose = "manageaccount.close";
+    public const string ManageAccountSignIn = "manageaccount.signin";
+    public const string ManageAccountContact = "manageaccount.contact";
+    public const string ManageAccountGoogleSignIn = "manageaccount.google.signin";
+    public const string ManageAccountAppleSignIn = "manageaccount.apple.signin";
+    public const string ManageAccountDelete = "manageaccount.delete";
+    public const string ManageAccountSignOut = "manageaccount.signout";
+    
+    //delete account popup
+    public const string DeleteAccountClose = "deleteaccount.close";
+    public const string DeleteAccountProceed = "deleteaccount.proceed";
+    
+    //confirm delete account popup
+    public const string DeleteAccountConfirmClose = "deleteaccountconfirm.close";
+    public const string DeleteAccountConfirmProceed = "deleteaccountconfirm.proceed";
+    public const string DeleteAccountConfirmNoCode = "deleteaccountconfirm.nocode";
 
     //leaderboard
     public const string LeaderboardFree = "leaderboard.free";
@@ -111,6 +137,7 @@ public static class ButtonId
     //battlepass popup
     public const string BattlepassPopupClose = "battlepass.close";
     public const string BattlepassPopupBuy = "battlepass.buy";
+    public const string BattlepassPopupJoin = "battlepass.join";
 }
 
 public static class TypeUtilities

@@ -46,7 +46,9 @@ public class ServerManager : MonoSingleton<ServerManager>
         { SignatureLoginAPI.AutoLoginGet, "/user/me"},
         { SignatureLoginAPI.ResetPassword, "/user/ask-reset-password"},
         { SignatureLoginAPI.SetNewPass, "/user/reset-password"},
-        { SignatureLoginAPI.Logout, "/user/logout"}
+        { SignatureLoginAPI.Logout, "/user/logout"},
+        { SignatureLoginAPI.AskDelete, "/user/account/ask-delete"},
+        { SignatureLoginAPI.Delete, "/user/account/delete"}
     };
 
     private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()

@@ -20,6 +20,9 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     [Header("Other")]
     public Image playerAvatar;
     public TextMeshProUGUI playerUsername;
+    public Button changeNameButton;
+    public GameObject syncProgressButton;
+    public GameObject signOutButton;
 
     private AvatarInformation currentAvatar;
     
@@ -29,19 +32,20 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
         InitialiseHintsToggle();
         SetPlayerAvatar(UserManager.Instance.GetPlayerAvatar());
         RefreshPlayerUsername();
+        RefreshAuthState();
     }
 
     private void InitialiseMusicToggle()
     {
-        bool muted = SoundManager.Instance.IsMuted();
-        MusicToggle.SetIsOnWithoutNotify(!muted);
-        MusicToggleOff.SetActive(muted);
-        MusicToggleOn.SetActive(!muted);
+        bool musicOn = UserManager.Instance.GetPlayerSettings().music;
+        MusicToggle.SetIsOnWithoutNotify(musicOn);
+        MusicToggleOff.SetActive(!musicOn);
+        MusicToggleOn.SetActive(musicOn);
     }
 
     private void InitialiseHintsToggle()
     {
-        bool hinting = UserManager.Instance.GetPlayerHints();
+        bool hinting = UserManager.Instance.GetPlayerSettings().hints;
         HintsToggle.SetIsOnWithoutNotify(hinting);
         HintsToggleOff.SetActive(!hinting);
         HintsToggleOn.SetActive(hinting);
@@ -106,5 +110,12 @@ public class GamePopupOptions : GameScreenAnimatedEntryExit
     public void RefreshPlayerUsername()
     {
         playerUsername.text = UserManager.Instance.GetPlayerUserName();
+    }
+
+    public void RefreshAuthState()
+    {
+        changeNameButton.interactable = UserManager.PlayerType == PlayerType.LoggedInUser; 
+        signOutButton.SetActive(UserManager.PlayerType == PlayerType.LoggedInUser);
+        syncProgressButton.SetActive(UserManager.PlayerType == PlayerType.Guest);
     }
 }

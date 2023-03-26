@@ -27,7 +27,6 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
     const int MAX_ENERGY = 10;
 
     private Dictionary<PlayerResource, TextMeshProUGUI> _resourceTextMap;
-    private bool _resourcesSet = false;
 
     private AvatarInformation currentAvatar;
     
@@ -39,8 +38,8 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
             { PlayerResource.Energy, energyText },
             { PlayerResource.Gems, gemsText }
         };
-        UserManager.Instance.GetPlayerResources();
         UserManager.CallbackWithResources += SetResources;
+        UserManager.Instance.GetPlayerResources();
     }
 
     private void OnDestroy()
@@ -53,12 +52,12 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
         SetTopInfo(PlayerResource.Bubbles, wallet.bubbles);
         SetTopInfo(PlayerResource.Energy, wallet.energy);
         SetTopInfo(PlayerResource.Gems, wallet.gems);
+        RefreshData();
         ResourcesSet?.Invoke();
     }
 
     private void SetTopInfo(PlayerResource resource, int value)
     {
-        _resourcesSet = true;
         if (resource == PlayerResource.Energy)
         {
             _resourceTextMap[resource].text = value.ToString() + "/" + MAX_ENERGY;
@@ -86,12 +85,7 @@ public class GameScreenHomeHeader : GameScreenAnimatedShowHide
             }
         }
     }
-
-    public bool AreResourcesSet()
-    {
-        return _resourcesSet;
-    }
-
+    
     public void RefreshData()
     {
         currentAvatar = UserManager.Instance.GetPlayerAvatar();

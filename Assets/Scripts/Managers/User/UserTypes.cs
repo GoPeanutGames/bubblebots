@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace BubbleBots.User
 {
-    public enum PrefsKey { Nickname, WalletAddress, SessionToken, Signature, Hints, Avatar }
-    public enum PrefsKeyToDelete {Rank}
+    public enum PrefsKey { Nickname, WalletAddress, SessionToken, Signature, Settings, Avatar }
+    public enum PrefsKeyToDelete {Hints}
 
     [Serializable]
     public class NFTImage
@@ -16,13 +16,20 @@ namespace BubbleBots.User
     }
 
     [Serializable]
+    public class Settings
+    {
+        public bool hints;
+        public bool music;
+    }
+
+    [Serializable]
     public class User
     {
         public string UserName;
         public string WalletAddress;
         public string SessionToken;
         public string Signature;
-        public bool Hints;
+        public Settings settings;
         public AvatarInformation Avatar;
     }
 
