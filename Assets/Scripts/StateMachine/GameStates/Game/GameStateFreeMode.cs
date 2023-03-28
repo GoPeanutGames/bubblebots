@@ -205,7 +205,11 @@ public class GameStateFreeMode : GameState
         {
             gameScreenGame.GetComponent<GUIGame>().DestroyExplosionEffects();
         }
-        
+
+        if (UserManager.PlayerType == PlayerType.Guest)
+        {
+            UserManager.TimesPlayed++;
+        }
         stateMachine.PushState(new GameStateHome());
         SoundManager.Instance.FadeOutMusic();
     }

@@ -138,6 +138,14 @@ public static class ButtonId
     public const string BattlepassPopupClose = "battlepass.close";
     public const string BattlepassPopupBuy = "battlepass.buy";
     public const string BattlepassPopupJoin = "battlepass.join";
+    
+    //save progress popup
+    public const string SaveYourProgressPopupClose = "saveyourprogress.close";
+    public const string SaveYourProgressPopupSave = "saveyourprogress.save";
+    
+    //sign in to buy
+    public const string SignInToBuyPopupClose = "signintobuy.close";
+    public const string SignInToBuyPopupSignIn = "signintobuy.signin";
 }
 
 public static class TypeUtilities

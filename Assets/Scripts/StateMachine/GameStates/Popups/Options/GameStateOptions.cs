@@ -17,15 +17,13 @@ public class GameStateOptions : GameState
 
 	public override void Enter()
 	{
-		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>(true);
-		_gamePopupOptions = Screens.Instance.PushScreen<GamePopupOptions>();
-		_gamePopupOptions.StartOpen();
 		_finalAvatar = UserManager.Instance.GetPlayerAvatar();
-		Screens.Instance.BringToFront<GamePopupOptions>();
 	}
 
 	public override void Enable()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>(true);
+		_gamePopupOptions = Screens.Instance.PushScreen<GamePopupOptions>(true);
 		_gamePopupOptions.RefreshPlayerUsername();
 		_gamePopupOptions.RefreshAuthState();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
@@ -143,11 +141,7 @@ public class GameStateOptions : GameState
 
 	public override void Disable()
 	{
-		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-	}
-
-	public override void Exit()
-	{
 		Screens.Instance.PopScreen(_gamePopupOptions);
+		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
 	}
 }

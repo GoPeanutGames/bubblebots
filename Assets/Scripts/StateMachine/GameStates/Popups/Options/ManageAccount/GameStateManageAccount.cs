@@ -3,19 +3,17 @@ using UnityEngine.Device;
 public class GameStateManageAccount : GameState
 {
 	private GamePopupManageAccount _gamePopupManageAccount;
+	private GameScreenDarkenedBg _darkenedBg;
 	
 	public override string GetGameStateName()
 	{
 		return "Game state manage account";
 	}
 	
-	public override void Enter()
-	{
-		_gamePopupManageAccount = Screens.Instance.PushScreen<GamePopupManageAccount>();
-	}
-
 	public override void Enable()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>(true);
+		_gamePopupManageAccount = Screens.Instance.PushScreen<GamePopupManageAccount>(true);
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 		_gamePopupManageAccount.UpdateSignOutButtons();
 	}
@@ -34,6 +32,7 @@ public class GameStateManageAccount : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.ManageAccountClose:
+				Screens.Instance.PopScreen(_darkenedBg);
 				stateMachine.PopState();
 				break;
 			case ButtonId.ManageAccountDelete:
@@ -79,11 +78,8 @@ public class GameStateManageAccount : GameState
 	
 	public override void Disable()
 	{
-		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-	}
-
-	public override void Exit()
-	{
+		Screens.Instance.PopScreen(_darkenedBg);
 		Screens.Instance.PopScreen(_gamePopupManageAccount);
+		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
 	}
 }

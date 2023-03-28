@@ -113,7 +113,14 @@ public class GameStateStore : GameState
                 ClickRight();
                 break;
             case ButtonId.StoreBuy:
-                BuyButtonClick(data);
+                if (UserManager.PlayerType == PlayerType.LoggedInUser)
+                {
+                    BuyButtonClick(data);
+                }
+                else
+                {
+                    stateMachine.PushState(new GameStateSignInToBuy());
+                }
                 break;
             default:
                 break;

@@ -14,6 +14,8 @@ public enum PlayerType
 
 public class UserManager : MonoSingleton<UserManager>
 {
+    public static bool ShownOnce = false;
+    public static int TimesPlayed;
     public static PlayerType PlayerType;
     public static int RobotsKilled = 0;
     public static Action<GetPlayerWallet> CallbackWithResources;

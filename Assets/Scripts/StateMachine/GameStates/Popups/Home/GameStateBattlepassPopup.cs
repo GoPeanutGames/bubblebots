@@ -13,7 +13,6 @@ public class GameStateBattlepassPopup : GameState
 	{
 		_gamePopupBattlepass = Screens.Instance.PushScreen<GamePopupBattlepass>();
 		_gamePopupBattlepass.StartOpen();
-		Screens.Instance.BringToFront<GamePopupExplanator>();
 	}
 
 	public override void Enable()

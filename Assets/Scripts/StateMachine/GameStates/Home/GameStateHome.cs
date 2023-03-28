@@ -38,6 +38,20 @@ public class GameStateHome : GameState
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 		ResetMainMenuLook();
 		UserManager.Instance.GetPlayerResources();
+		if (UserManager.PlayerType == PlayerType.Guest)
+		{
+			if (UserManager.ShownOnce == false && UserManager.TimesPlayed == 2)
+			{
+				UserManager.TimesPlayed = 0;
+				UserManager.ShownOnce = true;
+				stateMachine.PushState(new GameStateSaveYourProgress());
+			}
+			else if (UserManager.TimesPlayed == 5)
+			{
+				UserManager.TimesPlayed = 0;
+				stateMachine.PushState(new GameStateSaveYourProgress());
+			}
+		}
 	}
 
 	private void OnGameEvent(GameEventData data)

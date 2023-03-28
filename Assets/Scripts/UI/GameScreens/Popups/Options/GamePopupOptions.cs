@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GamePopupOptions : GameScreenAnimatedEntryExit
+public class GamePopupOptions : GameScreen
 {
     [Header("Music")]
     public Toggle MusicToggle;
