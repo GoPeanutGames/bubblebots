@@ -1,19 +1,17 @@
 public class GameStateConfirmDeleteAccount : GameState
 {
+	private GameScreenDarkenedBg _darkenedBg;
 	private GamePopupConfirmDeleteAccount _gamePopupConfirmDeleteAccount;
 	
 	public override string GetGameStateName()
 	{
 		return "Game state confirm delete account";
 	}
-	
-	public override void Enter()
-	{
-		_gamePopupConfirmDeleteAccount = Screens.Instance.PushScreen<GamePopupConfirmDeleteAccount>();
-	}
 
 	public override void Enable()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>();
+		_gamePopupConfirmDeleteAccount = Screens.Instance.PushScreen<GamePopupConfirmDeleteAccount>();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
 
@@ -50,10 +48,7 @@ public class GameStateConfirmDeleteAccount : GameState
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-	}
-
-	public override void Exit()
-	{
 		Screens.Instance.PopScreen(_gamePopupConfirmDeleteAccount);
+		Screens.Instance.PopScreen(_darkenedBg);
 	}
 }

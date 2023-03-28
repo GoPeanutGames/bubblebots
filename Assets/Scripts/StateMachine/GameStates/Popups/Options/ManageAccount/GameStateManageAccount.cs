@@ -4,6 +4,7 @@ public class GameStateManageAccount : GameState
 {
 	private GamePopupManageAccount _gamePopupManageAccount;
 	private GameScreenDarkenedBg _darkenedBg;
+	private GameScreenLoading _gameScreenLoading;
 	
 	public override string GetGameStateName()
 	{
@@ -59,10 +60,12 @@ public class GameStateManageAccount : GameState
 	private void SignOutSuccess()
 	{
 		_gamePopupManageAccount.UpdateSignOutButtons();
+		Screens.Instance.PopScreen(_gameScreenLoading);
 	}
 
 	private void SignOut()
 	{
+		_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
 		UserManager.Instance.loginManager.SignOut(SignOutSuccess);
 	}
 

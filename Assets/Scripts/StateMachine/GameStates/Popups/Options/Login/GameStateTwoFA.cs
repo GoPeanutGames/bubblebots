@@ -2,19 +2,17 @@ public class GameStateTwoFA : GameState
 {
 	private GamePopupTwoFA _gamePopupTwoFa;
 	private GameScreenLoading _gameScreenLoading;
+	private GameScreenDarkenedBg _darkenedBg;
 	
 	public override string GetGameStateName()
 	{
 		return "game state 2fa";
 	}
-	
-	public override void Enter()
-	{
-		_gamePopupTwoFa = Screens.Instance.PushScreen<GamePopupTwoFA>();
-	}
 
 	public override void Enable()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>();
+		_gamePopupTwoFa = Screens.Instance.PushScreen<GamePopupTwoFA>();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
     
@@ -59,10 +57,7 @@ public class GameStateTwoFA : GameState
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-	}
-    
-	public override void Exit()
-	{
+		Screens.Instance.PopScreen(_darkenedBg);
 		Screens.Instance.PopScreen(_gamePopupTwoFa);
 	}
 }

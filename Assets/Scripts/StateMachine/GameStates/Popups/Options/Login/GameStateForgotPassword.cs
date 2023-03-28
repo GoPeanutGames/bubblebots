@@ -1,5 +1,6 @@
 public class GameStateForgotPassword : GameState
 {
+	private GameScreenDarkenedBg _darkenedBg;
 	private GamePopupForgotPassword _gamePopupForgotPassword;
 	private GameScreenLoading _gameScreenLoading;
 	
@@ -8,13 +9,10 @@ public class GameStateForgotPassword : GameState
 		return "game state forgot password";
 	}
 
-	public override void Enter()
-	{
-		_gamePopupForgotPassword = Screens.Instance.PushScreen<GamePopupForgotPassword>();
-	}
-
 	public override void Enable()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>();
+		_gamePopupForgotPassword = Screens.Instance.PushScreen<GamePopupForgotPassword>();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
 	
@@ -59,10 +57,7 @@ public class GameStateForgotPassword : GameState
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-	}
-
-	public override void Exit()
-	{
 		Screens.Instance.PopScreen(_gamePopupForgotPassword);
+		Screens.Instance.PopScreen(_darkenedBg);
 	}
 }

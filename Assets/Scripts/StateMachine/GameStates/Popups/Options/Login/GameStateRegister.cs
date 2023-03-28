@@ -1,5 +1,6 @@
 public class GameStateRegister : GameState
 {
+	private GameScreenDarkenedBg _darkenedBg;
 	private GamePopupRegister _gamePopupRegister;
 	private GameScreenLoading _gameScreenLoading;
 	
@@ -8,13 +9,10 @@ public class GameStateRegister : GameState
 		return "game state register";
 	}
 	
-	public override void Enter()
-	{
-		_gamePopupRegister = Screens.Instance.PushScreen<GamePopupRegister>();
-	}
-
 	public override void Enable()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>();
+		_gamePopupRegister = Screens.Instance.PushScreen<GamePopupRegister>();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
     
@@ -61,10 +59,7 @@ public class GameStateRegister : GameState
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-	}
-    
-	public override void Exit()
-	{
+		Screens.Instance.PopScreen(_darkenedBg);
 		Screens.Instance.PopScreen(_gamePopupRegister);
 	}
 }

@@ -7,6 +7,7 @@ public class GameStateOptions : GameState
 {
 	private GamePopupOptions _gamePopupOptions;
 	private GameScreenDarkenedBg _darkenedBg;
+	private GameScreenLoading _gameScreenLoading;
 
 	private AvatarInformation _finalAvatar;
 
@@ -43,13 +44,13 @@ public class GameStateOptions : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.OptionsClose:
-				Screens.Instance.PopScreen(_darkenedBg);
 				stateMachine.PopState();
 				break;
 			case ButtonId.OptionsSyncProgress:
 				stateMachine.PushState(new GameStateLogin());
 				break;
 			case ButtonId.OptionsSignOut:
+				_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
 				UserManager.Instance.loginManager.SignOut(SignOutSuccess);
 				break;
 			case ButtonId.OptionsChangePicture:
@@ -63,7 +64,6 @@ public class GameStateOptions : GameState
 				break;
 			case ButtonId.OptionsSave:
 				SaveSettings();
-				Screens.Instance.PopScreen(_darkenedBg);
 				stateMachine.PopState();
 				break;
 		}
@@ -71,6 +71,7 @@ public class GameStateOptions : GameState
 
 	private void SignOutSuccess()
 	{
+		Screens.Instance.PopScreen(_gameScreenLoading);
 		_gamePopupOptions.RefreshAuthState();
 	}
 
@@ -141,6 +142,7 @@ public class GameStateOptions : GameState
 
 	public override void Disable()
 	{
+		Screens.Instance.PopScreen(_darkenedBg);
 		Screens.Instance.PopScreen(_gamePopupOptions);
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
 	}

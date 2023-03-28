@@ -1,5 +1,6 @@
 public class GameStateSetNewPassword : GameState
 {
+	private GameScreenDarkenedBg _darkenedBg;
 	private GamePopupSetNewPassword _gamePopupSetNewPassword;
 	private GameScreenLoading _gameScreenLoading;
 	
@@ -7,14 +8,11 @@ public class GameStateSetNewPassword : GameState
 	{
 		return "game state set new password";
 	}
-
-	public override void Enter()
-	{
-		_gamePopupSetNewPassword = Screens.Instance.PushScreen<GamePopupSetNewPassword>();
-	}
-
+	
 	public override void Enable()
 	{
+		_darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>();
+		_gamePopupSetNewPassword = Screens.Instance.PushScreen<GamePopupSetNewPassword>();
 		GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
 	}
 	
@@ -62,10 +60,7 @@ public class GameStateSetNewPassword : GameState
 	public override void Disable()
 	{
 		GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-	}
-
-	public override void Exit()
-	{
 		Screens.Instance.PopScreen(_gamePopupSetNewPassword);
+		Screens.Instance.PopScreen(_darkenedBg);
 	}
 }

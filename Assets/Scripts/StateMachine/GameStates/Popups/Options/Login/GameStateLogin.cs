@@ -2,6 +2,7 @@ public class GameStateLogin : GameState
 {
     private GamePopupLogin _gamePopupLogin;
     private GameScreenLoading _gameScreenLoading;
+    private GameScreenDarkenedBg _darkenedBg;
 
     public override string GetGameStateName()
     {
@@ -10,11 +11,12 @@ public class GameStateLogin : GameState
 
     public override void Enter()
     {
-        _gamePopupLogin = Screens.Instance.PushScreen<GamePopupLogin>();
     }
 
     public override void Enable()
     {
+        _darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>();
+        _gamePopupLogin = Screens.Instance.PushScreen<GamePopupLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
     }
     
@@ -94,10 +96,7 @@ public class GameStateLogin : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-    }
-    
-    public override void Exit()
-    {
         Screens.Instance.PopScreen(_gamePopupLogin);
+        Screens.Instance.PopScreen(_darkenedBg);
     }
 }
