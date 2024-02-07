@@ -252,7 +252,7 @@ namespace CodeStage.AntiCheat.EditorCode.PostProcessors
 		{
 			var result = new List<BuildHashes>();
 
-			foreach (var reportFile in report.files)
+			foreach (var reportFile in report.GetFiles())
 			{
 				var path = reportFile.path;
 				var extension = Path.GetExtension(path);
