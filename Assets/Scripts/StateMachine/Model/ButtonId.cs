@@ -18,6 +18,7 @@ public static class ButtonId
     public const string LoginSignInClose = "login.signin.close";
     public const string LoginSignInGoogle = "login.signin.google";
     public const string LoginSignInApple = "login.signin.apple";
+    public const string LoginSignInMetamask = "login.signin.metamask";
     public const string LoginGoToSignUp = "login.goto.signup";
     public const string LoginSignInSubmit = "login.signin.submit";
     public const string LoginForgotPassword = "login.forgotpassword";
