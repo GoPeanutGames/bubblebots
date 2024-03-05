@@ -119,6 +119,7 @@ public class Screens : MonoSingleton<Screens>
 
     public T PushScreen<T>(T screen) where T : GameScreen
     {
+        Debug.Log($"Pushing: {screen.name}");
         Instance.screensStack.Add(screen);
         RefreshScreensSortingOrder();
         SetCamera(screen);
@@ -181,6 +182,7 @@ public class Screens : MonoSingleton<Screens>
         RefreshScreensSortingOrder();
         if (screen != null)
         {
+            Debug.Log($"Popping: {screen.name}");
             DestroyScreen(screen);
         }
     }
@@ -204,6 +206,7 @@ public class Screens : MonoSingleton<Screens>
         T screen = FindScreen<T>(Instance.screensStack);
         if (screen != null)
         {
+            Debug.Log($"Popping: {screen.name}");
             PopScreen(screen);
         }
     }
@@ -247,7 +250,9 @@ public class Screens : MonoSingleton<Screens>
         }
 
         Canvas canvas = screen.GetComponent<Canvas>();
-        canvas.worldCamera = Instance.uiCamera;
+        if (canvas != null){
+            canvas.worldCamera = Instance.uiCamera;
+        }
         //canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
         //// URP requires that overlay cameras be added to the main camera's overlay stack.

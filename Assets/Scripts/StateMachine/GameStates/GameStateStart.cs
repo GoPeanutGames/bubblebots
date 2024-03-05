@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class GameStateStart : GameState
 {
 	private AutoLogin _autoLogin;
@@ -36,6 +38,7 @@ public class GameStateStart : GameState
 
 	public override void Exit()
 	{
+		Debug.Log("POPPING LOADING");
 		Screens.Instance.PopScreen(_gameScreenLoading);
 	}
 }

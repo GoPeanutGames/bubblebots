@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Canvas))]
 [ExecuteInEditMode]
 public class GameScreen : MonoBehaviour
 {
@@ -55,9 +54,9 @@ public class GameScreen : MonoBehaviour
         {
             canvas.sortingOrder = order;
         }
-        else
-        {
-            Debug.LogError("GameScreen should have a Canvas component " + gameObject.name);
-        }
+        // else
+        // {
+        //     Debug.LogError("GameScreen should have a Canvas component " + gameObject.name);
+        // }
     }
 }
