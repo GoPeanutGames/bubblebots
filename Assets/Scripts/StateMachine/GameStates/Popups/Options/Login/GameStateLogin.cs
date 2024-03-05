@@ -1,19 +1,8 @@
-using System.Runtime.InteropServices;
-using BubbleBots.Server.Signature;
-
 public class GameStateLogin : GameState
 {
     private GamePopupLogin _gamePopupLogin;
     private GameScreenLoading _gameScreenLoading;
     private GameScreenDarkenedBg _darkenedBg;
-
-#if UNITY_WEBGL
-    [DllImport("__Internal")]
-    private static extern void Login(bool isDev);
-
-    [DllImport("__Internal")]
-    private static extern void RequestSignature(string schema, string address);
-#endif
     
     public override string GetGameStateName()
     {
@@ -29,7 +18,6 @@ public class GameStateLogin : GameState
         _darkenedBg = Screens.Instance.PushScreen<GameScreenDarkenedBg>();
         _gamePopupLogin = Screens.Instance.PushScreen<GamePopupLogin>();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
-        GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
     }
     
     private void OnGameEvent(GameEventData gameEvent)
@@ -37,19 +25,6 @@ public class GameStateLogin : GameState
         if (gameEvent.eventName == GameEvents.ButtonTap)
         {
             OnButtonTap(gameEvent);
-        }
-    }
-    
-    private void OnMetamaskEvent(GameEventData data)
-    {
-        GameEventString metamaskEvent = data as GameEventString;
-        if (data.eventName == GameEvents.MetamaskSuccess)
-        {
-            MetamaskLoginSuccess(metamaskEvent.stringData);
-        }
-        else if (data.eventName == GameEvents.SignatureSuccess)
-        {
-            SignatureLoginSuccess(metamaskEvent.stringData);
         }
     }
 
@@ -60,11 +35,15 @@ public class GameStateLogin : GameState
         {
             case ButtonId.LoginSignInGoogle:
                 _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-                UserManager.Instance.loginManager.GoogleSignIn(GoogleOrAppleLoginSuccess, GoogleLoginFail);
+                UserManager.Instance.loginManager.GoogleSignIn(LoginSuccess, GoogleLoginFail);
                 break;
             case ButtonId.LoginSignInApple:
                 _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-                UserManager.Instance.loginManager.AppleSignIn(GoogleOrAppleLoginSuccess, AppleLoginFail);
+                UserManager.Instance.loginManager.AppleSignIn(LoginSuccess, AppleLoginFail);
+                break;
+            case ButtonId.LoginSignInMetamask:
+                _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+                UserManager.Instance.loginManager.MetamaskSignIn(LoginSuccess, MetamaskSignInFail);
                 break;
             case ButtonId.LoginSignInSubmit:
                 if (_gamePopupLogin.SignInValidation())
@@ -86,33 +65,9 @@ public class GameStateLogin : GameState
         }
     }
 
-    private void LoginWithMetamask()
+    private void MetamaskSignInFail()
     {
-        bool isDev = EnvironmentManager.Instance.IsDevelopment();
-#if UNITY_WEBGL
-        Login(isDev);
-#endif
-    }
-    
-    public void MetamaskLoginSuccess(string address)
-    {
-        // tempAddress = address;
-        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Get, (schema) => { RequestSignatureFromMetamask(schema.ToString()); }, address);
-        // gameScreenLogin.ShowLoadingScreen();
-        // gameScreenLogin.HideLoginScreen();
-    }
-
-    private void RequestSignatureFromMetamask(string schema)
-    {
-#if UNITY_WEBGL
-        // RequestSignature(schema, tempAddress);
-#endif
-    }
-
-    public void SignatureLoginSuccess(string signature)
-    {
-        // SoundManager.Instance.PlayMetamaskSfx();
-        // StartLogin(tempAddress, signature);
+        Screens.Instance.PopScreen(_gameScreenLoading);
     }
     
     private void SignInFail()
@@ -134,7 +89,7 @@ public class GameStateLogin : GameState
 
     }
 
-    private void GoogleOrAppleLoginSuccess()
+    private void LoginSuccess()
     {
         Screens.Instance.PopScreen(_gameScreenLoading);
         stateMachine.PopState();
@@ -150,7 +105,6 @@ public class GameStateLogin : GameState
     public override void Disable()
     {
         GameEventsManager.Instance.RemoveGlobalListener(OnGameEvent);
-        GameEventsManager.Instance.RemoveGlobalListener(OnMetamaskEvent);
         Screens.Instance.PopScreen(_gamePopupLogin);
         Screens.Instance.PopScreen(_darkenedBg);
     }

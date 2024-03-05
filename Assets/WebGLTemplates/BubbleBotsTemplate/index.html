@@ -4,10 +4,6 @@
     <meta charset="utf-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="icon" href="https://peanutgames.com/assets/favicon.ico" />
-    <script
-      src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"
-      type="application/javascript"
-    ></script>
     <link
       rel="shortcut icon"
       href="https://peanutgames.com/assets/favicon.ico"
@@ -288,15 +284,15 @@
         loadingBar.style.display = "block";
         var script = document.createElement("script");
         var buildUrl = "Build";
-        var loaderUrl = buildUrl + "/WebGL.loader.js";
+        var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
         script.src = loaderUrl;
         script.onload = () => {
           createUnityInstance(
             document.querySelector("#unity-canvas"),
             {
-              dataUrl: buildUrl + "/WebGL.data.br",
-              frameworkUrl: buildUrl + "/WebGL.framework.js.br",
-              codeUrl: buildUrl + "/WebGL.wasm.br",
+              dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
+              frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
+              codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
               streamingAssetsUrl: "StreamingAssets",
               companyName: "Peanut Games",
               productName: "Bubble Bots",
