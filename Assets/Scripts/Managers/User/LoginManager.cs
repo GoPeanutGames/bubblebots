@@ -126,12 +126,20 @@ public class LoginManager : MonoBehaviour
 	
 	public void MetamaskSignIn(UnityAction onSuccess, UnityAction onFail)
 	{
+#if !UNITY_EDITOR
 		_callbackOnSuccess = onSuccess;
 		_callbackOnFail = onFail;
 		bool isDev = EnvironmentManager.Instance.IsDevelopment();
 #if UNITY_WEBGL
 		Login(isDev);
 #endif
+#elif UNITY_EDITOR
+		string signature = "0x821ee840b49c4294850eb51319b9ddb85504190ee38f4dec00f81b13b64fbd6a388d75df615de9aaac22adbc6b565134eaefa25e3b09223313932323e48c4aba1b";
+		_tempAddress = "0x5d7167477bf3abedb261b4a5a1c150b87e6837a9";
+		MetamaskSignatureSuccess(signature);
+		onSuccess?.Invoke();
+#endif
+
 	}
 
 	private void MetamaskConnectSuccess(string address)
