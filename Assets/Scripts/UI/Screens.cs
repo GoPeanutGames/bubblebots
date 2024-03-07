@@ -18,19 +18,77 @@ public class Screens : MonoSingleton<Screens>
 
     public List<ScreenLocationParent> screenLocationParentsMobile;
 
+    public List<ScreenLocationParent> screenLocationParentsDesktop;
+
+    public GameObject desktopCanvas;
+    public GameObject mobileCanvas;
+    private List<ScreenLocationParent> screenLocationParents;
+
+
+    public Sprite defaultBackground;
+
+    public Image backgroundMobile;
+    public Image backgroundDesktop;
+
+    private Image backgroundObject;
+
     public Image gameBackgroundMobile;
+    public Image gameBackgroundDesktop;
+
+    private Image gameBackgroundObject;
 
     #region Screens
 
+    private void Start()
+    {
+        if (Application.isMobilePlatform)
+        {
+            screenLocationParents = screenLocationParentsMobile;
+            desktopCanvas.SetActive(false);
+            mobileCanvas.SetActive(true);
+            RectTransform rTransformUI = mobileCanvas.GetComponent<RectTransform>();
+            rTransformUI.anchorMax = new Vector2(1, 1);
+            rTransformUI.anchorMin = new Vector2(0, 0);
+            rTransformUI.offsetMax = new Vector2(0, 0);
+            rTransformUI.offsetMin = new Vector2(0, 0);
+            rTransformUI.localScale = new Vector3(1, 1, 1);
+            backgroundObject = backgroundMobile;
+            gameBackgroundObject = gameBackgroundMobile;
+        } 
+        else
+        {
+            backgroundObject = backgroundDesktop;
+            gameBackgroundObject = gameBackgroundDesktop;
+            screenLocationParents = screenLocationParentsDesktop;
+            mobileCanvas.SetActive(false);
+        }
+    }
+    
+    public void ResetBackground()
+    {
+        backgroundObject.sprite = defaultBackground;
+    }
+
+    public void SetBackground(Sprite sprite)
+    {
+        backgroundObject.sprite = sprite;
+    }
+    
     public void HideGameBackground()
     {
-        gameBackgroundMobile.enabled = false;
+        if(gameBackgroundObject==null){
+            return;
+        }
+        gameBackgroundObject.enabled = false;
     }
 
     public void SetGameBackground(Sprite sprite)
     {
-        gameBackgroundMobile.enabled = true;
-        gameBackgroundMobile.sprite = sprite;
+        if(gameBackgroundObject==null){
+            return;
+        }
+        gameBackgroundObject.enabled = true;
+        gameBackgroundObject.sprite = sprite;
     }
 
     public T PushScreen<T>(bool unique = false) where T : GameScreen
@@ -67,6 +125,7 @@ public class Screens : MonoSingleton<Screens>
 
     public T PushScreen<T>(T screen) where T : GameScreen
     {
+        Debug.Log($"Pushing: {screen.name}");
         Instance.screensStack.Add(screen);
         RefreshScreensSortingOrder();
         SetCamera(screen);
@@ -75,7 +134,7 @@ public class Screens : MonoSingleton<Screens>
 
     public Transform GetParent(GameScreen.ScreenLocation location)
     {
-        return screenLocationParentsMobile.Find(x => x.location == location)?.parent;
+        return screenLocationParents.Find(x => x.location == location)?.parent;
     }
 
     private static void RefreshScreensSortingOrder()
@@ -129,6 +188,7 @@ public class Screens : MonoSingleton<Screens>
         RefreshScreensSortingOrder();
         if (screen != null)
         {
+            Debug.Log($"Popping: {screen.name}");
             DestroyScreen(screen);
         }
     }
@@ -152,6 +212,7 @@ public class Screens : MonoSingleton<Screens>
         T screen = FindScreen<T>(Instance.screensStack);
         if (screen != null)
         {
+            Debug.Log($"Popping: {screen.name}");
             PopScreen(screen);
         }
     }
@@ -195,7 +256,9 @@ public class Screens : MonoSingleton<Screens>
         }
 
         Canvas canvas = screen.GetComponent<Canvas>();
-        canvas.worldCamera = Instance.uiCamera;
+        if (canvas != null){
+            canvas.worldCamera = Instance.uiCamera;
+        }
         //canvas.renderMode = RenderMode.ScreenSpaceOverlay;
 
         //// URP requires that overlay cameras be added to the main camera's overlay stack.

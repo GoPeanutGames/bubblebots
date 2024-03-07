@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class GameStateStart : GameState
 {
 	private AutoLogin _autoLogin;
@@ -17,6 +19,7 @@ public class GameStateStart : GameState
 
 	private void AutoLoginFail()
 	{
+		Debug.Log($"{nameof(GameStateStart)}::{nameof(AutoLoginFail)}");
 		UserManager.PlayerType = PlayerType.Guest;
 		AnalyticsManager.Instance.InitAnalyticsGuest();
 		UserManager.Instance.SetPlayerUserName("Guest user", false);

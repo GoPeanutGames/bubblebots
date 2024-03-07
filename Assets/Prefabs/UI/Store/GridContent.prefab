@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1961859667326055347}
   - component: {fileID: 1961859667326055344}
   - component: {fileID: 8100151469005511519}
+  - component: {fileID: 8475144593782925712}
   m_Layer: 5
   m_Name: GridContent
   m_TagString: Untagged
@@ -31,7 +32,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -53,13 +53,13 @@ MonoBehaviour:
   m_Padding:
     m_Left: 40
     m_Right: 20
-    m_Top: 80
+    m_Top: 40
     m_Bottom: 40
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 480, y: 530}
-  m_Spacing: {x: 20, y: 120}
+  m_CellSize: {x: 180, y: 200}
+  m_Spacing: {x: 20, y: 60}
   m_Constraint: 1
   m_ConstraintCount: 2
 --- !u!114 &8100151469005511519
@@ -76,3 +76,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
+--- !u!114 &8475144593782925712
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1961859667326055346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2094af53ba8bdf44b28504cc4614de1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellSizeDesktop: {x: 180, y: 200}
+  cellSizeMobile: {x: 480, y: 530}
+  cellSpacingDesktop: {x: 20, y: 60}
+  cellSpacingMobile: {x: 20, y: 120}

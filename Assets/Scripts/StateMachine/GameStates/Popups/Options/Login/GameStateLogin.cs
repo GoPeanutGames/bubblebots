@@ -3,7 +3,7 @@ public class GameStateLogin : GameState
     private GamePopupLogin _gamePopupLogin;
     private GameScreenLoading _gameScreenLoading;
     private GameScreenDarkenedBg _darkenedBg;
-
+    
     public override string GetGameStateName()
     {
         return "game state login";
@@ -35,11 +35,15 @@ public class GameStateLogin : GameState
         {
             case ButtonId.LoginSignInGoogle:
                 _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-                UserManager.Instance.loginManager.GoogleSignIn(GoogleOrAppleLoginSuccess, GoogleLoginFail);
+                UserManager.Instance.loginManager.GoogleSignIn(LoginSuccess, GoogleLoginFail);
                 break;
             case ButtonId.LoginSignInApple:
                 _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
-                UserManager.Instance.loginManager.AppleSignIn(GoogleOrAppleLoginSuccess, AppleLoginFail);
+                UserManager.Instance.loginManager.AppleSignIn(LoginSuccess, AppleLoginFail);
+                break;
+            case ButtonId.LoginSignInMetamask:
+                _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+                UserManager.Instance.loginManager.MetamaskSignIn(LoginSuccess, MetamaskSignInFail);
                 break;
             case ButtonId.LoginSignInSubmit:
                 if (_gamePopupLogin.SignInValidation())
@@ -61,6 +65,11 @@ public class GameStateLogin : GameState
         }
     }
 
+    private void MetamaskSignInFail()
+    {
+        Screens.Instance.PopScreen(_gameScreenLoading);
+    }
+    
     private void SignInFail()
     {
         Screens.Instance.PopScreen(_gameScreenLoading);
@@ -80,7 +89,7 @@ public class GameStateLogin : GameState
 
     }
 
-    private void GoogleOrAppleLoginSuccess()
+    private void LoginSuccess()
     {
         Screens.Instance.PopScreen(_gameScreenLoading);
         stateMachine.PopState();

@@ -32,6 +32,7 @@ public class StoreManager : MonoSingleton<StoreManager>
     private void AddStoreItem(StoreTabs tab, BundleData data)
     {
         CreateTabIfNotExists(tab);
+#if !UNITY_WEBGL
         StoreItem storeItem = new StoreItem()
         {
             Bundle = data,
@@ -39,6 +40,15 @@ public class StoreManager : MonoSingleton<StoreManager>
             Image = "Store/Gems/Gem Chest Small",
             BottomLine = "USD " + data.price.ToString("##.##")
         };
+#else
+        StoreItem storeItem = new StoreItem()
+        {
+            Bundle = data,
+            TopLine = GetGemText(data.gems),
+            Image = "Store/Gems/Gem Chest Small",
+            BottomLine = "USDC " + data.price.ToString("##.##")
+        };
+#endif
         _storeTabItemsMap[tab].Items.Add(storeItem);
     }
 
@@ -115,7 +125,7 @@ public class StoreManager : MonoSingleton<StoreManager>
 
     public void GetBundleFromId(int bundleId, Action<BundleData> bundleCallback)
     {
-        Debug.Log("GEt Bundle: " + bundleId);
+        Debug.Log("Get Bundle: " + bundleId);
         GetBundlesData((bundles) =>
         {
             BundleData data = bundles.Find((a) => a.bundleId == bundleId);

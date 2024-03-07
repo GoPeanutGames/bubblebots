@@ -25,7 +25,7 @@ public class MainController : MonoBehaviour, IErrorManager
 
     public void AccessDeniedError()
     {
-        if (_stateMachine.GetCurrentState().GetType() != typeof(GameStateLogin))
+        if (_stateMachine.GetCurrentState().GetType() != typeof(GameStateLogin) && _stateMachine.GetCurrentState().GetType() != typeof(GameStateStart))
         {
             _stateMachine.PushState(new GameStateAccessDenied());
         }
