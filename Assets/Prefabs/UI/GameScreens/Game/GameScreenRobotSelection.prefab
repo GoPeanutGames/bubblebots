@@ -2227,6 +2227,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2852045996544439308}
   - component: {fileID: 7224039442325483693}
+  - component: {fileID: 8033350219258950724}
   m_Layer: 5
   m_Name: PlayerRobotsContainer
   m_TagString: Untagged
@@ -2276,10 +2277,26 @@ MonoBehaviour:
   m_ChildAlignment: 4
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 30, y: 0}
+  m_CellSize: {x: 270, y: 270}
+  m_Spacing: {x: 50, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!114 &8033350219258950724
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4219863692630223807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2094af53ba8bdf44b28504cc4614de1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellSizeDesktop: {x: 100, y: 100}
+  cellSizeMobile: {x: 270, y: 270}
+  cellSpacingDesktop: {x: 30, y: 0}
+  cellSpacingMobile: {x: 50, y: 0}
 --- !u!1 &4255178617406956590
 GameObject:
   m_ObjectHideFlags: 0
@@ -4057,6 +4074,7 @@ GameObject:
   - component: {fileID: 937915012923094773}
   - component: {fileID: 7576765835730906753}
   - component: {fileID: 2397278235682586972}
+  - component: {fileID: 2116410451194922516}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -4122,6 +4140,22 @@ MonoBehaviour:
   m_Spacing: {x: 30, y: 30}
   m_Constraint: 1
   m_ConstraintCount: 3
+--- !u!114 &2116410451194922516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7751968777711202216}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2094af53ba8bdf44b28504cc4614de1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cellSizeDesktop: {x: 120, y: 120}
+  cellSizeMobile: {x: 250, y: 250}
+  cellSpacingDesktop: {x: 30, y: 30}
+  cellSpacingMobile: {x: 60, y: 30}
 --- !u!1 &8131985061575305773
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,6 +19,7 @@ public class GameStateStart : GameState
 
 	private void AutoLoginFail()
 	{
+		Debug.Log($"{nameof(GameStateStart)}::{nameof(AutoLoginFail)}");
 		UserManager.PlayerType = PlayerType.Guest;
 		AnalyticsManager.Instance.InitAnalyticsGuest();
 		UserManager.Instance.SetPlayerUserName("Guest user", false);
@@ -38,7 +39,6 @@ public class GameStateStart : GameState
 
 	public override void Exit()
 	{
-		Debug.Log("POPPING LOADING");
 		Screens.Instance.PopScreen(_gameScreenLoading);
 	}
 }

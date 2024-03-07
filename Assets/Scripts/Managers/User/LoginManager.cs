@@ -99,6 +99,7 @@ public class LoginManager : MonoBehaviour
 	
 	private void AutoLoginFail(string error)
 	{
+		Debug.Log($"{nameof(LoginManager)}::{nameof(AutoLoginFail)}");
 		_callbackOnFail?.Invoke();
 		ClearCallbacks();
 		Debug.LogError("Auto Login failed with: " + error);
@@ -106,6 +107,7 @@ public class LoginManager : MonoBehaviour
 	
 	public void TryAutoLogin(UnityAction onSuccess, UnityAction onFail)
 	{
+		Debug.Log($"{nameof(LoginManager)}::{nameof(TryAutoLogin)}");
 		_callbackOnSuccess = onSuccess;
 		_callbackOnFail = onFail;
 		_autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
