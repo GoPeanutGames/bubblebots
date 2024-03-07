@@ -28,18 +28,21 @@ public class JSLibConnectionManager : MonoBehaviour
     [SkipRename]
     public void BundleBuySuccess()
     {
+        Debug.Log($"{nameof(JSLibConnectionManager)}::{nameof(BundleBuySuccess)}");
         MetamaskManager.Instance.StoreBundleBuySuccess();
     }
 
     [SkipRename]
     public void BundleBuyFail()
     {
+        Debug.Log($"{nameof(JSLibConnectionManager)}::{nameof(BundleBuyFail)}");
         MetamaskManager.Instance.StoreBundleBuyFail();
     }
     
     [SkipRename]
     public void BundleBuyFailBalance()
     {
+        Debug.Log($"{nameof(JSLibConnectionManager)}::{nameof(BundleBuyFailBalance)}");
         MetamaskManager.Instance.StoreBundleBuyFailBalance();
     }
 }

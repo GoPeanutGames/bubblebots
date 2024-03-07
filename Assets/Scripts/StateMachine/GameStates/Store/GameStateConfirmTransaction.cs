@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class GameStateConfirmTransaction : GameState
 {
     private GameScreenConfirmTransaction _gameScreenConfirmTransaction;
@@ -43,6 +45,7 @@ public class GameStateConfirmTransaction : GameState
                 stateMachine.PopState();
                 break;
             case ButtonId.ConfirmTransactionBuy:
+                Debug.Log($"{nameof(GameStateConfirmTransaction)}::{nameof(OnButtonTap)} - {ButtonId.ConfirmTransactionBuy}");
                 Screens.Instance.PopScreen<GameScreenStore>();
                 stateMachine.PushState(new GameStateMetamaskTransaction(_bundleId));
                 break;
