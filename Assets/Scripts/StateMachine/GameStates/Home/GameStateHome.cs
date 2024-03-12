@@ -1,3 +1,4 @@
+using BubbleBots.Server.Player;
 using UnityEngine;
 
 public class GameStateHome : GameState
@@ -7,6 +8,7 @@ public class GameStateHome : GameState
 	private GameScreenHomeSideBar _gameScreenHomeSideBar;
 	private GameScreenHome _gameScreenHome;
 	private GameScreenLoading _gameScreenLoading;
+	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
 
 	public override string GetGameStateName()
 	{
@@ -61,6 +63,15 @@ public class GameStateHome : GameState
 			OnButtonTap(data);
 		}
 	}
+	
+	private void ClearStatesAndScreens()
+	{
+		while (Screens.GetCurrentScreen() != null)
+		{
+			Screens.Instance.PopScreen();
+		}
+		stateMachine.PopAll();
+	}
 
 	private void OnButtonTap(GameEventData data)
 	{
@@ -68,7 +79,10 @@ public class GameStateHome : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.MainMenuBottomHUDPlay:
-				stateMachine.PushState(new GameStateSelectMode());
+				// stateMachine.PushState(new GameStateSelectMode());
+				ClearStatesAndScreens();
+				stateMachine.PushState(new GameStateFreeMode());
+				SoundManager.Instance.PlayModeSelectedSfx();
 				break;
 			case ButtonId.MainMenuTopHUDGemPlus:
 			case ButtonId.MainMenuBottomHUDStore:
@@ -80,6 +94,9 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuSideBarLeaderboard:
 				ShowLeaderboard();
 				break;
+			case ButtonId.ModeSelectNethermode:
+				NethermodeClick();
+				break;
 			case ButtonId.MainMenuSideBarTutorial:
 				Application.OpenURL("https://drive.google.com/file/d/1irXRB5-smW5rbZ9FB8RqBgh_OBQAS_AU/view");
 				break;
@@ -89,9 +106,67 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuSideBarSettings:
 				stateMachine.PushState(new GameStateOptions());
 				break;
+			case ButtonId.NotEnoughGemsBack:
+				Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
+				break;
+		}
+	}
+	
+	private void NethermodeClick()
+	{
+		if (UserManager.PlayerType == PlayerType.Guest)
+		{
+			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+		}
+		else
+		{
+			_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+			CheckForBattlePass();
+		}
+	}
+	
+	private void CheckForBattlePass()
+	{
+		ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Battlepass, BattlePassSuccess, UserManager.Instance.GetPlayerWalletAddress(), BattlePassFail);
+	}
+
+	private void BattlePassSuccess(string data)
+	{
+		GetBattlePassResponse response = JsonUtility.FromJson<GetBattlePassResponse>(data);
+		if (response.exists)
+		{
+			PlayNetherMode();
+		}
+		else
+		{
+			BattlePassFail("no battlepass");
 		}
 	}
 
+	private void BattlePassFail(string data)
+	{
+		UserManager.CallbackWithResources += ResourcesReceived;
+		UserManager.Instance.GetPlayerResources();
+	}
+	
+	private void ResourcesReceived(GetPlayerWallet wallet)
+	{
+		Screens.Instance.PopScreen(_gameScreenLoading);
+		UserManager.CallbackWithResources -= ResourcesReceived;
+		if (wallet.gems <= 0)
+		{
+			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+			return;
+		}
+		PlayNetherMode();
+	}
+	
+	private void PlayNetherMode()
+	{
+		ClearStatesAndScreens();
+		stateMachine.PushState(new GameStateNetherMode());
+	}
+	
 	private void ShowLeaderboard()
 	{
 		_gameScreenHomeHeader.Hide();
