@@ -115,6 +115,9 @@ public static class ButtonId
 
     //not enough gems 
     public const string NotEnoughGemsBack = "notenoughgems.back";
+    public const string NotEnoughGemsBuy = "notenoughgems.buy";
+    public const string NotLoggedIn = "notloggedin.login";
+    public const string NotLoggedInClose = "notloggedin.close";
 
     //game
     public const string QuitGame = "game.quit";

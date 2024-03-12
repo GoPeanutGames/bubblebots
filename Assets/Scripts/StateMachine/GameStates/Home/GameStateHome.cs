@@ -9,6 +9,7 @@ public class GameStateHome : GameState
 	private GameScreenHome _gameScreenHome;
 	private GameScreenLoading _gameScreenLoading;
 	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
+	private GameScreenNotLoggedIn _gameScreenNotLoggedIn;
 
 	public override string GetGameStateName()
 	{
@@ -79,7 +80,6 @@ public class GameStateHome : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.MainMenuBottomHUDPlay:
-				// stateMachine.PushState(new GameStateSelectMode());
 				ClearStatesAndScreens();
 				stateMachine.PushState(new GameStateFreeMode());
 				SoundManager.Instance.PlayModeSelectedSfx();
@@ -109,6 +109,38 @@ public class GameStateHome : GameState
 			case ButtonId.NotEnoughGemsBack:
 				Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
 				break;
+			case ButtonId.NotEnoughGemsBuy:
+				Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
+				ShowStore();
+				break;
+			case ButtonId.NotLoggedIn:
+				UserManager.Instance.loginManager.MetamaskSignIn(OnMetamaskLoginSuccess,null);
+				break;
+			case ButtonId.NotLoggedInClose:
+				Screens.Instance.PopScreen(_gameScreenNotLoggedIn);
+				break;
+		}
+	}
+
+	private void OnMetamaskLoginSuccess()
+	{
+		_gameScreenHomeHeader.RefreshData();
+		Screens.Instance.PopScreen(_gameScreenNotLoggedIn);
+		ResetMainMenuLook();
+		UserManager.Instance.GetPlayerResources();
+		if (UserManager.PlayerType == PlayerType.Guest)
+		{
+			if (UserManager.ShownOnce == false && UserManager.TimesPlayed == 2)
+			{
+				UserManager.TimesPlayed = 0;
+				UserManager.ShownOnce = true;
+				stateMachine.PushState(new GameStateSaveYourProgress());
+			}
+			else if (UserManager.TimesPlayed == 5)
+			{
+				UserManager.TimesPlayed = 0;
+				stateMachine.PushState(new GameStateSaveYourProgress());
+			}
 		}
 	}
 	
@@ -116,7 +148,7 @@ public class GameStateHome : GameState
 	{
 		if (UserManager.PlayerType == PlayerType.Guest)
 		{
-			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+			_gameScreenNotLoggedIn = Screens.Instance.PushScreen<GameScreenNotLoggedIn>();
 		}
 		else
 		{

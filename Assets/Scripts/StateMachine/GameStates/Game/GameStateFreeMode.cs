@@ -189,7 +189,7 @@ public class GameStateFreeMode : GameState
     {
         if (freeToPlayGameplayManager.CanShowQuitPopup())
         {
-            stateMachine.PushState(new GameStateQuitPopup("You will sacrifice your <color=#FFCB5E>Bubbles</color> this round... if you exit this game. Are you sure you want to quit?"));
+            stateMachine.PushState(new GameStateQuitPopup("You will sacrifice your <color=#FFCB5E>Points</color> this round... if you exit this game. Are you sure you want to quit?"));
         }
     }
 
