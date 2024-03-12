@@ -304,8 +304,8 @@ RectTransform:
   - {fileID: 6413861655390271168}
   m_Father: {fileID: 8591185797157513500}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.25, y: -0.05}
-  m_AnchorMax: {x: 0.74, y: 0.9}
+  m_AnchorMin: {x: 0.23, y: -0.1}
+  m_AnchorMax: {x: 0.76, y: 0.9}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -460,10 +460,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 2993150532420981748}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0.15, y: 0}
+  m_AnchorMax: {x: 0.85, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -119.99999, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1950517242192038648
 CanvasRenderer:
@@ -493,7 +493,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Login to use gems
+  m_text: Login to use gemss
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3378af4a89b351c45826b1f6c3c294b3, type: 2}
   m_sharedMaterial: {fileID: 8760506590217660936, guid: 3378af4a89b351c45826b1f6c3c294b3,

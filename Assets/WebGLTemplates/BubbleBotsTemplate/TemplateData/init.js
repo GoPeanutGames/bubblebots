@@ -123,10 +123,15 @@ window.metamaskBundleBuying = async (bundleId = 1, isDev = true) => {
         const baseUrl = isDev === true ? `https://api-bb.peanuthub.dev/` : `https://api-bb.peanutgames.com/`;
 
         //get the bundle purchasing request
-        const buyRequest = await fetch(`${baseUrl}bundles/prepare-gems-purchase-with-eth'`, {
+        let buyRequest = await fetch(`${baseUrl}bundles/prepare-gems-purchase-with-eth`, {
             method: 'POST',
+            headers: {
+                "content-type": "application/json"
+            },
             body: JSON.stringify({ address: userAddress.toLowerCase(), bundleId: `${bundleId}` }),
         })
+
+        buyRequest = await buyRequest.json();
 
         if (!buyRequest) {
             console.log("You are not eligible to buy this bundle. Please try again later.");
@@ -157,6 +162,7 @@ window.metamaskBundleBuying = async (bundleId = 1, isDev = true) => {
             )
 
         await tx.wait()
+        return true;
     }
 };
 
