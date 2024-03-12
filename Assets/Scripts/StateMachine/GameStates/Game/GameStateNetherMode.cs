@@ -117,7 +117,7 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             stateMachine.PushState(new GameStateWonPopup(
-                "<color=#FFCB5E>" + (data as GameEventLevelComplete).lastLevelPotentialBubbles.ToString() + "</color> Bubbles!",
+                "<color=#FFCB5E>" + (data as GameEventLevelComplete).lastLevelPotentialBubbles.ToString() + "</color> Points!",
                 ButtonId.LevelCompleteContinue,
                 "Continue",
                 ()=>netherModeGameplayManager.StartNextLevel()
@@ -127,7 +127,7 @@ public class GameStateNetherMode : GameState
         {
             SoundManager.Instance.PlayBattleLostSfx();
             stateMachine.PushState(new GameStateWonPopup(
-                "<color=#FFCB5E>" + (data as GameEventFreeModeLose).numBubblesWon.ToString() + "</color> Bubbles from previous levels!",
+                "<color=#FFCB5E>" + (data as GameEventFreeModeLose).numBubblesWon.ToString() + "</color> Points from previous levels!",
                 ButtonId.GameEndGoToMainMenu,
                 "Go to home"
             ));
@@ -139,7 +139,7 @@ public class GameStateNetherMode : GameState
         else if (data.eventName == GameEvents.NetherModeComplete)
         {
             stateMachine.PushState(new GameStateWonPopup(
-                "You earned <color=#FFCB5E>" + (data as GameEventInt).intData + "</color> Bubbles and extra <color=#FFCB5E>10,000</color> Bubbles for completing all levels!",
+                "You earned <color=#FFCB5E>" + (data as GameEventInt).intData + "</color> Points and extra <color=#FFCB5E>10,000</color> Points for completing all levels!",
                 ButtonId.GameEndGoToMainMenu,
                 "Go to home"
             ));

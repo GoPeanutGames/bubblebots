@@ -44,6 +44,7 @@ public static class ButtonId
     //main menu side bar
     public const string MainMenuSideBarLeaderboard = "mainmenu.sidebar.leaderboard";
     public const string MainMenuSideBarSettings = "mainmenu.sidebar.settings";
+    public const string MainMenuSideBarDashboard = "mainmenu.sidebar.dashboard";
     public const string MainMenuSideBarMissions = "mainmenu.sidebar.missions";
     public const string MainMenuSideBarTutorial = "mainmenu.sidebar.tutorial";
     

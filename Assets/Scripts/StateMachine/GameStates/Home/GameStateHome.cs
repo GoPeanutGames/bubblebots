@@ -97,8 +97,8 @@ public class GameStateHome : GameState
 			case ButtonId.ModeSelectNethermode:
 				NethermodeClick();
 				break;
-			case ButtonId.MainMenuSideBarTutorial:
-				Application.OpenURL("https://drive.google.com/file/d/1irXRB5-smW5rbZ9FB8RqBgh_OBQAS_AU/view");
+			case ButtonId.MainMenuSideBarDashboard:
+				Application.OpenURL("https://dashboard.peanutgames.com");
 				break;
 			case ButtonId.HomeHeaderExplanator:
 				stateMachine.PushState(new GameStateExplanatorPopup());
