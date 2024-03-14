@@ -42,7 +42,7 @@ const env = {
     },
     prod: {
         chainId: 81457,
-        gemsContract: "0x7f119f5f554b5a13f806f708aa74855523773828",
+        gemsContract: "0xb40f84a37f0e39c078c273e9660dcc37a9fca4d1",
         tokenContract: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
         connectionConfig: {
             rpcUrls: ["https://rpc.blast.io"],
