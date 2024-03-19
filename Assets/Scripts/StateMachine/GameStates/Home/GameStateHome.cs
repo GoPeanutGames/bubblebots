@@ -1,3 +1,4 @@
+using BubbleBots.Server.Player;
 using UnityEngine;
 
 public class GameStateHome : GameState
@@ -7,6 +8,8 @@ public class GameStateHome : GameState
 	private GameScreenHomeSideBar _gameScreenHomeSideBar;
 	private GameScreenHome _gameScreenHome;
 	private GameScreenLoading _gameScreenLoading;
+	private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
+	private GameScreenNotLoggedIn _gameScreenNotLoggedIn;
 
 	public override string GetGameStateName()
 	{
@@ -61,6 +64,15 @@ public class GameStateHome : GameState
 			OnButtonTap(data);
 		}
 	}
+	
+	private void ClearStatesAndScreens()
+	{
+		while (Screens.GetCurrentScreen() != null)
+		{
+			Screens.Instance.PopScreen();
+		}
+		stateMachine.PopAll();
+	}
 
 	private void OnButtonTap(GameEventData data)
 	{
@@ -68,7 +80,9 @@ public class GameStateHome : GameState
 		switch (customButtonData.stringData)
 		{
 			case ButtonId.MainMenuBottomHUDPlay:
-				stateMachine.PushState(new GameStateSelectMode());
+				ClearStatesAndScreens();
+				stateMachine.PushState(new GameStateFreeMode());
+				SoundManager.Instance.PlayModeSelectedSfx();
 				break;
 			case ButtonId.MainMenuTopHUDGemPlus:
 			case ButtonId.MainMenuBottomHUDStore:
@@ -80,8 +94,11 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuSideBarLeaderboard:
 				ShowLeaderboard();
 				break;
-			case ButtonId.MainMenuSideBarTutorial:
-				Application.OpenURL("https://drive.google.com/file/d/1irXRB5-smW5rbZ9FB8RqBgh_OBQAS_AU/view");
+			case ButtonId.ModeSelectNethermode:
+				NethermodeClick();
+				break;
+			case ButtonId.MainMenuSideBarDashboard:
+				Application.OpenURL("https://peanutgames.com/dashboard");
 				break;
 			case ButtonId.HomeHeaderExplanator:
 				stateMachine.PushState(new GameStateExplanatorPopup());
@@ -89,9 +106,99 @@ public class GameStateHome : GameState
 			case ButtonId.MainMenuSideBarSettings:
 				stateMachine.PushState(new GameStateOptions());
 				break;
+			case ButtonId.NotEnoughGemsBack:
+				Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
+				break;
+			case ButtonId.NotEnoughGemsBuy:
+				Screens.Instance.PopScreen(_gameScreenNotEnoughGems);
+				ShowStore();
+				break;
+			case ButtonId.NotLoggedIn:
+				UserManager.Instance.loginManager.MetamaskSignIn(OnMetamaskLoginSuccess,null);
+				break;
+			case ButtonId.NotLoggedInClose:
+				Screens.Instance.PopScreen(_gameScreenNotLoggedIn);
+				break;
 		}
 	}
 
+	private void OnMetamaskLoginSuccess()
+	{
+		_gameScreenHomeHeader.RefreshData();
+		Screens.Instance.PopScreen(_gameScreenNotLoggedIn);
+		ResetMainMenuLook();
+		UserManager.Instance.GetPlayerResources();
+		if (UserManager.PlayerType == PlayerType.Guest)
+		{
+			if (UserManager.ShownOnce == false && UserManager.TimesPlayed == 2)
+			{
+				UserManager.TimesPlayed = 0;
+				UserManager.ShownOnce = true;
+				stateMachine.PushState(new GameStateSaveYourProgress());
+			}
+			else if (UserManager.TimesPlayed == 5)
+			{
+				UserManager.TimesPlayed = 0;
+				stateMachine.PushState(new GameStateSaveYourProgress());
+			}
+		}
+	}
+	
+	private void NethermodeClick()
+	{
+		if (UserManager.PlayerType == PlayerType.Guest)
+		{
+			_gameScreenNotLoggedIn = Screens.Instance.PushScreen<GameScreenNotLoggedIn>();
+		}
+		else
+		{
+			_gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
+			CheckForBattlePass();
+		}
+	}
+	
+	private void CheckForBattlePass()
+	{
+		ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Battlepass, BattlePassSuccess, UserManager.Instance.GetPlayerWalletAddress(), BattlePassFail);
+	}
+
+	private void BattlePassSuccess(string data)
+	{
+		GetBattlePassResponse response = JsonUtility.FromJson<GetBattlePassResponse>(data);
+		if (response.exists)
+		{
+			PlayNetherMode();
+		}
+		else
+		{
+			BattlePassFail("no battlepass");
+		}
+	}
+
+	private void BattlePassFail(string data)
+	{
+		UserManager.CallbackWithResources += ResourcesReceived;
+		UserManager.Instance.GetPlayerResources();
+	}
+	
+	private void ResourcesReceived(GetPlayerWallet wallet)
+	{
+		Screens.Instance.PopScreen(_gameScreenLoading);
+		UserManager.CallbackWithResources -= ResourcesReceived;
+		if (wallet.gems <= 0)
+		{
+			_gameScreenNotEnoughGems = Screens.Instance.PushScreen<GameScreenNotEnoughGems>();
+			return;
+		}
+		PlayNetherMode();
+	}
+	
+	private void PlayNetherMode()
+	{
+		ClearStatesAndScreens();
+		stateMachine.PushState(new GameStateNetherMode());
+	}
+	
 	private void ShowLeaderboard()
 	{
 		_gameScreenHomeHeader.Hide();

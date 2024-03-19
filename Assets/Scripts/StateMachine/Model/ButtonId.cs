@@ -44,6 +44,7 @@ public static class ButtonId
     //main menu side bar
     public const string MainMenuSideBarLeaderboard = "mainmenu.sidebar.leaderboard";
     public const string MainMenuSideBarSettings = "mainmenu.sidebar.settings";
+    public const string MainMenuSideBarDashboard = "mainmenu.sidebar.dashboard";
     public const string MainMenuSideBarMissions = "mainmenu.sidebar.missions";
     public const string MainMenuSideBarTutorial = "mainmenu.sidebar.tutorial";
     
@@ -114,6 +115,9 @@ public static class ButtonId
 
     //not enough gems 
     public const string NotEnoughGemsBack = "notenoughgems.back";
+    public const string NotEnoughGemsBuy = "notenoughgems.buy";
+    public const string NotLoggedIn = "notloggedin.login";
+    public const string NotLoggedInClose = "notloggedin.close";
 
     //game
     public const string QuitGame = "game.quit";

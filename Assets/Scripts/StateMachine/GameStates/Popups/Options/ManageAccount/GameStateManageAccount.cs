@@ -51,6 +51,9 @@ public class GameStateManageAccount : GameState
 			case ButtonId.ManageAccountGoogleSignIn:
 				UserManager.Instance.loginManager.GoogleSignIn(GoogleSignInSuccess, null);
 				break;
+			case ButtonId.LoginSignInMetamask:
+				UserManager.Instance.loginManager.MetamaskSignIn(MetamaskSignInSuccess, null);
+				break;
 			case ButtonId.ManageAccountContact:
 				Application.OpenURL("https://discord.gg/gopeanutgames");
 				break;
@@ -75,6 +78,11 @@ public class GameStateManageAccount : GameState
 	}
 	
 	private void GoogleSignInSuccess()
+	{
+		_gamePopupManageAccount.UpdateSignOutButtons();
+	}
+	
+	private void MetamaskSignInSuccess()
 	{
 		_gamePopupManageAccount.UpdateSignOutButtons();
 	}

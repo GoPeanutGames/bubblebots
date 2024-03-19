@@ -123,7 +123,7 @@ public class GameStateFreeMode : GameState
         else if (data.eventName == GameEvents.FreeModeLevelComplete)
         {
             stateMachine.PushState(new GameStateWonPopup(
-                "<color=#FFCB5E>" + (data as GameEventLevelComplete).numBubblesWon.ToString() + "</color> Bubbles!",
+                "<color=#FFCB5E>" + (data as GameEventLevelComplete).numBubblesWon.ToString() + "</color> Points!",
                 ButtonId.LevelCompleteContinue,
                 "Continue",
                 () => freeToPlayGameplayManager.StartNextLevel()) //todo: probably can do this better -> refactor
@@ -133,7 +133,7 @@ public class GameStateFreeMode : GameState
         {
             SoundManager.Instance.PlayBattleLostSfx();
             stateMachine.PushState(new GameStateWonPopup(
-                "<color=#FFCB5E>" + (data as GameEventFreeModeLose).numBubblesWon.ToString() + "</color> Bubbles from previous levels!",
+                "<color=#FFCB5E>" + (data as GameEventFreeModeLose).numBubblesWon.ToString() + "</color> Points from previous levels!",
                 ButtonId.GameEndGoToMainMenu, 
                 "Go to home"));
         }
@@ -189,7 +189,7 @@ public class GameStateFreeMode : GameState
     {
         if (freeToPlayGameplayManager.CanShowQuitPopup())
         {
-            stateMachine.PushState(new GameStateQuitPopup("You will sacrifice your <color=#FFCB5E>Bubbles</color> this round... if you exit this game. Are you sure you want to quit?"));
+            stateMachine.PushState(new GameStateQuitPopup("You will sacrifice your <color=#FFCB5E>Points</color> this round... if you exit this game. Are you sure you want to quit?"));
         }
     }
 
