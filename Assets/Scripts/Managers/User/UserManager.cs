@@ -23,6 +23,16 @@ public class UserManager : MonoSingleton<UserManager>
     public NFTManager NftManager;
     public LoginManager loginManager;
     public List<Sprite> PlayerAvatars;
+
+
+    public bool IsLoggedIn
+    {
+        get
+        {
+            return PlayerType == PlayerType.LoggedInUser;
+        }
+    }
+    public bool IsReferred { get; set; } = false;
     
     private User CurrentUser;
 

@@ -151,6 +151,11 @@ public static class ButtonId
     //sign in to buy
     public const string SignInToBuyPopupClose = "signintobuy.close";
     public const string SignInToBuyPopupSignIn = "signintobuy.signin";
+
+
+    //not referred
+    public const string NotReferredClose = "notreferred.close";
+    public const string NotReferredGetReferral = "notreferred.getreferral";
 }
 
 public static class TypeUtilities

@@ -7,8 +7,10 @@ using BubbleBots.Server.Gameplay;
 using BubbleBots.Server.Player;
 using BubbleBots.Server.Signature;
 using BubbleBots.Server.Store;
+using BubbleBots.Server.Referral;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEditor.Search;
 
 public class ServerManager : MonoSingleton<ServerManager>
 {
@@ -31,7 +33,7 @@ public class ServerManager : MonoSingleton<ServerManager>
         { PlayerAPI.Wallet , "/player/wallet/"},
         { PlayerAPI.Battlepass, "/player/battlepass-exist/"},
         { PlayerAPI.GetOwnedNFTs, "/player/images/"},
-        { PlayerAPI.SetDefaultNFT, "/player/image/default-nft"}
+        { PlayerAPI.SetDefaultNFT, "/player/image/default-nft"},
     };
 
     private readonly Dictionary<SignatureLoginAPI, string> signatureAPIMap = new()
@@ -54,6 +56,11 @@ public class ServerManager : MonoSingleton<ServerManager>
     private readonly Dictionary<StoreAPI, string> _storeAPIMap = new()
     {
         { StoreAPI.Bundles, "/bundles" }
+    };
+
+    private readonly Dictionary<ReferralAPI, string> referralAPIMap = new()
+    {
+        {ReferralAPI.IsRedeemedPlayer, "/referral/is-redeemed-player" }
     };
 
     private string Encrypt(string jsonForm)
@@ -128,6 +135,15 @@ public class ServerManager : MonoSingleton<ServerManager>
             }
             webRequest.Dispose();
         };
+    }
+
+    public void GetIsPlayerRedeemed(ReferralAPI api, string formData, Action<string> onComplete, Action<string> onFail = null)
+    {
+        //string address = UserManager.Instance.GetPlayerWalletAddress();
+        //string signature = UserManager.Instance.GetPlayerSignature();
+        
+        UnityWebRequest webRequest = SetupPostWebRequest(referralAPIMap[api], formData);
+        SendWebRequest(webRequest, onComplete, onFail);
     }
 
     public void SendGameplayDataToServer(GameplaySessionAPI api, string formData, Action<string> onComplete,
