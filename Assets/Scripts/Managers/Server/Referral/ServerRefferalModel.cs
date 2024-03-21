@@ -14,5 +14,10 @@ namespace BubbleBots.Server.Referral
         public string address;
     }
 
+    [Serializable]
+    public class ReferralIsRedeemedResponse
+    {
+        public bool exists;
+    }
 
 }
