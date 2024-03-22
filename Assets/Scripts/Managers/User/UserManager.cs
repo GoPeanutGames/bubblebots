@@ -32,7 +32,7 @@ public class UserManager : MonoSingleton<UserManager>
             return PlayerType == PlayerType.LoggedInUser;
         }
     }
-    public bool IsReferred { get; set; } = false;
+    public bool IsReferred { get; set; } = true;
     
     private User CurrentUser;
 

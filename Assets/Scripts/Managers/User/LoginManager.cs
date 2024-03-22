@@ -62,24 +62,6 @@ public class LoginManager : MonoBehaviour
         UserManager.Instance.SetWalletAddress(result.web3Info.address);
         UserManager.Instance.SetSignature(result.web3Info.signature);
         StoreManager.Instance.InitialiseStore(result.web3Info.address);
-
-        ReferralIsRedeemedData formData = new ReferralIsRedeemedData()
-        {
-            address = UserManager.Instance.GetPlayerWalletAddress(),
-            signature = UserManager.Instance.GetPlayerSignature()
-        };
-
-        ServerManager.Instance.GetIsPlayerRedeemed(ReferralAPI.IsRedeemedPlayer, JsonUtility.ToJson(formData),
-            (successResponse) =>
-        {
-            ReferralIsRedeemedResponse result = JsonUtility.FromJson<ReferralIsRedeemedResponse>(successResponse);
-            UserManager.Instance.IsReferred = result.exists;
-        },
-            (failResponse) =>
-        {
-            UserManager.Instance.IsReferred = false;
-        });
-
         ServerManager.Instance.GetPlayerDataFromServer(PlayerAPI.Get, GetPlayerSuccess, result.web3Info.address, GetPlayerFail);
         UserManager.Instance.NftManager.DownloadPLayerNfts();
     }
