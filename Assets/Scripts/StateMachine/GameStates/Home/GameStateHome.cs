@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class GameStateHome : GameState
 {
-    private GameScreenHomeFooter _gameScreenHomeFooter;
     private GameScreenHomeHeader _gameScreenHomeHeader;
     private GameScreenHomeSideBar _gameScreenHomeSideBar;
     private GameScreenHome _gameScreenHome;
@@ -17,11 +16,6 @@ public class GameStateHome : GameState
         return "game state home";
     }
 
-    private void ResetMainMenuLook()
-    {
-        _gameScreenHomeFooter.HideHomeButton();
-    }
-
     public override void Enter()
     {
         base.Enter();
@@ -29,18 +23,15 @@ public class GameStateHome : GameState
         SoundManager.Instance.PlayHomeMusic();
         _gameScreenHome = Screens.Instance.PushScreen<GameScreenHome>(true);
         _gameScreenHomeHeader = Screens.Instance.PushScreen<GameScreenHomeHeader>(true);
-        _gameScreenHomeFooter = Screens.Instance.PushScreen<GameScreenHomeFooter>(true);
         _gameScreenHomeSideBar = Screens.Instance.PushScreen<GameScreenHomeSideBar>(true);
     }
 
     public override void Enable()
     {
-        _gameScreenHomeFooter.Show();
         _gameScreenHomeSideBar.Show();
         _gameScreenHomeHeader.Show();
         _gameScreenHomeHeader.RefreshData();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
-        ResetMainMenuLook();
         UserManager.Instance.GetPlayerResources();
         if (UserManager.PlayerType == PlayerType.Guest)
         {
@@ -133,7 +124,6 @@ public class GameStateHome : GameState
     {
         _gameScreenHomeHeader.RefreshData();
         Screens.Instance.PopScreen(_gameScreenNotLoggedIn);
-        ResetMainMenuLook();
         UserManager.Instance.GetPlayerResources();
         if (UserManager.PlayerType == PlayerType.Guest)
         {
@@ -240,7 +230,6 @@ public class GameStateHome : GameState
     public override void Exit()
     {
         Screens.Instance.PopScreen(_gameScreenHome);
-        Screens.Instance.PopScreen(_gameScreenHomeFooter);
         Screens.Instance.PopScreen(_gameScreenHomeHeader);
         Screens.Instance.PopScreen(_gameScreenHomeSideBar);
     }
