@@ -92,6 +92,9 @@ public class GameStateHome : GameState
             case ButtonId.MainMenuSideBarDashboard:
                 Application.OpenURL("https://peanutgames.com/dashboard");
                 break;
+            case ButtonId.MainMenuSideBarUsePoints:
+                Application.OpenURL("https://peanutgames.com/dashboard");
+                break;
             case ButtonId.HomeHeaderExplanator:
                 stateMachine.PushState(new GameStateExplanatorPopup());
                 break;
