@@ -1,4 +1,5 @@
 using BubbleBots.Environment;
+using MetaMask.Unity;
 using UnityEngine;
 
 public class EnvironmentManager : MonoSingleton<EnvironmentManager>
@@ -8,6 +9,8 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     [SerializeField] private bool Rhym;
     [SerializeField] private EnvironmentSpec DevelopmentEnvironment;
     [SerializeField] private EnvironmentSpec ProductionEnvironment;
+    [SerializaField] private MetaMaskConfig _metaMaskConfigDev;
+    [SerializaField] private MetaMaskConfig _metaMaskConfigProd;
 
     private EnvironmentSpec currentEnvironment;
 
@@ -48,5 +51,10 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     public bool IsDevelopment()
     {
         return Development;
+    }
+
+    public MetaMaskConfig GetMetamaskConfig()
+    {
+        return Development ? _metaMaskConfigDev : _metaMaskConfigProd;
     }
 }

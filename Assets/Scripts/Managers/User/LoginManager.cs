@@ -11,18 +11,10 @@ using UnityEngine.Events;
 
 public class LoginManager : MonoBehaviour
 {
-
-#if UNITY_WEBGL
-	[DllImport("__Internal")]
-	private static extern void Login(bool isDev);
-
-	[DllImport("__Internal")]
-	private static extern void RequestSignature(string schema, string address);
-#endif
-
     private GoogleLogin _googleLogin;
     private AutoLogin _autoLogin;
     private AppleLogin _appleLogin;
+    private MetamaskLogin _metamaskLogin;
     private UnityAction _callbackOnSuccess;
     private UnityAction _callbackOnFail;
 
@@ -34,8 +26,8 @@ public class LoginManager : MonoBehaviour
     {
         _googleLogin = new GoogleLogin();
         _appleLogin = new AppleLogin();
+        _metamaskLogin = new MetamaskLogin();
         _autoLogin = new AutoLogin();
-        GameEventsManager.Instance.AddGlobalListener(OnMetamaskEvent);
     }
 
 #if UNITY_IOS
@@ -114,72 +106,16 @@ public class LoginManager : MonoBehaviour
         _autoLogin.TryAutoLogin(AutoLoginSuccess, AutoLoginFail);
     }
 
-    private void OnMetamaskEvent(GameEventData data)
-    {
-        GameEventString metamaskEvent = data as GameEventString;
-        if (data.eventName == GameEvents.MetamaskSuccess)
-        {
-            MetamaskConnectSuccess(metamaskEvent.stringData);
-        }
-        else if (data.eventName == GameEvents.SignatureSuccess)
-        {
-            MetamaskSignatureSuccess(metamaskEvent.stringData);
-        }
-    }
-
     public void MetamaskSignIn(UnityAction onSuccess, UnityAction onFail)
     {
-#if !UNITY_EDITOR
-		_callbackOnSuccess = onSuccess;
-		_callbackOnFail = onFail;
-		bool isDev = EnvironmentManager.Instance.IsDevelopment();
-#if UNITY_WEBGL
-		Login(isDev);
-#endif
-#elif UNITY_EDITOR
-        string signature = "0x821ee840b49c4294850eb51319b9ddb85504190ee38f4dec00f81b13b64fbd6a388d75df615de9aaac22adbc6b565134eaefa25e3b09223313932323e48c4aba1b";
-        _tempAddress = "0x5d7167477bf3abedb261b4a5a1c150b87e6837a9";
-        MetamaskSignatureSuccess(signature);
-        onSuccess?.Invoke();
-#endif
-
+        _callbackOnSuccess = onSuccess;
+        _callbackOnFail = onFail;
+        _metamaskLogin.MetamaskSignIn(MetamaskLoginSuccess, null);
     }
 
-    private void MetamaskConnectSuccess(string address)
+    private void MetamaskLoginSuccess(LoginResult loginResult)
     {
-        _tempAddress = address;
-        ServerManager.Instance.GetLoginSignatureDataFromServer(SignatureLoginAPI.Get, (schema) => { MetamaskRequestSignature(schema.ToString()); }, address);
-    }
-
-    private void MetamaskConnectFail()
-    {
-        _callbackOnFail?.Invoke();
-    }
-
-    private void MetamaskRequestSignature(string schema)
-    {
-
-#if UNITY_WEBGL
-		RequestSignature(schema, _tempAddress);
-#endif
-    }
-
-    private void MetamaskSignatureSuccess(string signature)
-    {
-        LoginSuccessSetData(new LoginResult()
-        {
-            token = signature,
-            web3Info = new PostWeb3Login()
-            {
-                signature = signature,
-                address = _tempAddress
-            }
-        });
-    }
-
-    private void MetamaskSignatureFail()
-    {
-        _callbackOnFail?.Invoke();
+        LoginSuccessSetData(loginResult);
     }
 
     public void GoogleSignIn(UnityAction onSuccess, UnityAction onFail)
