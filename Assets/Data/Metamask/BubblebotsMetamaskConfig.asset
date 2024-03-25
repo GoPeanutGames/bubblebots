@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   log: 1
   appName: Bubblebots
-  appUrl: https://peanutgames.com
+  appUrl: game.peanutgames.com
   appIcon: 
   userAgent: UnityUGUITransport/1.0.0
   encrypt: 1
