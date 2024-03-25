@@ -33,7 +33,6 @@ public class MetamaskLogin
 		Initialise();
 	}
 	
-	
 	private void Initialise()
 	{
 		MetaMaskConfig metaMaskConfig = EnvironmentManager.Instance.GetMetamaskConfig();

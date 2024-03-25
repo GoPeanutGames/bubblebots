@@ -26,8 +26,12 @@ public class LoginManager : MonoBehaviour
     {
         _googleLogin = new GoogleLogin();
         _appleLogin = new AppleLogin();
-        _metamaskLogin = new MetamaskLogin();
         _autoLogin = new AutoLogin();
+    }
+
+    private void Start()
+    {
+        _metamaskLogin = new MetamaskLogin();
     }
 
 #if UNITY_IOS

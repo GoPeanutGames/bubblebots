@@ -9,8 +9,7 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     [SerializeField] private bool Rhym;
     [SerializeField] private EnvironmentSpec DevelopmentEnvironment;
     [SerializeField] private EnvironmentSpec ProductionEnvironment;
-    [SerializaField] private MetaMaskConfig _metaMaskConfigDev;
-    [SerializaField] private MetaMaskConfig _metaMaskConfigProd;
+    public MetaMaskConfig metaMaskConfigProd;
 
     private EnvironmentSpec currentEnvironment;
 
@@ -55,6 +54,6 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
 
     public MetaMaskConfig GetMetamaskConfig()
     {
-        return Development ? _metaMaskConfigDev : _metaMaskConfigProd;
+        return metaMaskConfigProd;
     }
 }
