@@ -392,8 +392,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 127.13078, y: -518.09064}
-  m_SizeDelta: {x: 254.26157, y: 0}
+  m_AnchoredPosition: {x: 145.92372, y: -389.1299}
+  m_SizeDelta: {x: 291.84744, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &3175150689079546668
 CanvasRenderer:
@@ -571,8 +571,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 127.13078, y: -806.98175}
-  m_SizeDelta: {x: 254.26157, y: 0}
+  m_AnchoredPosition: {x: 145.92372, y: -583.6949}
+  m_SizeDelta: {x: 291.84744, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &4632903029961487472
 CanvasRenderer:
@@ -750,8 +750,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 127.13078, y: -1095.8729}
-  m_SizeDelta: {x: 254.26157, y: 0}
+  m_AnchoredPosition: {x: 145.92372, y: -778.2598}
+  m_SizeDelta: {x: 291.84744, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &3901376534991975678
 CanvasRenderer:
@@ -929,8 +929,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 127.13078, y: -229.19943}
-  m_SizeDelta: {x: 254.26157, y: 0}
+  m_AnchoredPosition: {x: 145.92372, y: -194.56496}
+  m_SizeDelta: {x: 291.84744, y: 0}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &4043113586242431990
 CanvasRenderer:
@@ -1121,6 +1121,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   location: 1
   AnimatorComponent: {fileID: 5502253699454023162}
+  buttonsTexts:
+  - {fileID: 7181738054364239618}
+  - {fileID: 4483232626484978795}
+  - {fileID: 8283479686385358847}
+  - {fileID: 6408664477812208673}
 --- !u!95 &5502253699454023162
 Animator:
   serializedVersion: 5
@@ -1154,7 +1159,7 @@ GameObject:
   - component: {fileID: 6271436802683698995}
   - component: {fileID: 7181738054364239618}
   m_Layer: 5
-  m_Name: LeaderboardText
+  m_Name: UsePointsText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1176,8 +1181,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: -0.2946818}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 0, y: -12.488}
-  m_SizeDelta: {x: 0, y: 24.975}
+  m_AnchoredPosition: {x: 0, y: -0.00022506714}
+  m_SizeDelta: {x: 0, y: -0.00053406}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6271436802683698995
 CanvasRenderer:
