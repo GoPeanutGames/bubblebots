@@ -138,9 +138,6 @@ public class ServerManager : MonoSingleton<ServerManager>
 
     public void GetIsPlayerRedeemed(ReferralAPI api, string formData, Action<string> onComplete, Action<string> onFail = null)
     {
-        //string address = UserManager.Instance.GetPlayerWalletAddress();
-        //string signature = UserManager.Instance.GetPlayerSignature();
-        
         UnityWebRequest webRequest = SetupPostWebRequest(referralAPIMap[api], formData);
         SendWebRequest(webRequest, onComplete, onFail);
     }
