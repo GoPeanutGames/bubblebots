@@ -160,6 +160,7 @@ PlayerSettings:
   applicationIdentifier:
     Android: com.peanutgames.minibots.prod
     Standalone: com.UnityTechnologies.com.unity.template-starter-kit
+    iPhone: com.peanutgames.minibots.prod
   buildNumber:
     Standalone: 0
     VisionOS: 0
@@ -233,14 +234,14 @@ PlayerSettings:
   metalAPIValidation: 1
   iOSRenderExtraFrameOnPause: 0
   iosCopyPluginsCodeInsteadOfSymlink: 0
-  appleDeveloperTeamID: 
+  appleDeveloperTeamID: 9YTHR2KXM9
   iOSManualSigningProvisioningProfileID: 
   tvOSManualSigningProvisioningProfileID: 
   VisionOSManualSigningProvisioningProfileID: 
   iOSManualSigningProvisioningProfileType: 0
   tvOSManualSigningProvisioningProfileType: 0
   VisionOSManualSigningProvisioningProfileType: 0
-  appleEnableAutomaticSigning: 0
+  appleEnableAutomaticSigning: 1
   iOSRequireARKit: 0
   iOSAutomaticallyDetectAndAddCapabilities: 1
   appleEnableProMotion: 0

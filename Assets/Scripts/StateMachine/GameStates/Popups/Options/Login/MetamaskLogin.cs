@@ -2,9 +2,11 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using BubbleBots.Server.Signature;
+#if  !UNITY_IOS
 using MetaMask;
 using MetaMask.Models;
 using MetaMask.Unity;
+#endif
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -18,7 +20,9 @@ public class MetamaskLogin
 	private static extern void RequestSignature(string schema, string address);
 #endif
 	
+#if  !UNITY_IOS
 	private static string WalletAddress => MetaMaskUnity.Instance.Wallet.ConnectedAddress.ToLower();
+#endif
 	private static long ChainId => EnvironmentManager.Instance.IsDevelopment() ? ChainDataReference.SepoliaChainId : ChainDataReference.BlastChainId;
 	private static Chain ChainData => EnvironmentManager.Instance.IsDevelopment() ? ChainDataReference.SepoliaChain : ChainDataReference.BlastChain;
 	
@@ -35,11 +39,13 @@ public class MetamaskLogin
 	
 	private void Initialise()
 	{
+#if  !UNITY_IOS
 		MetaMaskConfig metaMaskConfig = EnvironmentManager.Instance.GetMetamaskConfig();
 		if (!_metamaskInitialised){
 			MetaMaskUnity.Instance.Initialize(metaMaskConfig);
 			_metamaskInitialised = true;
 		}
+#endif
 	}
 	
 	private void OnMetamaskEvent(GameEventData data)
@@ -60,11 +66,13 @@ public class MetamaskLogin
 		_callbackOnSuccess = onSuccess;
 		_callbackOnFail = onFail;
 		if (Application.isMobilePlatform){
+#if  !UNITY_IOS
 			MetaMaskUnity.Instance.Wallet.EthereumRequestFailedHandler += MobileConnectMetamaskFailHandler;
 			MetaMaskUnity.Instance.Wallet.WalletConnectedHandler += MetamaskMobileConnected;
 			MetaMaskUnity.Instance.Wallet.WalletDisconnectedHandler += MobileWalletDisconnected;
 			MetaMaskUnity.Instance.Wallet.WalletAuthorizedHandler += MetamaskMobileAuthorized;
 			MetaMaskUnity.Instance.Connect();
+#endif
 		}
 		else{
 #if !UNITY_EDITOR
@@ -122,6 +130,7 @@ public class MetamaskLogin
 	}
 
 	#region MOBILE ONLY
+#if  !UNITY_IOS
 	
 		private void MobileWalletDisconnected(object sender, EventArgs e)
 		{
@@ -131,7 +140,9 @@ public class MetamaskLogin
 		private void MobileConnectMetamaskFailHandler(object sender, EventArgs e)
 		{
 			MetaMaskEthereumRequestFailedEventArgs failedEventArgs = e as MetaMaskEthereumRequestFailedEventArgs;
+
 			MetaMaskUnity.Instance.Wallet.EthereumRequestFailedHandler -= MobileConnectMetamaskFailHandler;
+
 			LogOutMetamask();
 		}
 		public void LogOutMetamask()
@@ -205,5 +216,6 @@ public class MetamaskLogin
 			MetaMaskUnity.Instance.Wallet.EthereumRequestFailedHandler -= MobileConnectMetamaskFailHandler;
 			MetamaskSignatureSuccess(result as string);
 		}
+#endif
 	#endregion
 }

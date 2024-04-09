@@ -1,6 +1,9 @@
 using BubbleBots.Environment;
-using MetaMask.Unity;
 using UnityEngine;
+
+#if  !UNITY_IOS
+using MetaMask.Unity;
+#endif
 
 public class EnvironmentManager : MonoSingleton<EnvironmentManager>
 {
@@ -9,9 +12,17 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     [SerializeField] private bool Rhym;
     [SerializeField] private EnvironmentSpec DevelopmentEnvironment;
     [SerializeField] private EnvironmentSpec ProductionEnvironment;
-    public MetaMaskConfig metaMaskConfigProd;
 
     private EnvironmentSpec currentEnvironment;
+    
+#if  !UNITY_IOS
+    public MetaMaskConfig metaMaskConfigProd;
+    
+    public MetaMaskConfig GetMetamaskConfig()
+    {
+        return metaMaskConfigProd;
+    }
+#endif
 
     protected override void Awake()
     {
@@ -51,9 +62,5 @@ public class EnvironmentManager : MonoSingleton<EnvironmentManager>
     {
         return Development;
     }
-
-    public MetaMaskConfig GetMetamaskConfig()
-    {
-        return metaMaskConfigProd;
-    }
+    
 }
