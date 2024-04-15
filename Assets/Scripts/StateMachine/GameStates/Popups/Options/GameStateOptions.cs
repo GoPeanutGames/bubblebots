@@ -73,6 +73,7 @@ public class GameStateOptions : GameState
 	{
 		Screens.Instance.PopScreen(_gameScreenLoading);
 		_gamePopupOptions.RefreshAuthState();
+		stateMachine.PopState();
 	}
 
 	private void GetNextPicture()

@@ -146,7 +146,11 @@ public class GameStateHome : GameState
 
     private void NethermodeClick()
     {
-        if (!LoggedInReferredLock())
+        if (UserManager.PlayerType == PlayerType.Guest)
+        {
+            stateMachine.PushState(new GameStateStore());
+        }
+        else
         {
             _gameScreenLoading = Screens.Instance.PushScreen<GameScreenLoading>();
             CheckForBattlePass();
