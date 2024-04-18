@@ -15,6 +15,25 @@ mergeInto(LibraryManager.library, {
       console.log("Error Connecting, show modal for catch");
     }
   },
+
+  RequestAuthInfo: async function () {
+     try {
+        // throws error if no auth info saved
+	let info = window.getAuthInfo()
+        myGameInstance.SendMessage(
+          "Managers/JSLibConnectionManager",
+          "RequestWalletAuthInfoSuccess",
+          info // JSON encoded string { address, signature }
+        )
+     } catch (e) {
+	console.log("Failed to get saved auth info:", e.message)
+	// myGameInstance.SendMessage(
+        //   "Managers/JSLibConnectionManager",
+        //   "RequestWalletAuthInfoFail",
+        //   e.message || "something went wrong"
+        // )
+     }
+  },
   
   RequestWalletAdress_test: async function () {
 	try {
