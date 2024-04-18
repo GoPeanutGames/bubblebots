@@ -45,4 +45,18 @@ public class JSLibConnectionManager : MonoBehaviour
         Debug.Log($"{nameof(JSLibConnectionManager)}::{nameof(BundleBuyFailBalance)}");
         MetamaskManager.Instance.StoreBundleBuyFailBalance();
     }
+
+
+    [SkipRename]
+    public void RequestWalletAdressSuccess(string address)
+    {
+        Debug.Log("JSLIB : got wallet adress: " + address);
+    }
+
+    [SkipRename]
+    public void RequestSignatureSuccess(string signature)
+    {
+        Debug.Log("JSLIB : got wallet adress: " + signature);
+    }
+
 }

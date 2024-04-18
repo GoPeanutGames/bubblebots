@@ -15,6 +15,30 @@ mergeInto(LibraryManager.library, {
       console.log("Error Connecting, show modal for catch");
     }
   },
+  
+  RequestWalletAdress_test: async function () {
+	try {
+        myGameInstance.SendMessage(
+          "Managers/JSLibConnectionManager",
+          "RequestWalletAdressSuccess",
+          "test_adress"
+        );
+    } catch (e) {
+      console.log("Something went wrong when getting wallet adress");
+    }
+  },
+  
+    RequestSignature_test: async function () {
+	try {
+        myGameInstance.SendMessage(
+          "Managers/JSLibConnectionManager",
+          "RequestSignatureSuccess",
+          "test_signature"
+        );
+    } catch (e) {
+      console.log("Something went wrong when getting signature");
+    }
+  },
 
   RequestSignature: async function (schema, account) {
     account = UTF8ToString(account);
