@@ -167,7 +167,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         if (currentLevelIndex >= gameplayData.levels.Count - 1)
         {
             gameplayState = NethermodeGameplayState.NetherModeComplete;
-            OnNetherModeComplete();
+            //OnNetherModeComplete();
         }
     }
 
