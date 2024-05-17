@@ -18,7 +18,6 @@ public class MainController : MonoBehaviour, IErrorManager
     {
         if (_stateMachine.GetCurrentState().GetType() != typeof(GameStateAccountDisabled))
         {
-            Debug.Log("here");
             _stateMachine.PushState(new GameStateAccountDisabled());
         }
     }

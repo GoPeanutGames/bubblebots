@@ -46,6 +46,8 @@ public class NetherModeGameplayManager : MonoBehaviour
             SoundManager.Instance.FadeInMusic();
         });
 
+        Debug.Log("[START] pro mode");
+
     }
     public void StartSession(List<BubbleBotData> bots)
     {
@@ -166,7 +168,7 @@ public class NetherModeGameplayManager : MonoBehaviour
         gameplayState = NethermodeGameplayState.LevelComplete;
         if (currentLevelIndex >= gameplayData.levels.Count - 1)
         {
-            gameplayState = NethermodeGameplayState.NetherModeComplete;
+            //gameplayState = NethermodeGameplayState.NetherModeComplete;
             //OnNetherModeComplete();
         }
     }
@@ -365,22 +367,15 @@ public class NetherModeGameplayManager : MonoBehaviour
                 yield return new WaitForSeconds(.1f);
             }
         }
-        gameplayState = NethermodeGameplayState.LevelCompleteMenu;
-        OnNetherModeComplete();
-        AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
+        gameplayState = NethermodeGameplayState.NetherModeComplete;
 
-        UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
-
-        sessionData.AddTotalBubbles(sessionData.GetPotentialBubbles());
-
-        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetTotalBubbles(), lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
-
-        sessionData.ResetPotentialBubbles();
+        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
+        EndLevelBubblesUpdate();
+        if (IsFinished())
+        {
+            GameEventsManager.Instance.PostEvent(new GameEventInt() { eventName = GameEvents.NetherModeComplete, intData = sessionData.GetTotalBubbles() });
+        }
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
-
-
-
-        //MenuGUI.DisplayWin();
     }
 
     IEnumerator ShowLevelText(float _duration, float _fadeDuration)

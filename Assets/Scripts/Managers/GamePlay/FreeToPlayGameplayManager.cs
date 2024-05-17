@@ -4,6 +4,7 @@ using BubbleBots.Data;
 using BubbleBots.Gameplay.Models;
 using BubbleBots.Modes;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class FreeToPlayGameplayManager : MonoBehaviour
 {
@@ -44,6 +45,8 @@ public class FreeToPlayGameplayManager : MonoBehaviour
             SoundManager.Instance.PlayBattleBgm();
             SoundManager.Instance.FadeInMusic();
         });
+
+        Debug.Log("[START] free mode");
 
     }
     public void StartSession(List<BubbleBotData> bots)

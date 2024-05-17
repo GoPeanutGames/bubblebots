@@ -19,6 +19,8 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 
     private void OnGameplaySessionEnd(string data)
     {
+        GameplaySessionUpdateDataResponse r = JsonUtility.FromJson<GameplaySessionUpdateDataResponse>(data);
+        Debug.Log("[RECEIVE]received score update: " + r.score);
         currentGameplaySessionID = "";
     }
 
@@ -46,11 +48,13 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
 
     public void UpdateGameplaySession(int score, bool bubbleBurst = false, System.Action<int, int> callback = null)
     {
+        Debug.Log("[SEND_UNATH]sending score update: " + score);
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
         }
 
+        Debug.Log("[SEND]sending score update: " + score);
         previousScore = score;
         GameplaySessionUpdateData formData = new()
         {
@@ -70,15 +74,18 @@ public class ServerGameplayController : MonoSingleton<ServerGameplayController>
                 callback(r.bubbles, r.specialBurst);
             }
             GameEventsManager.Instance.PostEvent(new GameEventUpdateSession() { eventName = GameEvents.UpdateSessionResponse, bubbles = r.bubbles });
+            Debug.Log("[RECEIVE]received score update: " + r.score);
         });
     }
 
     public void EndGameplaySession(int score, GameStatus gameStatus)
     {
+        Debug.Log("[SEND_UNATH]sending score update on END: " + score);
         if (UserManager.PlayerType == PlayerType.Guest)
         {
             return;
         }
+        Debug.Log("[SEND]sending score update on END: " + score);
         previousScore = score;
         GameplaySessionEndData formData = new()
         {
