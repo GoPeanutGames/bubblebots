@@ -10,7 +10,14 @@ public class GameStateHome : GameState
     private GameScreenNotEnoughGems _gameScreenNotEnoughGems;
     private GameScreenNotLoggedIn _gameScreenNotLoggedIn;
     private GameScreenNotReferred _gameScreenNotReferred;
+    private GameScreenLevelsMap _gameScreenLevelsMap;
 
+    private bool navigateToLevelsMap = false;
+
+    public GameStateHome(bool showLevelsMap = false)
+    {
+       navigateToLevelsMap = showLevelsMap;
+    }
     public override string GetGameStateName()
     {
         return "game state home";
@@ -28,23 +35,32 @@ public class GameStateHome : GameState
 
     public override void Enable()
     {
-        _gameScreenHomeSideBar.Show();
-        _gameScreenHomeHeader.Show();
-        _gameScreenHomeHeader.RefreshData();
         GameEventsManager.Instance.AddGlobalListener(OnGameEvent);
         UserManager.Instance.GetPlayerResources();
-        if (UserManager.PlayerType == PlayerType.Guest)
+
+        if (navigateToLevelsMap)
         {
-            if (UserManager.ShownOnce == false && UserManager.TimesPlayed == 2)
+            ShowLevelsMap();
+            navigateToLevelsMap = false;
+        }
+        else
+        {
+            _gameScreenHomeSideBar.Show();
+            _gameScreenHomeHeader.Show();
+            _gameScreenHomeHeader.RefreshData();
+            if (UserManager.PlayerType == PlayerType.Guest)
             {
-                UserManager.TimesPlayed = 0;
-                UserManager.ShownOnce = true;
-                stateMachine.PushState(new GameStateSaveYourProgress());
-            }
-            else if (UserManager.TimesPlayed == 5)
-            {
-                UserManager.TimesPlayed = 0;
-                stateMachine.PushState(new GameStateSaveYourProgress());
+                if (UserManager.ShownOnce == false && UserManager.TimesPlayed == 2)
+                {
+                    UserManager.TimesPlayed = 0;
+                    UserManager.ShownOnce = true;
+                    stateMachine.PushState(new GameStateSaveYourProgress());
+                }
+                else if (UserManager.TimesPlayed == 5)
+                {
+                    UserManager.TimesPlayed = 0;
+                    stateMachine.PushState(new GameStateSaveYourProgress());
+                }
             }
         }
     }
@@ -118,10 +134,44 @@ public class GameStateHome : GameState
             case ButtonId.NotReferredGetReferral:
                 Screens.Instance.PopScreen(_gameScreenNotReferred);
                 break;
+            case ButtonId.MainMenuBottomHUDLevels:
+                ShowLevelsMap();
+                break;
+            case ButtonId.LevelsMapBack:
+                HideLevelsMap();
+                break;
+            case ButtonId.LevelsMapPlay:
+                PlayCurrentLevel();
+                break;
             default:
                 break;
         }
     }
+
+
+    private void PlayCurrentLevel()
+    {
+        ClearStatesAndScreens();
+        stateMachine.PushState(new GameStateLevelsMode());
+        SoundManager.Instance.PlayModeSelectedSfx();
+    }
+
+
+    private void ShowLevelsMap()
+    {
+        _gameScreenHomeSideBar.Hide();
+        _gameScreenHomeHeader.Hide();
+        _gameScreenLevelsMap = Screens.Instance.PushScreen<GameScreenLevelsMap>(true);
+        _gameScreenLevelsMap.SetPlayButtonText("LEVEL " + UserManager.Instance.GetCurrentLevel().ToString());
+    }
+
+    private void HideLevelsMap()
+    {
+        _gameScreenHomeSideBar.Show();
+        _gameScreenHomeHeader.Show();
+        Screens.Instance.PopScreen<GameScreenLevelsMap>();
+    }
+
 
     private void OnMetamaskLoginSuccess()
     {

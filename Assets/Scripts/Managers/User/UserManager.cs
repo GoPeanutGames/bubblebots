@@ -55,7 +55,8 @@ public class UserManager : MonoSingleton<UserManager>
         { PrefsKey.SessionToken, "session_token" },
         { PrefsKey.Signature, "signature" },
         { PrefsKey.Avatar, "avatar"},
-        { PrefsKey.Settings, "settings"}
+        { PrefsKey.Settings, "settings"},
+        { PrefsKey.CurrentLevel, "currentLevel" }
     };
     
     private readonly Dictionary<PrefsKeyToDelete, string> prefsKeysToDeleteMap = new()
@@ -82,6 +83,18 @@ public class UserManager : MonoSingleton<UserManager>
         string settingsStringJSON = ObscuredPrefs.Get<string>(prefsKeyMap[PrefsKey.Settings], JsonUtility.ToJson(DEFAULT_SETTINGS));
         return JsonUtility.FromJson<Settings>(settingsStringJSON);
     }
+
+    public int GetCurrentLevel()
+    {
+        int currentLevel = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.CurrentLevel], 1);
+        return currentLevel;
+    }
+
+    public void IncreaseCurrentLevel()
+    {
+        int newLevel = GetCurrentLevel() + 1;
+        ObscuredPrefs.Set(prefsKeyMap[PrefsKey.CurrentLevel], newLevel);
+    }
     
     public void GetUserOrSetDefault()
     {
@@ -93,7 +106,7 @@ public class UserManager : MonoSingleton<UserManager>
             SessionToken = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.SessionToken], ""),
             Signature = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Signature], ""),
             settings = GetSettings(),
-            Avatar = JsonUtility.FromJson<AvatarInformation>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(EMPTY_AVATAR))) 
+            Avatar = JsonUtility.FromJson<AvatarInformation>(ObscuredPrefs.Get(prefsKeyMap[PrefsKey.Avatar], JsonUtility.ToJson(EMPTY_AVATAR)))
         };
     }
 

@@ -3,6 +3,7 @@
     <package>androidx.annotation:annotation:[1.2.0]</package>
     <package>com.google.games:gpgs-plugin-support:0.10.14</package>
     <package>com.revenuecat.purchases:purchases-hybrid-common:[8.2.1]</package>
+    <package>com.squareup.okhttp3:okhttp:4.10.0</package>
   </packages>
   <files>
     <file>Assets/Plugins/Android/androidx.activity.activity-1.2.3.aar</file>
@@ -68,6 +69,8 @@
     <file>Assets/Plugins/Android/com.revenuecat.purchases.purchases-7.3.1.aar</file>
     <file>Assets/Plugins/Android/com.revenuecat.purchases.purchases-hybrid-common-8.2.1.aar</file>
     <file>Assets/Plugins/Android/com.revenuecat.purchases.purchases-store-amazon-7.3.1.aar</file>
+    <file>Assets/Plugins/Android/com.squareup.okhttp3.okhttp-4.10.0.jar</file>
+    <file>Assets/Plugins/Android/com.squareup.okio.okio-jvm-3.0.0.jar</file>
     <file>Assets/Plugins/Android/javax.inject.javax.inject-1.jar</file>
     <file>Assets/Plugins/Android/org.jetbrains.annotations-13.0.jar</file>
     <file>Assets/Plugins/Android/org.jetbrains.kotlin.kotlin-android-extensions-runtime-1.7.21.jar</file>

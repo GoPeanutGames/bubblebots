@@ -40,7 +40,12 @@ public static class ButtonId
     public const string MainMenuBottomHUDFriends = "mainmenu.bottomHUD.friends";
     public const string MainMenuBottomHUDBattlepass = "mainmenu.bottomHUD.battlepass";
     public const string MainMenuBottomHUDItems = "mainmenu.bottomHUD.items";
-    
+    public const string MainMenuBottomHUDLevels = "mainmenu.bottomHUD.levels";
+
+    //levels map
+    public const string LevelsMapPlay = "levelsmap.play";
+    public const string LevelsMapBack = "levelsmap.back";
+
     //main menu side bar
     public const string MainMenuSideBarLeaderboard = "mainmenu.sidebar.leaderboard";
     public const string MainMenuSideBarSettings = "mainmenu.sidebar.settings";

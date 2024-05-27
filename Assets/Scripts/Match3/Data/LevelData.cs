@@ -12,7 +12,9 @@ namespace BubbleBots.Match3.Data
         public List<GemData> gemSetSpecials;
         public GemData bubbleGem;
         public int waves;
-        
+
+        public Sprite background;
+
         [Range(0, 100)]
         public float bubbleSpawnChance = 0;
 

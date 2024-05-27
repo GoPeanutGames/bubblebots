@@ -40,7 +40,7 @@ public class GameStateBattlepassPopup : GameState
 				Application.OpenURL("https://tokentrove.com/collection/PeanutGamesBattlePasses");
 				break;
 			case ButtonId.BattlepassPopupJoin:
-				Application.OpenURL("https://discord.gg/ZMq4a8savb");
+				Application.OpenURL(GameLinks.DiscordLink);
 				break;
 		}
 	}

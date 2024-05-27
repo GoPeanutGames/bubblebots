@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace BubbleBots.User
 {
-    public enum PrefsKey { Nickname, WalletAddress, SessionToken, Signature, Settings, Avatar }
+    public enum PrefsKey { Nickname, WalletAddress, SessionToken, Signature, Settings, Avatar, CurrentLevel }
     public enum PrefsKeyToDelete {Hints}
 
     [Serializable]

@@ -11,4 +11,7 @@ public class GameSettingsManager : MonoSingleton<GameSettingsManager>
     public NetherModeGameplayData netherModeGameplayData;
     public int netherModeEnemyDamage;
     public GameObject netherModeGameplayManager;
+
+    public LevelsModeGameplayData levelsGameplayData;
+    public GameObject levelsGameplayManager;
 }

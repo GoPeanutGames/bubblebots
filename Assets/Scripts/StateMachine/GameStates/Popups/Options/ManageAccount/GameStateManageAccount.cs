@@ -55,7 +55,7 @@ public class GameStateManageAccount : GameState
 				UserManager.Instance.loginManager.MetamaskSignIn(MetamaskSignInSuccess, null);
 				break;
 			case ButtonId.ManageAccountContact:
-				Application.OpenURL("https://discord.gg/gopeanutgames");
+				Application.OpenURL(GameLinks.DiscordLink);
 				break;
 		}
 	}
