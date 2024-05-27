@@ -39,6 +39,12 @@ public class GameEventEnemyRobotDamage : GameEventData
     public int enemyRobotNewHp;
 }
 
+
+public class GameEventUpdateRoster : GameEventData
+{
+    public PlayerRoster playerRoster;
+}
+
 public class GameEventPlayerRobotKilled : GameEventData
 {
     public int id; // as in order in list for ui. needs refactoring

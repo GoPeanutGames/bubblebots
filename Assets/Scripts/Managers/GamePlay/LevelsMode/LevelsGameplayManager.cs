@@ -21,7 +21,7 @@ public class LevelsGameplayManager : MonoBehaviour
 
     public LevelsModeGameplayData gameplayData;
 
-    public ServerGameplayController serverGameplayController;
+    //public ServerGameplayController serverGameplayController;
     //public GUIGame GameGUI;
     public float enemyDamage = 0.05f;
 
@@ -48,8 +48,10 @@ public class LevelsGameplayManager : MonoBehaviour
         Debug.Log("[START] levels mode");
 
     }
-    public void StartSession(List<BubbleBotData> bots)
+    public void StartSession(List<BubbleBotData> bots, int levelIndex)
     {
+        currentLevelIndex = levelIndex;
+
         ModeManager.Instance.SetMode(Mode.LEVELS);
         if (EnvironmentManager.Instance.IsRhym())
         {
@@ -66,7 +68,6 @@ public class LevelsGameplayManager : MonoBehaviour
             },
             currentBot = 0
         };
-        currentLevelIndex = 0;
 
         match3Manager.Initialize(gameplayData.levels[currentLevelIndex], false);
         
@@ -120,19 +121,22 @@ public class LevelsGameplayManager : MonoBehaviour
 
         currentWaveIndex = 0;
         currentEnemy = 0;
+
+        int botHp = gameplayData.startHP + (currentLevelIndex - 1) * gameplayData.hpIncrement;
+
         currentWave = new Wave()
         {
             bots = new List<BubbleBot>()
             {
-                new BubbleBot() { hp = 40, maxHp = 40, bubbleBotData = first },
-                new BubbleBot() { hp = 40, maxHp = 40, bubbleBotData = second },
-                new BubbleBot() { hp = 40, maxHp = 40, bubbleBotData = third }
+                new BubbleBot() { hp = botHp, maxHp = botHp, bubbleBotData = first },
+                new BubbleBot() { hp = botHp, maxHp = botHp, bubbleBotData = second },
+                new BubbleBot() { hp = botHp, maxHp = botHp, bubbleBotData = third }
             },
             completed = false
         };
 
         AnalyticsManager.Instance?.SendPlayEvent(currentLevelIndex + 1);
-        serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);
+        //serverGameplayController?.StartGameplaySession(currentLevelIndex + 1);
 
 
         GameEventsManager.Instance.PostEvent(new GameEventLevelStart() { eventName = GameEvents.FreeModeLevelStart, enemies = currentWave.bots, playerRoster = this.playerRoster });
@@ -218,12 +222,12 @@ public class LevelsGameplayManager : MonoBehaviour
         gameplayState = LevelsGameplayState.GameEndMenu;
         GameEventsManager.Instance.PostEvent(new GameEventFreeModeLose()
         {
-            eventName = GameEvents.FreeModeLose,
+            eventName = GameEvents.LevelsModeLose,
             score = (int)GetScore(),
             numBubblesWon = sessionData.GetTotalBubbles(),
             lastLevelPotentialBubbles = sessionData.GetPotentialBubbles()
         });
-        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
+        //serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.LOSE);
     }
 
     private bool KillEnemy()
@@ -231,7 +235,7 @@ public class LevelsGameplayManager : MonoBehaviour
         sessionData.IncrementRobotsKilled(1);
         UserManager.RobotsKilled++;
         AnalyticsManager.Instance?.SendRobotKillEvent(UserManager.RobotsKilled);
-        serverGameplayController?.UpdateGameplaySession((int)GetScore());
+        //serverGameplayController?.UpdateGameplaySession((int)GetScore());
 
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotKilled() { eventName = GameEvents.FreeModeEnemyRobotKilled, id = currentEnemy });
         FindObjectOfType<GUIGame>().KillEnemy();
@@ -287,7 +291,7 @@ public class LevelsGameplayManager : MonoBehaviour
     public void IncrementScore(int toAdd)
     {
         sessionData.IncrementScore(toAdd);
-        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore());
+        //serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore());
         GameEventsManager.Instance.PostEvent(new GameEventScoreUpdate() { eventName = GameEvents.FreeModeScoreUpdate, score = (int)sessionData.GetScore() });
         //GameGUI.UpdateScore((int)sessionData.GetScore());
         FindObjectOfType<GUIGame>().UpdateScore((int)sessionData.GetScore());
@@ -321,6 +325,9 @@ public class LevelsGameplayManager : MonoBehaviour
 
     IEnumerator EndLevelSequence()
     {
+
+        GameEventsManager.Instance.PostEvent(new GameEventData() { eventName = GameEvents.LevelsModeEndSequence });
+            
         gameplayState = LevelsGameplayState.EndLevelSequence;
         match3Manager.GameGUI.DehighlightSpecial();
         yield return new WaitUntil(() => match3Manager.GetGameplayState() == Match3GameplayManager.GameplayState.WaitForInput);
@@ -335,44 +342,37 @@ public class LevelsGameplayManager : MonoBehaviour
             }
         }
         gameplayState = LevelsGameplayState.LevelCompleteMenu;
-        serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
+        //serverGameplayController?.EndGameplaySession((int)GetScore(), BubbleBots.Server.Gameplay.GameStatus.WON);
         AnalyticsManager.Instance.SendLevelEvent((int)GetScore());
 
         UserManager.Instance?.AddBubbles(sessionData.GetPotentialBubbles());
 
         sessionData.AddTotalBubbles(sessionData.GetPotentialBubbles());
 
-        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.FreeModeLevelComplete, numBubblesWon = sessionData.GetTotalBubbles(), lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
+        GameEventsManager.Instance.PostEvent(new GameEventLevelComplete() { eventName = GameEvents.LevelsModeComplete, numBubblesWon = sessionData.GetTotalBubbles(), lastLevelPotentialBubbles = sessionData.GetPotentialBubbles() });
 
         sessionData.ResetPotentialBubbles();
         FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
 
-
-
-        //MenuGUI.DisplayWin();
     }
 
     IEnumerator ShowLevelText(float _duration, float _fadeDuration)
     {
         GameEventsManager.Instance.PostEvent(new GameEventShowLevelText() { eventName = GameEvents.ShowLevetText, duration = _duration, fadeDuration = _fadeDuration });
-        //GameGUI.ShowLevelText(currentLevelIndex, duration, fadeDuration);
-        FindObjectOfType<GUIGame>().ShowLevelText(currentLevelIndex, _duration, _fadeDuration);
+        //to do:  ShowLevelText should print exact level
+        FindObjectOfType<GUIGame>().ShowLevelText(currentLevelIndex - 1, _duration, _fadeDuration);
         yield return new WaitForSeconds(_duration);
-
         currentEnemy = 0;
         GameEventsManager.Instance.PostEvent(new GameEventEnemyRobotTargeted() { eventName = GameEvents.FreeModeEnemyRobotTargeted, id = currentEnemy });
-        // FindObjectOfType<GUIGame>().TargetEnemy(currentEnemy);
-        //GameGUI.TargetEnemy(currentEnemy);
-
         gameplayState = LevelsGameplayState.Match3Playing;
     }
 
     private void OnBubbleExploded(int _posX, int _posY)
     {
-        serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true, (bubbles, numGained) =>
-        {
-            FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, numGained);
-        });
+        //serverGameplayController?.UpdateGameplaySession((int)sessionData.GetScore(), true, (bubbles, numGained) =>
+        //{
+        //    FindObjectOfType<GUIGame>().ExplodeBubble(_posX, _posY, numGained);
+        //});
 
         GameEventsManager.Instance.PostEvent(new GameEventBubbleExploded() { eventName = GameEvents.BubbleExploded, posX = _posX, posY = _posY });
     }
@@ -389,6 +389,25 @@ public class LevelsGameplayManager : MonoBehaviour
         if (EnvironmentManager.Instance.IsRhym())
         {
             match3Manager.SetCanSpawnBubbles(false);
+        }
+    }
+
+    public void UseBooster(BoosterId id)
+    {
+        if (id == BoosterId.AddHp)
+        {
+            for (int i = 0; i < playerRoster.bots.Count; ++i)
+            {
+                if (playerRoster.bots[i].hp <= 0)
+                {
+                    playerRoster.bots[i].hp += 5;
+                } else
+                {
+                    playerRoster.bots[i].hp += 5;
+                    playerRoster.bots[i].maxHp = Mathf.Max(playerRoster.bots[i].hp, playerRoster.bots[i].maxHp);
+                }
+            }
+            GameEventsManager.Instance.PostEvent(new GameEventUpdateRoster() { eventName = GameEvents.UpdatePlayerRoster, playerRoster = this.playerRoster });
         }
     }
 

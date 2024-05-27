@@ -9,7 +9,9 @@ public class GameStateLevelsMode : GameState
     private GameScreenRobotSelection gameScreenRobotSelection;
     private GameScreenGame gameScreenGame;
     private GameScreenSkinsInfoPopup _gameScreenSkinsInfoPopup;
-    
+    private GameScreenBoostersPopup _gameScreenBoostersPopup;
+    private GameScreenBuyBoosterPopup _gameScreenBuyBoosterPopup;
+
     private LevelsGameplayManager levelsGameplayManager;
 
     public override string GetGameStateName()
@@ -90,6 +92,11 @@ public class GameStateLevelsMode : GameState
             gameScreenGame.SetPlayerRobots(eventLevelStart.playerRoster);
             gameScreenGame.SetEnemyRobots(eventLevelStart.enemies);
         }
+        else if (data.eventName == GameEvents.UpdatePlayerRoster)
+        {
+            GameEventUpdateRoster updateRosterEvent = data as GameEventUpdateRoster;
+            gameScreenGame.SetPlayerRobots(updateRosterEvent.playerRoster);
+        }
         else if (data.eventName == GameEvents.FreeModeEnemyRobotDamage)
         {
             GameEventEnemyRobotDamage eventEnemyRobotDamage = data as GameEventEnemyRobotDamage;
@@ -120,22 +127,27 @@ public class GameStateLevelsMode : GameState
             GameEventInt eventEnemyRobotTargeted = data as GameEventInt;
             gameScreenGame.TargetEnemyRobot(eventEnemyRobotTargeted.intData);
         }
-        else if (data.eventName == GameEvents.FreeModeLevelComplete)
+        else if (data.eventName == GameEvents.LevelsModeComplete)
         {
-            stateMachine.PushState(new GameStateWonPopup(
-                "<color=#FFCB5E>" + (data as GameEventLevelComplete).numBubblesWon.ToString() + "</color> Points!",
+            UserManager.Instance.IncreaseCurrentLevel();
+            stateMachine.PushState(new GameStateLevelWonPopup(
+                "<color=#FFCB5E>" + "Congratulations, you won!",
                 ButtonId.LevelCompleteContinue,
                 "Continue",
-                () => levelsGameplayManager.StartNextLevel()) //todo: probably can do this better -> refactor
+                () => GoToMainMenu()) //todo: probably can do this better -> refactor
             );
         }
-        else if (data.eventName == GameEvents.FreeModeLose)
+        else if (data.eventName == GameEvents.LevelsModeLose)
         {
             SoundManager.Instance.PlayBattleLostSfx();
-            stateMachine.PushState(new GameStateWonPopup(
-                "<color=#FFCB5E>" + (data as GameEventFreeModeLose).numBubblesWon.ToString() + "</color> Points from previous levels!",
-                ButtonId.GameEndGoToMainMenu, 
-                "Go to home"));
+            stateMachine.PushState(new GameStateLevelWonPopup(
+                "<color=#FFCB5E>" + "Level lost!",
+                ButtonId.GameEndGoToMainMenu,
+                 "Continue",
+                 () => GoToMainMenu(),
+                 true)
+                );
+                
         }
         else if (data.eventName == GameEvents.UpdateSessionResponse)
         {
@@ -143,6 +155,9 @@ public class GameStateLevelsMode : GameState
             {
                 levelsGameplayManager.OnNewBubblesCount((data as GameEventUpdateSession).bubbles);
             }
+        } else if (data.eventName == GameEvents.LevelsModeEndSequence)
+        {
+            gameScreenGame.ShowBoosters(false);
         }
     }
 
@@ -165,6 +180,36 @@ public class GameStateLevelsMode : GameState
                 break;
             case ButtonId.RobotSelectionBackButton:
                 ShowQuitRobotSelect();
+                break;
+            case ButtonId.Boosters:
+                _gameScreenBoostersPopup = Screens.Instance.PushScreen<GameScreenBoostersPopup>(true);
+                _gameScreenBoostersPopup.Refresh();
+                break;
+            case ButtonId.BoostersClose:
+                Screens.Instance.PopScreen<GameScreenBoostersPopup>();
+                break;
+            case ButtonId.BoostersUse:
+                if (_gameScreenBoostersPopup.canUse)
+                {
+                    UserManager.Instance.AddBoosterCount(BoosterId.AddHp, -1);
+                    levelsGameplayManager.UseBooster(BoosterId.AddHp);
+                    Screens.Instance.PopScreen<GameScreenBoostersPopup>();
+                } 
+                else
+                {
+                    _gameScreenBuyBoosterPopup = Screens.Instance.PushScreen<GameScreenBuyBoosterPopup>(true);
+                    _gameScreenBuyBoosterPopup.BoosterId = BoosterId.AddHp;
+                }
+                break;
+            case ButtonId.BuyBoosterClose:
+                Screens.Instance.PopScreen<GameScreenBuyBoosterPopup>();
+                break;
+            case ButtonId.BuyBoosterPoints:
+                UserManager.Instance.AddBoosterCount(BoosterId.AddHp, 1);
+                Screens.Instance.PopScreen<GameScreenBuyBoosterPopup>();
+                _gameScreenBoostersPopup.Refresh();
+                break;
+            default:
                 break;
         }
     }
@@ -210,6 +255,7 @@ public class GameStateLevelsMode : GameState
         {
             UserManager.TimesPlayed++;
         }
+        stateMachine.PopAll();
         stateMachine.PushState(new GameStateHome(true));
         SoundManager.Instance.FadeOutMusic();
     }
@@ -218,16 +264,19 @@ public class GameStateLevelsMode : GameState
     {
         SoundManager.Instance.PlayBattleStartSfx();
         gameScreenGame = Screens.Instance.PushScreen<GameScreenGame>();
+        gameScreenGame.ShowBoosters(true);
         gameScreenGame.SetPlayerName(UserManager.Instance.GetPlayerUserName());
+        gameScreenGame.SetBackground(GameSettingsManager.Instance.levelsGameplayData.levels[UserManager.Instance.GetCurrentLevel() - 1].background);
         levelsGameplayManager = GameObject.Instantiate(GameSettingsManager.Instance.levelsGameplayManager).GetComponent<LevelsGameplayManager>();
 
         levelsGameplayManager.gameplayData = GameSettingsManager.Instance.levelsGameplayData;
-        levelsGameplayManager.enemyDamage = GameSettingsManager.Instance.freeModeEnemyDamage;
-        levelsGameplayManager.serverGameplayController = ServerGameplayController.Instance;
+        levelsGameplayManager.enemyDamage = GameSettingsManager.Instance.levelsModeEnemyDamage;
+        //levelsGameplayManager.serverGameplayController = ServerGameplayController.Instance;
 
-        levelsGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots());
+        levelsGameplayManager.StartSession(gameScreenRobotSelection.GetSelectedBots(), UserManager.Instance.GetCurrentLevel());
         UserManager.Instance.GetPlayerResources();
-        Screens.Instance.SetGameBackground(GameSettingsManager.Instance.freeModeGameplayData.gamebackgroundSprite);
+
+        
         Screens.Instance.PopScreen(gameScreenRobotSelection);
     }
 

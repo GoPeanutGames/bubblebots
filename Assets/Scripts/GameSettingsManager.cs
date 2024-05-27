@@ -14,4 +14,5 @@ public class GameSettingsManager : MonoSingleton<GameSettingsManager>
 
     public LevelsModeGameplayData levelsGameplayData;
     public GameObject levelsGameplayManager;
+    public int levelsModeEnemyDamage;
 }

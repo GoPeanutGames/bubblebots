@@ -84,7 +84,7 @@ public class Screens : MonoSingleton<Screens>
 
     public void SetGameBackground(Sprite sprite)
     {
-        if(gameBackgroundObject==null){
+        if (gameBackgroundObject == null){
             return;
         }
         gameBackgroundObject.enabled = true;

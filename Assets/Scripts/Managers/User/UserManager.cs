@@ -56,7 +56,8 @@ public class UserManager : MonoSingleton<UserManager>
         { PrefsKey.Signature, "signature" },
         { PrefsKey.Avatar, "avatar"},
         { PrefsKey.Settings, "settings"},
-        { PrefsKey.CurrentLevel, "currentLevel" }
+        { PrefsKey.CurrentLevel, "currentLevel" },
+        { PrefsKey.BoosterHp, "boosterHp" }
     };
     
     private readonly Dictionary<PrefsKeyToDelete, string> prefsKeysToDeleteMap = new()
@@ -88,6 +89,26 @@ public class UserManager : MonoSingleton<UserManager>
     {
         int currentLevel = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.CurrentLevel], 1);
         return currentLevel;
+    }
+
+    public int GetBoosterCount(BoosterId id)
+    {
+        if (id == BoosterId.AddHp)
+        {
+            int count = ObscuredPrefs.Get(prefsKeyMap[PrefsKey.BoosterHp], 3);
+            return count;
+        }
+        return 0;
+    }
+
+    public void AddBoosterCount(BoosterId id, int toAdd)
+    {
+        if (id == BoosterId.AddHp)
+        {
+            int newCount = GetBoosterCount(id) + toAdd;
+            newCount = Math.Max(0, newCount);
+            ObscuredPrefs.Set(prefsKeyMap[PrefsKey.BoosterHp], newCount);
+        }
     }
 
     public void IncreaseCurrentLevel()

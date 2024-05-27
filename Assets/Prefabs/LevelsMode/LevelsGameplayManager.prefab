@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6c9a1f7974ea174eaa5bce184bdf493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameplayData: {fileID: 11400000, guid: 4d1c9df41976a0040aca7ff09efdb606, type: 2}
+  gameplayData: {fileID: 11400000, guid: 7db1fe960c55ab54686edceea9aa0b1a, type: 2}
   serverGameplayController: {fileID: 0}
   enemyDamage: 1
   match3Manager: {fileID: 1545353200782405067}

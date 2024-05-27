@@ -162,7 +162,18 @@ public class GameStateHome : GameState
         _gameScreenHomeSideBar.Hide();
         _gameScreenHomeHeader.Hide();
         _gameScreenLevelsMap = Screens.Instance.PushScreen<GameScreenLevelsMap>(true);
-        _gameScreenLevelsMap.SetPlayButtonText("LEVEL " + UserManager.Instance.GetCurrentLevel().ToString());
+        _gameScreenLevelsMap.SetCurrentLevel(UserManager.Instance.GetCurrentLevel(), GameSettingsManager.Instance.levelsGameplayData.levels.Count);
+
+        if (UserManager.Instance.GetCurrentLevel() > GameSettingsManager.Instance.levelsGameplayData.levels.Count)
+        {
+            _gameScreenLevelsMap.SetPlayButtonText("Coming soon!");
+            _gameScreenLevelsMap.playButton.interactable = false;
+        }
+        else
+        {
+            _gameScreenLevelsMap.SetPlayButtonText("LEVEL " + UserManager.Instance.GetCurrentLevel().ToString());
+            _gameScreenLevelsMap.playButton.interactable = true;
+        }
     }
 
     private void HideLevelsMap()

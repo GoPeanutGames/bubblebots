@@ -16,6 +16,7 @@ public static class GameEvents
     public const string ShowLevetText = "gameplay.show.levelText";
     public const string BubbleExploded = "gameplay.bubble.exploded";
     public const string BubblesUnclaimedUpdate = "gameplay.bubbles.unclaimed.update";
+    public const string UpdatePlayerRoster = "gameplay.update.player.roster";
 
     //free mode gameplay
     public const string FreeModeSessionStarted = "freemode.session.start";
@@ -30,9 +31,13 @@ public static class GameEvents
     public const string FreeModeLose = "freemode.lose";
     public const string FreeModeScoreUpdate = "freemode.score.update";
 
-
     //nether mode
     public const string NetherModeComplete = "nether.mode.complete";
+
+    //levels mode
+    public const string LevelsModeComplete = "levels.mode.complete";
+    public const string LevelsModeLose = "levels.mode.lose";
+    public const string LevelsModeEndSequence = "levels.mode.endSequence";
 
     // server comms
     public const string UpdateSessionResponse = "server.session.update";

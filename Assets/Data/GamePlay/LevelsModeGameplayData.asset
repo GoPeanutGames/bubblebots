@@ -12,7 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1322ead549705b9449aa1d2c6a88592c, type: 3}
   m_Name: LevelsModeGameplayData
   m_EditorClassIdentifier: 
-  levels: []
+  levels:
+  - {fileID: 11400000, guid: 1856f9923ee7c0746af12abf6401bf74, type: 2}
+  - {fileID: 11400000, guid: 6446a787daffc7d46b7463d40cefaacb, type: 2}
+  - {fileID: 11400000, guid: d1e85ada7e447c04ca1a3f468d90f7dd, type: 2}
+  - {fileID: 11400000, guid: 89e6d50a0ac94cf40a3214782aa5c956, type: 2}
+  - {fileID: 11400000, guid: 313d0b627a482ce40807ca5aa4770431, type: 2}
+  - {fileID: 11400000, guid: 4e033688a570f9a45b9c0ab9c7c6e6f6, type: 2}
+  - {fileID: 11400000, guid: 68ab17d58f068cc4eb1782290adf92bd, type: 2}
+  - {fileID: 11400000, guid: 4eb7645dcdea0c14994b8102c9a27b45, type: 2}
+  - {fileID: 11400000, guid: dd0d74a99a08a2e49b69e964fb0773f1, type: 2}
+  - {fileID: 11400000, guid: 97eaa40202bc5674899c46adf42725f3, type: 2}
   gamebackgroundSprite: {fileID: 0}
-  robotsAvailable: []
-  enemyRobots: []
+  robotsAvailable:
+  - {fileID: 11400000, guid: 37a34d42834f676418f667f2b1fb138a, type: 2}
+  - {fileID: 11400000, guid: 03dc974d257658f4aa1115df6b505e9f, type: 2}
+  - {fileID: 11400000, guid: e56b7cb2d6b55b6438dee25bd57e2d1c, type: 2}
+  - {fileID: 11400000, guid: f6717bd1405728b42b4d32eead52dfe8, type: 2}
+  - {fileID: 11400000, guid: e4d55a4467e5c184395902e765957b0c, type: 2}
+  - {fileID: 11400000, guid: 6066b7811f4cc914996c66ced68ce965, type: 2}
+  - {fileID: 11400000, guid: e3f37e6ce643d3c4dab38ef74521ceb7, type: 2}
+  - {fileID: 11400000, guid: 73aab45eb8bb10940b4170e8a9130db2, type: 2}
+  enemyRobots:
+  - {fileID: 11400000, guid: 09d3ecf4c24c55743a6ae6a23703daa7, type: 2}
+  - {fileID: 11400000, guid: 5779e2f4f1c8ff64fa411e2c99e97b2e, type: 2}
+  - {fileID: 11400000, guid: 1f7ec5b0019335945aab353d05523bc4, type: 2}
+  - {fileID: 11400000, guid: a06b3d4a857afd2469fb3440b1c8f7ad, type: 2}
+  - {fileID: 11400000, guid: 0a0b5b3f7b80e9f4d91a483bba06b3cb, type: 2}
+  - {fileID: 11400000, guid: 5d3bfc52169113c48bebe9010d05b2df, type: 2}
+  - {fileID: 11400000, guid: 518c6c793442f8a47a2306fe3adcd968, type: 2}
+  - {fileID: 11400000, guid: 17ec5d13caa88014f9c1e52f7238c6cd, type: 2}
+  - {fileID: 11400000, guid: cd493d55ca450204a92882dfda4394c6, type: 2}
+  startHP: 100
+  hpIncrement: 5
+  backgrounds: []

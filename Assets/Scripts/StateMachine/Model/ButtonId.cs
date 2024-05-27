@@ -127,6 +127,16 @@ public static class ButtonId
 
     //game
     public const string QuitGame = "game.quit";
+    public const string Boosters = "game.boosters";
+
+    //boosters
+    public const string BoostersUse = "boosters.use";
+    public const string BoostersClose = "boosters.close";
+
+    //buybooster
+    public const string BuyBoosterPoints = "booster.buy.points";
+    public const string BuyBoosterIap = "booster.buy.iap";
+    public const string BuyBoosterClose = "booster.buy.close";
 
     //level complete
     public const string LevelCompleteContinue = "level.complete.continue";

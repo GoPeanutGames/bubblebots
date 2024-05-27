@@ -4,12 +4,26 @@ using BubbleBots.Gameplay.Models;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameScreenGame : GameScreen
 {
     public List<PlayerRobot> playerRobotVisuals;
     public List<EnemyRobot> enemyRobotVisuals;
     public TextMeshProUGUI playerNameText;
+    public Image background;
+
+    public GameObject boosters;
+
+    public void ShowBoosters(bool visibility)
+    {
+        boosters.SetActive(visibility);
+    }
+
+    public void SetBackground(Sprite backgroundSprite)
+    {
+        background.sprite = backgroundSprite;
+    }
 
     public void InitialiseEnemyRobots()
     {
