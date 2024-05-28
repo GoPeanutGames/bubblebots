@@ -40,8 +40,14 @@ public class GameStateWonPopup : GameState
 		if (data.eventName == GameEvents.ButtonTap)
 		{
 			OnButtonTap(data);
-		}
-	}
+		} 
+        else if (data.eventName == GameEvents.UpdateBubblesNumber)
+        {
+			int bubbles = (data as GameEventInt).intData;
+
+			_gameWonPopup.SetDescriptionText("You earned <color=#FFCB5E>" + bubbles + "</color> Points and extra <color=#FFCB5E>20,000</color> Points for completing all levels!");
+        }
+    }
 
 	private void OnButtonTap(GameEventData data)
 	{

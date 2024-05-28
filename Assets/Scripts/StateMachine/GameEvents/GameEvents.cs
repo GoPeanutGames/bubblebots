@@ -17,6 +17,7 @@ public static class GameEvents
     public const string BubbleExploded = "gameplay.bubble.exploded";
     public const string BubblesUnclaimedUpdate = "gameplay.bubbles.unclaimed.update";
     public const string UpdatePlayerRoster = "gameplay.update.player.roster";
+    public const string UpdateBubblesNumber = "gameplay.update.bubbles.number";
 
     //free mode gameplay
     public const string FreeModeSessionStarted = "freemode.session.start";

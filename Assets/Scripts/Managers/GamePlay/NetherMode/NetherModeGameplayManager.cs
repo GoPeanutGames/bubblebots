@@ -408,7 +408,8 @@ public class NetherModeGameplayManager : MonoBehaviour
     public void OnNewBubblesCount(int newValue)
     {
         sessionData.SetPotentialBubbles(Mathf.Max(sessionData.GetPotentialBubbles(), newValue));
-        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(newValue);
+        FindObjectOfType<GUIGame>().SetUnclaimedBubblesText(sessionData.GetPotentialBubbles());
+        GameEventsManager.Instance.PostEvent(new GameEventInt() { eventName = GameEvents.UpdateBubblesNumber, intData = sessionData.GetPotentialBubbles()});
     }
 
 }
