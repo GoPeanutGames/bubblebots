@@ -44,5 +44,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 17ec5d13caa88014f9c1e52f7238c6cd, type: 2}
   - {fileID: 11400000, guid: cd493d55ca450204a92882dfda4394c6, type: 2}
   startHP: 100
-  hpIncrement: 5
+  hpIncrement: 20
   backgrounds: []
